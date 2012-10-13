@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121013134916) do
+ActiveRecord::Schema.define(:version => 20121013152213) do
 
   create_table "authentications", :force => true do |t|
     t.string  "provider", :null => false
@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(:version => 20121013134916) do
     t.integer  "color_index", :default => 0, :null => false
   end
 
-  add_index "projects", ["title"], :name => "index_projects_on_title", :unique => true
+  add_index "projects", ["title"], :name => "index_projects_on_title"
 
   create_table "users", :force => true do |t|
     t.string   "email"
