@@ -49,6 +49,7 @@ gem "haml-rails"
 gem "omniauth", "~> 1.1.0"
 gem "omniauth-facebook"
 gem "omniauth-twitter"
+gem "omniauth-google-oauth2"
 gem "rails_config"
 
 group :develop do
