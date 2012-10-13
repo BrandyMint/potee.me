@@ -28,10 +28,16 @@ class Potee.Models.Project extends Backbone.Model
   # невозможно вызывать в конструкторе, так как проекты
   # инициализируются раньше window.dashboard.
   calculateDays: ->
-    @firstDay = window.router.dashboard.indexOf(@started_at)
-    @lastDay = window.router.dashboard.indexOf(@finish_at)
+    @firstDay = window.router.dashboard.indexOf(@started_at, "days")
+    @lastDay = window.router.dashboard.indexOf(@finish_at, "days")
+    @firstWeek = window.router.dashboard.indexOf(@started_at, "weeks")
+    @lastWeek = window.router.dashboard.indexOf(@finish_at, "weeks")
+    @firstMonth = window.router.dashboard.indexOf(@started_at, "months")
+    @lastMonth = window.router.dashboard.indexOf(@finish_at, "months")
 
-    @duration = @lastDay - @firstDay + 1
+    @duration_in_days = @lastDay - @firstDay
+    @duration_in_weeks = @lastWeek - @firstWeek
+    @duration_in_months = @lastMonth - @firstMonth
 
   progressDiv: ->
 
@@ -51,6 +57,36 @@ class Potee.Models.Project extends Backbone.Model
   setStartEndDates: ->
     @started_at = moment(@get("started_at")).toDate()
     @finish_at = moment(@get("finish_at")).toDate()
+
+  days_to_scale: (scale) ->
+    switch scale
+      when "days"
+        1
+      when "weeks"
+        7
+      when "months"
+        # считаем количество дней в месяце
+        m = moment(@started_at).clone().startOf('month')
+        next_month = m.clone().add('months', 1)
+        next_month.diff(m, 'days')
+
+  first_item_by_scale: (scale) ->
+    switch scale
+      when "days"
+        @firstDay
+      when "weeks"
+        @firstWeek
+      when "months"
+        @firstMonth
+
+  duration_by_scale: (scale) ->
+    switch scale
+      when "days"
+        @duration_in_days
+      when "weeks"
+        @duration_in_weeks
+      when "months"
+        @duration_in_months
 
 class Potee.Collections.ProjectsCollection extends Backbone.Collection
   model: Potee.Models.Project

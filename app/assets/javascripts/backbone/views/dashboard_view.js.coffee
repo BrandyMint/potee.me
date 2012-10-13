@@ -24,7 +24,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @timeline_view.render()
     @$el.append @timeline_view.el
 
-    @projects_view ||= new Potee.Views.Projects.IndexView
+    @projects_view = new Potee.Views.Projects.IndexView
       projects: @model.projects
 
     @$el.append @projects_view.el

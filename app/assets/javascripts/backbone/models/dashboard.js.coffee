@@ -8,6 +8,7 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   initialize: (@projects) ->
     @findStartEndDate()
+    @scale = "days" # by default
     return
 
   # По списку проектов находит крайние левую и правые даты
@@ -36,6 +37,12 @@ class Potee.Models.Dashboard extends Backbone.Model
   max_with_span: () ->
     moment(@max).clone().add('days', @spanDays).toDate()
 
-  # date должен быть объектом Date
-  indexOf: (date) ->
-    return moment(date).diff(moment(@min), "days") + @spanDays
+  # Возвращает индекс элемента
+  #
+  # @param [Date] date дата
+  # @param [String] input формат (days - дни, months - месяцы, weeks - недели)
+  indexOf: (date, input) ->
+    index = moment(date).diff(moment(@min), input)
+    if input == "days"
+      index = index + @spanDays
+    index

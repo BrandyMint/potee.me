@@ -31,11 +31,18 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     return false
 
-  setFirstDay: (day) ->
-    @$el.css('margin-left', day * window.router.dashboard.pixels_per_day)
+  # Project's line left margin (when does it start)
+  setLeftMargin: ->
+    d = window.router.dashboard
+    column_width = d.pixels_per_day * @model.days_to_scale(d.scale)
+    @$el.css('margin-left', @model.first_item_by_scale(d.scale) * column_width)
 
-  setDuration: (day) ->
-    @$el.css('width', day * window.router.dashboard.pixels_per_day)
+  # Project's line width
+  setDuration: ->
+    d = window.router.dashboard
+    column_width = d.pixels_per_day * @model.days_to_scale(d.scale)
+    console.log(column_width)
+    @$el.css('width', @model.duration_by_scale(d.scale) * column_width)
 
   setTitleView: (state)->
 
@@ -78,7 +85,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @setTitleView('show')
 
-    @setFirstDay @model.firstDay
-    @setDuration @model.duration
+    @setLeftMargin()
+    @setDuration()
 
     return this
