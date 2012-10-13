@@ -5,6 +5,15 @@ class Potee.Views.Titles.EditView extends Backbone.View
   tagName: "div"
   className: 'project-title'
 
+  initialize: ->
+    _.bindAll(this, 'on_keypress');
+    $(document).bind('keydown', this.on_keypress);
+
+  on_keypress: (e) ->
+    e ||= window.event
+    if e.keyCode == 27
+      @cancel()
+
   events :
     "submit #edit-project" : "update"
     'click .cancel' : 'cancel'

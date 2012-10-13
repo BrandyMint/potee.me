@@ -35,6 +35,11 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.css('width', day * window.dashboard.model.pixels_per_day)
 
   setTitleView: (state)->
+
+    if @titleView
+      @titleEl = undefined
+      @titleView.remove()
+
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
       when 'edit' then title_view_class = Potee.Views.Titles.EditView
@@ -58,7 +63,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   render: ->
     @titleEl = undefined
     # TODO Вынести progressbar в отдельную вьюху?
-    
+
     @$el.html(@template(@model.toJSON() ))
     @$el.attr('id', @model.get('id'))
 
