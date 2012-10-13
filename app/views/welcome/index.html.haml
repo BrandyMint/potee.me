@@ -1,1 +1,7 @@
 %h1 Welcome#index
+
+- if current_user
+  Welcome, #{current_user.name}
+  = link_to "Log out", logout_url
+- else
+  = link_to 'Login with Facebook', '/auth/facebook'
