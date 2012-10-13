@@ -4,6 +4,8 @@ class Project < ActiveRecord::Base
   # FIX
   attr_protected :secret
 
+  has_many :events
+
   before_validation do
     self.started_at ||= Date.today()
     self.finish_at ||= self.started_at + 1.months
@@ -13,4 +15,5 @@ class Project < ActiveRecord::Base
   validates :title, :presence => true, :uniqueness => true
   validates :started_at, :presence => true
   validates :color_index, :presence => true
+
 end
