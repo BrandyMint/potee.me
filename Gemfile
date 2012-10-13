@@ -39,4 +39,4 @@ gem 'jquery-rails'
 
 gem "haml", ">= 3.0.0"
 gem "haml-rails"
-gem "omniauth", "~> 0.2.0"
+gem "omniauth"
