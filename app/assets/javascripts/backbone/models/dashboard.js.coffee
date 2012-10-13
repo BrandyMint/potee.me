@@ -3,6 +3,9 @@ class Potee.Models.Dashboard extends Backbone.Model
   pixels_per_day_excluding_border: 39
   spanDays: 3
 
+  defaults:
+    scale: 'days'
+
   initialize: (@projects) ->
     @findStartEndDate()
     return

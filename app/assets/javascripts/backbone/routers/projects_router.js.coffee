@@ -5,6 +5,8 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
 
     @dashboard = new Potee.Models.Dashboard(@projects)
 
+    window.dashboard = @dashboard
+
   routes:
     "new"      : "newProject"
     "index"    : "index"
@@ -21,8 +23,8 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     project.view.setTitleView 'new'
 
   index: ->
-    @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)
-
+    @dashboard_view = new Potee.Views.DashboardView
+      model: @dashboard
 
   #show: (id) ->
     #project = @projects.get(id)
