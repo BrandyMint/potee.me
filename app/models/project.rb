@@ -4,7 +4,7 @@ class Project < ActiveRecord::Base
   # FIX
   attr_protected :secret
 
-  has_many :events
+  has_many :events, :dependent => :destroy
 
   before_validation do
     self.started_at ||= Date.today()
