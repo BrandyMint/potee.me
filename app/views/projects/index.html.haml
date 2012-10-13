@@ -1,13 +1,8 @@
 #screen
   #dashboard
-    #timeline
-    #projects
-    :plain
-      <a href="#/new">New Project</a>
 
 :javascript
   $(function() {
-    window.router = new App.Routers.ProjectsRouter({projects: #{@projects.to_json.html_safe}});
-    Backbone.history.start();
+    window.start({projects: #{@projects.to_json.html_safe}});
   })
 
