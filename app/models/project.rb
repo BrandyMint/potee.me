@@ -6,6 +6,7 @@ class Project < ActiveRecord::Base
 
   before_validation do
     self.started_at ||= Date.today()
+    self.finish_at ||= self.started_at + 1.months
     self.color_index ||= 1
   end
 
