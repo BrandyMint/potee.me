@@ -15,7 +15,7 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
   months: () ->
     months = []
     # iterate by 1 month
-    range.by "m", (moment) ->
+    range.by "M", (moment) ->
       months.push(moment.format("MMMM, YYYY"))
     months
 
