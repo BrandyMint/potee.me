@@ -20,11 +20,13 @@ body
 
 #viewport
   @extend .span12
-  margin: 10px 20px
+  margin: 0
+  width: 100%
   position: absolute
   color: $fontColor
   height: $dashboardHeight
-  overflow-x: scroll  
+  overflow-x: scroll
+  overflow-y: hidden
 
 #dashboard
   position: absolute
@@ -36,7 +38,6 @@ body
 .projects-dashboard-bars, #projects // to #projects
   position: absolute
   z-index: 100
-  width: $dashboardWidth
   margin-top: 40px
 
   
@@ -50,7 +51,6 @@ body
   z-index: 1
  
 #timeline table // timeline table
-  width: $dashboardWidth
   height: $dashboardHeight - 30px
 
 #timeline table td // timeline table td
