@@ -19,7 +19,6 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
 
     window.projects_view.addOne project, true
     project.view.setTitleView 'new'
-    # $("#projects").html(@view.render().el)
 
   index: ->
     @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)

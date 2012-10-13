@@ -11,7 +11,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   events:
     "click .destroy" : "destroy"
     "click .title" : "edit"
-    "dblclick .progress" : "nextColor"
+    "click .progress" : "nextColor"
 
   nextColor: ->
     @model.nextColor()
@@ -46,7 +46,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
       when 'edit' then title_view_class = Potee.Views.Titles.EditView
-      when 'new'  then title_view_class = Potee.Views.Titles.EditView
+      when 'new'  then title_view_class = Potee.Views.Titles.NewView
 
     options =
       project_view: this

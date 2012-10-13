@@ -12,7 +12,7 @@ class Project < ActiveRecord::Base
     self.color_index ||= 1
   end
 
-  validates :title, :presence => true, :uniqueness => true
+  validates :title, :presence => true #, :uniqueness => true
   validates :started_at, :presence => true
   validates :color_index, :presence => true
 
