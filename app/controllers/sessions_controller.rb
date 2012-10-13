@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   def create
-    user = User.from_omniauth(auth)
+    user = Authentication.authenticate_or_create(auth)
     session[:user_id] = user.id
     redirect_to root_url, notice: 'Logged in!'
   end
