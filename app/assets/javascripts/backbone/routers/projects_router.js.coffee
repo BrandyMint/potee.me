@@ -6,7 +6,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   routes:
     "new"      : "newProject"
     "index"    : "index"
-    ":id/edit" : "edit"
+    # ":id/edit" : "edit"
     ":id"      : "show"
     ".*"        : "index"
 

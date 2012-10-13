@@ -7,10 +7,15 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
   events:
     "click .destroy" : "destroy"
-    "dblclick" : "nextColor"
+    "click .title" : "edit"
+    "dblclick .progress" : "nextColor"
 
   nextColor: ->
     @model.nextColor()
+
+
+  edit: ->
+    @setTitleView 'edit'
 
   bounce: ->
     @$el.effect('bounce', {times: 5}, 200)
@@ -36,6 +41,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     options =
       project_view: this
+      model: @model
 
     if @titleEl
       options['el'] = @titleEl
@@ -48,7 +54,10 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       @$el.append @titleEl
 
   render: ->
-    $(@el).html(@template(@model.toJSON() ))
+    @titleEl = undefined
+    # TODO Вынести progressbar в отдельную вьюху?
+    
+    @$el.html(@template(@model.toJSON() ))
     @$el.attr('id', @model.get('id'))
 
     @setTitleView('show')
