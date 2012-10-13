@@ -50,3 +50,7 @@ gem "omniauth", "~> 1.1.0"
 gem "omniauth-facebook"
 gem "omniauth-twitter"
 gem "rails_config"
+
+group :develop do
+  gem 'debugger'
+end
