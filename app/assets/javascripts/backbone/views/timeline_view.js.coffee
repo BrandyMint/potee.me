@@ -11,7 +11,7 @@ class Potee.Views.TimelineView extends Backbone.View
     @view ||= new Potee.Views.Timelines.DaysView
       date_start: moment(@dashboard.min)
       date_finish: moment(@dashboard.max)
-      column_width: @dashboard.pixels_per_day
+      column_width: @dashboard.pixels_per_day - 1 # Толщина бордера
 
     @$el.html(@view.render().el)
 
