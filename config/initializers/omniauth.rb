@@ -1,5 +1,6 @@
 OmniAuth.config.logger = Rails.logger
 
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :facebook, '435822783141513', 'e021c8dd40c3966475002285eb9d31a1', scope: 'email'
+  provider :facebook, Settings.facebook.key, Settings.facebook.secret, scope: 'email'
+#   provider :twitter, 'aIge6ADDxeRLL0D0DfNiA', 'WZr5DPDmLNJK1JGEaStArnCki0Rau8yS3mZInpBSh0'
 end
