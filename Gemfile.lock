@@ -163,11 +163,8 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-twitter
   rails (= 3.2.8)
-<<<<<<< HEAD
   rails-backbone
-=======
   rails_config
->>>>>>> Added rails_config gem, moved facebook app settings to config/settings.yml
   sass-rails (~> 3.2.3)
   uglifier (>= 1.0.3)
   vendorer
