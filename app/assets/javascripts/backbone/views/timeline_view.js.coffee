@@ -1,4 +1,5 @@
 class Potee.Views.TimelineView extends Backbone.View
+  template: JST["backbone/templates/timeline"]
   id: 'timeline'
   tagName: 'div'
 
@@ -6,20 +7,22 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = @options.dashboard
 
   events:
-    "click #timeline-zoom .btn" : "zoom"
+    "click .zoom-control .btn" : "zoom"
 
   zoom: (event) ->
     level = event.target.getAttribute('data-zoom-level')
     switch level
-      when 'days' then @timeline_view = new Potee.Views.Timelines.DaysView(moment(@dashboard.min), moment(@dashboard.max))
-      when 'weeks' then @timeline_view = new Potee.Views.Timelines.WeeksView(moment(@dashboard.min), moment(@dashboard.max))
-      when 'months' then @timeline_view = new Potee.Views.Timelines.MonthsView(moment(@dashboard.min), moment(@dashboard.max))
+      when 'days' then @view = new Potee.Views.Timelines.DaysView(moment(@dashboard.min), moment(@dashboard.max))
+      when 'weeks' then @view = new Potee.Views.Timelines.WeeksView(moment(@dashboard.min), moment(@dashboard.max))
+      when 'months' then @view = new Potee.Views.Timelines.MonthsView(moment(@dashboard.min), moment(@dashboard.max))
     @render()
 
   render: ->
-    view = new Potee.Views.Timelines.DaysView(moment(@dashboard.min), moment(@dashboard.max))
-    @$el.html view.render().el
+    $(@el).html(@template)
 
-    # TODO Рендерит нужную вьюху
+    # TODO [AK 13/10/12] render view depends on user settings
+    @view ||= new Potee.Views.Timelines.DaysView(moment(@dashboard.min), moment(@dashboard.max))
+    @$el.append @view.render().el
+
     return this
 

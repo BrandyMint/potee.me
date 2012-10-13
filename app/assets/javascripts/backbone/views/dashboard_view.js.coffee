@@ -13,7 +13,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   render: ->
     @timeline_view ||= new Potee.Views.TimelineView
-      dashboard: this
+      dashboard: @dashboard
 
     @timeline_view.render()
     @$el.append @timeline_view.el
