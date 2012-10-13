@@ -1,15 +1,13 @@
 %header.viewport-header
   %h1.pull-left Projects timeline
 
-  %button.pull-right.btn.btn-primary{:id=>'project-create'} New project
-  <a href="#/new">New Project</a>
+  .pull-right
+    = link_to 'New project', '#/new', :class => 'btn btn-primary', :id => 'project-create'
 
   .clearfix
 %hr
 #viewport
   #dashboard
-    #timeline
-    #projects
 
 :javascript
   $(function() {

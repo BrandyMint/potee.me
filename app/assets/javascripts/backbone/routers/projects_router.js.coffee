@@ -7,7 +7,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     "new"      : "newProject"
     "index"    : "index"
     # ":id/edit" : "edit"
-    ":id"      : "show"
+    # ":id"      : "show"
     ".*"        : "index"
 
   newProject: ->
@@ -17,16 +17,13 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   index: ->
     @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)
 
-  show: (id) ->
-    project = @projects.get(id)
+  #show: (id) ->
+    #project = @projects.get(id)
 
-    @view = new Potee.Views.Projects.ShowView(model: project)
-    $("#projects").html(@view.render().el)
+  #edit: (id) ->
+    #project = @projects.get(id)
 
-  edit: (id) ->
-    project = @projects.get(id)
-
-    project.view.setTitleView('edit')
+    #project.view.setTitleView('edit')
 
     # @project_title_view = new Potee.Views.Projects.EditView(model: project)
     # project.view.title_view

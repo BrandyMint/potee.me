@@ -23,5 +23,6 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   render: =>
     # $(@el).html(@template(projects: @options.projects.toJSON() ))
     @addAll()
-    $("#projects").html(@el)
+
+    # $("#projects").html(@el)
     return this
