@@ -5,7 +5,6 @@ $monoFontFamily:        "proxima-nova", Monaco, Menlo, Consolas, "Courier New", 
 @import "bootstrap"
 @import "colors"
 @import "variables"
-@import "timeline"
 
 @import "ui"
 
@@ -30,27 +29,38 @@ body
 #dashboard
   position: absolute
   width: 100%
+
+
+// Projects
+
+.projects-dashboard-bars, #projects // to #projects
+  position: absolute
+  z-index: 100
+  width: $dashboardWidth
+  margin-top: 40px
+
   
 
 
 // Timeline
 
-.projects-timeline // to #timeline
+#timeline // to #timeline
   position: absolute
   height: $dashboardHeight
   z-index: 1
  
-.dashboard-timeline-table // timeline table
+#timeline table // timeline table
   width: $dashboardWidth
   height: $dashboardHeight - 30px
 
-.dashboard-timeline-item // timeline table td
+#timeline table td // timeline table td
   border-right: 1px solid $timelineLineColor
   width: 3.1%
   height: 100%
   text-align: center
+  vertical-align: top
   font-size: 12px
-
+  white-space: nowrap
 
 
 // previous
