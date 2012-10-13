@@ -13,7 +13,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     ".*"        : "index"
 
   newProject: ->
-    @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)
+    @dashboard_view ||= new Potee.Views.DashboardView(dashboard: @dashboard)
     # @view = new Potee.Views.Projects.NewView(collection: @projects)
     project = new Potee.Models.Project
 
