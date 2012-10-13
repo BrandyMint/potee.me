@@ -18,8 +18,8 @@ class Potee.Models.Dashboard extends Backbone.Model
           max = project.finish_at
     )
 
-    @min = moment(min).subtract("days", 3).toDate()
-    @max = moment(max).add("days", 3).toDate()
+    @min = moment(min).toDate()
+    @max = moment(max).toDate()
 
     @days = moment(@max).diff(moment(@min), "days") + 3 # FIX
 
@@ -27,4 +27,4 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   # date должен быть объектом Date
   indexOf: (date) ->
-    return moment(date).diff(moment(@min), "days")
+    return moment(date).diff(moment(@min), "days") + 3
