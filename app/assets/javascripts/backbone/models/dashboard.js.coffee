@@ -7,16 +7,19 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
-    @min = @projects.first().started_at
-    @max = @projects.first().finish_at
+    min = @projects.first().started_at
+    max = @projects.first().finish_at
 
     @projects.each((project)=>
-        if project.started_at < @min
-          @min = project.started_at
+        if project.started_at < min
+          min = project.started_at
 
-        if project.finish_at > @max
-          @max = project.finish_at
+        if project.finish_at > max
+          max = project.finish_at
     )
+
+    @min = moment(min).subtract("days", 3).toDate()
+    @max = moment(max).add("days", 3).toDate()
 
     return
 
