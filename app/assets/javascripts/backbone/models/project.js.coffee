@@ -10,6 +10,12 @@ class Potee.Models.Project extends Backbone.Model
   defaults:
     title: 'проект без названия'
 
+  firstDay: ->
+    Date.parse @get('started_at')
+
+  lastDay: ->
+    Date.parse @get('finish_at')
+
   nextColor: ->
     @set 'color_index', ( @get('color_index') + 1 ) % 7
     @save()

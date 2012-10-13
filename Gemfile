@@ -26,6 +26,8 @@ gem 'vendorer'
 
 gem 'bootstrap-sass'
 
+gem 'vendorer'
+
 group :development do
   # Deploy with Capistrano
   gem 'capistrano'
