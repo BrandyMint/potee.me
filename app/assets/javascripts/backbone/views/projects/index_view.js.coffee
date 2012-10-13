@@ -13,6 +13,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @options.projects.each(@addOne)
 
   addOne: (project) =>
+    project.calculateDays()
     view = new Potee.Views.Projects.ProjectView
       model : project
     project.view = view

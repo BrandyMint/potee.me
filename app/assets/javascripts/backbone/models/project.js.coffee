@@ -7,8 +7,6 @@ class Potee.Models.Project extends Backbone.Model
     @on 'change:color_index', @change_color
     @setStartEndDates()
 
-    @calculateDays()
-
   events:
     "change:color_index" : "change_color"
 
@@ -19,9 +17,13 @@ class Potee.Models.Project extends Backbone.Model
     @set 'color_index', ( @get('color_index') + 1 ) % 7
     @save()
 
+  # Этот метод может быть вызыван только в том случае, если window.dashboard
+  # ужен инициализирован, поэтому его невозможно вызывать в конструкторе, так
+  # как проекты инициализируются раньше window.dashboard.
   calculateDays: ->
-    @firstDay = @get('color_index') # FIX window.dashboard.model.getIndexOfDay @get('started_at')
-    @lastDay = @firstDay + 10 # window.dashboard.model.getIndexOfDay @get('finish_at') + 10 # FIX
+    @firstDay = window.dashboard.model.indexOf(@started_at)
+    @lastDay = window.dashboard.model.indexOf(@finish_at)
+
     @duration = @lastDay - @firstDay + 1
 
   progressDiv: ->
