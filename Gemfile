@@ -32,6 +32,7 @@ group :development do
   # Deploy with Capistrano
   gem 'capistrano'
   gem 'capistrano_colors'
+  gem 'debugger'
 end
 
 group :production do
@@ -62,7 +63,4 @@ gem "omniauth-twitter"
 gem "omniauth-google-oauth2"
 gem "rails_config"
 gem "authbuttons-rails"
-
-group :develop do
-  gem 'debugger'
-end
+gem "gon"
