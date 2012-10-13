@@ -59,6 +59,7 @@ gem "omniauth-facebook"
 gem "omniauth-twitter"
 gem "omniauth-google-oauth2"
 gem "rails_config"
+gem "authbuttons-rails"
 
 group :develop do
   gem 'debugger'
