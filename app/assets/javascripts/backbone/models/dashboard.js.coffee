@@ -27,6 +27,12 @@ class Potee.Models.Dashboard extends Backbone.Model
 
     return
 
+  min_with_span: () ->
+    moment(@min).clone().subtract('days', @spanDays).toDate()
+
+  max_with_span: () ->
+    moment(@max).clone().add('days', @spanDays).toDate()
+
   # date должен быть объектом Date
   indexOf: (date) ->
     return moment(date).diff(moment(@min), "days") + @spanDays
