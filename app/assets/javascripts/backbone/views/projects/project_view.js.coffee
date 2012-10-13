@@ -43,6 +43,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
       when 'edit' then title_view_class = Potee.Views.Titles.EditView
+      when 'new'  then title_view_class = Potee.Views.Titles.EditView
 
     options =
       project_view: this
@@ -65,7 +66,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     # TODO Вынести progressbar в отдельную вьюху?
 
     @$el.html(@template(@model.toJSON() ))
-    @$el.attr('id', @model.get('id'))
+    @$el.attr('id', @model.cid)
 
     @model.projectEvents.each((event)=>
       event_view = new Potee.Views.Projects.EventView(model: event)

@@ -8,6 +8,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
   initialize: ->
     _.bindAll(this, 'on_keypress');
     $(document).bind('keydown', this.on_keypress);
+    @collection = window.projects
+    @model = @options.model
 
   on_keypress: (e) ->
     e ||= window.event
@@ -16,7 +18,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   events :
     "submit #edit-project" : "update"
-    'click .cancel' : 'cancel'
+    "submit #new-project"  : "create"
+    'click .cancel'        : 'cancel'
 
   update : (e) ->
     e.preventDefault()
@@ -29,11 +32,33 @@ class Potee.Views.Titles.EditView extends Backbone.View
         # window.location.hash = "/#{@model.id}"
     )
 
+  create: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
+
+    @model.unset("errors")
+
+    @collection.create(@model.toJSON(),
+      success: (project) =>
+        @model = project
+        @model.view.setTitleView 'show'
+        # window.location.hash = "/#{@model.id}"
+
+      error: (project, jqXHR) =>
+        @model.set({errors: $.parseJSON(jqXHR.responseText)})
+    )
+
+  render: ->
+
   keypress: (event)->
     alert(event)
 
   cancel: ->
-    @model.view.setTitleView 'show'
+    if @model.isNew()
+      @model.view.remove()
+      # @model.remove()
+    else
+      @model.view.setTitleView 'show'
 
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))

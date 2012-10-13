@@ -1,7 +1,7 @@
 Potee.Views.Projects ||= {}
 
 class Potee.Views.Projects.NewView extends Backbone.View
-  template: JST["backbone/templates/projects/new"]
+  template: JST["backbone/templates/projects/edit"]
 
   events:
     "submit #new-project": "save"

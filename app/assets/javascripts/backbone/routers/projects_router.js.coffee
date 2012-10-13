@@ -1,6 +1,8 @@
 class Potee.Routers.ProjectsRouter extends Backbone.Router
   initialize: (options) ->
     @projects = @getProjectsCollection(options.projects)
+    window.projects = @projects
+
     @dashboard = new Potee.Models.Dashboard(@projects)
 
   routes:
@@ -11,11 +13,17 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     ".*"        : "index"
 
   newProject: ->
-    @view = new Potee.Views.Projects.NewView(collection: @projects)
-    $("#projects").html(@view.render().el)
+    @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)
+    # @view = new Potee.Views.Projects.NewView(collection: @projects)
+    project = new Potee.Models.Project
+
+    window.projects_view.addOne project, true
+    project.view.setTitleView 'new'
+    # $("#projects").html(@view.render().el)
 
   index: ->
     @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)
+
 
   #show: (id) ->
     #project = @projects.get(id)

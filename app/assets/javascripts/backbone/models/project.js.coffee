@@ -16,7 +16,8 @@ class Potee.Models.Project extends Backbone.Model
     "change:color_index" : "change_color"
 
   defaults:
-    title: 'проект без названия'
+    title: 'без названия'
+    color_index: 1
 
   nextColor: ->
     @set 'color_index', ( @get('color_index') + 1 ) % 7

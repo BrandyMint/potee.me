@@ -8,17 +8,22 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   initialize: () ->
     @options.projects.bind('reset', @addAll)
+    window.projects_view = this
     @render()
 
   addAll: () =>
     @options.projects.each(@addOne)
 
-  addOne: (project) =>
+  addOne: (project, prepend) =>
     project.calculateDays()
     view = new Potee.Views.Projects.ProjectView
       model : project
     project.view = view
-    @$el.append(view.render().el)
+
+    if prepend
+      @$el.prepend view.render().el
+    else
+      @$el.append view.render().el
 
   render: =>
     # $(@el).html(@template(projects: @options.projects.toJSON() ))
