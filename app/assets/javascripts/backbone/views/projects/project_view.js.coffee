@@ -53,6 +53,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       @titleEl = @titleView.el
       @$el.append @titleEl
 
+      # if state=='edit'
+
   render: ->
     @titleEl = undefined
     # TODO Вынести progressbar в отдельную вьюху?

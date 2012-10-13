@@ -7,6 +7,7 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   events :
     "submit #edit-project" : "update"
+    'click .cancel' : 'cancel'
 
   update : (e) ->
     e.preventDefault()
@@ -19,6 +20,11 @@ class Potee.Views.Titles.EditView extends Backbone.View
         # window.location.hash = "/#{@model.id}"
     )
 
+  keypress: (event)->
+    alert(event)
+
+  cancel: ->
+    @model.view.setTitleView 'show'
 
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))
