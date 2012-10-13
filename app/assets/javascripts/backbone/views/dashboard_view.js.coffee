@@ -5,7 +5,11 @@ class Potee.Views.DashboardView extends Backbone.View
   initialize: (options)->
     @dashboard = options.dashboard
     @setElement($('#dashboard'))
+    @resetWidth()
     @render()
+
+  resetWidth: ->
+    @$el.css('width', @dashboard.days * @dashboard.pixels_per_day)
 
   render: ->
     @timeline_view ||= new Potee.Views.TimelineView

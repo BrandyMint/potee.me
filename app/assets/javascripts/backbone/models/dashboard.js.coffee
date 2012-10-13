@@ -21,10 +21,9 @@ class Potee.Models.Dashboard extends Backbone.Model
     @min = moment(min).subtract("days", 3).toDate()
     @max = moment(max).add("days", 3).toDate()
 
-    return
+    @days = moment(@max).diff(moment(@min), "days") + 3 # FIX
 
-  durationInDays: ->
-    return moment(@max).diff(moment(@min), "days")
+    return
 
   # date должен быть объектом Date
   indexOf: (date) ->
