@@ -5,9 +5,16 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
   events:
     "click .destroy" : "destroy"
+    "dblclick" : "nextColor"
 
   tagName: "div"
   className: 'project'
+
+  nextColor: ->
+    @model.nextColor()
+
+  bounce: ->
+    @$el.effect('bounce', {times: 5}, 200)
 
   destroy: () ->
     @model.destroy()

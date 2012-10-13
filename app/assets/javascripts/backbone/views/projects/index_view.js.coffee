@@ -12,6 +12,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   addOne: (project) =>
     view = new Potee.Views.Projects.ProjectView
       model : project
+    project.view = view
     @$el.append(view.render().el)
 
   render: =>

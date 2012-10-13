@@ -1,7 +1,27 @@
+$color0: #c0b393
 $color1: #f57969
 $color2: #55bae4
 $color3: #f6ab68
 $color4: #ca7777
 $color5: #c1d170
 $color6: #ab88c4
-$color7: #c0b393
+
+@mixin progress($color)
+  //+gradient-vertical(#ee5f5b, #c43c35)
+  $lastColor: darken($color, 10)
+  +gradient-vertical($color, $lastColor)
+
+.progress-color1 .bar, .progress .bar-color1
+  +progress($color1)
+.progress-color2 .bar, .progress .bar-color2
+  +progress($color2)
+.progress-color3 .bar, .progress .bar-color3
+  +progress($color3)
+.progress-color4 .bar, .progress .bar-color4
+  +progress($color4)
+.progress-color5 .bar, .progress .bar-color5
+  +progress($color5)
+.progress-color6 .bar, .progress .bar-color6
+  +progress($color6)
+.progress-color0 .bar, .progress .bar-color0
+  +progress($color0)
