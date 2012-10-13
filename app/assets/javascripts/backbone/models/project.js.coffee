@@ -3,6 +3,8 @@ class Potee.Models.Project extends Backbone.Model
 
   initialize: ->
     @on 'change:color_index', @change_color
+    @setStartEndDates()
+    return
 
     @firstDay = @get('color_index') # FIX window.dashboard.model.getIndexOfDay @get('started_at')
     @lastDay = @firstDay + 10 # window.dashboard.model.getIndexOfDay @get('finish_at') + 10 # FIX
@@ -24,6 +26,10 @@ class Potee.Models.Project extends Backbone.Model
     @view.render()
     @view.bounce()
     # @view.$el.find('.progress').addClass('active')
+
+  setStartEndDates: ->
+    @started_at = moment(@get("started_at")).toDate()
+    @finish_at = moment(@get("finish_at")).toDate()
 
 class Potee.Collections.ProjectsCollection extends Backbone.Collection
   model: Potee.Models.Project

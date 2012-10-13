@@ -4,8 +4,8 @@ class Potee.Views.DashboardView extends Backbone.View
   id: 'dashboard'
   tagName: 'div'
 
-  initialize: ->
-    @model = new Potee.Models.Dashboard()
+  initialize: (projects)->
+    @model = new Potee.Models.Dashboard(projects)
     @render()
 
   render: ->
