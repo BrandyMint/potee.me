@@ -27,5 +27,8 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   edit: (id) ->
     project = @projects.get(id)
 
-    @view = new Potee.Views.Projects.EditView(model: project)
-    $("#projects").html(@view.render().el)
+    project.view.setTitleView('edit')
+
+    # @project_title_view = new Potee.Views.Projects.EditView(model: project)
+    # project.view.title_view
+    # $("#").html(@view.render().el)
