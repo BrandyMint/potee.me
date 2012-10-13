@@ -1,0 +1,54 @@
+
+.progress
+  overflow: visible
+  margin:
+    top: $barHeight
+    bottom: 5px
+  +gradient-vertical(rgba(245,245,245,0.2),rgba(249,249,249,0.2))
+  +transition(all 0.4s ease)
+  +box-shadow(none)
+  &:hover
+    +gradient-vertical(rgba(245,245,245,0.8),rgba(249,249,249,0.8))
+    +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
+  .bar
+    width: 100%
+    +border-radius(4px)
+
+.timeline-item-today
+  background: rgba(255,255,255,0.1)
+
+.project-name
+  +transition(color 0.4s ease)
+
+.event-point
+  width: 8px
+  height: 28px
+  +border-radius(4px)
+  margin-top: -4px
+  
+#projects
+  .progress
+    cursor: pointer
+
+
+
+
+@for $i from 1 through 9
+  $pColor: hsl($i*50,80%,40%)
+  .project-#{$i}
+    width: 100%/$i
+    margin-left: (100% - 100%/$i)/2
+    .progress .bar
+      background: $pColor
+    .project-name
+      color: $pColor
+    .event-point
+      background-color: lighten($pColor,30%)
+      
+    &:hover
+      .progress
+        +box-shadow(0 0 10px 0 $pColor)
+      .project-name
+        color: lighten($pColor,20%)
+
+
