@@ -6,7 +6,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   events:
     "click .destroy" : "destroy"
 
-  tagName: "tr"
+  tagName: "div"
+  className: 'project'
 
   destroy: () ->
     @model.destroy()
