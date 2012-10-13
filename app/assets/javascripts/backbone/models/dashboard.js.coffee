@@ -1,5 +1,6 @@
 class Potee.Models.Dashboard extends Backbone.Model
   pixels_per_day: 40
+  spanDays: 3
 
   initialize: (@projects) ->
     @findStartEndDate()
@@ -21,10 +22,10 @@ class Potee.Models.Dashboard extends Backbone.Model
     @min = moment(min).toDate()
     @max = moment(max).toDate()
 
-    @days = moment(@max).diff(moment(@min), "days") + 6
+    @days = moment(@max).diff(moment(@min), "days") + @spanDays*2
 
     return
 
   # date должен быть объектом Date
   indexOf: (date) ->
-    return moment(date).diff(moment(@min), "days") + 3
+    return moment(date).diff(moment(@min), "days") + @spanDays
