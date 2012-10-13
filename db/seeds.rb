@@ -6,18 +6,42 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-Project.create :title => 'Design for google.com',
+p1 = Project.create :title => 'Design for google.com',
   :started_at => Date.parse('2012-09-01'),
   :finish_at => Date.parse('2012-12-01'),
   :color_index => 1
 
+p1.events.create(
+  title: 'Prepare vision document',
+  date: Date.parse('2012-10-01'),
+  time: Time.parse('2012-10-01 12:00')
+)
 
-Project.create :title => 'Make wife happy',
+p1.events.create(
+  title: 'Make some thoughts',
+  date: Date.parse('2012-10-25'),
+  time: Time.parse('2012-10-25 14:00')
+)
+
+p2 = Project.create :title => 'Make wife happy',
   :started_at => Date.parse('2012-09-15'),
   :finish_at => Date.parse('2012-11-04'),
   :color_index => 2
 
-Project.create :title => 'Lear SCALA',
+p2.events.create(
+  title: 'Buy tickets to Oper',
+  date: Date.parse('2012-10-03'),
+  time: Time.parse('2012-10-03 21:00')
+)
+
+p3 = Project.create :title => 'Learn SCALA',
   :started_at => Date.parse('2012-09-25'),
   :finish_at => Date.parse('2013-01-09'),
   :color_index => 3
+
+p3.events.create(
+  title: 'Read the BOOK',
+  date: Date.parse('2012-11-12'),
+  time: Time.parse('2012-11-12 6:00')
+)
+
