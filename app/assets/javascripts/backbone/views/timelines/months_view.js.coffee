@@ -5,20 +5,32 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
 
   tagName: 'div'
   className: 'months'
-  range = undefined
 
-  initialize: (date_start, date_finish) ->
-    start = moment(date_start, "YYYY-MM-DD")
-    end   = moment(date_finish, "YYYY-MM-DD")
-    range = moment().range(start, end);
+  initialize: (options) ->
+    start = moment(options.date_start, "YYYY-MM-DD")
+    end   = moment(options.date_finish, "YYYY-MM-DD")
+    @range = moment().range(start.startOf('month'), end.endOf('month'))
+    @column_width = options.column_width
 
   months: () ->
     months = []
     # iterate by 1 month
-    range.by "M", (moment) ->
+    @range.by "M", (moment) ->
       months.push(moment.format("MMMM, YYYY"))
     months
 
+  set_column_width: () ->
+    days_in_months = []
+    @range.by "M", (moment) ->
+      next_month = moment.clone().add('months', 1)
+      count = next_month.diff(moment, 'days')
+      days_in_months.push(count)
+
+    column_width = @column_width
+    @$el.find('table td').each (index) ->
+      $(this).attr('width', column_width * days_in_months[index] + "px")
+
   render: =>
     $(@el).html(@template(months: @months()))
+    @set_column_width()
     return this

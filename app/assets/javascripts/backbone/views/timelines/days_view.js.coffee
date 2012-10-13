@@ -5,20 +5,24 @@ class Potee.Views.Timelines.DaysView extends Backbone.View
 
   tagName: 'div'
   className: 'days'
-  range = undefined
 
-  initialize: (date_start, date_finish) ->
-    start = moment(date_start, "YYYY-MM-DD")
-    end   = moment(date_finish, "YYYY-MM-DD")
-    range = moment().range(start, end);
+  initialize: (options) ->
+    start = moment(options.date_start, "YYYY-MM-DD")
+    end   = moment(options.date_finish, "YYYY-MM-DD")
+    @range = moment().range(start, end);
+    @column_width = options.column_width
 
   days: () ->
     days = []
     # iterate by 1 day
-    range.by "d", (moment) ->
+    @range.by "d", (moment) ->
       days.push(moment.format("dddd, MMMM Do"))
     days
 
+  set_column_width: () ->
+    @$el.find('table td').attr('width', @column_width + "px")
+
   render: =>
     $(@el).html(@template(days: @days()))
+    @set_column_width()
     return this

@@ -13,9 +13,22 @@ class Potee.Views.TimelineZoomView extends Backbone.View
     level = event.target.getAttribute('data-zoom-level')
     dashboard = @dashboard_view.dashboard
     switch level
-      when 'days' then view = new Potee.Views.Timelines.DaysView(moment(dashboard.min), moment(dashboard.max))
-      when 'weeks' then view = new Potee.Views.Timelines.WeeksView(moment(dashboard.min), moment(dashboard.max))
-      when 'months' then view = new Potee.Views.Timelines.MonthsView(moment(dashboard.min), moment(dashboard.max))
+      when 'days'
+        view = new Potee.Views.Timelines.DaysView
+          date_start: moment(dashboard.min)
+          date_finish: moment(dashboard.max)
+          column_width: dashboard.pixels_per_day
+      when 'weeks'
+        view = new Potee.Views.Timelines.WeeksView
+          date_start: moment(dashboard.min)
+          date_finish: moment(dashboard.max)
+          column_width: dashboard.pixels_per_day
+      when 'months'
+        view = new Potee.Views.Timelines.MonthsView
+          date_start: moment(dashboard.min)
+          date_finish: moment(dashboard.max)
+          column_width: dashboard.pixels_per_day
+
     @dashboard_view.timeline_view = new Potee.Views.TimelineView
       dashboard: dashboard
       view: view
