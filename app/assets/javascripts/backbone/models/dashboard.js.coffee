@@ -3,3 +3,9 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   # Сколько всего дней на столе
   days: 400
+
+  getIndexOfDay: (date) ->
+    # Возвращает индекс дня
+    # Date.parse @get('started_at')
+    return 1
+
