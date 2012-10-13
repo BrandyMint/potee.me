@@ -12,9 +12,13 @@ class Potee.Views.DashboardView extends Backbone.View
     @$el.css('width', @dashboard.days * @dashboard.pixels_per_day)
 
   render: ->
+    @timeline_zoom_view = new Potee.Views.TimelineZoomView
+      dashboard_view: this
+    @timeline_zoom_view.render()
+    @$el.append @timeline_zoom_view.el
+
     @timeline_view ||= new Potee.Views.TimelineView
       dashboard: @dashboard
-
     @timeline_view.render()
     @$el.append @timeline_view.el
 
