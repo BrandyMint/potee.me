@@ -1,6 +1,4 @@
 class Potee.Views.DashboardView extends Backbone.View
-  template: JST["backbone/templates/dashboard"]
-
   id: 'dashboard'
   tagName: 'div'
 
@@ -11,7 +9,6 @@ class Potee.Views.DashboardView extends Backbone.View
   render: ->
 
     # TODO Рендерим timeline
-    # TODO Рендерим projects
     @projects_view = new Potee.Views.Projects.IndexView(projects: @dashboard.projects)
-    $(@el).html(@template(@dashboard.toJSON()))
+    @$.append @projects_view.el
     return this
