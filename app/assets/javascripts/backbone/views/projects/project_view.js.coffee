@@ -67,6 +67,11 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.html(@template(@model.toJSON() ))
     @$el.attr('id', @model.get('id'))
 
+    @model.projectEvents.each((event)=>
+      event_view = new Potee.Views.Projects.EventView(model: event)
+      @$el.append(event_view.el)
+    )
+
     @setTitleView('show')
 
     @setFirstDay @model.firstDay

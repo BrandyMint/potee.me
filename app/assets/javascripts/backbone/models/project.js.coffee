@@ -7,6 +7,11 @@ class Potee.Models.Project extends Backbone.Model
     @on 'change:color_index', @change_color
     @setStartEndDates()
 
+    # Свойство events используется для событий Backbone модели, поэтому
+    # использовать его для обозначения списка событий не получается.
+    @projectEvents = new Potee.Collections.EventsCollection(project: this)
+    @projectEvents.reset(@get("events"))
+
   events:
     "change:color_index" : "change_color"
 
