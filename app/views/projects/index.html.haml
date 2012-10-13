@@ -1,17 +1,8 @@
-%h1 Listing projects
+#projects
 
-%table
-  %tr
-    %th
-    %th
-    %th
+:javascript
+  $(function() {
+    window.router = new App.Routers.ProjectsRouter({projects: #{@projects.to_json.html_safe}});
+    Backbone.history.start();
+  })
 
-  - @projects.each do |project|
-    %tr
-      %td= link_to 'Show', project
-      %td= link_to 'Edit', edit_project_path(project)
-      %td= link_to 'Destroy', project, method: :delete, data: { confirm: 'Are you sure?' }
-
-%br
-
-= link_to 'New Project', new_project_path

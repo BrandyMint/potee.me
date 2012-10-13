@@ -9,3 +9,5 @@ window.Potee =
   Collections: {}
   Routers: {}
   Views: {}
+
+window.App = window.Potee
