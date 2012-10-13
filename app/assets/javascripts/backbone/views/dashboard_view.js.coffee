@@ -15,7 +15,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @timeline_zoom_view = new Potee.Views.TimelineZoomView
       dashboard_view: this
     @timeline_zoom_view.render()
-    @$el.append @timeline_zoom_view.el
+    $('#timeline-zoom-container').html @timeline_zoom_view.el
 
     @timeline_view ||= new Potee.Views.TimelineView
       dashboard: @dashboard
