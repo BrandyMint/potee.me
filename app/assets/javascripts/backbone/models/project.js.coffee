@@ -17,12 +17,13 @@ class Potee.Models.Project extends Backbone.Model
     @set 'color_index', ( @get('color_index') + 1 ) % 7
     @save()
 
-  # Этот метод может быть вызыван только в том случае, если window.dashboard
-  # ужен инициализирован, поэтому его невозможно вызывать в конструкторе, так
-  # как проекты инициализируются раньше window.dashboard.
+  # Этот метод может быть вызыван только в том случае, если
+  # window.router.dashboard уже инициализирован, поэтому его
+  # невозможно вызывать в конструкторе, так как проекты
+  # инициализируются раньше window.dashboard.
   calculateDays: ->
-    @firstDay = window.dashboard.model.indexOf(@started_at)
-    @lastDay = window.dashboard.model.indexOf(@finish_at)
+    @firstDay = window.router.dashboard.indexOf(@started_at)
+    @lastDay = window.router.dashboard.indexOf(@finish_at)
 
     @duration = @lastDay - @firstDay + 1
 

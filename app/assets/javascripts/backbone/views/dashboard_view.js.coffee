@@ -4,12 +4,14 @@ class Potee.Views.DashboardView extends Backbone.View
   id: 'dashboard'
   tagName: 'div'
 
-  initialize: (projects)->
-    @model = new Potee.Models.Dashboard(projects)
+  initialize: (options)->
+    @dashboard = options.dashboard
     @render()
 
   render: ->
+
     # TODO Рендерим timeline
     # TODO Рендерим projects
-    $(@el).html(@template(@model.toJSON() ))
+    @projects_view = new Potee.Views.Projects.IndexView(projects: @dashboard.projects)
+    $(@el).html(@template(@dashboard.toJSON()))
     return this

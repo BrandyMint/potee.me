@@ -8,6 +8,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   initialize: () ->
     @options.projects.bind('reset', @addAll)
+    @render()
 
   addAll: () =>
     @options.projects.each(@addOne)
@@ -22,5 +23,5 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   render: =>
     # $(@el).html(@template(projects: @options.projects.toJSON() ))
     @addAll()
-
+    $("#projects").html(@el)
     return this

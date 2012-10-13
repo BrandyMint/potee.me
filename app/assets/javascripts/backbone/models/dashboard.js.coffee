@@ -1,10 +1,7 @@
 class Potee.Models.Dashboard extends Backbone.Model
   pixels_per_day: 40
 
-  initialize: (projects) ->
-    @projects = new Potee.Collections.ProjectsCollection()
-    @projects.reset(projects)
-
+  initialize: (@projects) ->
     @findStartEndDate()
     return
 

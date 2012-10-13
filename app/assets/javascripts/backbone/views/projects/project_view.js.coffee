@@ -29,10 +29,10 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     return false
 
   setFirstDay: (day) ->
-    @$el.css('margin-left', day * window.dashboard.model.pixels_per_day)
+    @$el.css('margin-left', day * window.router.dashboard.pixels_per_day)
 
   setDuration: (day) ->
-    @$el.css('width', day * window.dashboard.model.pixels_per_day)
+    @$el.css('width', day * window.router.dashboard.pixels_per_day)
 
   setTitleView: (state)->
 
