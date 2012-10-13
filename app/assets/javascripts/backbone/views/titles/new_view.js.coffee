@@ -2,6 +2,7 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
   template: JST["backbone/templates/titles/new"]
   events :
     "submit #new-project"  : "create"
+    'click .cancel'        : 'cancel'
 
   create: (e) ->
     e.preventDefault()
