@@ -10,11 +10,12 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @options.projects.each(@addOne)
 
   addOne: (project) =>
-    view = new Potee.Views.Projects.ProjectView({model : project})
-    @$("tbody").append(view.render().el)
+    view = new Potee.Views.Projects.ProjectView
+      model : project
+    @$el.append(view.render().el)
 
   render: =>
-    $(@el).html(@template(projects: @options.projects.toJSON() ))
+    # $(@el).html(@template(projects: @options.projects.toJSON() ))
     @addAll()
 
     return this
