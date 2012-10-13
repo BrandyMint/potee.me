@@ -9,5 +9,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @render()
 
   render: ->
+    # TODO Рендерим timeline
+    # TODO Рендерим projects
     $(@el).html(@template(@model.toJSON() ))
     return this
