@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121013052346) do
+ActiveRecord::Schema.define(:version => 20121013054132) do
 
   create_table "events", :force => true do |t|
     t.string   "title",      :null => false
@@ -23,9 +23,12 @@ ActiveRecord::Schema.define(:version => 20121013052346) do
   add_index "events", ["project_id"], :name => "index_events_on_project_id"
 
   create_table "projects", :force => true do |t|
-    t.string   "title",      :null => false
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.string   "title",                      :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.date     "started_at",                 :null => false
+    t.date     "finish_at"
+    t.integer  "color_index", :default => 0, :null => false
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_title", :unique => true
