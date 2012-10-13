@@ -34,15 +34,14 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   # Project's line left margin (when does it start)
   setLeftMargin: ->
     d = window.router.dashboard
-    column_width = d.pixels_per_day * @model.days_to_scale(d.scale)
-    @$el.css('margin-left', @model.first_item_by_scale(d.scale) * column_width)
+    column_width = d.pixels_per_day * @model.days_to_scale(d.get("scale"))
+    @$el.css('margin-left', @model.first_item_by_scale(d.get("scale")) * column_width)
 
   # Project's line width
   setDuration: ->
     d = window.router.dashboard
-    column_width = d.pixels_per_day * @model.days_to_scale(d.scale)
-    console.log(column_width)
-    @$el.css('width', @model.duration_by_scale(d.scale) * column_width)
+    column_width = d.pixels_per_day * @model.days_to_scale(d.get("scale"))
+    @$el.css('width', @model.duration_by_scale(d.get("scale")) * column_width)
 
   setTitleView: (state)->
 
