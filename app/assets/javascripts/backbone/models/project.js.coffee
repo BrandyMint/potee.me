@@ -35,6 +35,12 @@ class Potee.Models.Project extends Backbone.Model
 
   progressDiv: ->
 
+  toJSON: ->
+    res = super(this)
+    res['cid'] = @cid
+
+    return res
+
   change_color: (model, olor_index)->
     @calculateDays()
     if @view

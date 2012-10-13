@@ -16,4 +16,10 @@ class Project < ActiveRecord::Base
   validates :started_at, :presence => true
   validates :color_index, :presence => true
 
+
+  # Вирутальный аттрибут от backbone
+  def cid= value
+
+  end
+
 end

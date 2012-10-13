@@ -5,6 +5,9 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   tagName: "div"
   className: 'project'
 
+  initialize: ->
+    @model.view = this
+
   events:
     "click .destroy" : "destroy"
     "click .title" : "edit"
