@@ -3,9 +3,9 @@ class DummyProjectsObserver < ActiveRecord::Observer
 
   def after_create(user)
     projects = user.projects.create([
-      {title: 'Learn Scala', started_at: Date.today, finish_at: 10.days.since, color_index: 1},
-      {title: 'Make my wife happy', started_at: Date.today-2.days, finish_at: 11.days.since, color_index: 2},
-      {title: 'Start my own business', started_at: Date.today-3.days, finish_at: 12.days.since, color_index: 3},
+      {title: 'Learn Scala', started_at: Date.today, finish_at: 10.days.since, color_index: 2},
+      {title: 'Make my wife happy', started_at: Date.today-2.days, finish_at: 11.days.since, color_index: 1},
+      {title: 'Start my own business', started_at: Date.today-3.days, finish_at: 12.days.since, color_index: 0},
     ])
     p = projects.first
     p.events.create([
