@@ -43,6 +43,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
     @cancel()
 
   cancel: ->
+    $(document).unbind 'click'
+
     if @model.isNew()
       @model.view.remove()
       # @model.remove()
@@ -54,6 +56,21 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))
+
+    @$el.click (e)->
+      event.stopPropagation()
+
+    view = this
+    $(document).click ->
+      console.log view
+      view.cancel()
+
+    #$(@el).bind 'clickoutside', ->
+      #alert('asd')
+      #view.cancel()
+
+    # if(!$(event.target).is('#foo')))
+
 
     @.$("form").backboneLink(@model)
     return this

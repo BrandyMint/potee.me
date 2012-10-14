@@ -24,7 +24,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     event_view = new Potee.Views.Events.EventView(model: event)
     @$el.append(event_view.render().el)
 
-  edit: ->
+  edit: (e)->
+    e.stopPropagation()
     @setTitleView 'edit'
 
   bounce: ->
