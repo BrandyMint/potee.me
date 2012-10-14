@@ -141,6 +141,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       stop: (jsEvent, ui) =>
         @eventDateTimeChanged(event, ui.position.left + @leftMargin())
     )
+
     $(event_view.el).css("position", "absolute")
     return event_view.el
 
