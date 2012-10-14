@@ -17,7 +17,7 @@ class Potee.Views.Timelines.WeeksView extends Backbone.View
     range = moment().range(@start.clone(), @end.clone())
     range.by("w", (m) =>
       if m < @end
-        weeks.push(@week(m, m.clone().day(7)))
+        weeks.push(@week(m, m.clone().day(6)))
     )
 
     return weeks

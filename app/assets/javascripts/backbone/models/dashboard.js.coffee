@@ -54,7 +54,7 @@ class Potee.Models.Dashboard extends Backbone.Model
       when "days"
        return moment(@min).clone().subtract('days', @spanDays).toDate()
       when "weeks"
-        return moment(@min).clone().day(1).toDate()
+        return moment(@min).clone().day(0).toDate()
       when "months"
         return moment(@min).clone().startOf("month").toDate()
 
@@ -63,7 +63,7 @@ class Potee.Models.Dashboard extends Backbone.Model
       when "days"
         return moment(@max).clone().add('days', @spanDays).toDate()
       when "weeks"
-        return moment(@max).clone().day(7).toDate()
+        return moment(@max).clone().day(6).toDate()
       when "months"
         return moment(@max).clone().endOf("month")
 
