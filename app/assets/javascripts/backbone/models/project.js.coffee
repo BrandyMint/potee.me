@@ -93,9 +93,12 @@ class Potee.Models.Project extends Backbone.Model
       when "days"
         @firstDay
       when "weeks"
-        @firstWeek
+        m = moment(@started_at)
+        m.diff(moment(@started_at).clone().day(0), 'days')
       when "months"
-        @firstMonth
+        m = moment(@started_at)
+        m.diff(moment(@started_at).clone().startOf('month'), 'days')
+
 
   duration_by_scale: (scale) ->
     switch scale

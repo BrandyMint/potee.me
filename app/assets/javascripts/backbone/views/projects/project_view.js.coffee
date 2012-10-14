@@ -43,7 +43,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   setLeftMargin: ->
     d = window.router.dashboard
     column_width = d.pixels_per_day
-    @$el.css('margin-left', @model.first_item_by_scale("days") * column_width)
+    @$el.css('margin-left', @model.first_item_by_scale(d.get('scale')) * column_width)
 
   # Project's line width
   setDuration: ->
