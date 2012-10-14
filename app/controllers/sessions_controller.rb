@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session[:user_id] = nil unless current_user.incognito?
+    session[:user_id] = nil unless current_user and current_user.incognito?
     redirect_to root_url, notice: 'Logged out.'
   end
 
