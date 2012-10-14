@@ -13,12 +13,13 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     "click .progress .bar" : "add_event"
 
   add_event: (js_event) ->
-    datetime = window.router.dashboard.datetime_by_x_coord(@model, js_event.clientX)
+    datetime = window.router.dashboard.datetimeAt(js_event.offsetX + @leftMargin())
     event = @model.projectEvents.create(
       title: "Title of your event",
       date: datetime,
       time: datetime,
       project_id: @model.id)
+
     event_view = new Potee.Views.Events.EventView
       model: event,
       x: js_event.offsetX
@@ -26,6 +27,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     el = event_view.render().$el
     @$el.append el
 #    el.effect('bounce', {times: 3}, 100)
+    @$el.resizable("option", "minWidth", @minWidthForResize())
 
   edit: (e)->
     e.stopPropagation()
@@ -109,10 +111,23 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @$el.resizable(
       grid: window.dashboard.pixels_per_day,
+      minWidth: @minWidthForResize()
+      minHeight: 60,
+      maxHeight: 60,
       stop: (event, ui) =>
         @durationChanged(ui.size.width)
     )
+
     return this
+
+  minWidthForResize: ->
+    lastEvent = @model.projectEvents.last() || null
+    if lastEvent == null
+      return window.dashboard.pixels_per_day
+    else
+      date = moment(lastEvent.date).clone().add("days", 1)
+      diff = date.diff(moment(@model.started_at), "days")
+      return diff * window.dashboard.pixels_per_day
 
   durationChanged: (width) ->
     duration = Math.round(width / window.dashboard.pixels_per_day)

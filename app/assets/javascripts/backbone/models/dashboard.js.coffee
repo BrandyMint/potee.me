@@ -79,12 +79,16 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   # Возвращает время в зависимости от X
   #
-  # @param [Integer] x_coord X-координата
-  datetime_by_x_coord: (project, x_coord) ->
-    day_index = (x_coord / this.pixels_per_day) - @days_before_min()
-    days = Math.floor(day_index)
-    hours = Math.round((day_index - days) * 24)
-    moment(project.started_at).clone().add('d', days).add('h', hours).toDate()
+  # @param [Integer] x X-координата
+  datetimeAt: (x) ->
+    days = Math.floor(x / @pixels_per_day)
+    daysWidth = days * @pixels_per_day
+
+    hours = Math.floor((x - daysWidth) / (@pixels_per_day / 24))
+    hoursWidth = Math.round(hours * (@pixels_per_day / 24))
+
+    minutes = Math.round((x - daysWidth - hoursWidth) / (@pixels_per_day / (24 * 60)))
+    return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes)
 
   # Возвращает количество дней перед днем старта 1 проекта
   days_before_min: ->

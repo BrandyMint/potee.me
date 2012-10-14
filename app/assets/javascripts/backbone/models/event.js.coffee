@@ -7,15 +7,6 @@ class Potee.Models.Event extends Backbone.Model
     @project = @collection.project
     @project_started_at = @collection.project.started_at
 
-  days_to_scale: (scale) ->
-    switch scale
-      when "days"
-        1
-      when "weeks"
-        7
-      when "months"
-        31
-
 class Potee.Collections.EventsCollection extends Backbone.Collection
   model: Potee.Models.Event
   url: '/events'
