@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(:version => 20121014200323) do
     t.integer  "project_id", :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.date     "date"
-    t.time     "time"
+    t.date     "date",       :null => false
+    t.time     "time",       :null => false
   end
 
   add_index "events", ["project_id"], :name => "index_events_on_project_id"

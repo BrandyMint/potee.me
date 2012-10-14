@@ -4,6 +4,8 @@ class Project < ActiveRecord::Base
   # FIX
   attr_protected :secret
 
+  default_scope order(:started_at)
+
   belongs_to :user
   has_many :events, :dependent => :destroy
 
