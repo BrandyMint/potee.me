@@ -1,6 +1,6 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui
+//= require jquery.ui.resizable
 //= require underscore
 //= require moment
 //= require moment-range

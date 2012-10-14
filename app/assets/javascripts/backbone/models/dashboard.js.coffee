@@ -89,3 +89,11 @@ class Potee.Models.Dashboard extends Backbone.Model
   # Возвращает количество дней перед днем старта 1 проекта
   days_before_min: ->
     moment(@min).diff(@min_with_span(), 'days')
+
+  width: ->
+    return @days * @pixels_per_day
+
+  setWidth: (width) ->
+    duration = Math.round(width / @pixels_per_day)
+    @max = moment(@min_with_span()).clone().add("days", duration)
+    @setDuration()

@@ -42,24 +42,6 @@ class Potee.Models.Project extends Backbone.Model
     @set 'color_index', ( @get('color_index') + 1 ) % 7
     @save()
 
-  # Этот метод может быть вызыван только в том случае, если
-  # window.router.dashboard уже инициализирован, поэтому его
-  # невозможно вызывать в конструкторе, так как проекты
-  # инициализируются раньше window.dashboard.
-  calculateDays: ->
-    @firstDay = window.router.dashboard.indexOf(@started_at, "days")
-    @lastDay = window.router.dashboard.indexOf(@finish_at, "days") + 1 # Прибавляем еще один день, чтобы проект заканчивался в конце дня
-    @firstWeek = window.router.dashboard.indexOf(@started_at, "weeks")
-    @lastWeek = window.router.dashboard.indexOf(@finish_at, "weeks")
-    @firstMonth = window.router.dashboard.indexOf(@started_at, "months")
-    @lastMonth = window.router.dashboard.indexOf(@finish_at, "months")
-
-    @duration_in_days = @lastDay - @firstDay
-    @duration_in_weeks = @lastWeek - @firstWeek
-    @duration_in_months = @lastMonth - @firstMonth
-
-  progressDiv: ->
-
   toJSON: ->
     res = super(this)
     res['cid'] = @cid
@@ -77,38 +59,18 @@ class Potee.Models.Project extends Backbone.Model
     @started_at = moment(@get("started_at")).toDate()
     @finish_at = moment(@get("finish_at")).toDate()
 
-  days_to_scale: (scale) ->
-    switch scale
-      when "days"
-        1
-      when "weeks"
-        7
-      when "months"
-        # считаем количество дней в месяце
-        m = moment(@started_at).clone().startOf('month')
-        next_month = m.clone().add('months', 1)
-        next_month.diff(m, 'days')
+  duration: ->
+    return moment(@finish_at).diff(moment(@started_at), "days") + 1
 
-  first_item_by_scale: (scale) ->
-    switch scale
-      when "days"
-        @firstDay
-      when "weeks"
-        m = moment(@started_at)
-        m.diff(moment(@started_at).clone().day(0), 'days')
-      when "months"
-        m = moment(@started_at)
-        m.diff(moment(@started_at).clone().startOf('month'), 'days')
+  # duration - количество дней
+  setDuration: (duration) ->
+    finishAt = moment(@started_at).clone().add("days", duration)
 
+    @set("finish_at", finishAt.format("YYYY-MM-DD"))
+    @save()
+    @setStartEndDates()
 
-  duration_by_scale: (scale) ->
-    switch scale
-      when "days"
-        @duration_in_days
-      when "weeks"
-        @duration_in_weeks
-      when "months"
-        @duration_in_months
+    return
 
 class Potee.Collections.ProjectsCollection extends Backbone.Collection
   model: Potee.Models.Project
