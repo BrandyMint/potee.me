@@ -1,4 +1,5 @@
-= link_to "POTEE", root_path, :class => 'brand'
+= link_to root_path, :class => 'brand' do
+  = image_tag 'logo.png'
 
 %ul.nav#project_control
   %li.divider-vertical
@@ -18,7 +19,7 @@
 
 
 %ul.nav.pull-right{:style=>'font-size: 16px'}
-  - if current_user.incognito?
+  - if !current_user or current_user.incognito?
     %li
       = link_to '#' do
         Sign up to save your projects &rarr;

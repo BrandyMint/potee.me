@@ -5,8 +5,7 @@ class Potee.Views.DashboardView extends Backbone.View
   initialize: (options)->
     @model.view = this
     @setElement($('#dashboard'))
-    @resetWidth()
-    @render()
+    @update()
 
 
   setScale: (scale) ->
@@ -19,6 +18,12 @@ class Potee.Views.DashboardView extends Backbone.View
     $("#scale-#{scale}").addClass('active')
 
   resetWidth: ->
+    @model.findStartEndDate()
+
+    viewportWidth = $('#viewport').width()
+    if viewportWidth > @model.width()
+      @model.setWidth(viewportWidth)
+
     @$el.css('width', @model.width())
 
   render: ->
@@ -41,4 +46,17 @@ class Potee.Views.DashboardView extends Backbone.View
     $(@el).html('')
     @resetWidth()
     @render()
+    @scrollToToday()
     return
+
+  scrollToToday: ->
+    switch @model.get("scale")
+      when "days"
+        today = moment()
+      when "weeks"
+        today = moment().day(0)
+      when "month"
+        today = moment().startOf("month")
+
+    offset = today.diff(moment(@model.min_with_span()), "days") * @model.pixels_per_day
+    $('#viewport').scrollLeft(offset)

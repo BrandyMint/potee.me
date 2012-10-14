@@ -10,11 +10,12 @@ protected
 
     if session[:user_id]
       @current_user = User.find_by_id(session[:user_id])
-    else
-      @current_user = User.create! :name => 'Incognito'
-      # save it temporary
-      session[:user_id] = @current_user.id
+      return @current_user if @current_user
     end
+
+    @current_user = User.create! :name => 'Incognito'
+    # save it temporary
+    session[:user_id] = @current_user.id
 
     @current_user
   end
