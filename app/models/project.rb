@@ -16,7 +16,7 @@ class Project < ActiveRecord::Base
   validates :title, :presence => true #, :uniqueness => true
   validates :started_at, :presence => true
   validates :color_index, :presence => true
-  validates :user_id, presence: true
+  # validates :user_id, presence: true
 
   # Вирутальный аттрибут от backbone
   def cid= value
