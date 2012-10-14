@@ -7,7 +7,7 @@ class Potee.Views.Events.EventView extends Backbone.View
   className: "event"
 
   events:
-    # "click" : "edit"
+    "click .event-title" : "edit"
     "submit #edit-event" : "update"
     "click #submit"        : "update"
     'click #cancel'        : 'cancelEvent'
@@ -27,6 +27,10 @@ class Potee.Views.Events.EventView extends Backbone.View
   update: (e)->
     e.preventDefault()
     e.stopPropagation()
+
+    title = @$el.find('input#title').attr("value")
+    @model.set("title", title)
+
     @model.save(null,
       success : (model) =>
         @model = model

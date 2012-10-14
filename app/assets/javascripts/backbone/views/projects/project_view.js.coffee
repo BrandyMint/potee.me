@@ -137,6 +137,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     $(event_view.el).draggable(
       axis: 'x',
       containment: "parent",
+      distance: '3',
       stop: (jsEvent, ui) =>
         @eventDateTimeChanged(event, ui.position.left + @leftMargin())
     )
