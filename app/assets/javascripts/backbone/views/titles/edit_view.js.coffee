@@ -67,7 +67,6 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
     view = this
     $(document).click ->
-      console.log view
       view.cancel()
 
     #$(@el).bind 'clickoutside', ->

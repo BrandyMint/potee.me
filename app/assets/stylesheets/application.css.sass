@@ -10,7 +10,7 @@ $monoFontFamily:        "proxima-nova", Monaco, Menlo, Consolas, "Courier New", 
 
 
 body
-  padding-top: 60px
+  padding-top: 40px // Величани nav-bar-а
   background-color: #222
   background-image: image-url("black-Linen.png")
 
@@ -105,9 +105,12 @@ input#title
   position: absolute
   height: $dashboardHeight
   z-index: 1
- 
+
 #timeline table // timeline table
   height: $dashboardHeight - 30px
+
+#timeline table thead td
+  padding-top: 20px
 
 #timeline table td.current // timeline table td
   // TODO Подкладывать полупрозрачный фон

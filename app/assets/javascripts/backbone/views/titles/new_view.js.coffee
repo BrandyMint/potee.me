@@ -2,6 +2,7 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
   template: JST["backbone/templates/titles/new"]
   events :
     "submit #new-project"  : "create"
+    "click #submit"        : "create"
     'click #cancel'        : 'cancelEvent'
 
   create: (e) ->
@@ -12,10 +13,13 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
 
     @collection.create(@model.toJSON(),
       success: (project) =>
+        $('#project_new').removeClass('active')
+
         project.view = @model.view
         @model = project
+        @model.view.model = project
         @model.view.setTitleView 'show'
-        window.location.hash = "/"
+        window.location.hash = '/'
 
       error: (project, jqXHR) =>
         @model.set({errors: $.parseJSON(jqXHR.responseText)})
