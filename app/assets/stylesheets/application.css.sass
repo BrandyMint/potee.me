@@ -81,13 +81,12 @@ input#title
 #timeline table // timeline table
   height: $dashboardHeight - 30px
 
-$timeline_current_opacity: 0.1
 #timeline table td.current // timeline table td
-  background-color: white
-  opacity: $timeline_current_opacity
-  -moz-opacity: $timeline_current_opacity
-  -webkit-opacity: $timeline_current_opacity
-  -khtml-opacity: $timeline_current_opacity
+  // TODO Подкладывать полупрозрачный фон
+  // background-color: #999
+  // +opacity( 0.1 )
+  background-image: image-url('low_contrast_linen.png')
+  border-right: 1px solid lighten($timelineLineColor, 10)
 
 #timeline table td // timeline table td
   border-right: 1px solid $timelineLineColor
@@ -99,6 +98,8 @@ $timeline_current_opacity: 0.1
   display: inline-block
   white-space: nowrap
   padding: 0px
+  &.day_6
+    border-right: 1px solid lighten($timelineLineColor, 10)
 
 // previous
 

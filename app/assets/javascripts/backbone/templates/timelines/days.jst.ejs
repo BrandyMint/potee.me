@@ -1,12 +1,15 @@
 <table>
+  <thead>
+    <tr>
+      <% for(var i = 0; i < days.length; i++) { %>
+        <td class="<%= days[i].css_class %>"><%= days[i].title %></td>
+      <% } %>
+    </tr>
+  </thead>
   <tbody>
     <tr>
     <% for(var i = 0; i < days.length; i++) { %>
-      <% if (i == current_day) { %>
-        <td class="current"><%= days[i] %></td>
-      <% } else {%>
-        <td><%= days[i] %></td>
-      <% } %>
+      <td class="<%= days[i].css_class %>">&nbsp;</td>
     <% } %>
     </tr>
   </tbody>
