@@ -2,7 +2,7 @@
   <tbody>
     <tr>
     <% for(var i = 0; i < days.length; i++) { %>
-       <td><%= days[i] %></td>
+       <td data-date="<%= days[i].date %>"><%= days[i].title %></td>
     <% } %>
     </tr>
   </tbody>
