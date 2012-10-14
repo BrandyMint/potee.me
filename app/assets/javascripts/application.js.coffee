@@ -10,3 +10,6 @@
 //= require backbone/potee
 //= require bootstrap
 //= require_tree .
+
+$ ->
+  $('[rel=tooltip]').tooltip()

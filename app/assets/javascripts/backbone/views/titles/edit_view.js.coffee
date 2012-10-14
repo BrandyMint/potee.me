@@ -18,7 +18,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   events :
     "submit #edit-project" : "update"
-    'click .cancel'        : 'cancel'
+    "click #submit"        : "update"
+    'click #cancel'        : 'cancelEvent'
 
   update : (e) ->
     e.preventDefault()
@@ -36,6 +37,11 @@ class Potee.Views.Titles.EditView extends Backbone.View
   keypress: (event)->
     alert(event)
 
+  cancelEvent: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
+    @cancel()
+
   cancel: ->
     if @model.isNew()
       @model.view.remove()
@@ -49,6 +55,5 @@ class Potee.Views.Titles.EditView extends Backbone.View
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))
 
-    this.$("form").backboneLink(@model)
-
+    @.$("form").backboneLink(@model)
     return this

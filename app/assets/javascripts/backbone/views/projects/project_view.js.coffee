@@ -78,6 +78,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       @titleEl = @titleView.el
       @$el.append @titleEl
 
+    @$el.find('input#title').focus()
+
       # if state=='edit'
 
   render: ->

@@ -1,7 +1,7 @@
-<form id="edit-project" name="project">
-    <input type="text" name="title" id="title" value="<%= title %>" >
-    <input type="submit" value="OK" />
-    <input type="button" value="cancel" class='cancel'/>
+<form id="edit-project" class='project-form' name="project">
+    <input type="text" name="title" id="title" tabindex="1" value="<%- title %>" >
+    <a href='#submit' id='submit'><i class="icon-ok icon-white"></i></a>
+    <a href='#cancel' id='cancel'><i class="icon-remove icon-white"></i></a>
+    <a href="#/<%= cid %>/destroy" id='destroy' class="destroy" rel="tooltip" title="Remove the project forever"><i class="icon-remove-sign icon-white"></i></a>
 </form>
 
-<a href="#/<%= cid %>/destroy" class="destroy">[x]</a>
