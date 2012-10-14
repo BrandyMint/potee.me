@@ -48,7 +48,7 @@ class Potee.Models.Project extends Backbone.Model
     return res
 
   change_color: (model, olor_index)->
-    @calculateDays()
+#    @calculateDays()
     if @view
       @view.render()
       @view.bounce()
