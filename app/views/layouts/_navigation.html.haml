@@ -1,4 +1,4 @@
-= link_to "Potee timeline management", root_path, :class => 'brand'
+= link_to "POTEE", root_path, :class => 'brand'
 %ul.nav#scale-nav
   %li#scale-days.active= link_to 'Days', '#days'
   %li#scale-weeks= link_to 'Weeks', '#weeks'
@@ -10,16 +10,31 @@
       %i.icon-folder-open
       New project
 
-%ul.nav.pull-right
-  %li
-    = link_to '#' do
-      %i.icon-user
-      = current_user
-  %li.divider-vertical
-  %li
-    = link_to logout_path do
-      %i.icon-off
-  %li.divider-vertical
+%ul.nav.pull-right{:style=>'font-size: 16px'}
+  - if current_user.incognito?
+    %li
+      = link_to '#' do
+        Authorize to save your projects &rarr;
+
+    = render :partial => 'auth/facebook'
+    = render :partial => 'auth/twitter'
+    = render :partial => 'auth/google'
+
+  - else
+    %li
+      = link_to '#' do
+        %i.icon-user
+        = current_user
+    %li.divider-vertical
+    = render :partial => 'auth/facebook'
+    = render :partial => 'auth/twitter'
+    = render :partial => 'auth/google'
+    %li.divider-vertical
+
+    %li
+      = link_to logout_path do
+        %i.icon-off
+    %li.divider-vertical
 
   -#- if user_signed_in?
     -#%li

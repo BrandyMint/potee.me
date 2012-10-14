@@ -23,6 +23,10 @@ body
 
 // https://github.com/railsrumble/r12-team-61/wiki/Views
 
+a.connected
+  i
+    color: blue
+
 #viewport
   @extend .span12
   margin: 0
@@ -53,8 +57,15 @@ input#title
   // # color: inherit
 
 .title
+  top: -24px
+  position: relative
+  font-size: 11px
+  padding-left: 5px
+  height: 23px
+  // color: #343434!important
+  // +opacity(0.6)
   text-transform: uppercase
-  height: 24px
+  letter-spacing: 1px
 
 // Projects
 
@@ -65,29 +76,29 @@ input#title
 
 .project
   position: relative
-  height: 60px
+  height: 87px
 
 
 // Events
 
 .event
-  height: 25px // TODO связать с толщиной проекта
+  height: 30px // TODO связать с толщиной проекта
   +box-shadow(outset 0 1px 1px rgba(0,0,0,.075))
   +border-radius(2px)
-  +opacity(0.5)
-  width: 4px
+  +opacity(0.6)
+  width: 7px
   position: absolute
   top: -3px
   &.event-handled
     .event-title
-      font-size: 12px
+      //font-size: 12px
     +opacity(1.0)
 
 .event-title
   position: absolute
   top: -20px
   width: 200px
-  font-size: 10px
+  // font-size: 10px
   // +opacity(0.3)
   text-shadow: 0 -1px 0 rgba(0,0,0,.25)
   cursor: pointer
@@ -143,7 +154,7 @@ input#title
   white-space: nowrap
   padding: 0px
   &.day_6
-    border-right: 1px solid lighten($timelineLineColor, 10)
+    border-right: 1px solid #909090 // lighten($timelineLineColor, 10)
 
 // previous
 

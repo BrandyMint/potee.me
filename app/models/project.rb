@@ -11,6 +11,7 @@ class Project < ActiveRecord::Base
     self.started_at ||= Date.today()
     self.finish_at ||= self.started_at + 1.months
     self.color_index ||= 1
+    self.user ||= User.first() # FIX убрать
   end
 
   validates :title, :presence => true #, :uniqueness => true
