@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(:version => 20121014155354) do
     t.date     "started_at",                 :null => false
     t.date     "finish_at"
     t.integer  "color_index", :default => 0, :null => false
-    t.integer  "user_id",                    :null => false
+    t.integer  "user_id"
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_title"
