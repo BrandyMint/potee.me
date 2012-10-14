@@ -20,13 +20,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       time: datetime,
       project_id: @model.id)
 
-    event_view = new Potee.Views.Events.EventView
-      model: event,
-      x: js_event.offsetX
-
-    el = event_view.render().$el
-    @$el.append el
-    el.effect('bounce', {times: 3}, 100)
+    eventElement = @renderEvent(event)
+    eventElement.effect('bounce', {times: 3}, 100)
     @$el.resizable("option", "minWidth", @minWidthForResize())
 
   edit: (e)->
@@ -95,13 +90,12 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @titleEl = undefined
     # TODO Вынести progressbar в отдельную вьюху?
 
-    @$el.html(@template(@model.toJSON() ))
+    @$el.html(@template(width: @width()))
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
 
     @model.projectEvents.each((event)=>
-      event_view = new Potee.Views.Events.EventView(model: event)
-      @$el.append(event_view.render().el)
+      @renderEvent(event)
     )
 
     @setTitleView('show')
@@ -136,4 +130,21 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     if totalWidth > window.dashboard.width()
       dashboard.findStartEndDate()
       dashboard.view.update()
+
+  renderEvent: (event) ->
+    event_view = new Potee.Views.Events.EventView(model: event)
+    @$el.append(event_view.render().el)
+    $(event_view.el).draggable(
+      axis: 'x',
+      containment: "parent",
+      stop: (jsEvent, ui) =>
+        @eventDateTimeChanged(event, ui.position.left + @leftMargin())
+    )
+    $(event_view.el).css("position", "absolute")
+    return event_view.el
+
+  eventDateTimeChanged: (event, offset) ->
+    datetime = window.dashboard.datetimeAt(offset)
+    event.setDateTime(datetime)
+    event.save()
 

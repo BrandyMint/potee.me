@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require jquery.effects.bounce
 //= require jquery.ui.resizable
+//= require jquery.ui.draggable
 //= require underscore
 //= require moment
 //= require moment-range

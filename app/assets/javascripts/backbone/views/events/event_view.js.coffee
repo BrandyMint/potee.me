@@ -7,7 +7,7 @@ class Potee.Views.Events.EventView extends Backbone.View
   className: "event"
 
   events:
-    "click" : "edit"
+    # "click" : "edit"
     "submit #edit-event" : "update"
     "click #submit"        : "update"
     'click #cancel'        : 'cancelEvent'
@@ -81,5 +81,5 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   render: ->
     @renderShow()
-    @$el.css('margin-left', @options.x || @calcOffset())
+    @$el.css('left', @options.x || @calcOffset())
     return this
