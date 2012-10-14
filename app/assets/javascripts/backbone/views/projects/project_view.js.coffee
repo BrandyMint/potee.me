@@ -86,6 +86,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @$el.html(@template(@model.toJSON() ))
     @$el.attr('id', @model.cid)
+    @$el.addClass('project-color-'+@model.get('color_index'))
 
     @model.projectEvents.each((event)=>
       event_view = new Potee.Views.Projects.EventView(model: event)

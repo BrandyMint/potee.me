@@ -7,24 +7,29 @@ $color5: #c1d170
 $color6: #ab88c4
 
 @mixin progress($color)
-  //+gradient-vertical(#ee5f5b, #c43c35)
-  $lastColor: darken($color, 10)
-  +gradient-vertical($color, $lastColor)
+  .progress .bar
+    //+gradient-vertical(#ee5f5b, #c43c35)
+    $lastColor: darken($color, 10)
+    +gradient-vertical($color, $lastColor)
+
+  $text-color: darken($color, 10)
   .project-title
     .title
+      color: $text-color
+    input
       color: $color
 
-.progress-color1 .bar, .progress .bar-color1
-  +progress($color1)
-.progress-color2 .bar, .progress .bar-color2
-  +progress($color2)
-.progress-color3 .bar, .progress .bar-color3
-  +progress($color3)
-.progress-color4 .bar, .progress .bar-color4
-  +progress($color4)
-.progress-color5 .bar, .progress .bar-color5
-  +progress($color5)
-.progress-color6 .bar, .progress .bar-color6
-  +progress($color6)
-.progress-color0 .bar, .progress .bar-color0
+.project-color-0
   +progress($color0)
+.project-color-1
+  +progress($color1)
+.project-color-2
+  +progress($color2)
+.project-color-3
+  +progress($color3)
+.project-color-4
+  +progress($color4)
+.project-color-5
+  +progress($color5)
+.project-color-6
+  +progress($color6)
