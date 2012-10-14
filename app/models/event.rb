@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  attr_accessible :title, :date, :time
+  attr_accessible :title, :date, :time, :project_id
 
   belongs_to :project
 

@@ -11,11 +11,13 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   events:
     "click .destroy" : "destroy"
     "click .title" : "edit"
-    "click .progress" : "nextColor"
+    "dblclick .progress .bar" : "add_event"
 
-  nextColor: ->
-    @model.nextColor()
-
+  add_event: (js_event) ->
+    projectEvents = new Potee.Collections.EventsCollection(project: @model)
+    event = projectEvents.create(title: "Title of your event", date: "2012-10-24", time: "2012-10-24 12:00", project_id: @model.id)
+    event_view = new Potee.Views.Projects.EventView(model: event)
+    @$el.append(event_view.render().el)
 
   edit: ->
     @setTitleView 'edit'
@@ -79,7 +81,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @model.projectEvents.each((event)=>
       event_view = new Potee.Views.Projects.EventView(model: event)
-      @$el.append(event_view.el)
+      @$el.append(event_view.render().el)
     )
 
     @setTitleView('show')
