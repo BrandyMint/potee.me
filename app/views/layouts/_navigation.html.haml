@@ -19,7 +19,7 @@
 
 
 %ul.nav.pull-right{:style=>'font-size: 16px'}
-  - if current_user.incognito?
+  - if !current_user or current_user.incognito?
     %li
       = link_to '#' do
         Sign up to save your projects &rarr;
