@@ -1,4 +1,7 @@
-class Potee.Views.Projects.EventView extends Backbone.View
+Potee.Views.Events ||= {}
+
+class Potee.Views.Events.EventView extends Backbone.View
+  template: JST["backbone/templates/events/event"]
   tagName: "div"
   className: "event"
 
@@ -15,5 +18,6 @@ class Potee.Views.Projects.EventView extends Backbone.View
     Math.round(daysOffset + timeOffset)
 
   render: ->
+    @$el.html @template( @model.toJSON() )
     @$el.css('margin-left', @calcOffset())
     return this

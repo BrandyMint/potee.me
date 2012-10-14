@@ -21,7 +21,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       date: datetime,
       time: datetime,
       project_id: @model.id)
-    event_view = new Potee.Views.Projects.EventView(model: event)
+    event_view = new Potee.Views.Events.EventView(model: event)
     @$el.append(event_view.render().el)
 
   edit: ->
@@ -89,7 +89,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.addClass('project-color-'+@model.get('color_index'))
 
     @model.projectEvents.each((event)=>
-      event_view = new Potee.Views.Projects.EventView(model: event)
+      event_view = new Potee.Views.Events.EventView(model: event)
       @$el.append(event_view.render().el)
     )
 
