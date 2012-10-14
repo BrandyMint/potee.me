@@ -12,6 +12,9 @@ class Potee.Models.Project extends Backbone.Model
     @projectEvents = new Potee.Collections.EventsCollection(project: this)
     @projectEvents.reset(@get("events"))
 
+    @unset 'events',
+      silent: true
+
   events:
     "change:color_index" : "change_color"
 
