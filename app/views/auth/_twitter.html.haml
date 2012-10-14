@@ -1,6 +1,6 @@
-%li
+%li.auth.auth-twitter
   - if current_user.authentications.where(:provider=>:twitter).exists?
-    %p.navbar-text.connected{:rel=>:tooltip, :title=>'Twitter is connected'}
+    = link_to 'javascript: void()', :class => :connected do
       %i.icon-twitter-bird
   - else
     = link_to '/auth/twitter?force_login=true' do
