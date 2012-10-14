@@ -13,11 +13,15 @@ $color6: #ab88c4
     +gradient-vertical($color, $lastColor)
 
   $text-color: darken($color, 10)
+  $event-color: darken($color, 20)
   .project-title
     .title
       color: $text-color
     input
       color: $color
+
+  .event
+    background-color: $event-color
 
 .project-color-0
   +progress($color0)

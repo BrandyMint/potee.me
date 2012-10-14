@@ -116,10 +116,10 @@ input#title
   position: relative
 
 .event
-  height: 30px
-  width: 7px
-  background-color: red
-  border-radius: 3px
+  height: 25px // TODO связать с толщиной проекта
+  +box-shadow(outset 0 1px 1px rgba(0,0,0,.075))
+  +border-radius(2px)
+  width: 4px
   position: absolute
   top: -5px
 
