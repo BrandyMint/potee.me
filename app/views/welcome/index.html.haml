@@ -1,14 +1,26 @@
-%h1 Potee
+-#%h1 Potee
 
-= link_to projects_path do
+-#= link_to projects_path do
   = image_tag 'http://f.cl.ly/items/323N272z1T0k230W441K/100.png'
+.welcome.container
+  .row
+    .welcome-logo.span3
+      =link_to projects_path do
+        = image_tag 'logo_potee.png', :width => 170, :height => 242
+    .welcome-description.span7.offset1
+      %h2.welcome-description-text
+        .highlighted New way of planning.
+        Now you know what is the next step in your projects.
+        = link_to 'Get started', projects_path, :class => 'get-started-link'
+  .welcome-login.row
+    .span7.offset4
+      %h3.welcome-login-title.pull-left Connect with
+      - if current_user
+        Welcome, #{current_user.name}
+        = link_to "Log out", logout_url
+      - else
+        = link_to image_tag('facebook_64.png'), '/auth/facebook'
+        = link_to image_tag('twitter_64.png'), '/auth/twitter?force_login=true'
+        = link_to image_tag('google_64.png'), '/auth/google_oauth2'
 
-- if current_user
-  Welcome, #{current_user.name}
-  = link_to "Log out", logout_url
-- else
-  = link_to image_tag('facebook_64.png'), '/auth/facebook'
-  = link_to image_tag('twitter_64.png'), '/auth/twitter?force_login=true'
-  = link_to image_tag('google_64.png'), '/auth/google_oauth2'
-
-= link_to 'Pivotal', 'https://www.pivotaltracker.com/projects/664921'
+        = link_to 'Pivotal', 'https://www.pivotaltracker.com/projects/664921'
