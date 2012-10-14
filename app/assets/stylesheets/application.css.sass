@@ -25,7 +25,7 @@ body
 
 p.connected
   i
-    color: black
+    color: green
 
 #viewport
   @extend .span12
@@ -128,7 +128,25 @@ input#title
   padding-left: 20px
   padding-right: 20px
 
+
+// Делает навигацию прозрачной
+.anavbar-fixed-top .navbar-inner, .anavbar-static-top .navbar-inner
+  position: absolute
+  // border: 1px solid white
+  +border-radius(6px)
+  +opacity(0.9)
+  width: 98%
+  left: 15px
+  top: 15px
+  margin-right: 35px
+
 .navbar .brand
+  padding: 0
+  img
+    width: 113px
+    margin-bottom: -6px
+    margin-top: -3px
+
   // margin-right: 40px
   // # color: #999 !important
 
