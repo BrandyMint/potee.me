@@ -32,7 +32,7 @@ class Potee.Models.Project extends Backbone.Model
   # инициализируются раньше window.dashboard.
   calculateDays: ->
     @firstDay = window.router.dashboard.indexOf(@started_at, "days")
-    @lastDay = window.router.dashboard.indexOf(@finish_at, "days")
+    @lastDay = window.router.dashboard.indexOf(@finish_at, "days") + 1 # Прибавляем еще один день, чтобы проект заканчивался в конце дня
     @firstWeek = window.router.dashboard.indexOf(@started_at, "weeks")
     @lastWeek = window.router.dashboard.indexOf(@finish_at, "weeks")
     @firstMonth = window.router.dashboard.indexOf(@started_at, "months")
