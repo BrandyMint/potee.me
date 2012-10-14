@@ -6,6 +6,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @model.view = this
     @setElement($('#dashboard'))
     @update()
+    @scrollToToday()
 
 
   setScale: (scale) ->
@@ -46,7 +47,6 @@ class Potee.Views.DashboardView extends Backbone.View
     $(@el).html('')
     @resetWidth()
     @render()
-    @scrollToToday()
     return
 
   scrollToToday: ->
