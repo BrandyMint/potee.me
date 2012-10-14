@@ -12,8 +12,10 @@ protected
       @current_user = User.find_by_id(session[:user_id])
     else
       @current_user = User.create :name => 'Incognito'
+      # save it temporary
       session[:user_id] = @current_user.id
     end
+    @current_user
   end
 
   def authorize_user
