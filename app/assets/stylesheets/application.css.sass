@@ -62,6 +62,8 @@ input#title
 
 .title
   top: -24px
+  // https://www.pivotaltracker.com/story/show/37732619
+  width: 200px
   position: relative
   font-size: 11px
   padding-left: 5px
@@ -80,12 +82,14 @@ input#title
 
 .project
   position: relative
-  height: 87px
+  height: 90px
 
 
 // Events
 
 .event
+  cursor: col-resize
+  cursor: w-resize
   height: 30px // TODO связать с толщиной проекта
   +box-shadow(outset 0 1px 1px rgba(0,0,0,.075))
   +border-radius(2px)
@@ -124,8 +128,9 @@ input#title
   padding-left: 20px
   padding-right: 20px
 
-.brand
+.navbar .brand
   margin-right: 40px
+  // # color: #999 !important
 
 #project_control
   margin-left: 80px
@@ -162,6 +167,21 @@ input#title
   padding: 0px
   &.day_6
     border-right: 1px solid #909090 // lighten($timelineLineColor, 10)
+
+.day_title
+  font-size: 18px
+  padding-bottom: 0px
+
+.day_month
+  -webkit-transform: rotate(90deg)
+  left: -72px
+  position: relative
+  width: 93px
+  height: 100px
+  top: -55px
+  text-transform: uppercase
+  letter-spacing: 3px
+
 
 // previous
 
