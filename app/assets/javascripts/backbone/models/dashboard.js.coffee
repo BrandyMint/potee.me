@@ -25,7 +25,7 @@ class Potee.Models.Dashboard extends Backbone.Model
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
     if @projects.length == 0
-      min = moment().subtract("months", 1).startOf("month").toDate()
+      min = moment().toDate()
       max = moment().add("months", 1).endOf("month").toDate()
     else
       min = @projects.first().started_at
