@@ -4,41 +4,29 @@ class Potee.Views.TimelineZoomView extends Backbone.View
   tagName: 'div'
 
   initialize: ->
-    @dashboard_view = @options.dashboard_view
+    @render()
 
   events:
-    "click .zoom-control .btn" : "zoom"
+    "click .zoom-control .btn" : "changeScale"
 
-  zoom: (event) ->
-    level = event.target.getAttribute('data-zoom-level')
-    dashboard = @dashboard_view.dashboard
-    switch level
-      when 'days'
-        view = new Potee.Views.Timelines.DaysView
-          date_start: moment(dashboard.min)
-          date_finish: moment(dashboard.max)
-          column_width: dashboard.pixels_per_day - 1 # Толшина бордера
-      when 'weeks'
-        view = new Potee.Views.Timelines.WeeksView
-          date_start: moment(dashboard.min)
-          date_finish: moment(dashboard.max)
-          column_width: dashboard.pixels_per_day - 1 # Толщина бордера
-      when 'months'
-        view = new Potee.Views.Timelines.MonthsView
-          date_start: moment(dashboard.min)
-          date_finish: moment(dashboard.max)
-          column_width: dashboard.pixels_per_day -1 # Толщина бордера
+  changeScale: (event) ->
+    @setScale event.target.getAttribute('data-zoom-level')
 
-    @dashboard_view.timeline_view = new Potee.Views.TimelineView
-      dashboard: dashboard
-      view: view
+  setScale: (scale) ->
+    window.dashboard.setScale(scale)
+    $(window.dashboard.view.el).html('')
+    window.dashboard.view.resetWidth()
+    window.dashboard.view.render()
+    @activateScale scale
 
-    # FIXME [AK] maybe there is another way
-    $('#dashboard').html('')
-    @dashboard_view.render()
+  activateScale: (scale) ->
+    @$el.find('.btn').removeClass('active btn-primary')
+    $("#scale-#{scale}").addClass('active btn-primary')
 
   render: ->
     $(@el).html(@template)
+    $('#timeline-zoom-container').html @el
+    @activateScale window.dashboard.get('scale')
 
     return this
 

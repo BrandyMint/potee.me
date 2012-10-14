@@ -9,33 +9,53 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @model.view = this
 
   events:
-    "click .destroy" : "destroy"
     "click .title" : "edit"
-    "click .progress" : "nextColor"
+    "click .progress .bar" : "add_event"
 
-  nextColor: ->
-    @model.nextColor()
+  add_event: (js_event) ->
+    datetime = window.router.dashboard.datetimeAt(js_event.offsetX + @leftMargin())
+    event = @model.projectEvents.create(
+      title: "Title of your event",
+      date: datetime,
+      time: datetime,
+      project_id: @model.id)
 
+    eventElement = @renderEvent(event)
+    eventElement.effect('bounce', {times: 3}, 100)
+    @$el.resizable("option", "minWidth", @minWidthForResize())
 
-  edit: ->
+  edit: (e)->
+    e.stopPropagation()
     @setTitleView 'edit'
 
   bounce: ->
     @$el.effect('bounce', {times: 5}, 200)
 
   destroy: () ->
-    @model.destroy()
-    @$el.fadeOut('fast', ->
+    window.projects.remove @model
+    # @model.destroy()
+    @$el.slideUp('fast', ->
       @remove
     )
 
     return false
 
-  setFirstDay: (day) ->
-    @$el.css('margin-left', day * window.router.dashboard.pixels_per_day)
 
-  setDuration: (day) ->
-    @$el.css('width', day * window.router.dashboard.pixels_per_day)
+  # Project's line left margin (when does it start)
+  setLeftMargin: ->
+    @$el.css('margin-left', @leftMargin())
+
+  leftMargin: ->
+    dashboardStart = moment(window.dashboard.min_with_span())
+    offsetInDays = moment(@model.started_at).diff(dashboardStart, "days")
+    return offsetInDays * window.dashboard.pixels_per_day
+
+  # Project's line width
+  setDuration: ->
+    @$el.css('width', @width())
+
+  width: ->
+    return @model.duration() * window.dashboard.pixels_per_day
 
   setTitleView: (state)->
 
@@ -62,23 +82,70 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       @titleEl = @titleView.el
       @$el.append @titleEl
 
-      # if state=='edit'
+    @$el.find('input#title').focus()
+
+    @bounce() if state == 'new'
 
   render: ->
     @titleEl = undefined
     # TODO Вынести progressbar в отдельную вьюху?
 
-    @$el.html(@template(@model.toJSON() ))
+    @$el.html(@template(width: @width()))
     @$el.attr('id', @model.cid)
+    @$el.addClass('project-color-'+@model.get('color_index'))
 
     @model.projectEvents.each((event)=>
-      event_view = new Potee.Views.Projects.EventView(model: event)
-      @$el.append(event_view.el)
+      @renderEvent(event)
     )
 
     @setTitleView('show')
 
-    @setFirstDay @model.firstDay
-    @setDuration @model.duration
+    @setLeftMargin()
+    @setDuration()
+
+    @$el.resizable(
+      grid: window.dashboard.pixels_per_day,
+      minWidth: @minWidthForResize()
+      handles: 'e'
+      stop: (event, ui) =>
+        @durationChanged(ui.size.width)
+    )
 
     return this
+
+  minWidthForResize: ->
+    lastEvent = @model.projectEvents.last() || null
+    if lastEvent == null
+      return window.dashboard.pixels_per_day
+    else
+      date = moment(lastEvent.date).clone().add("days", 1)
+      diff = date.diff(moment(@model.started_at), "days")
+      return diff * window.dashboard.pixels_per_day
+
+  durationChanged: (width) ->
+    duration = Math.round(width / window.dashboard.pixels_per_day)
+    @model.setDuration(duration)
+
+    totalWidth = @width() + @leftMargin()
+    if totalWidth > window.dashboard.width()
+      dashboard.findStartEndDate()
+      dashboard.view.update()
+
+  renderEvent: (event) ->
+    event_view = new Potee.Views.Events.EventView(model: event)
+    @$el.append(event_view.render().el)
+    $(event_view.el).draggable(
+      axis: 'x',
+      containment: "parent",
+      distance: '3',
+      stop: (jsEvent, ui) =>
+        @eventDateTimeChanged(event, ui.position.left + @leftMargin())
+    )
+    $(event_view.el).css("position", "absolute")
+    return event_view.el
+
+  eventDateTimeChanged: (event, offset) ->
+    datetime = window.dashboard.datetimeAt(offset)
+    event.setDateTime(datetime)
+    event.save()
+

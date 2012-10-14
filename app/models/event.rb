@@ -1,7 +1,15 @@
+# -*- coding: utf-8 -*-
 class Event < ActiveRecord::Base
-  attr_accessible :title, :date, :time
+  # FIX
+  attr_protected :secret
+  # attr_accessible :title, :date, :time, :project_id
 
   belongs_to :project
 
-  validates_presence_of :date, :time
+  before_validation do
+    self.title ||= 'Событие'
+  end
+
+  validates :date, presence: true
+  validates :time, presence: true
 end

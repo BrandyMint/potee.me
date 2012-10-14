@@ -1,15 +1,21 @@
 !!!
 %html
   %head
-    %title Potee - visual time management
+    %title Potee, visual time management
     = stylesheet_link_tag "application", media: "all"
     = javascript_include_tag "application"
+    = favicon_link_tag image_path "favicon.ico"
     = csrf_meta_tags
     :plain
       <script type="text/javascript" src="//use.typekit.net/jun8pbk.js"></script>
       <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     = yield(:head)
 
-
   %body
+    - if controller.is_a? ProjectsController
+      %header.navbar.navbar-fixed-top
+        %nav.navbar-inner
+          .container
+            = render 'layouts/navigation'
+
     = yield

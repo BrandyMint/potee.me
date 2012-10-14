@@ -5,15 +5,37 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
 
     @dashboard = new Potee.Models.Dashboard(@projects)
 
+    window.dashboard = @dashboard
+
   routes:
     "new"      : "newProject"
     "index"    : "index"
     # ":id/edit" : "edit"
     # ":id"      : "show"
     ".*"        : "index"
+    'days'      : 'scaleToDays'
+    'weeks'     : 'scaleToWeeks'
+    'months'    : 'scaleToMonths'
+
+  scaleToWeeks: ->
+    @generateDashboardView()
+    window.dashboard.set 'scale', 'weeks'
+
+  scaleToMonths: ->
+    @generateDashboardView()
+    window.dashboard.set 'scale', 'months'
+
+  scaleToDays: ->
+    @generateDashboardView()
+    window.dashboard.set 'scale', 'days'
+
+  generateDashboardView: ->
+    @dashboard_view ||= new Potee.Views.DashboardView
+      model: @dashboard
 
   newProject: ->
-    @dashboard_view ||= new Potee.Views.DashboardView(dashboard: @dashboard)
+    @generateDashboardView()
+    $('#project_new').addClass('active')
     # @view = new Potee.Views.Projects.NewView(collection: @projects)
     project = new Potee.Models.Project
 
@@ -21,8 +43,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     project.view.setTitleView 'new'
 
   index: ->
-    @dashboard_view = new Potee.Views.DashboardView(dashboard: @dashboard)
-
+    @generateDashboardView()
 
   #show: (id) ->
     #project = @projects.get(id)

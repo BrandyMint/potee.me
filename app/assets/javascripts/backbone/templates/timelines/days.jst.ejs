@@ -1,9 +1,16 @@
 <table>
- <tbody>
-   <tr>
-   <% for(var i = 0; i < days.length; i++) { %>
-      <td><%= days[i] %></td>
-   <% } %>
-   </tr>
- </tbody>
+  <thead>
+    <tr>
+      <% for(var i = 0; i < days.length; i++) { %>
+        <td class="<%= days[i].css_class %>"><%= days[i].title %></td>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <% for(var i = 0; i < days.length; i++) { %>
+      <td class="<%= days[i].css_class %>">&nbsp;</td>
+    <% } %>
+    </tr>
+  </tbody>
 </table>

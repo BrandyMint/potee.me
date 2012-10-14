@@ -1,0 +1,38 @@
+= link_to "Potee timeline management", root_path, :class => 'brand'
+%ul.nav#scale-nav
+  %li#scale-days.active= link_to 'Days', '#days'
+  %li#scale-weeks= link_to 'Weeks', '#weeks'
+  %li#scale-months= link_to 'Months', '#months'
+
+%ul.nav#project_control
+  %li#project_new
+    = link_to '#/new' do
+      %i.icon-folder-open
+      New project
+
+%ul.nav.pull-right
+  %li
+    = link_to '#' do
+      %i.icon-user
+      = current_user
+  %li.divider-vertical
+  %li
+    = link_to logout_path do
+      %i.icon-off
+  %li.divider-vertical
+
+  -#- if user_signed_in?
+    -#%li
+      -#= link_to 'Logout', destroy_user_session_path, :method=>'delete'
+  -#- else
+    -#%li
+      -#= link_to 'Login', new_user_session_path
+  -#- if user_signed_in?
+    -#%li
+      -#= link_to 'Edit account', edit_user_registration_path
+    -#- if current_user.has_role? :admin
+      -#%li
+        -#= link_to 'Admin', users_path
+  -#- else
+    -#%li
+      -#= link_to 'Sign up', new_user_registration_path

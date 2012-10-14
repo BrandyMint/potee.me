@@ -18,7 +18,9 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   events :
     "submit #edit-project" : "update"
-    'click .cancel'        : 'cancel'
+    "click #submit"        : "update"
+    'click #cancel'        : 'cancelEvent'
+    'click #destroy'       : 'destroyEvent'
 
   update : (e) ->
     e.preventDefault()
@@ -33,19 +35,46 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   render: ->
 
+  destroyEvent: (e) ->
+    @model.view.destroy()
+
   keypress: (event)->
     alert(event)
 
+  cancelEvent: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
+    @cancel()
+
   cancel: ->
+    $(document).unbind 'click'
+
     if @model.isNew()
-      @model.view.remove()
+      # @model.view.remove()
+      @model.view.destroy()
       # @model.remove()
     else
       @model.view.setTitleView 'show'
 
+    $('#project_new').removeClass('active')
+    window.location.hash = ''
+
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))
 
-    this.$("form").backboneLink(@model)
+    @$el.click (e)->
+      event.stopPropagation()
 
+    view = this
+    $(document).click ->
+      view.cancel()
+
+    #$(@el).bind 'clickoutside', ->
+      #alert('asd')
+      #view.cancel()
+
+    # if(!$(event.target).is('#foo')))
+
+
+    @.$("form").backboneLink(@model)
     return this

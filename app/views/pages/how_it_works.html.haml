@@ -1,0 +1,23 @@
+.container
+  = link_to "Back", root_path, class: "btn btn-primary"
+  .page-header
+    %h1
+      How it works
+      %small Potee - Simple Timeline Project Management System
+  .row
+    .span3.well
+      %h1 1. Create a project
+      %p
+        Click on the "New project" link. You can find it in the navbar on the top.
+        %small You can rename or delete it by clicking on the project's title.
+    .span3.well
+      %h1 2. Add some events
+      %p
+        Double click on the project's bar. A new event should appear.
+        %small You can rename or delete it by clicking on the event's title.
+    .span3.well
+      %h1 3. Enjoy it!
+      %p
+        You can thank
+        %a{href: url_for(team_pages_path)} the team members.
+        They will appreciate it!

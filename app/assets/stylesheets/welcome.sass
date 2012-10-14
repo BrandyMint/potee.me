@@ -1,0 +1,69 @@
+$column1: 250px
+$column2: 500px
+
+$welcomeHeight: 260px
+$welcomeWidth: $column1 + $column2
+
+
+.welcome
+  // margin-top: 70px
+  width: $welcomeWidth
+  height: $welcomeHeight
+
+  position: absolute
+  top: 50%
+  left: 50%
+  color: #999
+  margin-top: -$welcomeHeight/2 - 30px
+  margin-left: -$welcomeWidth/2
+
+.welcome-logo
+  float: left
+  width: $column1
+  margin-top: 21px
+
+.welcome-description
+  float: left
+  width: $column2
+  .welcome-description-text
+    font-size: 50px
+    line-height: 61px
+    font-weight: normal
+  .highlighted
+    color: #eee
+
+.get-started-link
+  text-decoration: none
+  color: #00bde5
+  border-bottom: 4px solid #00bde5
+
+  &:hover
+    text-decoration: none
+    color: lighten(#00bde5,10)
+    border-bottom: 4px solid darken(#00bde5,10)
+    // text-decoration: none
+
+.welcome-login
+  margin-top: 50px
+  .welcome-login-title
+    margin-right: 1em
+    color: #888
+    font-weight: normal
+
+.welcome-footer
+  clear: both !important
+  height: 40px
+  bottom: 15px
+  position: fixed
+  width: 100%
+
+.footer-links
+  //# margin-top: 100px
+  padding-bottom: 20px
+  text-align: center
+  a
+    color: #ccc
+    +opacity(0.5)
+    margin: 0 10px
+    &:hover
+      +opacity(1)

@@ -13,8 +13,8 @@ p1 = Project.create :title => 'Design for google.com',
 
 p1.events.create(
   title: 'Prepare vision document',
-  date: Date.parse('2012-10-01'),
-  time: Time.parse('2012-10-01 12:00')
+  date: Date.parse('2012-09-01'),
+  time: Time.parse('2012-09-01 12:00')
 )
 
 p1.events.create(

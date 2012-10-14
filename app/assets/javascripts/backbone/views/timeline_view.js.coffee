@@ -2,18 +2,29 @@ class Potee.Views.TimelineView extends Backbone.View
   id: 'timeline'
   tagName: 'div'
 
+  scale: 'days'
+
   initialize: ->
     @dashboard = @options.dashboard
     @view = @options.view
 
-  render: ->
-    # TODO [AK 13/10/12] render view depends on user settings
-    @view ||= new Potee.Views.Timelines.DaysView
-      date_start: moment(@dashboard.min)
-      date_finish: moment(@dashboard.max)
-      column_width: @dashboard.pixels_per_day - 1 # Толщина бордера
+  setScale: (scale) ->
+    switch scale
+      when 'days'   then @scaleClass = Potee.Views.Timelines.DaysView
+      when 'weeks'  then @scaleClass = Potee.Views.Timelines.WeeksView
+      when 'months' then @scaleClass = Potee.Views.Timelines.MonthsView
 
-    @$el.html(@view.render().el)
+    @currentView = new @scaleClass
+      date_start: moment(@dashboard.min_with_span())
+      date_finish: moment(@dashboard.max_with_span())
+      column_width: @dashboard.pixels_per_day
+      dashboard: @dashboard
+      time_line: this
+
+    @$el.html @currentView.render().el
+
+  render: ->
+    @setScale window.dashboard.get('scale')
 
     return this
 

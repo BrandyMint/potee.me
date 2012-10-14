@@ -24,3 +24,4 @@
 # end
 file 'vendor/assets/javascripts/moment.js', 'https://raw.github.com/timrwood/moment/1.7.2/moment.js'
 file 'vendor/assets/javascripts/backbone.localStorage.js', 'https://github.com/jeromegn/Backbone.localStorage/raw/master/backbone.localStorage.js'
+file 'vendor/assets/javascripts/jquery.outside-events.js', 'https://github.com/mgamer/jquery-outside-events/raw/master/jquery.ba-outside-events.js'
