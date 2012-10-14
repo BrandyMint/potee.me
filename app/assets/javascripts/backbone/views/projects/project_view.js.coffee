@@ -20,7 +20,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       time: datetime,
       project_id: @model.id)
 
-    eventElement = @renderEvent(event)
+    eventElement = @renderEvent(event, js_event.offsetX)
     $(eventElement).effect('bounce', {times: 3}, 100)
     @$el.resizable("option", "minWidth", @minWidthForResize())
 
@@ -131,10 +131,10 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       dashboard.findStartEndDate()
       dashboard.view.update()
 
-  renderEvent: (event) ->
+  renderEvent: (event,x = undefined) ->
     event_view = new Potee.Views.Events.EventView
       model: event
-      x: event.pageX
+      x: x
 
     @$el.append(event_view.render().el)
     $(event_view.el).draggable(
