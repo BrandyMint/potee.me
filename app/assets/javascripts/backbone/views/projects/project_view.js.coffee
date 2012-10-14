@@ -33,7 +33,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.effect('bounce', {times: 5}, 200)
 
   destroy: () ->
-    @model.destroy()
+    window.projects.remove @model
+    # @model.destroy()
     @$el.fadeOut('fast', ->
       @remove
     )

@@ -15,7 +15,7 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
         project.view = @model.view
         @model = project
         @model.view.setTitleView 'show'
-        # window.location.hash = "/#{@model.id}"
+        window.location.hash = "/"
 
       error: (project, jqXHR) =>
         @model.set({errors: $.parseJSON(jqXHR.responseText)})
