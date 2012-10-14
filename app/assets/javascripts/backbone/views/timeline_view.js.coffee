@@ -8,7 +8,7 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = @options.dashboard
     @view = @options.view
 
-  changeScale: (scale) ->
+  setScale: (scale) ->
     switch scale
       when 'days'   then @scaleClass = Potee.Views.Timelines.DaysView
       when 'weeks'  then @scaleClass = Potee.Views.Timelines.WeeksView
@@ -24,8 +24,7 @@ class Potee.Views.TimelineView extends Backbone.View
     @$el.html @currentView.render().el
 
   render: ->
-    # TODO [AK 13/10/12] render view depends on user settings
-    @changeScale window.dashboard.get('scale')
+    @setScale window.dashboard.get('scale')
 
     return this
 

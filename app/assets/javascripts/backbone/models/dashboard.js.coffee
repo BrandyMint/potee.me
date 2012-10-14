@@ -8,7 +8,11 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   initialize: (@projects) ->
     @findStartEndDate()
+    @on 'change:scale', @changeScale
     return
+
+  changeScale: (scale) ->
+    @view.setScale @get('scale')
 
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->

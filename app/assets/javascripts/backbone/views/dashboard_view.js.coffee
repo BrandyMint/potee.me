@@ -8,14 +8,24 @@ class Potee.Views.DashboardView extends Backbone.View
     @resetWidth()
     @render()
 
+
   setScale: (scale) ->
+    @activateScale scale
     @timeline_view.setScale scale
+    # (@view.el).html('')
+    # @view.render()
+    #$(window.dashboard.view.el).html('')
+    #window.dashboard.view.render()
+
+  activateScale: (scale) ->
+    $('#scale-nav li').removeClass('active')
+    $("##{scale}").addClass('active')
 
   resetWidth: ->
     @$el.css('width', @model.days * @model.pixels_per_day)
 
   render: ->
-    @timeline_zoom_view = new Potee.Views.TimelineZoomView
+    # @timeline_zoom_view = new Potee.Views.TimelineZoomView
 
     @timeline_view ||= new Potee.Views.TimelineView
       dashboard: @model

@@ -10,6 +10,10 @@
       <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     = yield(:head)
 
-
   %body
+    %header.navbar.navbar-fixed-top
+      %nav.navbar-inner
+        .container
+          = render 'layouts/navigation'
+
     = yield

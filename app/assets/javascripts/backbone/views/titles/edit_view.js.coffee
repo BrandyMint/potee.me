@@ -43,6 +43,9 @@ class Potee.Views.Titles.EditView extends Backbone.View
     else
       @model.view.setTitleView 'show'
 
+    $('#project_new').removeClass('active')
+    window.location.hash = ''
+
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))
 
