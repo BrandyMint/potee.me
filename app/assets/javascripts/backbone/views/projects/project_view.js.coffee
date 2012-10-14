@@ -10,7 +10,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
   events:
     "click .title" : "edit"
-    "dblclick .progress .bar" : "add_event"
+    "click .progress .bar" : "add_event"
 
   add_event: (js_event) ->
     datetime = window.router.dashboard.datetime_by_x_coord(@model, js_event.clientX)
@@ -20,8 +20,11 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       date: datetime,
       time: datetime,
       project_id: @model.id)
-    event_view = new Potee.Views.Events.EventView(model: event)
-    @$el.append(event_view.render().el)
+    event_view = new Potee.Views.Events.EventView
+      model: event,
+      x: js_event.offsetX
+
+    @$el.append event_view.render().el
 
   edit: (e)->
     e.stopPropagation()

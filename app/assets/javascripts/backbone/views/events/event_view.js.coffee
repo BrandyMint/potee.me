@@ -5,6 +5,12 @@ class Potee.Views.Events.EventView extends Backbone.View
   tagName: "div"
   className: "event"
 
+  events:
+    "click .event-title" : "edit"
+
+  edit: ->
+    alert('edit')
+
   calcOffset: ->
     d = window.router.dashboard
     columnWidth = d.pixels_per_day
@@ -19,5 +25,5 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   render: ->
     @$el.html @template( @model.toJSON() )
-    @$el.css('margin-left', @calcOffset())
+    @$el.css('margin-left', @options.x || @calcOffset())
     return this
