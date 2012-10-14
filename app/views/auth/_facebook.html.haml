@@ -1,4 +1,7 @@
 %li
-  = link_to '/auth/facebook' do
-    %i.icon-facebook-rect
-
+  - if current_user.authentications.where(:provider=>:facebook).exists?
+    %p.navbar-text.connected{:rel=>:tooltip, :title=>'Facebook is connected'}
+      %i.icon-facebook-rect
+  - else
+    = link_to '/auth/facebook' do
+      %i.icon-facebook-rect
