@@ -20,6 +20,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       date: datetime,
       time: datetime,
       project_id: @model.id)
+    # directly push it to model collection
+    @model.projectEvents.push(event)
     event_view = new Potee.Views.Events.EventView
       model: event,
       x: js_event.offsetX
