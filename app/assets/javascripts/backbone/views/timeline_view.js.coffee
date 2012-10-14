@@ -17,7 +17,7 @@ class Potee.Views.TimelineView extends Backbone.View
     @currentView = new @scaleClass
       date_start: moment(@dashboard.min_with_span())
       date_finish: moment(@dashboard.max_with_span())
-      column_width: @dashboard.pixels_per_day_excluding_border
+      column_width: @dashboard.pixels_per_day
       dashboard: @dashboard
       time_line: this
 

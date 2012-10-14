@@ -21,7 +21,8 @@ class Potee.Views.Timelines.DaysView extends Backbone.View
     days
 
   set_column_width: () ->
-    @$el.find('table td').attr('width', @column_width + "px")
+    columnWidth = @column_width - 1 # 1px на правую границу
+    @$el.find('table td').attr('width', columnWidth + "px")
 
   render: =>
     $(@el).html(@template(days: @days()))

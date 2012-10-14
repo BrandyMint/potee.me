@@ -7,23 +7,30 @@ class Potee.Views.Timelines.WeeksView extends Backbone.View
   className: 'weeks'
 
   initialize: (options) ->
-    start = moment(options.date_start, "YYYY-MM-DD")
-    end   = moment(options.date_finish, "YYYY-MM-DD")
-    @range = moment().range(start.day(0), end.day(6));
-    @column_width = options.column_width
+    @start = moment(options.date_start, "YYYY-MM-DD")
+    @end = moment(options.date_finish, "YYYY-MM-DD")
+    @columnWidth = options.column_width
 
+  # Первую и последнуюю неделю рассчитываются отдельно, так как они не обязательно
+  # начинаются в понедельник и заканчиваются в воскресенье.
   weeks: () ->
     weeks = []
-    # iterate by 1 week
-    @range.by "w", (moment) ->
-      weeks.push(moment.format("dddd, MMMM Do") + " - " + moment.clone().add('weeks', 1).subtract('days', 1).format("dddd, MMMM Do"))
-    weeks
+    weeks.push(@week(@start, @start.clone().day(7)))
 
-  set_column_width: () ->
-    days_in_week = 7
-    @$el.find('table td').attr('width', @column_width * days_in_week + "px")
+    range = moment().range(@start.clone().day(8), @end.clone().day(-7))
+    range.by("w", (m) =>
+      weeks.push(@week(m, m.clone().day(7)))
+    )
+
+    weeks.push(@week(@end.clone().day(1), @end))
+
+    return weeks
+
+  week: (start, end) ->
+    width = (end.diff(start, "days") + 1) * @columnWidth - 1 # 1px на правую границу
+    title = start.format("D.MM.YYYY") + " - " + end.format("D.MM.YYYY")
+    return { width: width, title: title }
 
   render: =>
     $(@el).html(@template(weeks: @weeks()))
-    @set_column_width()
     return this
