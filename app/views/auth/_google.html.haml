@@ -1,6 +1,6 @@
 %li.auth.auth-google
   - if current_user.authentications.where(:provider=>:google_oauth2).exists?
-    %p.navbar-text.connected{:rel=>:tooltip, :title=>'Google account is connected'}
+    = link_to 'javascript: void()', :class => :connected do
       %i.icon-googleplus-rect
   - else
     = link_to '/auth/google_oauth2' do
