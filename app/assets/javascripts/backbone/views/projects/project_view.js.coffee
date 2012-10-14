@@ -24,7 +24,11 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       model: event,
       x: js_event.offsetX
 
-    @$el.append event_view.render().el
+    el = event_view.render().$el
+    @$el.append el
+    el.effect('bounce', {times: 3}, 100)
+
+
 
   edit: (e)->
     e.stopPropagation()

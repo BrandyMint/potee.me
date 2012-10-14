@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 class Event < ActiveRecord::Base
-  attr_accessible :title, :date, :time, :project_id
+  # FIX
+  attr_protected :secret
+  # attr_accessible :title, :date, :time, :project_id
 
   belongs_to :project
 
