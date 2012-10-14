@@ -28,7 +28,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     el = event_view.render().$el
     @$el.append el
-    el.effect('bounce', {times: 3}, 100)
+#    el.effect('bounce', {times: 3}, 100)
 
 
 
