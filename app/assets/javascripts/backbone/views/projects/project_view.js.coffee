@@ -15,12 +15,13 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
   add_event: (js_event) ->
     # FIXME [AK] why 50?
-    timeline_cell = document.elementFromPoint(js_event.clientX, js_event.clientY - 50)
+    datetime = window.router.dashboard.datetime_by_x_coord(@model, js_event.clientX)
+    console.log(datetime)
     projectEvents = new Potee.Collections.EventsCollection(project: @model)
     event = projectEvents.create(
       title: "Title of your event",
-      date: timeline_cell.getAttribute('data-date'),
-      time: timeline_cell.getAttribute('data-date') + " 12:00",
+      date: datetime,
+      time: datetime,
       project_id: @model.id)
     event_view = new Potee.Views.Projects.EventView(model: event)
     @$el.append(event_view.render().el)

@@ -16,7 +16,7 @@ class Potee.Views.Timelines.DaysView extends Backbone.View
     days = []
     # iterate by 1 day
     @range.by "d", (moment) ->
-      days.push { title: moment.format("Do"), date: moment.format("YYYY-MM-DD")}
+      days.push moment.format("Do")
     days
 
   set_column_width: () ->

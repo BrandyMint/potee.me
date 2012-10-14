@@ -47,3 +47,12 @@ class Potee.Models.Dashboard extends Backbone.Model
     if input == "days"
       index = index + @spanDays
     index
+
+  # Возвращает время в зависимости от X
+  #
+  # @param [Integer] x_coord X-координата
+  datetime_by_x_coord: (project, x_coord) ->
+    day_index = (x_coord / this.pixels_per_day) - @spanDays
+    days = Math.floor(day_index)
+    hours = Math.round((day_index - days) * 24)
+    moment(project.started_at).clone().add('d', days).add('h', hours).toDate()
