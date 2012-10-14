@@ -1,8 +1,6 @@
 class ProjectsController < ApplicationController
   inherit_resources
 
-  before_filter :authorize_user
-
   respond_to :js, :json, :html
 
   protected
