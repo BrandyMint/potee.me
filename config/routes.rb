@@ -1,4 +1,6 @@
 Potee::Application.routes.draw do
+  match "/404", :to => "errors#not_found"
+
   match '/auth/:provider/callback', to: 'sessions#create'
   match '/auth/failure', to: redirect('/')
   match 'logout', to: 'sessions#destroy', as: 'logout'
