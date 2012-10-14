@@ -9,8 +9,8 @@ class Potee.Views.Timelines.DaysView extends Backbone.View
   initialize: (options) ->
     start = moment(options.date_start, "YYYY-MM-DD")
     end   = moment(options.date_finish, "YYYY-MM-DD")
-    @range = moment().range(start, end);
-    @column_width = options.column_width - 1
+    @range = moment().range(start, end)
+    @column_width = options.column_width
 
   days: () ->
     days = []

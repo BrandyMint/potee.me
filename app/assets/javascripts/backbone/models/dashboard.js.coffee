@@ -34,7 +34,9 @@ class Potee.Models.Dashboard extends Backbone.Model
     moment(@min).clone().subtract('days', @spanDays).toDate()
 
   max_with_span: () ->
-    moment(@max).clone().add('days', @spanDays).toDate()
+    # Проект заканчивается к какому-то числу, поэтому сдвигать границу
+    # надо надо @spanDays - 1 дней.
+    moment(@max).clone().add('days', @spanDays - 1).toDate()
 
   # Возвращает индекс элемента
   #
