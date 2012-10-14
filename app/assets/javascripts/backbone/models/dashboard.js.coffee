@@ -19,6 +19,7 @@ class Potee.Models.Dashboard extends Backbone.Model
       when "months"
         @pixels_per_day = 10
 
+    @setDuration(@min, @max)
     @view.setScale @get('scale')
 
   # По списку проектов находит крайние левую и правые даты
@@ -34,20 +35,37 @@ class Potee.Models.Dashboard extends Backbone.Model
           max = project.finish_at
     )
 
-    @min = moment(min).toDate()
-    @max = moment(max).toDate()
+    @min = min
+    @max = max
 
-    @days = moment(@max).diff(moment(@min), "days") + @spanDays*2
+    @setDuration()
 
     return
 
+  setDuration: () ->
+    min = @min_with_span()
+    max = @max_with_span()
+
+    @days = moment(max).diff(moment(min), "days") + 1
+    return
+
   min_with_span: () ->
-    moment(@min).clone().subtract('days', @spanDays).toDate()
+    switch @get('scale')
+      when "days"
+       return moment(@min).clone().subtract('days', @spanDays).toDate()
+      when "weeks"
+        return moment(@min).clone().day(1).toDate()
+      when "months"
+        return moment(@min).clone().startOf("month").toDate()
 
   max_with_span: () ->
-    # Проект заканчивается к какому-то числу, поэтому сдвигать границу
-    # надо надо @spanDays - 1 дней.
-    moment(@max).clone().add('days', @spanDays - 1).toDate()
+    switch @get('scale')
+      when "days"
+        return moment(@max).clone().add('days', @spanDays).toDate()
+      when "weeks"
+        return moment(@max).clone().day(7).toDate()
+      when "months"
+        return moment(@max).clone().endOf("month")
 
   # Возвращает индекс элемента
   #
