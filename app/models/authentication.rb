@@ -10,7 +10,7 @@ class Authentication < ActiveRecord::Base
 
   def self.create_user_with_authentication auth, current_user
     user = current_user || User.create do |user|
-      user.email = user auth['info']['email']
+      user.email = auth['info']['email']
       user.name = auth['info']['name']
     end
 
