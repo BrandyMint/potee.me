@@ -12,6 +12,10 @@ class Potee.Views.DashboardView extends Backbone.View
   setScale: (scale) ->
     @activateScale scale
     @timeline_view.setScale scale
+    $(this.el).html('')
+    this.resetWidth()
+    this.render()
+
     # (@view.el).html('')
     # @view.render()
     #$(window.dashboard.view.el).html('')
@@ -19,7 +23,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   activateScale: (scale) ->
     $('#scale-nav li').removeClass('active')
-    $("##{scale}").addClass('active')
+    $("#scale-#{scale}").addClass('active')
 
   resetWidth: ->
     @$el.css('width', @model.days * @model.pixels_per_day)

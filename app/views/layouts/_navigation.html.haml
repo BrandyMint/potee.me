@@ -1,8 +1,8 @@
 = link_to "Potee timeline management", root_path, :class => 'brand'
 %ul.nav#scale-nav
-  %li.active= link_to 'day', '#days'
-  %li= link_to 'weeks', '#weeks'
-  %li= link_to 'months', '#months'
+  %li#scale-days.active= link_to 'day', '#days'
+  %li#scale-weeks= link_to 'weeks', '#weeks'
+  %li#scale-months= link_to 'months', '#months'
 
 %ul.nav#project_control
   %li#project_new

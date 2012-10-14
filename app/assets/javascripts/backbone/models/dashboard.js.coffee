@@ -1,6 +1,5 @@
 class Potee.Models.Dashboard extends Backbone.Model
   pixels_per_day: 40
-  pixels_per_day_excluding_border: 39
   spanDays: 3
 
   defaults:
@@ -11,7 +10,15 @@ class Potee.Models.Dashboard extends Backbone.Model
     @on 'change:scale', @changeScale
     return
 
-  changeScale: (scale) ->
+  changeScale: ->
+    switch @get('scale')
+      when "days"
+        @pixels_per_day = 40
+      when "weeks"
+        @pixels_per_day = 20
+      when "months"
+        @pixels_per_day = 10
+
     @view.setScale @get('scale')
 
   # По списку проектов находит крайние левую и правые даты
@@ -61,13 +68,3 @@ class Potee.Models.Dashboard extends Backbone.Model
     hours = Math.round((day_index - days) * 24)
     moment(project.started_at).clone().add('d', days).add('h', hours).toDate()
 
-  setScale: (scale) ->
-    switch scale
-      when "days"
-        @pixels_per_day = 40
-      when "weeks"
-        @pixels_per_day = 20
-      when "months"
-        @pixels_per_day = 10
-
-    @set('scale', scale)
