@@ -38,6 +38,9 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
     width = end.diff(start, "days") * @columnWidth - 1 # 1 px на правую границу
     return { title: title, width: width }
 
+  index_of_current_month: ->
+    moment().diff(moment(@start), 'months')
+
   render: =>
-    $(@el).html(@template(months: @months()))
+    $(@el).html(@template(months: @months(), current_month: @index_of_current_month()))
     return this

@@ -64,6 +64,14 @@ body
 #timeline table // timeline table
   height: $dashboardHeight - 30px
 
+$timeline_current_opacity: 0.1
+#timeline table td.current // timeline table td
+  background-color: white
+  opacity: $timeline_current_opacity
+  -moz-opacity: $timeline_current_opacity
+  -webkit-opacity: $timeline_current_opacity
+  -khtml-opacity: $timeline_current_opacity
+
 #timeline table td // timeline table td
   border-right: 1px solid $timelineLineColor
   height: 100%

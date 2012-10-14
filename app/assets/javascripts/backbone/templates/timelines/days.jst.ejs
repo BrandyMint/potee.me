@@ -2,7 +2,11 @@
   <tbody>
     <tr>
     <% for(var i = 0; i < days.length; i++) { %>
-       <td><%= days[i] %></td>
+      <% if (i == current_day) { %>
+        <td class="current"><%= days[i] %></td>
+      <% } else {%>
+        <td><%= days[i] %></td>
+      <% } %>
     <% } %>
     </tr>
   </tbody>

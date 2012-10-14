@@ -31,6 +31,9 @@ class Potee.Views.Timelines.WeeksView extends Backbone.View
     title = start.format("D.MM.YYYY") + " - " + end.format("D.MM.YYYY")
     return { width: width, title: title }
 
+  index_of_current_week: ->
+    moment().diff(moment(@start), 'weeks')
+
   render: =>
-    $(@el).html(@template(weeks: @weeks()))
+    $(@el).html(@template(weeks: @weeks(), current_week: @index_of_current_week()))
     return this

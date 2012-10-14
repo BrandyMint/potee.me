@@ -2,7 +2,11 @@
 <tbody>
    <tr>
    <% for(var i = 0; i < months.length; i++) { %>
-      <td width="<%= months[i].width %>px"><%= months[i].title %></td>
+     <% if (i == current_month) { %>
+       <td width="<%= months[i].width %>px" class="current"><%= months[i].title %></td>
+     <% } else {%>
+       <td width="<%= months[i].width %>px"><%= months[i].title %></td>
+     <% } %>
    <% } %>
    </tr>
  </tbody>
