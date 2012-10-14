@@ -112,8 +112,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.resizable(
       grid: window.dashboard.pixels_per_day,
       minWidth: @minWidthForResize()
-      minHeight: 60,
-      maxHeight: 60,
+      handles: 'e'
       stop: (event, ui) =>
         @durationChanged(ui.size.width)
     )

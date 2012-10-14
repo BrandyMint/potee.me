@@ -63,7 +63,7 @@ class Potee.Models.Project extends Backbone.Model
 
   # duration - количество дней
   setDuration: (duration) ->
-    finishAt = moment(@started_at).clone().add("days", duration)
+    finishAt = moment(@started_at).clone().add("days", duration - 1)
 
     @set("finish_at", finishAt.format("YYYY-MM-DD"))
     @save()
