@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121014155354) do
+ActiveRecord::Schema.define(:version => 20121014200323) do
 
   create_table "authentications", :force => true do |t|
     t.string  "provider", :null => false
@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(:version => 20121014155354) do
     t.integer  "project_id", :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.date     "date",       :null => false
-    t.time     "time",       :null => false
+    t.date     "date"
+    t.time     "time"
   end
 
   add_index "events", ["project_id"], :name => "index_events_on_project_id"
