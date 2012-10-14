@@ -7,4 +7,11 @@ Potee::Application.routes.draw do
 
   resources :projects
   resources :events
+  resources :pages, :only => [] do
+    collection do
+      get :about
+      get :team
+      get :how_it_works
+    end
+  end
 end
