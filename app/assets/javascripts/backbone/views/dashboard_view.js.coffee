@@ -19,6 +19,12 @@ class Potee.Views.DashboardView extends Backbone.View
     $("#scale-#{scale}").addClass('active')
 
   resetWidth: ->
+    @model.findStartEndDate()
+
+    viewportWidth = $('#viewport').width()
+    if viewportWidth > @model.width()
+      @model.setWidth(viewportWidth)
+
     @$el.css('width', @model.width())
 
   render: ->
