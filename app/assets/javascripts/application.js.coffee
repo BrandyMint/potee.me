@@ -1,5 +1,6 @@
 //= require jquery
 //= require jquery_ujs
+//= require jquery.effects.bounce
 //= require jquery.ui.resizable
 //= require underscore
 //= require moment
