@@ -20,6 +20,7 @@ class Potee.Views.Titles.EditView extends Backbone.View
     "submit #edit-project" : "update"
     "click #submit"        : "update"
     'click #cancel'        : 'cancelEvent'
+    'click #destroy'       : 'destroyEvent'
 
   update : (e) ->
     e.preventDefault()
@@ -34,6 +35,9 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   render: ->
 
+  destroyEvent: (e) ->
+    @model.view.destroy()
+
   keypress: (event)->
     alert(event)
 
@@ -46,7 +50,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
     $(document).unbind 'click'
 
     if @model.isNew()
-      @model.view.remove()
+      # @model.view.remove()
+      @model.view.destroy()
       # @model.remove()
     else
       @model.view.setTitleView 'show'

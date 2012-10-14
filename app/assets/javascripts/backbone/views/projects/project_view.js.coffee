@@ -9,7 +9,6 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @model.view = this
 
   events:
-    "click .destroy" : "destroy"
     "click .title" : "edit"
     "dblclick .progress .bar" : "add_event"
 
@@ -34,7 +33,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   destroy: () ->
     window.projects.remove @model
     # @model.destroy()
-    @$el.fadeOut('fast', ->
+    @$el.slideUp('fast', ->
       @remove
     )
 
@@ -79,7 +78,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @$el.find('input#title').focus()
 
-      # if state=='edit'
+    @bounce() if state == 'new'
 
   render: ->
     @titleEl = undefined
