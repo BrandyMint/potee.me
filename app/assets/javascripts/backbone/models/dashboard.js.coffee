@@ -1,5 +1,5 @@
 class Potee.Models.Dashboard extends Backbone.Model
-  pixels_per_day: 80
+  pixels_per_day: 150
   spanDays: 3
 
   defaults:
@@ -13,9 +13,9 @@ class Potee.Models.Dashboard extends Backbone.Model
   changeScale: ->
     switch @get('scale')
       when "days"
-        @pixels_per_day = 80
+        @pixels_per_day = 150
       when "weeks"
-        @pixels_per_day = 20
+        @pixels_per_day = 40
       when "months"
         @pixels_per_day = 10
 
