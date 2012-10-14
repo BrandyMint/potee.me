@@ -18,8 +18,12 @@ class Potee.Views.Timelines.DaysView extends Backbone.View
     today = moment().format('DDMMYYYY')
     @range.by "d", (m) ->
       day = 
-        title: m.format('MMMM D')+'<br/>'+m.format('ddd')
+        title: m.format('D')
+        month: ''
+        day: m.format('ddd')
         css_class: 'day'
+      
+      day['month'] = m.format('MMMM') if day['title'] == '1'
       day['css_class'] += ' day_'+m.format('d')
       day['css_class'] += ' current' if m.format('DDMMYYYY') == today
       days.push day

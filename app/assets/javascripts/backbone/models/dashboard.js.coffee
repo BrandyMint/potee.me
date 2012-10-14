@@ -1,5 +1,5 @@
 class Potee.Models.Dashboard extends Backbone.Model
-  pixels_per_day: 80
+  pixels_per_day: 150
   spanDays: 3
 
   defaults:
@@ -13,9 +13,9 @@ class Potee.Models.Dashboard extends Backbone.Model
   changeScale: ->
     switch @get('scale')
       when "days"
-        @pixels_per_day = 80
+        @pixels_per_day = 150
       when "weeks"
-        @pixels_per_day = 20
+        @pixels_per_day = 40
       when "months"
         @pixels_per_day = 10
 
@@ -25,7 +25,7 @@ class Potee.Models.Dashboard extends Backbone.Model
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
     if @projects.length == 0
-      min = moment().subtract("months", 1).startOf("month").toDate()
+      min = moment().toDate()
       max = moment().add("months", 1).endOf("month").toDate()
     else
       min = @projects.first().started_at

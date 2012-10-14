@@ -26,5 +26,9 @@ class Potee.Views.TimelineView extends Backbone.View
   render: ->
     @setScale window.dashboard.get('scale')
 
+    # В Firefox стиль отображения для td должен быть дефолтным в отличии от Chrome
+    if $.browser.mozilla
+      @$el.find('td').css('display', 'table-cell')
+
     return this
 

@@ -41,6 +41,10 @@ p.connected
   position: absolute
   width: 100%
 
+#projects
+  height: 720px
+  overflow-y: auto
+
 // Project's title and form
 
 form.title-form
@@ -58,6 +62,8 @@ input#title
 
 .title
   top: -24px
+  // https://www.pivotaltracker.com/story/show/37732619
+  width: 200px
   position: relative
   font-size: 11px
   padding-left: 5px
@@ -76,12 +82,14 @@ input#title
 
 .project
   position: relative
-  height: 87px
+  height: 90px
 
 
 // Events
 
 .event
+  cursor: w-resize
+  cursor: col-resize
   height: 30px // TODO связать с толщиной проекта
   +box-shadow(outset 0 1px 1px rgba(0,0,0,.075))
   +border-radius(2px)
@@ -120,11 +128,12 @@ input#title
   padding-left: 20px
   padding-right: 20px
 
-.brand
-  margin-right: 40px
+.navbar .brand
+  // margin-right: 40px
+  // # color: #999 !important
 
 #project_control
-  margin-left: 80px
+  margin-right: 120px
 
 // Timeline
 
@@ -138,6 +147,7 @@ input#title
 
 #timeline table thead td
   padding-top: 20px
+  height: 720px
 
 #timeline table td.current // timeline table td
   // TODO Подкладывать полупрозрачный фон
@@ -158,6 +168,20 @@ input#title
   padding: 0px
   &.day_6
     border-right: 1px solid #909090 // lighten($timelineLineColor, 10)
+
+.day_title
+  font-size: 18px
+  padding-bottom: 0px
+
+.day_month
+  -webkit-transform: rotate(90deg)
+  left: -72px
+  position: relative
+  height: 100px
+  top: -55px
+  text-transform: uppercase
+  letter-spacing: 3px
+
 
 // previous
 

@@ -1,20 +1,27 @@
 = link_to "POTEE", root_path, :class => 'brand'
-%ul.nav#scale-nav
-  %li#scale-days.active= link_to 'Days', '#days'
-  %li#scale-weeks= link_to 'Weeks', '#weeks'
-  %li#scale-months= link_to 'Months', '#months'
 
 %ul.nav#project_control
+  %li.divider-vertical
   %li#project_new
     = link_to '#/new' do
       %i.icon-folder-open
       New project
+  %li.divider-vertical
+
+%ul.nav#scale-nav
+  -#%li
+    -#%p.navbar-text
+      -#%i.icon-tasks
+  %li#scale-days.active= link_to 'Week', '#days'
+  %li#scale-weeks= link_to 'Month', '#weeks'
+  %li#scale-months= link_to 'Year', '#months'
+
 
 %ul.nav.pull-right{:style=>'font-size: 16px'}
   - if current_user.incognito?
     %li
       = link_to '#' do
-        Authorize to save your projects &rarr;
+        Sign up to save your projects &rarr;
 
     = render :partial => 'auth/facebook'
     = render :partial => 'auth/twitter'

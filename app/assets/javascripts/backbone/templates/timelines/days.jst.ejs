@@ -2,7 +2,11 @@
   <thead>
     <tr>
       <% for(var i = 0; i < days.length; i++) { %>
-        <td class="<%= days[i].css_class %>"><%= days[i].title %></td>
+        <td class="<%= days[i].css_class %>">
+          <div class='day_title'><%= days[i].title %></div>
+          <div class='day_number'><%= days[i].day %></div>
+          <div class='day_month'><%= days[i].month %></div>
+        </td>
       <% } %>
     </tr>
   </thead>
