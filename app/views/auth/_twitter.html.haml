@@ -1,4 +1,4 @@
-%li
+%li.auth.auth-twitter
   - if current_user.authentications.where(:provider=>:twitter).exists?
     %p.navbar-text.connected{:rel=>:tooltip, :title=>'Twitter is connected'}
       %i.icon-twitter-bird

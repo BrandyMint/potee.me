@@ -2,12 +2,10 @@
   = image_tag 'logo.png'
 
 %ul.nav#project_control
-  %li.divider-vertical
   %li#project_new
     = link_to '#/new' do
       %i.icon-folder-open
       New project
-  %li.divider-vertical
 
 %ul.nav#scale-nav
   -#%li
@@ -20,7 +18,7 @@
 
 %ul.nav.pull-right{:style=>'font-size: 16px'}
   - if !current_user or current_user.incognito?
-    %li
+    %li.signup
       = link_to '#' do
         Sign up to save your projects &rarr;
 
@@ -33,16 +31,14 @@
       = link_to '#' do
         %i.icon-user
         = current_user
-    %li.divider-vertical
+    -# %li.divider-vertical
     = render :partial => 'auth/facebook'
     = render :partial => 'auth/twitter'
     = render :partial => 'auth/google'
-    %li.divider-vertical
 
     %li
       = link_to logout_path do
         %i.icon-off
-    %li.divider-vertical
 
   -#- if user_signed_in?
     -#%li
