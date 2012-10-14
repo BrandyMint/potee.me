@@ -9,9 +9,13 @@ class Authentication < ActiveRecord::Base
   end
 
   def self.create_user_with_authentication auth, current_user
-    user = current_user || User.create do |user|
+    user = current_user ||
+      User.create( :email => auth['info']['email'], :name => auth['info']['name'] )
+
+    if user.incognito?
       user.email = auth['info']['email']
       user.name = auth['info']['name']
+      user.save
     end
 
     user.authentications.create do |authentication|
@@ -19,11 +23,6 @@ class Authentication < ActiveRecord::Base
       authentication.uid = auth['uid']
     end
 
-    if user.incognito?
-      user.email = auth['info']['email']
-      user.name = auth['info']['name']
-      user.save
-    end
 
     user
   end
