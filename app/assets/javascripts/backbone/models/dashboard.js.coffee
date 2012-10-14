@@ -24,8 +24,12 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
-    min = @projects.first().started_at
-    max = @projects.first().finish_at
+    if @projects.length == 0
+      min = moment().subtract("months", 1).startOf("month").toDate()
+      max = moment().add("months", 1).endOf("month").toDate()
+    else
+      min = @projects.first().started_at
+      max = @projects.first().finish_at
 
     @projects.each((project)=>
         if project.started_at < min
@@ -88,7 +92,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     hoursWidth = Math.round(hours * (@pixels_per_day / 24))
 
     minutes = Math.round((x - daysWidth - hoursWidth) / (@pixels_per_day / (24 * 60)))
-    return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes)
+    return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes).toDate()
 
   # Возвращает количество дней перед днем старта 1 проекта
   days_before_min: ->

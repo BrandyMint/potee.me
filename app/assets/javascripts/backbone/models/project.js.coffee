@@ -81,7 +81,7 @@ class Potee.Collections.ProjectsCollection extends Backbone.Collection
 
   # Ищем следующий свободный цвет
   getNextColorIndex: ->
-    (@last().get('color_index')+1) % 7
+    @length != 0 ? (@last().get('color_index')+1) % 7 : 1
 
     # TODO
     #colors = {}

@@ -10,5 +10,6 @@ class Event < ActiveRecord::Base
     self.title ||= 'Событие'
   end
 
-  validates_presence_of :date, :time
+  validates :date, presence: true
+  validates :time, presence: true
 end

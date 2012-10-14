@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121013152213) do
+ActiveRecord::Schema.define(:version => 20121014155354) do
 
   create_table "authentications", :force => true do |t|
     t.string  "provider", :null => false
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20121013152213) do
     t.date     "started_at",                 :null => false
     t.date     "finish_at"
     t.integer  "color_index", :default => 0, :null => false
+    t.integer  "user_id",                    :null => false
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_title"
