@@ -56,3 +56,14 @@ class Potee.Models.Dashboard extends Backbone.Model
     days = Math.floor(day_index)
     hours = Math.round((day_index - days) * 24)
     moment(project.started_at).clone().add('d', days).add('h', hours).toDate()
+
+  setScale: (scale) ->
+    switch scale
+      when "days"
+        @pixels_per_day = 40
+      when "weeks"
+        @pixels_per_day = 20
+      when "months"
+        @pixels_per_day = 10
+
+    @set('scale', scale)

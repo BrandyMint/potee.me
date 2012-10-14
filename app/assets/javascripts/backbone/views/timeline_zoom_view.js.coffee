@@ -13,8 +13,9 @@ class Potee.Views.TimelineZoomView extends Backbone.View
     @setScale event.target.getAttribute('data-zoom-level')
 
   setScale: (scale) ->
-    window.dashboard.set('scale', scale)
+    window.dashboard.setScale(scale)
     $(window.dashboard.view.el).html('')
+    window.dashboard.view.resetWidth()
     window.dashboard.view.render()
     @activateScale scale
 
