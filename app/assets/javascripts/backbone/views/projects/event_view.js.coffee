@@ -10,7 +10,7 @@ class Potee.Views.Projects.EventView extends Backbone.View
 
     time        = moment(@model.time)
     timeDiff    = (time.hours() * 60 + time.minutes()) / (24 * 60)
-    timeOffset  = column_width * timeDiff
+    timeOffset  = columnWidth * timeDiff
 
     Math.round(daysOffset + timeOffset)
 
