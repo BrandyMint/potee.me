@@ -14,9 +14,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     "dblclick .progress .bar" : "add_event"
 
   add_event: (js_event) ->
-    # FIXME [AK] why 50?
     datetime = window.router.dashboard.datetime_by_x_coord(@model, js_event.clientX)
-    console.log(datetime)
     projectEvents = new Potee.Collections.EventsCollection(project: @model)
     event = projectEvents.create(
       title: "Title of your event",
