@@ -4,7 +4,8 @@
 %ul.nav#project_control
   %li#project_new
     = link_to '#/new' do
-      %i.icon-folder-open
+      %i.icon-folder
+      &nbsp;
       New project
 
 %ul.nav#scale-nav
@@ -28,17 +29,17 @@
 
   - else
     %li
-      = link_to '#' do
+      = link_to 'javascript: void()' do
         %i.icon-user
+        &nbsp;
         = current_user
-    -# %li.divider-vertical
     = render :partial => 'auth/facebook'
     = render :partial => 'auth/twitter'
     = render :partial => 'auth/google'
-
-    %li
+    %li.divider-vertical
+    %li.signout
       = link_to logout_path do
-        %i.icon-off
+        %i.icon-logout
 
   -#- if user_signed_in?
     -#%li
