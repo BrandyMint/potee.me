@@ -14,14 +14,11 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
   add_event: (js_event) ->
     datetime = window.router.dashboard.datetime_by_x_coord(@model, js_event.clientX)
-    projectEvents = new Potee.Collections.EventsCollection(project: @model)
-    event = projectEvents.create(
+    event = @model.projectEvents.create(
       title: "Title of your event",
       date: datetime,
       time: datetime,
       project_id: @model.id)
-    # directly push it to model collection
-    @model.projectEvents.push(event)
     event_view = new Potee.Views.Events.EventView
       model: event,
       x: js_event.offsetX
@@ -29,8 +26,6 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     el = event_view.render().$el
     @$el.append el
 #    el.effect('bounce', {times: 3}, 100)
-
-
 
   edit: (e)->
     e.stopPropagation()
