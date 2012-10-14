@@ -11,9 +11,10 @@
     = yield(:head)
 
   %body
-    %header.navbar.navbar-fixed-top
-      %nav.navbar-inner
-        .container
-          = render 'layouts/navigation'
+    - if controller.is_a? ProjectsController
+      %header.navbar.navbar-fixed-top
+        %nav.navbar-inner
+          .container
+            = render 'layouts/navigation'
 
     = yield

@@ -9,9 +9,17 @@
     = link_to '#/new' do
       %i.icon-folder-open
       New project
- 
+
 %ul.nav.pull-right
-  %li= current_user
+  %li
+    = link_to '#' do
+      %i.icon-user
+      = current_user
+  %li.divider-vertical
+  %li
+    = link_to logout_path do
+      %i.icon-off
+  %li.divider-vertical
 
   -#- if user_signed_in?
     -#%li
