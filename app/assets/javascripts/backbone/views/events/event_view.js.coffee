@@ -23,6 +23,7 @@ class Potee.Views.Events.EventView extends Backbone.View
   mouseleave: (e) ->
     @$el.removeClass('event-handled')
     @$el.unbind 'mouseover'
+    @cancel()
 
   update: (e)->
     e.preventDefault()
@@ -39,10 +40,20 @@ class Potee.Views.Events.EventView extends Backbone.View
         # window.location.hash = "/#{@model.id}"
     )
 
+  on_keypress: (e) ->
+    e ||= window.event
+    if e.keyCode == 27
+      @cancel()
+
   cancelEvent: (e)->
     e.preventDefault()
     e.stopPropagation()
+    @cancel()
+
+  cancel: ->
     view = this
+    $(document).unbind('keydown')
+    @$el.find('form').fadeOut('fast')
     @model.fetch
       success: (model) ->
         model.view = view
@@ -59,14 +70,19 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   renderEdit: ->
     return true if @mode == 'edit'
+
+    _.bindAll(this, 'on_keypress');
+    $(document).bind('keydown', this.on_keypress);
+
     @mode = 'edit'
     @$el.html @template_edit @model.toJSON()
+    @$el.find('input#title').focus()
     @.$("form").backboneLink(@model)
 
   renderShow: ->
     return true if @mode == 'show'
-    @mode = 'show'
     @$el.html @template_show @model.toJSON()
+    @mode = 'show'
 
   edit: ->
     @renderEdit()

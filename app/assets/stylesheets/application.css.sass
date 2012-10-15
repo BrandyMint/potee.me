@@ -4,11 +4,18 @@ $sansFontFamily:        "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans
 $serifFontFamily:       "proxima-nova", Georgia, "Times New Roman", Times, serif
 $monoFontFamily:        "proxima-nova", Monaco, Menlo, Consolas, "Courier New", monospace
 
-@import "bootstrap"
+@import "bootstrap_overrided"
 @import "colors"
 @import "variables"
 @import "ui"
 @import "welcome"
+
+::selection
+  color: black
+  background: #ccc
+::-moz-selection
+  color: black
+  background: #ccc
 
 body
   padding-top: 40px // Величани nav-bar-а
@@ -23,6 +30,17 @@ body
 
 // https://github.com/railsrumble/r12-team-61/wiki/Views
 .signout
+
+.icon-ok
+  margin-left: 3px
+
+#destroy
+  margin-left: 15px
+
+a#submit
+  color: #999
+  &:hover
+    color: white
 
 a.connected
   cursor: default
@@ -66,11 +84,11 @@ form.title-form
   padding: 0
 
 input#title
-  background: none
+  background-color: #000
   border: none
+  padding: 0 5px 0 5px
   margin: 0
   height: auto
-  padding: 0
   // # color: inherit
 
 .title
@@ -118,7 +136,7 @@ input#title
 .event-title
   position: absolute
   top: -20px
-  width: 200px
+  width: 280px
   //left: -40px
   //white-space: nowrap
   //width: 4px
@@ -130,7 +148,7 @@ input#title
 .event-form
   position: absolute
   top: -20px
-  width: 300px
+  width: 340px
   font-size: 12px
   text-shadow: 0 -1px 0 rgba(0,0,0,.25)
 
