@@ -1,0 +1,64 @@
+<% if rails_env == 'production' %>
+server {
+   server_name www.potee.me;
+   rewrite ^(.*)$ http://potee.me$1 permanent;
+}
+
+server {
+   server_name www.potee.ru;
+   rewrite ^(.*)$ http://potee.ru$1 permanent;
+}
+<% end %>
+
+server {
+   <% if rails_env == 'production' %>
+   server_name  potee.me  potee.ru *.potee.me *.potee.ru;
+   <% else %>
+   server_name .stage.potee.ru;
+   <% end %>
+
+   proxy_connect_timeout      900;
+   proxy_send_timeout         900;
+   proxy_read_timeout         900;
+   client_max_body_size 50000000;
+
+   gzip on;
+   gzip_comp_level 6;
+   gzip_http_version 1.0;
+   gzip_proxied any;
+   gzip_disable "MSIE [1-6]\.";
+   gzip_types application/atom+xml
+             application/json
+             application/x-javascript
+             application/xml
+             application/xml+rss
+             text/comma-separated-values
+             text/css
+             text/javascript
+             text/plain
+             text/xml
+             ;
+
+   access_log  /var/log/nginx/<%= application %>.access.log combined;
+
+   root <%= current_path %>/public;
+
+   try_files $uri/index.html $uri.html $uri @app;
+
+   location @app {
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-URL http://$host:$server_port$request_uri;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_redirect off;
+      proxy_pass       http://unix:<%= shared_path %>/pids/unicorn.sock;
+   }
+
+   location ~* ^/(?:uploads|system)/.+ {
+      root <%= shared_path %>;
+   }
+
+   error_page   404     /404.html;
+   error_page   500 502 503 504  /500.html;
+}
+
