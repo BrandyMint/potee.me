@@ -1,7 +1,7 @@
 <form id="edit-project" class='title-form project-form' name="project">
     <input type="text" name="title" id="title" tabindex="1" value="<%- title %>" >
-    <a href='#submit' id='submit'><i class="icon-ok icon-white"></i></a>
-    <a href='#cancel' id='cancel'><i class="icon-remove icon-white"></i></a>
+    <a href='#submit' id='submit' class='btn btn-mini'><i class="icon-ok icon-white"></i></a>
+    <!-- <a href='#cancel' id='cancel'><i class="icon-remove icon-white"></i></a> -->
     <a href="#/<%= id %>/destroy" data-confirm='Are you sure?' id='destroy' class="btn btn-danger btn-mini destroy" rel="tooltip" title="Remove the project forever">remove</i></a>
 </form>
 
