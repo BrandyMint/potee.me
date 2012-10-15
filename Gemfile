@@ -2,13 +2,17 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.8'
 
+gem 'airbrake'
+
 gem 'inherited_resources'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2'
+gem 'pg'
 
+gem 'rvm'
+gem 'unicorn'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -33,6 +37,8 @@ group :development do
   # Deploy with Capistrano
   gem 'capistrano'
   gem 'capistrano_colors'
+  gem 'capistrano-recipes0', '>= 1.1.0', :git => 'git://github.com/BrandyMint/capistrano-recipes0.git'
+  gem 'rvm-capistrano'
   gem 'debugger'
 end
 
