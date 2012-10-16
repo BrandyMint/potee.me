@@ -72,11 +72,15 @@ class Potee.Models.Dashboard extends Backbone.Model
       when "year"
         return moment(@max).clone().endOf("month")
 
+  offsetOf: (day) ->
+    day * @pixels_per_day
+
   # Возвращает индекс элемента
   #
   # @param [Date] date дата
+  # FIX убрать days/months/weeks. indexOf всегда должен вовращать номер дня
   # @param [String] input формат (days - дни, months - месяцы, weeks - недели)
-  indexOf: (date, input) ->
+  indexOf: (date, input='days') ->
     index = moment(date).diff(moment(@min), input)
     if input == "days"
       index = index + @spanDays

@@ -68,6 +68,14 @@ class Potee.Views.DashboardView extends Backbone.View
     return
 
   scrollToToday: ->
+    day = @model.indexOf( moment() ) - 2
+    console.log 'day num ' + day
+
+    x =  @model.offsetOf day
+    console.log 'scroll to ' + x
+    $('#viewport').scrollLeft x
+
+    return
     switch @model.get("scale")
       when "week"
         today = moment()
