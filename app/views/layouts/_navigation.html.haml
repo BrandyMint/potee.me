@@ -12,6 +12,13 @@
   -#%li
     -#%p.navbar-text
       -#%i.icon-tasks
+  %li.divider-vertical
+  %li
+    .navbar-text
+      .btn-group
+        .btn.btn-inverse.btn-mini week
+        .btn.btn-inverse.btn-mini month
+        .btn.btn-inverse.btn-mini year
   %li#scale-days.active= link_to 'Week', '#days'
   %li#scale-weeks= link_to 'Month', '#weeks'
   %li#scale-months= link_to 'Year', '#months'
@@ -20,7 +27,7 @@
 %ul.nav.pull-right{:style=>'font-size: 16px'}
   - if !current_user or current_user.incognito?
     %li.signup
-      = link_to '#' do
+      .navbar-text
         Sign up to save your projects &rarr;
 
     = render :partial => 'auth/facebook'

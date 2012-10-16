@@ -11,6 +11,9 @@ class Potee.Views.DashboardView extends Backbone.View
     _.bindAll(this, 'on_keypress')
     $(document).bind('keydown', @on_keypress)
 
+    $(document).bind 'click', (e)=>
+      if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
+        @cancelCurrentForm()
 
     @currentForm = undefined
 

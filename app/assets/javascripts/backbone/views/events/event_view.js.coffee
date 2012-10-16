@@ -94,7 +94,12 @@ class Potee.Views.Events.EventView extends Backbone.View
     @mode = 'show'
     @$el.html @template_show @model.toJSON()
 
-  edit: ->
+  edit: (e) =>
+
+    # Останаавливаем клик чтобы он не перешел выше где
+    # dashboard его поймает и решил закрыть эту форму
+    e.preventDefault()
+    e.stopPropagation()
     @renderEdit()
 
   calcOffset: ->
