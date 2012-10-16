@@ -1,0 +1,44 @@
+// Events
+
+.event
+  position: absolute
+  top: -3px
+  // Хоть какую-то высоту он должен иметь, иначе он не прыгает при добавлении
+  width: 280px
+  height: 30px
+  // border: 1px solid red
+  +opacity(0.6)
+  &.event-handled
+    .event-title
+      //font-size: 12px
+    +opacity(1.0)
+
+.event-bar
+  position: absolute
+  width: 7px
+  top: -3px
+  cursor: w-resize
+  cursor: col-resize
+  height: 30px // TODO связать с толщиной проекта
+  +box-shadow(outset 0 1px 1px rgba(0,0,0,.075))
+  +border-radius(2px)
+
+.event-title
+  position: absolute
+  top: -20px
+  width: 280px
+  //left: -40px
+  //white-space: nowrap
+  //width: 4px
+  //font-size: 10px
+  // +opacity(0.3)
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25)
+  cursor: pointer
+
+.event-form
+  position: absolute
+  top: -20px
+  width: 340px
+  font-size: 12px
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25)
+

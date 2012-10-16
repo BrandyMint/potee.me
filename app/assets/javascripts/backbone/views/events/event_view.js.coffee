@@ -10,20 +10,24 @@ class Potee.Views.Events.EventView extends Backbone.View
     "click .event-title" : "edit"
     "submit #edit-event" : "update"
     "click #submit"        : "update"
-    'click #cancel'        : 'cancelEvent'
-    'click #destroy'       : 'destroyEvent'
+    'click #cancel'         : 'cancelEvent'
+    'click #destroy'        : 'destroyEvent'
     'mouseenter'            : 'mouseenter'
     'mouseleave'            : 'mouseleave'
 
   mouseenter: (e) ->
+    #e.stopPropagation()
+    #return if window.dashboard.view.currentForm
     @$el.addClass('event-handled')
     @$el.bind 'mouseover', (e)->
       e.stopPropagation()
 
   mouseleave: (e) ->
+    #e.stopPropagation()
+    #return if window.dashboard.view.currentForm
     @$el.removeClass('event-handled')
     @$el.unbind 'mouseover'
-    @cancel()
+    @cancelEvent(e)
 
   update: (e)->
     e.preventDefault()
@@ -40,19 +44,15 @@ class Potee.Views.Events.EventView extends Backbone.View
         # window.location.hash = "/#{@model.id}"
     )
 
-  on_keypress: (e) ->
-    e ||= window.event
-    if e.keyCode == 27
-      @cancel()
 
   cancelEvent: (e)->
     e.preventDefault()
     e.stopPropagation()
-    @cancel()
+    window.dashboard.view.setCurrentForm undefined
+    # @cancel()
 
   cancel: ->
     view = this
-    $(document).unbind('keydown')
     @$el.find('form').fadeOut('fast')
     @model.fetch
       success: (model) ->
@@ -64,15 +64,16 @@ class Potee.Views.Events.EventView extends Backbone.View
     e.preventDefault()
     e.stopPropagation()
     @model.collection.remove @model
-    @$el.fadeOut('fast', ->
-      @remove
+
+    @$el.fadeOut('fast', =>
+      @remove()
+      window.dashboard.view.currentForm = undefined
     )
 
   renderEdit: ->
     return true if @mode == 'edit'
 
-    _.bindAll(this, 'on_keypress');
-    $(document).bind('keydown', this.on_keypress);
+    window.dashboard.view.setCurrentForm this
 
     @mode = 'edit'
     @$el.html @template_edit @model.toJSON()
@@ -81,8 +82,9 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   renderShow: ->
     return true if @mode == 'show'
-    @$el.html @template_show @model.toJSON()
+
     @mode = 'show'
+    @$el.html @template_show @model.toJSON()
 
   edit: ->
     @renderEdit()

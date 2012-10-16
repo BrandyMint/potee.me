@@ -6,15 +6,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
   className: 'project-title'
 
   initialize: ->
-    _.bindAll(this, 'on_keypress');
-    $(document).bind('keydown', this.on_keypress);
     @collection = window.projects
     @model = @options.model
-
-  on_keypress: (e) ->
-    e ||= window.event
-    if e.keyCode == 27
-      @cancel()
 
   events :
     "submit #edit-project" : "update"
@@ -38,13 +31,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
   destroyEvent: (e) ->
     @model.view.destroy()
 
-  keypress: (event)->
-    alert(event)
-
   cancelEvent: (e) ->
-    e.preventDefault()
-    e.stopPropagation()
-    @cancel()
+    window.dashboard.view.cancelCurrentForm()
 
   cancel: ->
     $(document).unbind 'click'

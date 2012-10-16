@@ -21,7 +21,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       project_id: @model.id)
 
     eventElement = @renderEvent(event, js_event.offsetX)
-    $(eventElement).effect('bounce', {times: 3}, 100)
+    eventElement.effect('bounce', {times: 3}, 150)
     @$el.resizable("option", "minWidth", @minWidthForResize())
 
   edit: (e)->
@@ -77,6 +77,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @titleView = new title_view_class options
     @titleView.render()
+
+    window.dashboard.view.setCurrentForm @titleView unless state == 'show'
 
     if !@titleEl
       @titleEl = @titleView.el
@@ -136,8 +138,9 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       model: event
       x: x
 
-    @$el.append(event_view.render().el)
-    $(event_view.el).draggable(
+    @$el.append event_view.render().$el
+
+    event_view.$el.draggable(
       axis: 'x',
       containment: "parent",
       distance: '3',
@@ -145,8 +148,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
         @eventDateTimeChanged(event, ui.position.left + @leftMargin())
     )
 
-    $(event_view.el).css("position", "absolute")
-    return event_view.el
+    event_view.$el.css("position", "absolute")
+    return event_view.$el
 
   eventDateTimeChanged: (event, offset) ->
     datetime = window.dashboard.datetimeAt(offset)

@@ -8,11 +8,31 @@ class Potee.Views.DashboardView extends Backbone.View
     @update()
     @scrollToToday()
 
+    _.bindAll(this, 'on_keypress')
+    $(document).bind('keydown', @on_keypress)
+
+
+    @currentForm = undefined
+
+  on_keypress: (e) =>
+    e.stopPropagation()
+    if e.keyCode == 27
+      e ||= window.event
+      e.preventDefault()
+      @cancelCurrentForm(e)
 
   setScale: (scale) ->
     @activateScale scale
     @timeline_view.setScale scale
     @update()
+
+  cancelCurrentForm: (e) =>
+    @setCurrentForm undefined
+
+  setCurrentForm: (form_view) =>
+    if @currentForm
+      @currentForm.cancel()
+    @currentForm = form_view
 
   activateScale: (scale) ->
     $('#scale-nav li').removeClass('active')
