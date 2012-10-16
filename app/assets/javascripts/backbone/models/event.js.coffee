@@ -1,6 +1,9 @@
 class Potee.Models.Event extends Backbone.Model
   paramRoot: "event"
 
+  defaults:
+    title: "Some event"
+
   initialize: ->
     @date = moment(@get("date")).toDate()
     @time = moment(@get("time")).toDate()

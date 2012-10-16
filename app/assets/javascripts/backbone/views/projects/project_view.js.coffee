@@ -15,7 +15,6 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   add_event: (js_event) ->
     datetime = window.router.dashboard.datetimeAt(js_event.offsetX + @leftMargin())
     event = @model.projectEvents.create(
-      title: "Title of your event",
       date: datetime,
       time: datetime,
       project_id: @model.id)
