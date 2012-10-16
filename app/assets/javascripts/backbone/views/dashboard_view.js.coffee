@@ -25,8 +25,7 @@ class Potee.Views.DashboardView extends Backbone.View
       @cancelCurrentForm(e)
 
   setScale: (scale) ->
-    @activateScale scale
-    @timeline_view.setScale scale
+    @timeline_view.resetScale scale
     @update()
 
   cancelCurrentForm: (e) =>
@@ -36,10 +35,6 @@ class Potee.Views.DashboardView extends Backbone.View
     if @currentForm
       @currentForm.cancel()
     @currentForm = form_view
-
-  activateScale: (scale) ->
-    $('#scale-nav li').removeClass('active')
-    $("#scale-#{scale}").addClass('active')
 
   resetWidth: ->
     @model.findStartEndDate()
@@ -52,7 +47,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   render: ->
     # @timeline_zoom_view = new Potee.Views.TimelineZoomView
-
+    #
     @timeline_view ||= new Potee.Views.TimelineView
       dashboard: @model
       dashboard_view: this
@@ -74,12 +69,13 @@ class Potee.Views.DashboardView extends Backbone.View
 
   scrollToToday: ->
     switch @model.get("scale")
-      when "days"
+      when "week"
         today = moment()
-      when "weeks"
-        today = moment().day(0)
       when "month"
+        today = moment().day(0)
+      when "year"
         today = moment().startOf("month")
 
     offset = today.diff(moment(@model.min_with_span()), "days") * @model.pixels_per_day
+
     $('#viewport').scrollLeft(offset)

@@ -3,24 +3,25 @@ class Potee.Models.Dashboard extends Backbone.Model
   spanDays: 3
 
   defaults:
-    scale: 'days'
+    scale: 'week'
 
   initialize: (@projects) ->
     @findStartEndDate()
     @on 'change:scale', @changeScale
     return
 
-  changeScale: ->
+  changeScale: =>
     switch @get('scale')
-      when "days"
+      when "week"
         @pixels_per_day = 150
-      when "weeks"
+      when "month"
         @pixels_per_day = 40
-      when "months"
+      when "year"
         @pixels_per_day = 10
 
     @setDuration(@min, @max)
-    @view.setScale @get('scale')
+    if @view
+      @view.setScale @get('scale')
 
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
@@ -55,20 +56,20 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   min_with_span: () ->
     switch @get('scale')
-      when "days"
+      when "week"
        return moment(@min).clone().subtract('days', @spanDays).toDate()
-      when "weeks"
+      when "month"
         return moment(@min).clone().day(0).toDate()
-      when "months"
+      when "year"
         return moment(@min).clone().startOf("month").toDate()
 
   max_with_span: () ->
     switch @get('scale')
-      when "days"
+      when "week"
         return moment(@max).clone().add('days', @spanDays).toDate()
-      when "weeks"
+      when "month"
         return moment(@max).clone().day(6).toDate()
-      when "months"
+      when "year"
         return moment(@max).clone().endOf("month")
 
   # Возвращает индекс элемента

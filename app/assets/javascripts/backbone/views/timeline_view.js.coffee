@@ -8,11 +8,17 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = @options.dashboard
     @view = @options.view
 
-  setScale: (scale) ->
+  resetScale: ->
+    scale = @dashboard.get('scale')
+
+    $('#scale-nav a').removeClass('active')
+    $("#scale-#{scale}").addClass('active')
+
     switch scale
-      when 'days'   then @scaleClass = Potee.Views.Timelines.DaysView
-      when 'weeks'  then @scaleClass = Potee.Views.Timelines.WeeksView
-      when 'months' then @scaleClass = Potee.Views.Timelines.MonthsView
+      when 'week'   then @scaleClass = Potee.Views.Timelines.DaysView
+      when 'month'  then @scaleClass = Potee.Views.Timelines.WeeksView
+      when 'year' then @scaleClass = Potee.Views.Timelines.MonthsView
+      else console.log('unknown scale ' + scale)
 
     @currentView = new @scaleClass
       date_start: moment(@dashboard.min_with_span())
@@ -24,7 +30,7 @@ class Potee.Views.TimelineView extends Backbone.View
     @$el.html @currentView.render().el
 
   render: ->
-    @setScale window.dashboard.get('scale')
+    @resetScale()
 
     # В Firefox стиль отображения для td должен быть дефолтным в отличии от Chrome
     if $.browser.mozilla

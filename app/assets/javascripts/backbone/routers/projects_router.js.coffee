@@ -3,7 +3,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @projects = @getProjectsCollection(options.projects)
     window.projects = @projects
 
-    @dashboard = new Potee.Models.Dashboard(@projects)
+    @dashboard = new Potee.Models.Dashboard @projects
 
     window.dashboard = @dashboard
 
@@ -13,21 +13,21 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     # ":id/edit" : "edit"
     # ":id"      : "show"
     ".*"        : "index"
-    'days'      : 'scaleToDays'
-    'weeks'     : 'scaleToWeeks'
-    'months'    : 'scaleToMonths'
+    'week'      : 'scaleToWeek'
+    'month'     : 'scaleToMonth'
+    'year'      : 'scaleToYear'
 
-  scaleToWeeks: ->
+  scaleToWeek: ->
+    window.dashboard.set 'scale', 'week'
     @generateDashboardView()
-    window.dashboard.set 'scale', 'weeks'
 
-  scaleToMonths: ->
+  scaleToMonth: ->
+    window.dashboard.set 'scale', 'month'
     @generateDashboardView()
-    window.dashboard.set 'scale', 'months'
 
-  scaleToDays: ->
+  scaleToYear: ->
+    window.dashboard.set 'scale', 'year'
     @generateDashboardView()
-    window.dashboard.set 'scale', 'days'
 
   generateDashboardView: ->
     @dashboard_view ||= new Potee.Views.DashboardView
