@@ -1,5 +1,13 @@
 // Events
 
+#dashboard.scale-year, #dashboard.scale-month
+  .event
+    .event-title
+      visibility: hidden
+    &.event-handled
+      .event-title
+        visibility: visible
+
 .event
   position: absolute
   top: -3px
