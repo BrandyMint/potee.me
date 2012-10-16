@@ -9,8 +9,12 @@ class Potee.Models.Dashboard extends Backbone.Model
     @findStartEndDate()
     @on 'change:scale', @changeScale
     @today = moment()
-    @currentDate = undefined # Это означает что будет возвращаться дата 'сегодня'
+
+    @setToday()
     return
+
+  setToday: ->
+    @currentDate = undefined
 
   getCurrentDate: ->
     @currentDate || moment()

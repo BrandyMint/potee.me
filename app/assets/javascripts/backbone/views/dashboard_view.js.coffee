@@ -33,6 +33,7 @@ class Potee.Views.DashboardView extends Backbone.View
     e.preventDefault()
 
     $('#project_new').addClass('active')
+
     project = new Potee.Models.Project
     window.projects_view.addOne project, true
     project.view.setTitleView 'new'
@@ -49,22 +50,36 @@ class Potee.Views.DashboardView extends Backbone.View
       return true
 
     # TODO Тоже для правого края
-    date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
 
     if @model.currentDate or @viewport.scrollLeft()>1
+      @$el.stop()
+      date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
 
-
   keydown: (e) =>
-    e.stopPropagation()
-    if e.keyCode == 27
-      e ||= window.event
-      e.preventDefault()
-      @cancelCurrentForm(e)
+    e ||= window.event
+
+    switch e.keyCode
+      when 27
+        e.preventDefault()
+        e.stopPropagation()
+        @cancelCurrentForm(e)
+      when 13
+        @newProject(e) unless @currentForm
+      when 32
+        unless @currentForm
+          e.preventDefault()
+          e.stopPropagation()
+          @gotoToday()
 
   setScale: (scale) ->
     @timeline_view.resetScale scale
     @update()
+
+  gotoToday: ->
+    @model.setToday()
+    # $(document).stop().animate { scrollTop: 0 }, 500, 'easeInOutExpo'
+    @gotoDate @model.getCurrentDate()
 
   gotoCurrentDate: ->
     @gotoDate @model.getCurrentDate()
@@ -113,13 +128,9 @@ class Potee.Views.DashboardView extends Backbone.View
     return
 
   gotoDate: (date) ->
+    $(document).scrollTop(0)
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
-    @viewport.scrollLeft x
 
-  gotoDay: (day) ->
-    x = @model.middleOffsetOf( day )
-    return if @viewport.scrollLeft() == x
-    @programmedScrolling = true
-    @viewport.scrollLeft x
+    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo'
