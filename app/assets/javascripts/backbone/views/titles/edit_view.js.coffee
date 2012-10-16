@@ -50,25 +50,5 @@ class Potee.Views.Titles.EditView extends Backbone.View
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))
 
-    @$el.bind 'blur', ->
-      console.log 'blue el'
-
-    $(document).blur ->
-      console.log 'blur'
-
-    #@$el.click (e)->
-      #event.stopPropagation()
-
-    #view = this
-    #$(document).click ->
-      #view.cancel()
-
-    #$(@el).bind 'clickoutside', ->
-      #alert('asd')
-      #view.cancel()
-
-    # if(!$(event.target).is('#foo')))
-
-
     @.$("form").backboneLink(@model)
     return this

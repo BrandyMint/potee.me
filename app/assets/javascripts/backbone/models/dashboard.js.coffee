@@ -16,7 +16,6 @@ class Potee.Models.Dashboard extends Backbone.Model
     @currentDate || moment()
 
   setCurrentDate: (date) ->
-    console.log 'setCurrentDate', date.toString()
     if date == @today
       @currentDate = undefined
     else
@@ -100,7 +99,6 @@ class Potee.Models.Dashboard extends Backbone.Model
     # Это Дата?
     if _.isObject(day)
       minutes = moment(day).diff(moment(@min_with_span()), 'minutes')
-      # console.log 'minutes', minutes
 
       (@pixels_per_day*minutes)/(24*60)
 
@@ -136,8 +134,6 @@ class Potee.Models.Dashboard extends Backbone.Model
 
     hours = Math.floor((x - daysWidth) / (@pixels_per_day / 24))
     hoursWidth = Math.round(hours * (@pixels_per_day / 24))
-
-    # console.log 'hours', hours
 
     minutes = Math.round((x - daysWidth - hoursWidth) / (@pixels_per_day / (24 * 60)))
     return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes).toDate()

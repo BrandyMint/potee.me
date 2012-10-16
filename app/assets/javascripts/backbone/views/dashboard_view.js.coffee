@@ -51,7 +51,6 @@ class Potee.Views.DashboardView extends Backbone.View
     @update()
 
   gotoCurrentDate: ->
-    console.log 'gotoCurrentDate', @model.getCurrentDate().toString()
     @gotoDate @model.getCurrentDate()
 
   cancelCurrentForm: (e) =>
@@ -98,16 +97,13 @@ class Potee.Views.DashboardView extends Backbone.View
     return
 
   gotoDate: (date) ->
-    # console.log 'gotoDate', date.toString()
     x = @model.middleOffsetOf date
-    # console.log 'gotoScroll', x
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
     @viewport.scrollLeft x
 
   gotoDay: (day) ->
     x = @model.middleOffsetOf( day )
-    # console.log 'gotoDay', day, x
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
     @viewport.scrollLeft x
