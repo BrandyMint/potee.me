@@ -8,7 +8,19 @@ class Potee.Models.Dashboard extends Backbone.Model
   initialize: (@projects) ->
     @findStartEndDate()
     @on 'change:scale', @changeScale
+    @today = moment()
+    @currentDate = undefined # Это означает что будет возвращаться дата 'сегодня'
     return
+
+  getCurrentDate: ->
+    @currentDate || moment()
+
+  setCurrentDate: (date) ->
+    console.log 'setCurrentDate', date.toString()
+    if date == @today
+      @currentDate = undefined
+    else
+      @currentDate = date
 
   changeScale: =>
     switch @get('scale')
@@ -72,14 +84,37 @@ class Potee.Models.Dashboard extends Backbone.Model
       when "year"
         return moment(@max).clone().endOf("month")
 
+  getDateOfDay: (day) ->
+     return moment(@min).clone().add('days', day - @spanDays) #.toDate()
+
   # Координаты дня для сердины экрана
   middleOffsetOf: (day) ->
-     x = @offsetOf( day ) - (@view.$el.parent().width() / 2) - (@pixels_per_day/2)
+     x = @_middleOffsetOf(day)
      return 0 if x < 0
      return x
 
+  _middleOffsetOf: (day) ->
+     @offsetOf( day ) - (@view.viewportWidth() / 2) - (@pixels_per_day/2)
+
   offsetOf: (day) ->
-    day * @pixels_per_day
+    # Это Дата?
+    if _.isObject(day)
+      minutes = moment(day).diff(moment(@min_with_span()), 'minutes')
+      # console.log 'minutes', minutes
+
+      (@pixels_per_day*minutes)/(24*60)
+
+    else
+      day * @pixels_per_day
+
+  dayOfOffset: (offset) ->
+    Math.round( offset / @pixels_per_day )
+
+  dayOfMiddleOffset: (offset) ->
+    @dayOfOffset( offset + (@view.viewportWidth()/2) - @pixels_per_day/2)
+
+  dateOfMiddleOffset: (offset) ->
+    @datetimeAt offset + (@view.viewportWidth()/2) # - @pixels_per_day/2
 
   # Возвращает индекс элемента
   #
@@ -101,6 +136,8 @@ class Potee.Models.Dashboard extends Backbone.Model
 
     hours = Math.floor((x - daysWidth) / (@pixels_per_day / 24))
     hoursWidth = Math.round(hours * (@pixels_per_day / 24))
+
+    # console.log 'hours', hours
 
     minutes = Math.round((x - daysWidth - hoursWidth) / (@pixels_per_day / (24 * 60)))
     return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes).toDate()

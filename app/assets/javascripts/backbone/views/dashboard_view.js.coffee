@@ -1,24 +1,45 @@
 class Potee.Views.DashboardView extends Backbone.View
   # id: 'dashboard'
   # tagName: 'div'
+  #
 
   initialize: (options)->
+    @viewport =$('#viewport')
     @model.view = this
     @setElement($('#dashboard'))
     @update()
 
-    @gotoDate moment()
+    @programmedScrolling = false
 
-    _.bindAll(this, 'on_keypress')
-    $(document).bind('keydown', @on_keypress)
+    _.bindAll(this, 'scroll')
+    @viewport.bind('scroll', @scroll)
 
+    _.bindAll(this, 'keydown')
+    $(document).bind('keydown', @keydown)
     $(document).bind 'click', (e)=>
       if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
         @cancelCurrentForm()
 
     @currentForm = undefined
 
-  on_keypress: (e) =>
+  scroll: (e)->
+    if @programmedScrolling
+      @programmedScrolling = false
+      return false
+
+    # Если мы сменили масштаб где физиески нельзя поставить сегодняшнюю дату
+    # 
+    if @viewportWidth()>=@$el.width()
+      return true
+
+    # TODO Тоже для правого края
+    date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
+
+    if @model.currentDate or @viewport.scrollLeft()>1
+      @model.setCurrentDate date
+
+
+  keydown: (e) =>
     e.stopPropagation()
     if e.keyCode == 27
       e ||= window.event
@@ -28,6 +49,10 @@ class Potee.Views.DashboardView extends Backbone.View
   setScale: (scale) ->
     @timeline_view.resetScale scale
     @update()
+
+  gotoCurrentDate: ->
+    console.log 'gotoCurrentDate', @model.getCurrentDate().toString()
+    @gotoDate @model.getCurrentDate()
 
   cancelCurrentForm: (e) =>
     @setCurrentForm undefined
@@ -40,11 +65,15 @@ class Potee.Views.DashboardView extends Backbone.View
   resetWidth: ->
     @model.findStartEndDate()
 
-    viewportWidth = $('#viewport').width()
+    viewportWidth = @viewportWidth() # @viewport.width()
     if viewportWidth > @model.width()
       @model.setWidth(viewportWidth)
 
     @$el.css('width', @model.width())
+
+  viewportWidth: ->
+    @viewport.width()
+    # @$el.parent().width()
 
   render: ->
     # @timeline_zoom_view = new Potee.Views.TimelineZoomView
@@ -69,7 +98,16 @@ class Potee.Views.DashboardView extends Backbone.View
     return
 
   gotoDate: (date) ->
-    @gotoDay @model.indexOf( date )
+    # console.log 'gotoDate', date.toString()
+    x = @model.middleOffsetOf date
+    # console.log 'gotoScroll', x
+    return if @viewport.scrollLeft() == x
+    @programmedScrolling = true
+    @viewport.scrollLeft x
 
   gotoDay: (day) ->
-    $('#viewport').scrollLeft @model.middleOffsetOf( day )
+    x = @model.middleOffsetOf( day )
+    # console.log 'gotoDay', day, x
+    return if @viewport.scrollLeft() == x
+    @programmedScrolling = true
+    @viewport.scrollLeft x

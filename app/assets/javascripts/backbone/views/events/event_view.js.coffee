@@ -7,7 +7,8 @@ class Potee.Views.Events.EventView extends Backbone.View
   className: "event"
 
   events:
-    "click .event-title" : "edit"
+    "click .event-title-el" : "edit"
+    "click .event-bar" : "edit"
     "submit #edit-event" : "update"
     "click #submit"      : "update"
     'click #cancel'      : 'cancelEvent'
@@ -19,20 +20,18 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   mouseenter: (e) ->
     return true if window.dashboard.view.currentForm
-    #e.stopPropagation()
-    #return if window.dashboard.view.currentForm
     @$el.addClass('event-handled')
-    #@$el.bind 'mouseover', (e)->
-      #e.stopPropagation()
+    true
 
   mouseleave: (e) ->
     #e.stopPropagation()
     return true if window.dashboard.view.currentForm
-    return false if @$el.hasClass('ui-draggable-dragging')
+    return true if @$el.hasClass('ui-draggable-dragging')
     if @$el.hasClass('event-handled')
       @$el.removeClass('event-handled')
       # @$el.unbind 'mouseover'
       # @cancelEvent(e)
+    true
 
   update: (e)->
     e.preventDefault()
