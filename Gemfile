@@ -14,6 +14,14 @@ gem 'pg'
 gem 'rvm'
 gem 'unicorn'
 
+gem "haml", ">= 3.0.0"
+gem "haml-rails"
+gem "omniauth", "~> 1.1.0"
+gem "omniauth-facebook"
+gem "omniauth-twitter"
+gem "omniauth-google-oauth2"
+gem "rails_config"
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -30,8 +38,6 @@ gem 'rails-backbone'
 gem 'vendorer'
 
 gem 'bootstrap-sass'
-
-gem 'vendorer'
 
 group :development do
   # Deploy with Capistrano
@@ -61,12 +67,3 @@ end
 
 # To use debugger
 # gem 'debugger'
-
-gem "haml", ">= 3.0.0"
-gem "haml-rails"
-gem "omniauth", "~> 1.1.0"
-gem "omniauth-facebook"
-gem "omniauth-twitter"
-gem "omniauth-google-oauth2"
-gem "rails_config"
-gem "authbuttons-rails"
