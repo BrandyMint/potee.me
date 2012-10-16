@@ -16,11 +16,27 @@ class Potee.Views.DashboardView extends Backbone.View
 
     _.bindAll(this, 'keydown')
     $(document).bind('keydown', @keydown)
-    $(document).bind 'click', (e)=>
-      if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
-        @cancelCurrentForm()
+
+    _.bindAll(this, 'click')
+    $(document).bind('click', @click)
+
+    $('#new-project-link').bind('click', @newProject)
 
     @currentForm = undefined
+
+  click: (e) ->
+    if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
+      @cancelCurrentForm()
+
+  newProject: (e)->
+    e.stopPropagation()
+    e.preventDefault()
+
+    $('#project_new').addClass('active')
+    project = new Potee.Models.Project
+    window.projects_view.addOne project, true
+    project.view.setTitleView 'new'
+    return false
 
   scroll: (e)->
     if @programmedScrolling
