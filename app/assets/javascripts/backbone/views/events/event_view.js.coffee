@@ -12,23 +12,26 @@ class Potee.Views.Events.EventView extends Backbone.View
     "click #submit"      : "update"
     'click #cancel'      : 'cancelEvent'
     'click #destroy'     : 'destroyEvent'
-    'mouseenter .event-title'         : 'mouseenter'
-    'mouseleave'         : 'mouseleave'
+    'mouseenter .event-title-el'  : 'mouseenter'
+    'mouseenter .event-bar'       : 'mouseenter'
+    'mouseleave .event-title-el'  : 'mouseleave'
+    'mouseleave .event-bar'       : 'mouseleave'
 
   mouseenter: (e) ->
-    return false if window.dashboard.view.currentForm
+    return true if window.dashboard.view.currentForm
     #e.stopPropagation()
     #return if window.dashboard.view.currentForm
     @$el.addClass('event-handled')
-    @$el.bind 'mouseover', (e)->
-      e.stopPropagation()
+    #@$el.bind 'mouseover', (e)->
+      #e.stopPropagation()
 
   mouseleave: (e) ->
     #e.stopPropagation()
-    return false if window.dashboard.view.currentForm
+    return true if window.dashboard.view.currentForm
+    return false if @$el.hasClass('ui-draggable-dragging')
     if @$el.hasClass('event-handled')
       @$el.removeClass('event-handled')
-      @$el.unbind 'mouseover'
+      # @$el.unbind 'mouseover'
       # @cancelEvent(e)
 
   update: (e)->
@@ -55,12 +58,14 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   cancel: ->
     view = this
+    @$el.removeClass('event-handled')
     @$el.find('form').fadeOut('fast')
-    @model.fetch
-      success: (model) ->
-        model.view = view
-        view.model = model
-        view.renderShow()
+    @renderShow()
+    #@model.fetch
+      #success: (model) ->
+        #model.view = view
+        #view.model = model
+        #view.renderShow()
 
   destroyEvent: (e)->
     e.preventDefault()
@@ -79,6 +84,7 @@ class Potee.Views.Events.EventView extends Backbone.View
 
     @mode = 'edit'
     @$el.html @template_edit @model.toJSON()
+    @$el.addClass('event-handled')
     @$el.find('input#title').focus()
     @.$("form").backboneLink(@model)
 
