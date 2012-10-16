@@ -1,14 +1,21 @@
 Potee::Application.routes.draw do
+
+  h = { :host => Settings.application.host }
+  h[:port] = 30009 if Rails.env.test?
+  self.default_url_options h
+
   match "/404", :to => "errors#not_found"
 
   match '/auth/:provider/callback', to: 'sessions#create'
   match '/auth/failure', to: redirect('/')
+
   match 'logout', to: 'sessions#destroy', as: 'logout'
 
   root to: 'welcome#index'
 
   resources :projects
   resources :events
+
   resources :pages, :only => [] do
     collection do
       get :about
