@@ -20,9 +20,11 @@ class Potee.Views.DashboardView extends Backbone.View
     _.bindAll(this, 'click')
     $(document).bind('click', @click)
 
+
     $('#new-project-link').bind('click', @newProject)
 
     @currentForm = undefined
+    @todayLink = undefined
 
   click: (e) ->
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
@@ -39,7 +41,18 @@ class Potee.Views.DashboardView extends Backbone.View
     project.view.setTitleView 'new'
     return false
 
+  resetTodayLink: (date)->
+    if @model.dateIsOnDashboard @model.today
+      return unless @todayLink
+      @todayLink.remove()
+      @todayLink = undefined
+    else
+      return if @todayLink
+      @todayLink = new Potee.Views.TodayView
+      @todayLink.render()
+
   scroll: (e)->
+
     if @programmedScrolling
       @programmedScrolling = false
       return false
@@ -78,7 +91,6 @@ class Potee.Views.DashboardView extends Backbone.View
 
   gotoToday: ->
     @model.setToday()
-    # $(document).stop().animate { scrollTop: 0 }, 500, 'easeInOutExpo'
     @gotoDate @model.getCurrentDate()
 
   gotoCurrentDate: ->
@@ -128,7 +140,6 @@ class Potee.Views.DashboardView extends Backbone.View
     return
 
   gotoDate: (date) ->
-    $(document).scrollTop(0)
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true

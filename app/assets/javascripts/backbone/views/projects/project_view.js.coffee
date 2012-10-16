@@ -9,12 +9,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @model.view = this
 
   events:
-    "click .project-title-el" : "edit"
+    "click .title" : "edit"
     "click .progress .bar" : "add_event"
-
-    # Это так делаем чтобы можо было добавлять эвенты
-    # под титулом, когда он не заполнен
-    "click .title" : "add_event"
 
   add_event: (js_event) ->
     #e.stopPropagation()

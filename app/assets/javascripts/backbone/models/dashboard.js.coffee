@@ -24,6 +24,7 @@ class Potee.Models.Dashboard extends Backbone.Model
       @currentDate = undefined
     else
       @currentDate = date
+    @view.resetTodayLink @currentDate
 
   changeScale: =>
     switch @get('scale')
@@ -102,8 +103,7 @@ class Potee.Models.Dashboard extends Backbone.Model
   offsetOf: (day) ->
     # Это Дата?
     if _.isObject(day)
-      minutes = moment(day).diff(moment(@min_with_span()), 'minutes')
-
+      minutes = moment(day).diff(moment(@min_with_span()), 'minutes') 
       (@pixels_per_day*minutes)/(24*60)
 
     else
@@ -128,6 +128,12 @@ class Potee.Models.Dashboard extends Backbone.Model
     if input == "days"
       index = index + @spanDays
     index
+
+  dateIsOnDashboard: (date) ->
+    left = @view.viewport.scrollLeft() 
+    right = left + @view.viewportWidth()
+    offset =  @offsetOf(date)
+    left < offset < right
 
   # Возвращает время в зависимости от X
   #
