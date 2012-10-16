@@ -1,0 +1,50 @@
+// Projects
+
+#projects
+  height: auto
+  // 720px
+
+  // ЗАчем это нужно? Из-за него проекты немного двигаются при скроле.
+  // Отключил
+  // overflow-y: auto
+  overflow: visible
+
+#projects
+  position: absolute
+  z-index: 100
+  margin-top: 80px
+
+.project
+  position: relative
+  height: 90px
+
+.title
+  top: -24px
+  z-index: 120
+  // https://www.pivotaltracker.com/story/show/37732619
+  width: 200px
+  position: relative
+  font-size: 11px
+  padding-left: 5px
+  height: 23px
+  // color: #343434!important
+  // +opacity(0.6)
+  text-transform: uppercase
+  letter-spacing: 1px
+
+
+
+// Project's title and form
+
+form.title-form
+  height: 24px
+  margin: 0
+  padding: 0
+
+input#title
+  background-color: #000
+  border: none
+  padding: 0 5px 0 5px
+  margin: 0
+  height: auto
+  // # color: inherit

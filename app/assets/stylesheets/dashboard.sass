@@ -1,0 +1,36 @@
+// Dashboard
+
+#viewport
+  @extend .span12
+  margin: 15px 0 0 0
+  width: 100%
+  position: absolute
+  color: $fontColor
+  height: $dashboardHeight
+  overflow-x: scroll
+  overflow-y: hidden
+
+#dashboard
+  position: absolute
+  width: 100%
+
+#dashboard.scale-month
+  .event-bar
+    width: 4px
+  .project
+    height: 50px
+
+#dashboard.scale-year
+  .event-bar
+    width: 2px
+  .project
+    height: 35px
+
+#dashboard.scale-year, #dashboard.scale-month
+  .event
+    .event-title
+      visibility: hidden
+    &.event-handled
+      .event-title
+        visibility: visible
+

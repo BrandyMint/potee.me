@@ -14,7 +14,7 @@ class Potee.Views.TimelineView extends Backbone.View
     $('#scale-nav a').removeClass('active')
     $("#scale-#{scale}").addClass('active')
 
-    @dashboard.view.$el.removeClass("scale-day")
+    @dashboard.view.$el.removeClass("scale-week")
     @dashboard.view.$el.removeClass("scale-month")
     @dashboard.view.$el.removeClass("scale-year")
 
@@ -22,7 +22,7 @@ class Potee.Views.TimelineView extends Backbone.View
 
     switch scale
       when 'week'   then @scaleClass = Potee.Views.Timelines.DaysView
-      when 'month'  then @scaleClass = Potee.Views.Timelines.WeeksView
+      when 'month'  then @scaleClass = Potee.Views.Timelines.DaysView # scale: 'week' #WeeksView
       when 'year' then @scaleClass = Potee.Views.Timelines.MonthsView
       else console.log('unknown scale ' + scale)
 
