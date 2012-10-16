@@ -72,6 +72,12 @@ class Potee.Models.Dashboard extends Backbone.Model
       when "year"
         return moment(@max).clone().endOf("month")
 
+  # Координаты дня для сердины экрана
+  middleOffsetOf: (day) ->
+     x = @offsetOf( day ) - (@view.$el.parent().width() / 2) - (@pixels_per_day/2)
+     return 0 if x < 0
+     return x
+
   offsetOf: (day) ->
     day * @pixels_per_day
 

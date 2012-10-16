@@ -6,7 +6,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @model.view = this
     @setElement($('#dashboard'))
     @update()
-    @scrollToToday()
+
+    @gotoDate moment()
 
     _.bindAll(this, 'on_keypress')
     $(document).bind('keydown', @on_keypress)
@@ -67,23 +68,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @render()
     return
 
-  scrollToToday: ->
-    day = @model.indexOf( moment() ) - 2
-    console.log 'day num ' + day
+  gotoDate: (date) ->
+    @gotoDay @model.indexOf( date )
 
-    x =  @model.offsetOf day
-    console.log 'scroll to ' + x
-    $('#viewport').scrollLeft x
-
-    return
-    switch @model.get("scale")
-      when "week"
-        today = moment()
-      when "month"
-        today = moment().day(0)
-      when "year"
-        today = moment().startOf("month")
-
-    offset = today.diff(moment(@model.min_with_span()), "days") * @model.pixels_per_day
-
-    $('#viewport').scrollLeft(offset)
+  gotoDay: (day) ->
+    $('#viewport').scrollLeft @model.middleOffsetOf( day )

@@ -23,13 +23,29 @@ class Potee.Views.Timelines.WeeksView extends Backbone.View
     return weeks
 
   week: (start, end) ->
-    width = (end.diff(start, "days") + 1) * @columnWidth - 1 # 1px на правую границу
-    title = start.format("D.MM.YYYY") + " - " + end.format("D.MM.YYYY")
-    return { width: width, title: title }
+    month = start.format('MMMM YYYY')
+    end_month = end.format('MMMM YYYY')
+
+    unless month==end_month
+      month += ' - ' + end_month
+
+    details = start.format('D') + ' - ' + end.format('D')
+
+    css_class = 'week'
+    unless moment().diff(moment(start), 'weeks')
+      css_class += ' current'
+
+    # start.format("D.MM.YYYY") + " - " + end.format("D.MM.YYYY")
+    res =
+      width: (end.diff(start, "days") + 1) * @columnWidth - 1 # 1px на правую границу
+      month: month
+      details: details
+      css_class: css_class
+
+    return res
 
   index_of_current_week: ->
-    moment().diff(moment(@start), 'weeks')
 
   render: =>
-    $(@el).html(@template(weeks: @weeks(), current_week: @index_of_current_week()))
+    $(@el).html @template( weeks: @weeks() )
     return this

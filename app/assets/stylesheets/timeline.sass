@@ -1,0 +1,60 @@
+// Timeline
+
+#timeline // to #timeline
+  position: absolute
+  height: $dashboardHeight
+  z-index: 1
+
+#timeline table // timeline table
+  height: $dashboardHeight - 30px
+
+#timeline table thead td
+  padding-top: 20px
+  &.week
+    padding-bottom: 20px
+
+#timeline table tbody td
+  height: 720px
+
+#timeline table thead td.current
+  // background-image: image-url('low_contrast_linen.png')
+  // background-color: #999
+  // +opacity( 0.1 )
+
+#timeline table td.current
+  // TODO Подкладывать полупрозрачный фон
+  background-image: image-url('lighten-Linen.gif')
+  border-right: 1px solid lighten($timelineLineColor, 10)
+
+#timeline table td // timeline table td
+  border-right: 1px solid $timelineLineColor
+  height: 100%
+  text-align: center
+  vertical-align: top
+  font-size: 9px
+  overflow: hidden
+  display: inline-block
+  white-space: nowrap
+  padding: 0px
+  &.day_6
+    border-right: 1px solid #909090 // lighten($timelineLineColor, 10)
+
+.timeline_day_header
+  +opacity(1)
+
+.day_title
+  font-size: 18px
+  padding-bottom: 0px
+
+.day_month
+  -webkit-transform: rotate(90deg)
+  left: -72px
+  position: relative
+  height: 100px
+  top: -55px
+  text-transform: uppercase
+  letter-spacing: 3px
+  width: 100%
+  height: auto
+  overflow: scroll
+

@@ -1,13 +1,19 @@
 <table>
-<tbody>
-   <tr>
-   <% for(var i = 0; i < weeks.length; i++) { %>
-     <% if (i == current_week) { %>
-        <td width="<%= weeks[i].width %>px" class="current"><%= weeks[i].title %></td>
-      <% } else {%>
-        <td width="<%= weeks[i].width %>px"><%= weeks[i].title %></td>
-      <% } %>
-   <% } %>
-   </tr>
- </tbody>
+  <thead>
+    <tr>
+      <% for(var i = 0; i < weeks.length; i++) { %>
+        <td width="<%= weeks[i].width %>px" class="<%= weeks[i].css_class %>">
+          <div class='week_month'><%= weeks[i].month %></div>
+          <div class='week_details'><%= weeks[i].details %></div>
+        </td>
+    <% } %>
+    </tr>
+  </thead>
+  <tbody>
+     <tr>
+     <% for(var i = 0; i < weeks.length; i++) { %>
+       <td width="<%= weeks[i].width %>px" class="<%= weeks[i].css_class %>"></td>
+     <% } %>
+     </tr>
+   </tbody>
 </table>

@@ -1,5 +1,5 @@
 <table>
-<tbody>
+<thead>
    <tr>
    <% for(var i = 0; i < months.length; i++) { %>
      <% if (i == current_month) { %>
@@ -9,5 +9,16 @@
      <% } %>
    <% } %>
    </tr>
- </tbody>
+ </thead>
+ <tbody>
+    <tr>
+    <% for(var i = 0; i < months.length; i++) { %>
+      <% if (i == current_month) { %>
+        <td width="<%= months[i].width %>px" class="current">&nbsp;</td>
+      <% } else {%>
+        <td width="<%= months[i].width %>px">&nbsp;</td>
+      <% } %>
+    <% } %>
+    </tr>
+  </tdoby>
 </table>

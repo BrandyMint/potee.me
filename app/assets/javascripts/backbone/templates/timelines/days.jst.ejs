@@ -3,9 +3,11 @@
     <tr>
       <% for(var i = 0; i < days.length; i++) { %>
         <td class="<%= days[i].css_class %>">
-          <div class='day_title'><%= days[i].title %></div>
-          <div class='day_number'><%= days[i].day %></div>
-          <div class='day_month'><%= days[i].month %></div>
+          <div class='timeline_day_header'>
+            <div class='day_title'><%= days[i].title %></div>
+            <div class='day_number'><%= days[i].day %></div>
+            <div class='day_month'><%= days[i].month %></div>
+         </div>
         </td>
       <% } %>
     </tr>

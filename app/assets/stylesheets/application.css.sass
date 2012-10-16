@@ -4,12 +4,14 @@ $sansFontFamily:        "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans
 $serifFontFamily:       "proxima-nova", Georgia, "Times New Roman", Times, serif
 $monoFontFamily:        "proxima-nova", Monaco, Menlo, Consolas, "Courier New", monospace
 
-@import "bootstrap_overrided"
-@import "colors"
-@import "variables"
-@import "ui"
-@import "welcome"
-@import 'events'
+@import bootstrap_overrided
+@import colors
+@import variables
+@import ui
+@import welcome
+@import events
+@import timeline
+@import navigation
 
 ::selection
   color: black
@@ -125,114 +127,9 @@ input#title
   position: relative
   height: 90px
 
-
-
-// Navigation
-
-.navbar .divider-vertical
-  height: 55px // Высота нава
-
-.navbar-text
-  //vertical-align: middle
-  //height: auto
-  // line-height: auto !important
-  padding: 7px 15px 0px 0px
-
-.navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container
-  width: auto
-  padding-left: 20px
-  padding-right: 10px
-
-.navbar
-  .btn-toolbar
-    margin-left: 15px
-    margin-top: 8px
-    margin-bottom: 0
-
-// Делает навигацию прозрачной
-.anavbar-fixed-top .navbar-inner, .anavbar-static-top .navbar-inner
-  position: absolute
-  // border: 1px solid white
-  +border-radius(6px)
-  +opacity(0.9)
-  width: 98%
-  left: 15px
-  top: 15px
-  margin-right: 35px
-
-.navbar .nav li
-  line-height: 34px
-.navbar .brand
-  padding: 0
-  img
-    width: 113px
-    margin-bottom: 7px
-    margin-top: 4px
-
-  // margin-right: 40px
-  // # color: #999 !important
-
 #project_control
   // margin-right: 120px
 
-// Timeline
-
-#timeline // to #timeline
-  position: absolute
-  height: $dashboardHeight
-  z-index: 1
-
-#timeline table // timeline table
-  height: $dashboardHeight - 30px
-
-#timeline table thead td
-  padding-top: 20px
-  height: 720px
-
-#timeline table td.current // timeline table td
-  // TODO Подкладывать полупрозрачный фон
-  // background-color: #999
-  // +opacity( 0.1 )
-  background-image: image-url('low_contrast_linen.png')
-  border-right: 1px solid lighten($timelineLineColor, 10)
-
-#timeline table td // timeline table td
-  border-right: 1px solid $timelineLineColor
-  height: 100%
-  text-align: center
-  vertical-align: top
-  font-size: 9px
-  overflow: hidden
-  display: inline-block
-  white-space: nowrap
-  padding: 0px
-  &.day_6
-    border-right: 1px solid #909090 // lighten($timelineLineColor, 10)
-
-.day_title
-  font-size: 18px
-  padding-bottom: 0px
-
-.day_month
-  -webkit-transform: rotate(90deg)
-  left: -72px
-  position: relative
-  height: 100px
-  top: -55px
-  text-transform: uppercase
-  letter-spacing: 3px
-
-
-// previous
-
-#viewport_old
-  width: 100%
-  height: auto
-  overflow: scroll
-
-#dashboard_old
-  width: auto
-  height: auto
 
 // text pages
 .text-white
