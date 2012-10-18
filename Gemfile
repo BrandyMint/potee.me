@@ -46,6 +46,29 @@ group :development do
   gem 'capistrano-recipes0', '>= 1.1.0', :git => 'git://github.com/BrandyMint/capistrano-recipes0.git'
   gem 'rvm-capistrano'
   gem 'debugger'
+
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'rb-fsevent', :require => false
+  gem 'rb-inotify', :require => false
+end
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'headless'
+
+  gem 'jasmine'
+  gem "jasminerice"
+  gem 'guard-jasmine'
+end
+
+group :test do
+  gem 'capybara'
+  gem 'capybara-webkit'
+  gem 'rr'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'launchy'
 end
 
 group :production do
