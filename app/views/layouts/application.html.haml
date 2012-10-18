@@ -7,7 +7,7 @@
     = favicon_link_tag image_path "favicon.ico"
     %meta{:name => 'title', :content => 'Potee, visual time management'}
     %meta{:name => 'description', :content => 'New way of planning. Now you know what is the next step in your projects.'}
-    %meta{:name => 'image_src', :content =>  root_url + image_path('logo_potee_background.png') }
+    %link{:rel=>'image_src', :href=>image_url('logo_potee_background.png')}
     = csrf_meta_tags
     :plain
       <script type="text/javascript" src="//use.typekit.net/jun8pbk.js"></script>
