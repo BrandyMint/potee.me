@@ -1,6 +1,5 @@
 // Events
 
-
 .event
   position: absolute
   top: -3px
@@ -10,7 +9,8 @@
   // Хоть какую-то высоту он должен иметь, иначе он не прыгает при добавлении
   height: 30px
   // border: 1px solid red
-  +opacity(0.6)
+  &.passed
+    +opacity(0.6)
   &.event-handled
     .event-title
       //font-size: 12px
@@ -28,7 +28,7 @@
 
 .event-title
   position: absolute
-  top: -20px
+  top: -25px
   width: 280px
   //left: -40px
   //white-space: nowrap
@@ -40,12 +40,13 @@
   text-shadow: 0 -1px 0 rgba(0,0,0,.25)
   cursor: text
   padding-right: 5px
+  font-size: 16px
 
 .event-form
   position: absolute
   top: -20px
   width: 340px
-  font-size: 12px
+  font-size: 16px
   z-index: 200
   text-shadow: 0 -1px 0 rgba(0,0,0,.25)
 

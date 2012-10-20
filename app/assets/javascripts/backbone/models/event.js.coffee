@@ -9,10 +9,19 @@ class Potee.Models.Event extends Backbone.Model
     @time = moment(@get("time")).toDate()
     @project = @collection.project
     @project_started_at = @collection.project.started_at
+    @setPassed()
+
+  setPassed: ->
+    @passed = moment(@get('date')).diff(moment()) < 0
 
   setDateTime: (datetime) ->
     @set("date", datetime)
     @set("time", datetime)
+    @setPassed()
+    @view.rerender()
+
+  toTemplate: ->
+    @toJSON()
 
 class Potee.Collections.EventsCollection extends Backbone.Collection
   model: Potee.Models.Event

@@ -6,6 +6,9 @@ class Potee.Views.Events.EventView extends Backbone.View
   tagName: "div"
   className: "event"
 
+  initialize: ->
+    @model.view = @
+
   events:
     "click .event-title-el" : "edit"
     "click .event-bar" : "edit"
@@ -82,7 +85,7 @@ class Potee.Views.Events.EventView extends Backbone.View
     window.dashboard.view.setCurrentForm this
 
     @mode = 'edit'
-    @$el.html @template_edit @model.toJSON()
+    @$el.html @template_edit @model.toTemplate()
     @$el.addClass('event-handled')
     @$el.find('input#title').focus()
     @.$("form").backboneLink(@model)
@@ -91,7 +94,7 @@ class Potee.Views.Events.EventView extends Backbone.View
     return true if @mode == 'show'
 
     @mode = 'show'
-    @$el.html @template_show @model.toJSON()
+    @$el.html @template_show @model.toTemplate()
 
   edit: (e) =>
 
@@ -113,7 +116,15 @@ class Potee.Views.Events.EventView extends Backbone.View
 
     Math.round(daysOffset + timeOffset)
 
+  rerender: ->
+    if @model.passed
+      @$el.addClass('passed')
+    else
+      @$el.removeClass('passed')
+
+
   render: ->
     @renderShow()
+    @$el.addClass('passed') if @model.passed
     @$el.css('left', @options.x || @calcOffset())
     return this
