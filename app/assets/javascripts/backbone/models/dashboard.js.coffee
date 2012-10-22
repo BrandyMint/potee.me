@@ -135,6 +135,12 @@ class Potee.Models.Dashboard extends Backbone.Model
     offset =  @offsetOf(date)
     left < offset < right
 
+  todayIsPassed: ->
+    left = @view.viewport.scrollLeft()
+    # right = left + @view.viewportWidth()
+    offset =  @offsetOf(@today)
+    offset < left
+
   # Возвращает время в зависимости от X
   #
   # @param [Integer] x X-координата
