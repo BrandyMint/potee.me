@@ -149,7 +149,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   #
   allowScrollByDrag: ->
-    @viewport.mousedown (e) =>
+    $('#dashboard').mousedown (e) =>
       @viewport.css("cursor", "move")
       @prev_x = e.screenX
       @prev_y = e.screenY
@@ -165,7 +165,8 @@ class Potee.Views.DashboardView extends Backbone.View
 
       if @dragging
         @viewport.scrollLeft @viewport.scrollLeft() - (e.screenX - @prev_x)
-        window.scrollBy(0, -(e.screenY - @prev_y))
+        $projects = @projects_view.$el
+        $projects.scrollTop $projects.scrollTop() - (e.screenY - @prev_y)
         @prev_x = e.screenX
         @prev_y = e.screenY
 

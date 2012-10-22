@@ -1,18 +1,14 @@
 // Projects
 
 #projects
-  height: auto
-  // 720px
-
-  // ЗАчем это нужно? Из-за него проекты немного двигаются при скроле.
-  // Отключил
-  // overflow-y: auto
-  overflow: visible
-
-#projects
   position: absolute
+  top: 80px
+  bottom: 40px
   z-index: 100
-  margin-top: 80px
+  overflow-x: hidden
+  overflow-y: auto
+  padding-right: 5px  // чтобы удобнее хватать правый бок для изменения размера самого длиного проекта
+  width: 100%
 
 .project
   position: relative
