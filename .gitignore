@@ -28,3 +28,6 @@ rerun.txt
 pickle-email-*.html
 
 config/database.yml
+
+.idea
+.jhw-cache
