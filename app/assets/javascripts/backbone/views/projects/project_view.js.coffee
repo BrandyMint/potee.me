@@ -11,6 +11,9 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   events:
     "click .title" : "edit"
     "click .progress .bar" : "add_event"
+    "mousedown": (e)->
+      if e.target == @$(".ui-resizable-e")[0]
+        e.stopPropagation()
 
   add_event: (js_event) ->
     #e.stopPropagation()

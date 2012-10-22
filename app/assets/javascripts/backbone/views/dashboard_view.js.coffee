@@ -20,8 +20,9 @@ class Potee.Views.DashboardView extends Backbone.View
     _.bindAll(this, 'click')
     $(document).bind('click', @click)
 
-
     $('#new-project-link').bind('click', @newProject)
+
+    @allowScrollByDrag()
 
     @currentForm = undefined
     @todayLink = undefined
@@ -145,3 +146,33 @@ class Potee.Views.DashboardView extends Backbone.View
     @programmedScrolling = true
 
     @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo'
+
+  #
+  allowScrollByDrag: ->
+    @viewport.mousedown (e) =>
+      @viewport.css("cursor", "move")
+      @prev_x = e.screenX
+      @prev_y = e.screenY
+      @mouse_down = true
+      @dragging = false
+
+    $document = $(document)
+
+    $document.mousemove (e) =>
+      if @mouse_down && !@dragging
+        @dragging = true
+        @viewport.css("cursor", "move")
+
+      if @dragging
+        @viewport.scrollLeft @viewport.scrollLeft() - (e.screenX - @prev_x)
+        window.scrollBy(0, -(e.screenY - @prev_y))
+        @prev_x = e.screenX
+        @prev_y = e.screenY
+
+    $document.mouseup =>
+      @mouse_down = false
+      if @dragging
+        @dragging = false
+        @viewport.css("cursor", "")
+
+

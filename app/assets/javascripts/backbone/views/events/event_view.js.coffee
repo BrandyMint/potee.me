@@ -11,7 +11,9 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   events:
     "click .event-title-el" : "edit"
-    "click .event-bar" : "edit"
+    "dblclick .event-bar" : "edit"
+    'mousedown' : (e)->
+      e.stopPropagation()
     "submit #edit-event" : "update"
     "click #submit"      : "update"
     'click #cancel'      : 'cancelEvent'
@@ -20,6 +22,7 @@ class Potee.Views.Events.EventView extends Backbone.View
     'mouseenter .event-bar'       : 'mouseenter'
     'mouseleave .event-title-el'  : 'mouseleave'
     'mouseleave .event-bar'       : 'mouseleave'
+
 
   mouseenter: (e) ->
     return true if window.dashboard.view.currentForm
