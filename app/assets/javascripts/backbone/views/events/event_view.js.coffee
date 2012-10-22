@@ -8,10 +8,11 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   initialize: ->
     @model.view = @
+    @setDragDetector()
 
   events:
-    "click .event-title-el" : "edit"
-    "dblclick .event-bar" : "edit"
+    "click .event-title-el" : "onclick"
+    "click .event-bar" : "onclick"
     'mousedown' : (e)->
       e.stopPropagation()
     "submit #edit-event" : "update"
@@ -23,6 +24,17 @@ class Potee.Views.Events.EventView extends Backbone.View
     'mouseleave .event-title-el'  : 'mouseleave'
     'mouseleave .event-bar'       : 'mouseleave'
 
+
+  onclick: (e) ->
+    # Останаавливаем клик чтобы он не перешел выше где
+    # dashboard его поймает и решил закрыть эту форму
+    e.preventDefault()
+    e.stopPropagation()
+    # не редактируем если перетаскиваем.
+    if @dragging
+      @dragging = false
+    else
+      @edit()
 
   mouseenter: (e) ->
     return true if window.dashboard.view.currentForm
@@ -99,12 +111,7 @@ class Potee.Views.Events.EventView extends Backbone.View
     @mode = 'show'
     @$el.html @template_show @model.toTemplate()
 
-  edit: (e) =>
-
-    # Останаавливаем клик чтобы он не перешел выше где
-    # dashboard его поймает и решил закрыть эту форму
-    e.preventDefault()
-    e.stopPropagation()
+  edit: ->
     @renderEdit()
 
   calcOffset: ->
@@ -131,3 +138,14 @@ class Potee.Views.Events.EventView extends Backbone.View
     @$el.addClass('passed') if @model.passed
     @$el.css('left', @options.x || @calcOffset())
     return this
+
+  setDragDetector: ->
+    @$el.mousedown =>
+      @mousedown = true
+    $(document).mousemove =>
+      @dragging = true if @mousedown
+    $(document).mouseup =>
+      @mousedown = false
+
+
+
