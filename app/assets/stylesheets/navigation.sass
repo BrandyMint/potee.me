@@ -36,12 +36,18 @@ a.brand
       &.active
         color: #eee
 
+
+.navbar-inverse .navbar-inner
+  background: none
+  border-bottom: 1px solid #333
+
 // Делает навигацию прозрачной
-.anavbar-fixed-top .navbar-inner, .anavbar-static-top .navbar-inner
+.fake-anavbar-fixed-top .navbar-inner, .anavbar-static-top .navbar-inner
   position: absolute
   // border: 1px solid white
   +border-radius(6px)
   +opacity(0.9)
+  background: none
   width: 98%
   left: 15px
   top: 15px
