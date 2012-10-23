@@ -25,7 +25,10 @@
 
     = yield
     = render 'layouts/gosquared'
-    = render 'layouts/uservoice'
+    - if controller.is_a? ProjectsController
+      #feedback
+        = link_to 'feedback', 'http://www.facebook.com/pages/Potee/361932213892066', :target=>:_blank
+    -# = render 'layouts/uservoice'
     -#:plain
       -#<!-- Place this before your front page's </body> tag. -->
       -#<script src="http://s0.railsrumble.com/banner.js" type="text/javascript"></script>>
