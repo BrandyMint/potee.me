@@ -4,7 +4,7 @@ class Potee.Views.DashboardView extends Backbone.View
   #
 
   initialize: (options)->
-    @viewport =$('#viewport')
+    @viewport = $('#viewport')
     @model.view = this
     @setElement($('#dashboard'))
     @update()
@@ -53,19 +53,17 @@ class Potee.Views.DashboardView extends Backbone.View
       @todayLink.render()
 
   scroll: (e)->
-
     if @programmedScrolling
-      @programmedScrolling = false
       return false
 
     # Если мы сменили масштаб где физиески нельзя поставить сегодняшнюю дату
     # 
-    if @viewportWidth()>=@$el.width()
+    if @viewportWidth() >= @$el.width()
       return true
 
     # TODO Тоже для правого края
 
-    if @model.currentDate or @viewport.scrollLeft()>1
+    if @model.currentDate or @viewport.scrollLeft() > 1
       @$el.stop()
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
@@ -144,8 +142,8 @@ class Potee.Views.DashboardView extends Backbone.View
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
-
     @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo'
+    setTimeout (()=> @programmedScrolling = false), 1000
 
   #
   allowScrollByDrag: ->

@@ -98,14 +98,13 @@ class Potee.Models.Dashboard extends Backbone.Model
      return x
 
   _middleOffsetOf: (day) ->
-     @offsetOf( day ) - (@view.viewportWidth() / 2) - (@pixels_per_day/2)
+     @offsetOf( day ) - (@view.viewportWidth() / 2)
 
   offsetOf: (day) ->
     # Это Дата?
     if _.isObject(day)
       minutes = moment(day).diff(moment(@min_with_span()), 'minutes') 
-      (@pixels_per_day*minutes)/(24*60)
-
+      (@pixels_per_day * minutes) / (24*60)
     else
       day * @pixels_per_day
 
@@ -113,10 +112,10 @@ class Potee.Models.Dashboard extends Backbone.Model
     Math.round( offset / @pixels_per_day )
 
   dayOfMiddleOffset: (offset) ->
-    @dayOfOffset( offset + (@view.viewportWidth()/2) - @pixels_per_day/2)
+    @dayOfOffset( offset + (@view.viewportWidth() / 2) - @pixels_per_day / 2)
 
   dateOfMiddleOffset: (offset) ->
-    @datetimeAt offset + (@view.viewportWidth()/2) # - @pixels_per_day/2
+    @datetimeAt offset + (@view.viewportWidth() / 2)
 
   # Возвращает индекс элемента
   #
