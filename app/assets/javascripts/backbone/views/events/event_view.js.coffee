@@ -6,6 +6,9 @@ class Potee.Views.Events.EventView extends Backbone.View
   tagName: "div"
   className: "event"
 
+  DEFAULT_Z_INDEX = 150
+  ACTIVE_Z_INDEX = 200
+
   initialize: ->
     @model.view = @
     @setDragDetector()
@@ -104,12 +107,14 @@ class Potee.Views.Events.EventView extends Backbone.View
     @$el.addClass('event-handled')
     @$el.find('input#title').focus()
     @.$("form").backboneLink(@model)
+    @$el.css('z-index', ACTIVE_Z_INDEX)
 
   renderShow: ->
     return true if @mode == 'show'
 
     @mode = 'show'
     @$el.html @template_show @model.toTemplate()
+    @$el.css('z-index', DEFAULT_Z_INDEX)
 
   edit: ->
     @renderEdit()
