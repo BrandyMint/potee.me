@@ -1,3 +1,5 @@
+@import "compass/css3/transform"
+
 // Timeline
 
 #timeline // to #timeline
@@ -16,7 +18,7 @@
 #timeline table tbody td
   height: 720px
 
-#timeline table thead td.current
+//#timeline table thead td.current
   // background-image: image-url('low_contrast_linen.png')
   // background-color: #999
   // +opacity( 0.1 )
@@ -47,14 +49,15 @@
   padding-bottom: 0px
 
 .day_month
-  -webkit-transform: rotate(90deg)
-  left: -72px
-  position: relative
-  height: 100px
-  top: -55px
+  +transform-origin(0%, 100%)
+  +transform(rotate(90deg))
+
+  position: absolute
+  top: -1em
+
   text-transform: uppercase
   letter-spacing: 3px
   width: 100%
   height: auto
-  overflow: scroll
+  text-align: left
 

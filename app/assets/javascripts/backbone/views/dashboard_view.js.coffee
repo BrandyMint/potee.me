@@ -150,7 +150,8 @@ class Potee.Views.DashboardView extends Backbone.View
   #
   allowScrollByDrag: ->
     $('#dashboard').mousedown (e) =>
-      @viewport.css("cursor", "move")
+      if e.offsetX >= $('#dashboard').width() - 20 # вертикальный скролл справа.
+        return
       @prev_x = e.screenX
       @prev_y = e.screenY
       @mouse_down = true
