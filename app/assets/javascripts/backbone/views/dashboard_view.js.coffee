@@ -142,8 +142,7 @@ class Potee.Views.DashboardView extends Backbone.View
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
-    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo'
-    setTimeout (()=> @programmedScrolling = false), 1000
+    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo', => @programmedScrolling = false
 
   #
   allowScrollByDrag: ->
