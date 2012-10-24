@@ -40,6 +40,8 @@ gem 'vendorer'
 
 gem 'bootstrap-sass'
 
+gem 'activeadmin'
+
 group :development do
   # Deploy with Capistrano
   gem 'capistrano'

@@ -1,5 +1,9 @@
 Potee::Application.routes.draw do
 
+  ActiveAdmin.routes(self)
+
+  devise_for :admin_users, ActiveAdmin::Devise.config
+
   h = { :host => Settings.application.host }
   h[:port] = 30009 if Rails.env.test?
   self.default_url_options h
