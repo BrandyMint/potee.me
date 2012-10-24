@@ -22,8 +22,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
     @model.save(null,
       success : (project) =>
         @model = project
+        window.dashboard.view.cancelCurrentForm()
         @model.view.setTitleView 'show'
-        # window.location.hash = "/#{@model.id}"
     )
 
   render: ->
@@ -35,17 +35,13 @@ class Potee.Views.Titles.EditView extends Backbone.View
     window.dashboard.view.cancelCurrentForm()
 
   cancel: ->
-    # $(document).unbind 'click'
-
     if @model.isNew()
-      # @model.view.remove()
       @model.view.destroy()
-      # @model.remove()
     else
       @model.view.setTitleView 'show'
 
     $('#project_new').removeClass('active')
-    # window.location.hash = ''
+
 
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))

@@ -4,6 +4,7 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
     "submit #new-project"  : "create"
     "click #submit"        : "create"
     'click #cancel'        : 'cancelEvent'
+    'mousedown': (e) -> e.stopPropagation()
 
   create: (e) ->
     e.preventDefault()

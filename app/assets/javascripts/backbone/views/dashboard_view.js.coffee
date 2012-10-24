@@ -100,7 +100,9 @@ class Potee.Views.DashboardView extends Backbone.View
 
   setCurrentForm: (form_view) =>
     if @currentForm
-      @currentForm.cancel()
+      form = @currentForm
+      @currentForm = undefined
+      form.cancel()
     @currentForm = form_view
 
   resetWidth: ->
@@ -114,11 +116,8 @@ class Potee.Views.DashboardView extends Backbone.View
 
   viewportWidth: ->
     @viewport.width()
-    # @$el.parent().width()
 
   render: ->
-    # @timeline_zoom_view = new Potee.Views.TimelineZoomView
-    #
     @timeline_view ||= new Potee.Views.TimelineView
       dashboard: @model
       dashboard_view: this

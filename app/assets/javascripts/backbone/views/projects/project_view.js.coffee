@@ -16,7 +16,6 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
         e.stopPropagation()
 
   add_event: (js_event) ->
-    #e.stopPropagation()
     datetime = window.router.dashboard.datetimeAt(js_event.offsetX + @leftMargin())
     event = @model.projectEvents.create(
       date: datetime,
@@ -36,12 +35,10 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
   destroy: () ->
     window.projects.remove @model
-    # @model.destroy()
     @$el.slideUp('fast', ->
       @remove
     )
-
-    return false
+    false
 
 
   # Project's line left margin (when does it start)
@@ -61,11 +58,6 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     return @model.duration() * window.dashboard.pixels_per_day
 
   setTitleView: (state)->
-
-    if @titleView
-      @titleEl = undefined
-      @titleView.remove()
-
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
       when 'edit' then title_view_class = Potee.Views.Titles.EditView
@@ -75,24 +67,19 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       project_view: this
       model: @model
 
-    if @titleEl
-      options['el'] = @titleEl
+    if @titleView
+      @titleView.remove()
 
     @titleView = new title_view_class options
-    @titleView.render()
-
+    @$el.append @titleView.render().el
+    window.dashboard.view.cancelCurrentForm()
     window.dashboard.view.setCurrentForm @titleView unless state == 'show'
-
-    if !@titleEl
-      @titleEl = @titleView.el
-      @$el.append @titleEl
 
     @$el.find('input#title').focus()
 
     @bounce() if state == 'new'
 
   render: ->
-    @titleEl = undefined
     # TODO Вынести progressbar в отдельную вьюху?
 
     @$el.html(@template(width: @width()))

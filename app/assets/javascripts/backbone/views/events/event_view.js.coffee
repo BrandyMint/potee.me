@@ -66,7 +66,6 @@ class Potee.Views.Events.EventView extends Backbone.View
         @model = model
 
         @renderShow()
-        # window.location.hash = "/#{@model.id}"
     )
 
 
@@ -74,18 +73,12 @@ class Potee.Views.Events.EventView extends Backbone.View
     e.preventDefault()
     e.stopPropagation()
     window.dashboard.view.setCurrentForm undefined
-    # @cancel()
 
   cancel: ->
     view = this
     @$el.removeClass('event-handled')
     @$el.find('form').fadeOut('fast')
     @renderShow()
-    #@model.fetch
-      #success: (model) ->
-        #model.view = view
-        #view.model = model
-        #view.renderShow()
 
   destroyEvent: (e)->
     e.preventDefault()
