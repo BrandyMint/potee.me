@@ -1,7 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-one:
-  title: MyString
+create_potee_project:
+  title: Create Potee project
+  project: learn_potee
+  date: <%= Time.now.to_date %>
+  time: <%= Time.now %>
 
-two:
+build_spaceship:
   title: MyString
+  project: space_travel
+  date: <%= 1.year.ago.to_date %>
+  time: <%= 1.year.ago.to_time %>
+
+meet_mars:
+  title: MyString
+  project: space_travel
+  date: <%= 2.year.ago.to_date %>
+  time: <%= 2.year.ago.to_time %>

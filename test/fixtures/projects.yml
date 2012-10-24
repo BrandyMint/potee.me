@@ -1,7 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-one:
-  title: MyString
+learn_potee:
+  title: Learn Potee
+  started_at: <%= DateTime.now %>
 
-two:
-  title: MyString
+space_travel:
+  title: Space travel
+  started_at: <%= DateTime.now %>

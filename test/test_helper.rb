@@ -10,4 +10,11 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+
+  def create_current_user(name = 'Bill Gates')
+    user = User.create! :name => name
+    session[:user_id] = user.id
+    user
+  end
+
 end

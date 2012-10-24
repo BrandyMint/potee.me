@@ -2,7 +2,10 @@ require 'test_helper'
 
 class EventsControllerTest < ActionController::TestCase
   setup do
-    @event = events(:one)
+    user = create_current_user
+    @project = projects(:learn_potee)
+    @project.update_attributes! :user => user
+    @event = @project.events.first
   end
 
   test "should get index" do
@@ -18,7 +21,8 @@ class EventsControllerTest < ActionController::TestCase
 
   test "should create event" do
     assert_difference('Event.count') do
-      post :create, event: {  }
+      post :create, event: { title: "Yet another event", project_id: @project.id,
+                             date: DateTime.now.to_date, time: DateTime.now.to_time }
     end
 
     assert_redirected_to event_path(assigns(:event))
