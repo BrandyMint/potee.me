@@ -6,5 +6,6 @@
 # IT IS UNLIKELY THAT YOU WILL NEED TO CHANGE THIS FILE
 #
 #=require application
+#=require jasmine-jquery
 #=require_tree ./
 

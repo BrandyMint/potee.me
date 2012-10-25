@@ -3,11 +3,11 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @projects = @getProjectsCollection(options.projects)
     window.projects = @projects
 
-    @dashboard = new Potee.Models.Dashboard @projects
-
+    @dashboard = new Potee.Models.Dashboard {}, {}, @projects
     window.dashboard = @dashboard
 
   routes:
+    ""          : "index"
     "index"     : "index"
     'week'      : 'scaleToWeek'
     'month'     : 'scaleToMonth'
@@ -15,6 +15,9 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     ".*"        : "index"
     # иначе не ловится редирект из фейсбука #_=_
     ":some"       : "index"
+
+  index: ->
+    @generateDashboardView()
 
   scaleToWeek: ->
     window.dashboard.set 'scale', 'week'
@@ -33,10 +36,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
       model: @dashboard
     @dashboard_view.gotoCurrentDate()
 
-  index: ->
-    @generateDashboardView()
-
   getProjectsCollection: (projects) ->
     collection = new Potee.Collections.ProjectsCollection()
     collection.reset(projects)
-    return collection
+    collection

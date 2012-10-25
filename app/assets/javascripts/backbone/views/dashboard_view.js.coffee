@@ -11,15 +11,9 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @programmedScrolling = false
 
-    _.bindAll(this, 'scroll')
     @viewport.bind('scroll', @scroll)
-
-    _.bindAll(this, 'keydown')
     $(document).bind('keydown', @keydown)
-
-    _.bindAll(this, 'click')
     $(document).bind('click', @click)
-
     $('#new-project-link').bind('click', @newProject)
 
     @allowScrollByDrag()
@@ -27,19 +21,17 @@ class Potee.Views.DashboardView extends Backbone.View
     @currentForm = undefined
     @todayLink = undefined
 
-  click: (e) ->
+  click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
       @cancelCurrentForm()
 
-  newProject: (e)->
+  newProject: (e)=>
     e.stopPropagation()
     e.preventDefault()
 
     $('#project_new').addClass('active')
 
-    project = new Potee.Models.Project
-    window.projects_view.addOne project, true
-    project.view.setTitleView 'new'
+    @projects_view.newProject()
     return false
 
   resetTodayLink: (date)->
@@ -52,7 +44,7 @@ class Potee.Views.DashboardView extends Backbone.View
       @todayLink = new Potee.Views.TodayView
       @todayLink.render()
 
-  scroll: (e)->
+  scroll: (e)=>
     if @programmedScrolling
       return false
 
@@ -105,43 +97,44 @@ class Potee.Views.DashboardView extends Backbone.View
       form.cancel()
     @currentForm = form_view
 
+  # переустановить шируину дэшборда.
   resetWidth: ->
     @model.findStartEndDate()
-
-    viewportWidth = @viewportWidth() # @viewport.width()
+    viewportWidth = @viewportWidth()
     if viewportWidth > @model.width()
       @model.setWidth(viewportWidth)
-
     @$el.css('width', @model.width())
 
   viewportWidth: ->
     @viewport.width()
 
   render: ->
+    $(@el).html('')
+
     @timeline_view ||= new Potee.Views.TimelineView
       dashboard: @model
       dashboard_view: this
-
     @timeline_view.render()
     @$el.append @timeline_view.el
 
     @projects_view = new Potee.Views.Projects.IndexView
       projects: @model.projects
-
     @$el.append @projects_view.el
-    return this
+
+    this
 
   update: ->
-    $(@el).html('')
     @resetWidth()
     @render()
-    return
 
+  # Перейти на указанную дату (отцентировать).
+  # @param [Date] date
   gotoDate: (date) ->
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
-    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo', => @programmedScrolling = false
+    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
+    setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
 
   #
   allowScrollByDrag: ->

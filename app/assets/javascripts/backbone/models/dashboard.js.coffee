@@ -5,7 +5,7 @@ class Potee.Models.Dashboard extends Backbone.Model
   defaults:
     scale: 'week'
 
-  initialize: (@projects) ->
+  initialize: (attributes, options, @projects) ->
     @findStartEndDate()
     @on 'change:scale', @changeScale
     @today = moment()
@@ -98,7 +98,7 @@ class Potee.Models.Dashboard extends Backbone.Model
      return x
 
   _middleOffsetOf: (day) ->
-     @offsetOf( day ) - (@view.viewportWidth() / 2)
+     @offsetOf( day ) - (@view.viewportWidth() / 2) + @pixels_per_day/2
 
   offsetOf: (day) ->
     # Это Дата?
@@ -115,7 +115,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @dayOfOffset( offset + (@view.viewportWidth() / 2) - @pixels_per_day / 2)
 
   dateOfMiddleOffset: (offset) ->
-    @datetimeAt offset + (@view.viewportWidth() / 2)
+    @datetimeAt offset + (@view.viewportWidth() / 2) - @pixels_per_day/2
 
   # Возвращает индекс элемента
   #

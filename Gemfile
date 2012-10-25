@@ -67,6 +67,8 @@ group :development, :test do
   gem 'jasmine'
   gem "jasminerice"
   gem 'guard-jasmine'
+  gem 'jasmine-jquery-rails'
+  gem 'sinon-rails'
 end
 
 group :test do

@@ -8,21 +8,27 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   initialize: () ->
     @options.projects.bind('reset', @addAll)
-    window.projects_view = this
     @render()
 
-  addAll: () =>
+  addAll: =>
     @options.projects.each(@addOne)
 
   addOne: (project, prepend) =>
     view = new Potee.Views.Projects.ProjectView
       model : project
-
     if prepend
       @$el.prepend view.render().el
     else
       @$el.append view.render().el
+    view
 
-  render: =>
+  render: ->
     @addAll()
-    return this
+    this
+
+  newProject: ->
+    project = new Potee.Models.Project
+    project_view = @addOne project, true
+    project_view.setTitleView 'new'
+
+
