@@ -14,9 +14,11 @@ protected
     if session[:user_id]
       @current_user = User.find_by_id(session[:user_id])
       return @current_user if @current_user
+      # TODO Show flas: User destroyed
     end
 
     @current_user = User.create! :name => 'Incognito'
+    @current_user.update_attribute :last_sign_at, Time.now
     # save it temporary
     session[:user_id] = @current_user.id
 

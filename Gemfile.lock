@@ -120,6 +120,8 @@ GEM
       multipart-post (~> 1.1)
     fastercsv (1.5.5)
     ffi (1.1.5)
+    foreverb (0.3.2)
+      thor (>= 0.15.0)
     formtastic (2.2.1)
       actionpack (>= 3.0)
     fssm (0.2.9)
@@ -339,6 +341,7 @@ DEPENDENCIES
   database_cleaner
   debugger
   factory_girl_rails
+  foreverb
   guard
   guard-jasmine
   guard-rspec

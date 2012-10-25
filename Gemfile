@@ -22,6 +22,10 @@ gem "omniauth-twitter"
 gem "omniauth-google-oauth2"
 gem "rails_config"
 
+group :daemons do
+  gem 'foreverb'
+end
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
