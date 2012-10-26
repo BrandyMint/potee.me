@@ -71,9 +71,9 @@ describe "Potee.Views.DashboardView", ->
           $today_column = $("tbody td.day.current")
           @$dayColumn = $($today_column.nextAll()[days_after_today-1])
           @view.gotoDate moment().add("days", days_after_today)
-          setTimeout (-> flag = true ), 1100
+          setTimeout (-> flag = true ), 2000
 
-        waitsFor (-> flag), "gotToDate not finished", 1200
+        waitsFor (-> flag), "gotToDate not finished", 3000
 
         runs =>
           actual = @$dayColumn.offset().left + @$dayColumn.width() / 2

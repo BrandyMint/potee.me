@@ -16,13 +16,14 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
         e.stopPropagation()
 
   add_event: (js_event) ->
-    datetime = window.router.dashboard.datetimeAt(js_event.offsetX + @leftMargin())
+    x = js_event.clientX - @$el.offset().left
+    datetime = window.router.dashboard.datetimeAt(x + @leftMargin())
     event = @model.projectEvents.create(
       date: datetime,
       time: datetime,
       project_id: @model.id)
 
-    eventElement = @renderEvent(event, js_event.offsetX)
+    eventElement = @renderEvent(event, x)
     eventElement.effect('bounce', {times: 3}, 150)
     @$el.resizable("option", "minWidth", @minWidthForResize())
 
@@ -45,6 +46,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   setLeftMargin: ->
     @$el.css('margin-left', @leftMargin())
 
+  # Смещение полосы проекта относительно начала дэшборда.
+  # @retrun [Number] смещение в пикселях.
   leftMargin: ->
     dashboardStart = moment(window.dashboard.min_with_span())
     offsetInDays = moment(@model.started_at).diff(dashboardStart, "days")

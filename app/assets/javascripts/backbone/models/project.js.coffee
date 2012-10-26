@@ -17,7 +17,7 @@ class Potee.Models.Project extends Backbone.Model
     @set 'color_index', window.projects.getNextColorIndex() if !@has('color_index')
     @set 'events', [] if !@has('events')
 
-    today = new Date()
+    today = moment().startOf("day")
 
     @set 'started_at', today.toString() if !@has('started_at')
     @set 'finish_at', moment(today).add('days',7).toString() if !@has('finish_at')
