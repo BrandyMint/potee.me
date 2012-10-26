@@ -22,7 +22,7 @@ module ForeverbConfig
       puts "File: #{file} #{filename}"
 
       if file=~/wwwpotee/
-        deploy_dir = '/home/wwwdata/potee.me'
+        deploy_dir = '/home/wwwpotee/potee.me'
         puts "Foreverb deploy directory: #{deploy_dir}"
         dir "#{deploy_dir}/current/"
         file "#{deploy_dir}/current/script/#{filename}"
