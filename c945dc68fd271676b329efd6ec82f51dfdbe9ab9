@@ -1,11 +1,11 @@
 {
   "built_on": "master",
-  "duration": 78.995,
-  "full_display_name": "Potee #30",
-  "id": "2012-10-26_10-38-23",
-  "number": 30,
-  "result": "FAILURE",
+  "duration": 114.941,
+  "full_display_name": "Potee #31",
+  "id": "2012-10-26_10-51-13",
+  "number": 31,
+  "result": "SUCCESS",
   "status_message": "?",
-  "time": "2012-10-26 10:38:23 +0400",
-  "url": "job/Potee/30/"
+  "time": "2012-10-26 10:51:13 +0400",
+  "url": "job/Potee/31/"
 }
