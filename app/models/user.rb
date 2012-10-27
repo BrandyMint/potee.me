@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
   has_many :authentications, :dependent => :destroy
   has_many :projects, :dependent => :destroy
 
+  mount_uploader :avatar, AvatarUploader
+
   def self.destroy_orphans
     without_authentications.where('created_at<?', 14.days.ago).destroy_all
   end

@@ -45,6 +45,8 @@ gem 'vendorer'
 gem 'bootstrap-sass'
 
 gem 'activeadmin'
+gem 'mini_magick'
+gem 'carrierwave'
 
 group :development do
   # Deploy with Capistrano
