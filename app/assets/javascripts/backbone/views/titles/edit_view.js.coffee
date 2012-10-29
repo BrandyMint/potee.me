@@ -14,6 +14,7 @@ class Potee.Views.Titles.EditView extends Backbone.View
     "click #submit"        : "update"
     'click #cancel'        : 'cancelEvent'
     'click #destroy'       : 'destroyEvent'
+    'mousedown': (e) -> e.stopPropagation()
 
   update : (e) ->
     e.preventDefault()
