@@ -30,7 +30,8 @@ class Potee.Views.Titles.EditView extends Backbone.View
   render: ->
 
   destroyEvent: (e) ->
-    @model.view.destroy()
+    if confirm("Sure to delete?")
+      @model.view.destroy()
 
   cancelEvent: (e) ->
     window.dashboard.view.cancelCurrentForm()
