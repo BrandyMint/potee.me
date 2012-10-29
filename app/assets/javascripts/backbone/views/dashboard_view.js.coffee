@@ -3,10 +3,17 @@ class Potee.Views.DashboardView extends Backbone.View
   # tagName: 'div'
   #
 
+  MAX_PIXELS_PER_DAY = 150
+  MIN_PIXELS_PER_DAY = 4
+
   initialize: (options)->
     @viewport = $('#viewport')
     @model.view = this
     @setElement($('#dashboard'))
+
+    @model.findStartEndDate()
+    @model.week_pixels_per_day = Math.min(Math.max(Math.ceil( @viewport.width() / @model.days), MIN_PIXELS_PER_DAY), MAX_PIXELS_PER_DAY)
+    @model.pixels_per_day = @model.week_pixels_per_day
     @update()
 
     @programmedScrolling = false
@@ -15,6 +22,9 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
+    $(window).resize =>
+      @resetWidth()
+      @timeline_view.render()
 
     @allowScrollByDrag()
 
@@ -62,7 +72,6 @@ class Potee.Views.DashboardView extends Backbone.View
 
   keydown: (e) =>
     e ||= window.event
-
     switch e.keyCode
       when 27
         e.preventDefault()
