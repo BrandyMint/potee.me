@@ -17,7 +17,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @currentDate = undefined
 
   getCurrentDate: ->
-    @currentDate || moment()
+    @currentDate || moment().startOf("day").add("hours", 12)
 
   setCurrentDate: (date) ->
     if date == @today
@@ -42,7 +42,7 @@ class Potee.Models.Dashboard extends Backbone.Model
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
     if @projects.length == 0
-      min = moment().toDate()
+      min = moment().startOf("day").toDate()
       max = moment().add("months", 1).endOf("month").toDate()
     else
       min = @projects.first().started_at
@@ -98,7 +98,7 @@ class Potee.Models.Dashboard extends Backbone.Model
      return x
 
   _middleOffsetOf: (day) ->
-     @offsetOf( day ) - (@view.viewportWidth() / 2) + @pixels_per_day/2
+     @offsetOf( day ) - (@view.viewportWidth() / 2)
 
   offsetOf: (day) ->
     # Это Дата?
@@ -115,7 +115,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @dayOfOffset( offset + (@view.viewportWidth() / 2) - @pixels_per_day / 2)
 
   dateOfMiddleOffset: (offset) ->
-    @datetimeAt offset + (@view.viewportWidth() / 2) - @pixels_per_day/2
+    @datetimeAt offset + (@view.viewportWidth() / 2)
 
   # Возвращает индекс элемента
   #
@@ -151,7 +151,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     hoursWidth = Math.round(hours * (@pixels_per_day / 24))
 
     minutes = Math.round((x - daysWidth - hoursWidth) / (@pixels_per_day / (24 * 60)))
-    return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes).toDate()
+    return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes)
 
   # Возвращает количество дней перед днем старта 1 проекта
   days_before_min: ->

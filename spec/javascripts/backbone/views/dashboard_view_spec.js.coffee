@@ -33,11 +33,11 @@ describe "Potee.Views.DashboardView", ->
         expect(@$today_column.prevAll("td").length).toEqual 3
 
       it "should have one month and 3 days after today", ->
-        days = moment().add("months", 1).endOf("month").diff(moment(), "days") + 3
+        days = moment().add("months", 1).endOf("month").diff(moment().startOf("day"), "days") + 3
         expect(@$today_column.nextAll("td").length).toEqual days
 
       it "should have appropriate width", ->
-        expect(@view.$el.width()).toEqual (3 + 1 + (moment().add("months", 1).endOf("month").diff(moment(), "days") + 3)) * @model.pixels_per_day
+        expect(@view.$el.width()).toEqual (3 + 1 + (moment().add("months", 1).endOf("month").diff(moment().startOf("day"), "days") + 3)) * @model.pixels_per_day
 
   describe "actions", ->
     describe "new project via 'New project' button", ->
@@ -58,7 +58,7 @@ describe "Potee.Views.DashboardView", ->
         @view.viewport.trigger "scroll"
 
       it "should change current date", ->
-        expect(@model.getCurrentDate()).toEqual @model.datetimeAt(@offset + (@view.viewportWidth() / 2) - @model.pixels_per_day / 2)
+        expect(@model.getCurrentDate()).toEqual @model.datetimeAt(@offset + (@view.viewportWidth() / 2))
 
   describe "go to date", ->
     describe "in week scale", ->
@@ -70,7 +70,7 @@ describe "Potee.Views.DashboardView", ->
           days_after_today = Math.ceil($(document).width() / @model.pixels_per_day)
           $today_column = $("tbody td.day.current")
           @$dayColumn = $($today_column.nextAll()[days_after_today-1])
-          @view.gotoDate moment().add("days", days_after_today)
+          @view.gotoDate moment().add("days", days_after_today).startOf("day").add("hours", 12)
           setTimeout (-> flag = true ), 2000
 
         waitsFor (-> flag), "gotToDate not finished", 3000

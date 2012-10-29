@@ -7,5 +7,6 @@
 #
 #=require application
 #=require jasmine-jquery
+#=require sinon
 #=require_tree ./
 

@@ -83,12 +83,3 @@ class Potee.Collections.ProjectsCollection extends Backbone.Collection
   getNextColorIndex: ->
     return 0 if @length == 0
     (@last().get('color_index')+1) % 7
-
-    # TODO
-    #colors = {}
-    #@map (el) ->
-      #colors[el.get('color_index')]||=0
-      #colors[el.get('color_index')]+=1
-
-
-    # (window.router.projects.size()+1) % 7
