@@ -5,7 +5,13 @@ class Authentication < ActiveRecord::Base
   belongs_to :user
 
   def self.authenticate_or_create auth, current_user
-    where(auth.slice('provider', 'uid')).first.try(:user) || create_user_with_authentication(auth, current_user)
+    user = Authentication.where(auth.slice('provider', 'uid')).first.try(:user) || create_user_with_authentication(auth, current_user)
+  
+    if !user.avatar? && auth['info']['image']
+      user.remote_avatar_url = auth['info']['image']
+      user.save!   
+    end
+    user
   end
 
   def self.create_user_with_authentication auth, current_user
