@@ -32,13 +32,16 @@
 
   - else
     %li
-      = link_to 'javascript: void()' do
+      = link_to 'javascript: void()', :class => 'js-user_link' do
         %i.icon-user
         &nbsp;
         = current_user
-    = render :partial => 'auth/facebook'
-    = render :partial => 'auth/twitter'
-    = render :partial => 'auth/google'
+        &nbsp; &darr;
+    %div.social_block.hidden    
+      = render :partial => 'auth/facebook'
+      = render :partial => 'auth/twitter'
+      = render :partial => 'auth/google'
+
     %li.divider-vertical
     %li.signout
       = link_to logout_path do
@@ -59,3 +62,6 @@
   -#- else
     -#%li
       -#= link_to 'Sign up', new_user_registration_path
+
+:javascript
+  $(hideShow($('a.js-user_link'), $('div.social_block')))
