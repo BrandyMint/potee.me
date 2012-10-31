@@ -18,7 +18,7 @@ protected
     end
 
     @current_user = User.create! :name => 'Incognito'
-    @current_user.update_attribute :last_sign_at, Time.now
+    @current_user.update_attribute :last_sign_in_at, Time.now
     # save it temporary
     session[:user_id] = @current_user.id
 
