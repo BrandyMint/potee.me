@@ -3,10 +3,17 @@ class Potee.Views.DashboardView extends Backbone.View
   # tagName: 'div'
   #
 
+  MAX_PIXELS_PER_DAY = 150
+  MIN_PIXELS_PER_DAY = 4
+
   initialize: (options)->
     @viewport = $('#viewport')
     @model.view = this
     @setElement($('#dashboard'))
+
+    @model.findStartEndDate()
+    @model.week_pixels_per_day = Math.min(Math.max(Math.ceil( @viewport.width() / @model.days), MIN_PIXELS_PER_DAY), MAX_PIXELS_PER_DAY)
+    @model.pixels_per_day = @model.week_pixels_per_day
     @update()
 
     @programmedScrolling = false
@@ -15,6 +22,9 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
+    $(window).resize =>
+      @resetWidth()
+      @timeline_view.render()
 
     @allowScrollByDrag()
 
@@ -60,21 +70,35 @@ class Potee.Views.DashboardView extends Backbone.View
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
 
+  Keys =
+    Enter: 13
+    Escape: 27
+    Space: 32
+    Plus: 187
+    Minus: 189
+
   keydown: (e) =>
     e ||= window.event
-
     switch e.keyCode
-      when 27
+      when Keys.Escape
         e.preventDefault()
         e.stopPropagation()
         @cancelCurrentForm(e)
-      when 13
+      when Keys.Enter
         @newProject(e) unless @currentForm
-      when 32
+      when Keys.Space
         unless @currentForm
           e.preventDefault()
           e.stopPropagation()
           @gotoToday()
+      when Keys.Plus
+        if @model.get("scale") == "week"
+          @model.week_pixels_per_day = Math.min(@model.week_pixels_per_day+5, MAX_PIXELS_PER_DAY)
+          @model.changeScale()
+      when Keys.Minus
+        if @model.get("scale") == "week"
+          @model.week_pixels_per_day = Math.max(@model.week_pixels_per_day-5, MIN_PIXELS_PER_DAY)
+          @model.changeScale()
 
   setScale: (scale) ->
     @timeline_view.resetScale scale
