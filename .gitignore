@@ -10,6 +10,7 @@ config/settings/*.local.yml
 config/environments/*.local.yml
 config/settings.yml
 config/settings/production.yml
+config/settings/development.yml
 public/uploads/*
 
 # Rails.gitignore (see https://github.com/github/gitignore)
