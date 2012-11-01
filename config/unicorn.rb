@@ -18,7 +18,7 @@ if rails_env=='production'
   pid APP_PATH + "shared/pids/unicorn.pid"
   stderr_path APP_PATH + "shared/log/unicorn.stderr.log"
   stdout_path APP_PATH + "shared/log/unicorn.stdout.log"
-elsif rails_env=='stage'
+elsif rails_env=='development'
   worker_processes 3
   APP_PATH = ENV['APP_PATH'] || '/home/wwwpotee/stage.potee.ru/'
   working_directory APP_PATH + "current"
