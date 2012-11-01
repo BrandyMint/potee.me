@@ -70,20 +70,35 @@ class Potee.Views.DashboardView extends Backbone.View
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
 
+  Keys =
+    Enter: 13
+    Escape: 27
+    Space: 32
+    Plus: 187
+    Minus: 189
+
   keydown: (e) =>
     e ||= window.event
     switch e.keyCode
-      when 27
+      when Keys.Escape
         e.preventDefault()
         e.stopPropagation()
         @cancelCurrentForm(e)
-      when 13
+      when Keys.Enter
         @newProject(e) unless @currentForm
-      when 32
+      when Keys.Space
         unless @currentForm
           e.preventDefault()
           e.stopPropagation()
           @gotoToday()
+      when Keys.Plus
+        if @model.get("scale") == "week"
+          @model.week_pixels_per_day = Math.min(@model.week_pixels_per_day+5, MAX_PIXELS_PER_DAY)
+          @model.changeScale()
+      when Keys.Minus
+        if @model.get("scale") == "week"
+          @model.week_pixels_per_day = Math.max(@model.week_pixels_per_day-5, MIN_PIXELS_PER_DAY)
+          @model.changeScale()
 
   setScale: (scale) ->
     @timeline_view.resetScale scale
