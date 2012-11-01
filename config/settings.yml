@@ -4,6 +4,8 @@ application:
     - potee.me
     - potee.ru
     - 3007.vkontraste.ru
+    - stage.potee.ru
+    - localhost
 facebook:
   key: '315783835195742'
   secret: '979acddccb558815e0e06c73ce1d3f0c'
