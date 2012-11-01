@@ -7,7 +7,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
   storage :file
   
   version :thumb do
-    process resize_to_fill: [35, 35]
+    process resize_to_fill: [24, 24]
   end  
 
   def store_dir
