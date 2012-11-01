@@ -19,8 +19,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     x = js_event.clientX - @$el.offset().left
     datetime = window.router.dashboard.datetimeAt(x + @leftMargin())
     event = @model.projectEvents.create(
-      date: datetime,
-      time: datetime,
+      date: datetime.toDate(),
+      time: datetime.toDate(),
       project_id: @model.id)
 
     eventElement = @renderEvent(event, x)
