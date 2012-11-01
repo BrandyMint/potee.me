@@ -34,6 +34,7 @@ before 'deploy:setup', 'rvm:install_rvm'
 before 'deploy:setup', 'rvm:install_ruby'
 before 'deploy:restart', 'deploy:migrate'
 after 'deploy:restart', "deploy:cleanup"
+after 'deploy:finalize_update', 'potee:symlink_configs'
 
 #RVM, Bundler
 require "rvm/capistrano"
@@ -42,4 +43,10 @@ require "recipes0/database_yml"
 require "recipes0/assets"
 require "recipes0/nginx"
 require "recipes0/init_d/unicorn"
+
+namespace :potee do
+   task :symlink_configs, :except => { :no_release => true } do
+      run "ln -nfs #{shared_path}/config/app_config.yml #{release_path}/config/settings/#{fetch(:rails_env)}.yml" 
+   end
+end
 
