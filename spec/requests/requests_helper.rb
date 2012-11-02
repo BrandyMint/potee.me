@@ -3,6 +3,8 @@ require 'capybara/rails'
 require 'capybara/rspec'
 require 'headless'
 
+USER_NAME = 'Barak Obama'
+
 RSpec.configure do |config|
 
   Capybara.javascript_driver = :selenium # :webkit пока нормально не работает (https://github.com/thoughtbot/capybara-webkit/issues/366)
@@ -15,6 +17,29 @@ RSpec.configure do |config|
   # jenkins и обычный пользователь пускают X-ы на разных портах
   headless = Headless.new :destroy_at_exit => false, :display => `whoami`=~/jenkins/ ? 98 : 99
   headless.start
+
+  OmniAuth.config.test_mode = true
+  OmniAuth.config.add_mock(:twitter, {
+    :uid => '12345',
+    :nickname => 'bobama',
+    :info => {
+      :name => USER_NAME
+    }
+  })
+  OmniAuth.config.add_mock(:facebook, {
+    :uid => '12345',
+    :nickname => 'bobama',
+    :info => {
+      :name => USER_NAME
+    }
+  })
+  OmniAuth.config.add_mock(:google_oauth2, {
+    :uid => '12345',
+    :nickname => 'bobama',
+    :info => {
+      :name => USER_NAME
+    }
+  })
 
   config.use_transactional_fixtures = false
 
