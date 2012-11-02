@@ -8,7 +8,7 @@ application:
     - 3007.vkontraste.ru
     - localhost
 facebook:
-  key: 
+  key:
   secret:
 twitter:
   key:
