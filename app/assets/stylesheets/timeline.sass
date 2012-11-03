@@ -48,12 +48,25 @@
 
 .day_month
   position: absolute
-  top: 0px
+  top: 30px
   padding-left: 0.5em
-
+  
   text-transform: uppercase
   letter-spacing: 3px
   width:  auto
   height: auto
   text-align: left
+  -moz-transform: rotate(90deg)
+  -moz-transform-origin: 50% 50%
+  -webkit-transform: rotate(90deg)
+  -webkit-transform-origin: 50% 50%
+
+.scale-week
+  .day_month
+    margin-left: -1.3em
+
+.scale-month
+  .day_month
+    margin: 6em 0 0 1.3em
+
 
