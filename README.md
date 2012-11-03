@@ -8,6 +8,8 @@ Now you know what is the next step in your projects.
 
 http://potee.me/ or http://potee.ru/
 
+"Follow us" facebook-page http://www.facebook.com/pages/Potee/361932213892066
+
 ![original post](http://f.cl.ly/items/323N272z1T0k230W441K/100.png)
 
 Background
