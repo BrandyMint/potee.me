@@ -21,7 +21,7 @@ class Potee.Views.Events.EventView extends Backbone.View
     "submit #edit-event" : "update"
     "click #submit"      : "update"
     'click #cancel'      : 'cancelEvent'
-    'click #destroy'     : 'destroyEvent'
+    'click #destroy'     : 'destroyEventonClick'
     'mouseenter .event-title-el'  : 'mouseenter'
     'mouseenter .event-bar'       : 'mouseenter'
     'mouseleave .event-title-el'  : 'mouseleave'
@@ -80,15 +80,22 @@ class Potee.Views.Events.EventView extends Backbone.View
     @$el.find('form').fadeOut('fast')
     @renderShow()
 
-  destroyEvent: (e)->
+  destroyEventonClick: (e)->
     e.preventDefault()
     e.stopPropagation()
-    @model.collection.remove @model
+    @destroyEvent()
 
-    @$el.fadeOut('fast', =>
-      @remove()
-      window.dashboard.view.currentForm = undefined
-    )
+  hello: ->
+    alert('hello')
+
+  destroyEvent: ->
+    if confirm("Sure to delete event?")
+      @model.collection.remove @model
+
+      @$el.fadeOut('fast', =>
+        @remove()
+        window.dashboard.view.currentForm = undefined
+      )
 
   renderEdit: ->
     return true if @mode == 'edit'

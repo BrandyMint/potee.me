@@ -27,6 +27,9 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     eventElement.effect('bounce', {times: 3}, 150)
     @$el.resizable("option", "minWidth", @minWidthForResize())
 
+  remove_event: (event) ->
+    event = @model.projectEvents
+
   edit: (e)->
     e.stopPropagation()
     @setTitleView 'edit'
@@ -130,22 +133,31 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     event_view = new Potee.Views.Events.EventView
       model: event
       x: x
-
     @$el.append event_view.render().$el
-
+    initY = event_view.$el.position().top - 3
     event_view.$el.draggable(
-      axis: 'x',
-      containment: "parent",
+      containment: "document",
       distance: '3',
+      grid: [ 1, 25 ],
+      revert: 'invalid',
       stop: (jsEvent, ui) =>
-        @eventDateTimeChanged(event, ui.position.left + @leftMargin())
+        @eventChange(event, event_view, ui.position, initY)
     )
-
+    event_view.$el.attr('data-id', event_view.model.id)
+    event_view.$el.attr('data-project_id', @model.id)
     event_view.$el.css("position", "absolute")
     return event_view.$el
 
+  eventChange: (event, event_view, position, initY) ->
+    if position.top != initY
+      event_view.destroyEvent()
+    else
+      @eventDateTimeChanged(event, position.left + @leftMargin())
+  
   eventDateTimeChanged: (event, offset) ->
     datetime = window.dashboard.datetimeAt(offset)
     event.setDateTime(datetime)
     event.save()
+  
+    
 

@@ -1,5 +1,6 @@
 class Potee.Models.Event extends Backbone.Model
   paramRoot: "event"
+  urlRoot: '/events'
 
   defaults:
     title: "Some event"
@@ -19,6 +20,11 @@ class Potee.Models.Event extends Backbone.Model
     @set("time", datetime.toDate())
     @setPassed()
     @view.rerender()
+
+  setProject: (project) ->
+    @set("project_id", project.id)
+    @view.rerender()
+    
 
   toTemplate: ->
     @toJSON()

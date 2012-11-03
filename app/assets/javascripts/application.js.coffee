@@ -3,6 +3,7 @@
 #= require jquery.effects.bounce
 #= require jquery.ui.resizable
 #= require jquery.ui.draggable
+#= require jquery.ui.droppable
 #= require underscore
 #= require moment
 #= require moment-range

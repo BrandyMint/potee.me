@@ -20,6 +20,12 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       @$el.prepend view.render().el
     else
       @$el.append view.render().el
+    view.$el.find('div.bar').droppable(
+      drop: (e, ui) =>
+        event = ui.draggable
+        own_project_id = event.data('project_id')
+        @changeProject(event.data('id'), project, own_project_id) if own_project_id != project.id
+    ) 
     view
 
   render: ->
@@ -31,4 +37,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     project_view = @addOne project, true
     project_view.setTitleView 'new'
 
+  changeProject: (event_id, project, own_project_id) ->
+    collection = new Potee.Collections.ProjectsCollection
+    collection.fetch()
+    own_project = collection.get(own_project_id)
+    event = own_project.projectEvents.get(event_id)
+    event.setProject(project)
 
