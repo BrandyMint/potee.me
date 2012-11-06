@@ -15,6 +15,7 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
+    $('#projects').dblclick(@newProject)
 
     @allowScrollByDrag()
 
