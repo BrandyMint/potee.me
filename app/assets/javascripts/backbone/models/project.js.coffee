@@ -71,6 +71,17 @@ class Potee.Models.Project extends Backbone.Model
 
     return
 
+  getClosestEvent: () ->
+    diff_seconds = 31536000 #количество секунд в году, пойдет для первоначального значения
+    closest_event = this.projectEvents.last
+    this.projectEvents.each((event) =>
+      diff = Math.abs(moment(event.date).diff(moment(), "seconds")) 
+      if diff < diff_seconds  
+        closest_event = event
+        diff_seconds = diff
+    )
+    return closest_event
+
 class Potee.Collections.ProjectsCollection extends Backbone.Collection
   model: Potee.Models.Project
   url: '/projects'

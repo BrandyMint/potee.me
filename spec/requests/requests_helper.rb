@@ -18,6 +18,15 @@ RSpec.configure do |config|
 
   config.use_transactional_fixtures = false
 
+  OmniAuth.config.test_mode = true
+  OmniAuth.config.add_mock(:twitter, {
+    :uid => '12345',
+    :nickname => 'bobama',
+    :info => {
+      :name => 'Barak Obama',
+    }
+  })
+
   config.before :each do
     if example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
