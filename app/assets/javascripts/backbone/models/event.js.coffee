@@ -11,6 +11,9 @@ class Potee.Models.Event extends Backbone.Model
     @project_started_at = @collection.project.started_at
     @setPassed()
 
+  resetDate: ->
+    @date = moment(@get("date")).toDate()
+
   setPassed: ->
     eventDate = moment(@get('date')).eod()
     today = moment().eod()
