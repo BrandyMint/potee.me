@@ -13,7 +13,7 @@ class Potee.Views.Titles.EditView extends Backbone.View
     "submit #edit-project" : "update"
     "click #submit"        : "update"
     'click #cancel'        : 'cancelEvent'
-    'click #destroy'       : 'destroyEvent'
+    'click #destroy'       : 'destroyProject'
     'mousedown': (e) -> e.stopPropagation()
 
   update : (e) ->
@@ -29,7 +29,7 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   render: ->
 
-  destroyEvent: (e) ->
+  destroyProject: (e) ->
     if confirm("Sure to delete?")
       @model.view.destroy()
 

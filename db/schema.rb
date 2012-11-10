@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121101092839) do
+ActiveRecord::Schema.define(:version => 20121110063852) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20121101092839) do
     t.date     "finish_at"
     t.integer  "color_index", :default => 0, :null => false
     t.integer  "user_id"
+    t.integer  "position"
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_title"

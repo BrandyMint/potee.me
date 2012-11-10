@@ -39,6 +39,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.slideUp('fast', ->
       @remove
     )
+    @$el.closest('div#projects').sortable("refresh")
     false
 
 
