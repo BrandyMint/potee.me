@@ -1,3 +1,4 @@
+@import "compass/css3/transform"
 // Timeline
 
 #timeline // to #timeline
@@ -48,12 +49,22 @@
 
 .day_month
   position: absolute
-  top: 0px
+  top: 30px
   padding-left: 0.5em
-
+  
   text-transform: uppercase
   letter-spacing: 3px
   width:  auto
   height: auto
   text-align: left
+  +transform-origin(0%, 100%)
+  +transform(rotate(90deg))
+
+.scale-week
+  .day_month
+    margin: -3.7em 0 0 1em
+
+.scale-month
+  .day_month
+    margin: 0.5em 0 0 0.5em
 
