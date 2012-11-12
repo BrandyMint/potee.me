@@ -34,7 +34,7 @@ class Potee.Models.Dashboard extends Backbone.Model
         @pixels_per_day = 34
       when "year"
         @pixels_per_day = 4
-
+    
     @setDuration(@min, @max)
     if @view
       @view.setScale @get('scale')
