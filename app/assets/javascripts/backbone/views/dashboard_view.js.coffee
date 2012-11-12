@@ -65,13 +65,13 @@ class Potee.Views.DashboardView extends Backbone.View
     e ||= window.event
 
     switch e.keyCode
-      when 27
+      when 27 # нажатие escape - отмена формы
         e.preventDefault()
         e.stopPropagation()
         @cancelCurrentForm(e)
-      when 13
+      when 13 # нажатие enter - созднаие проекта
         @newProject(e) unless @currentForm
-      when 32
+      when 32 # нажатие space - передвинуться на "сегодня"
         unless @currentForm
           e.preventDefault()
           e.stopPropagation()
@@ -136,6 +136,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @programmedScrolling = true
     @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
     setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
+    setTimeout (=>@resetTodayLink undefined), 1000
+
 
   #
   allowScrollByDrag: ->
