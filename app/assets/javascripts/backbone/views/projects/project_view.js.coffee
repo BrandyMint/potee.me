@@ -88,9 +88,10 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.html(@template(width: @width()))
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
-
+    closest_event = @model.projectEvents.getClosestEvent()  
     @model.projectEvents.each((event)=>
-      @renderEvent(event)
+      current_event = @renderEvent(event)
+      current_event.addClass('closest') if event == closest_event
     )
 
     @setTitleView('show')
