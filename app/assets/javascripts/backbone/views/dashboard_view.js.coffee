@@ -18,7 +18,6 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
-#    $('#timeline').bind('dblclick', @newProject_from_dbclick)
     $('#dashboard').bind('dblclick', @newProject_from_dbclick)
 
     $(window).resize =>
@@ -32,6 +31,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @currentForm = undefined
     @todayLink = undefined
+
 
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
@@ -55,6 +55,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
     $('#project_new').addClass('active')
     @projects_view.newProject(startFrom, position)
+    Backbone.pEvent.trigger 'resetStickyTitles'
     return false
 
   resetTodayLink: ->
@@ -82,6 +83,7 @@ class Potee.Views.DashboardView extends Backbone.View
       @$el.stop()
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
+    Backbone.pEvent.trigger 'resetStickyTitles'
 
   Keys =
     Enter: 13
@@ -186,7 +188,6 @@ class Potee.Views.DashboardView extends Backbone.View
     @projects_view = new Potee.Views.Projects.IndexView
       projects: @model.projects
     @$el.append @projects_view.el
-
     this
 
   update: ->
@@ -198,14 +199,12 @@ class Potee.Views.DashboardView extends Backbone.View
   gotoDate: (date, options = {animate: true}) ->
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
-    @programmedScrolling = true
+    @model.setCurrentDate(date)
     if  options.animate
       @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
-      setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
       setTimeout (=>@resetTodayLink()), 1000
     else
       @viewport.scrollLeft x
-      @programmedScrolling = false
       @resetTodayLink()
 
   allowScrollByDrag: ->
@@ -236,5 +235,3 @@ class Potee.Views.DashboardView extends Backbone.View
       if @dragging
         @dragging = false
         @viewport.css("cursor", "")
-
-
