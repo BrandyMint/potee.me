@@ -20,6 +20,7 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
         @model = project
         @model.view.model = project
         @model.view.setTitleView 'show'
+        @model.view.$el.attr('id', @model.cid) 
         window.location.hash = '/'
 
       error: (project, jqXHR) =>
