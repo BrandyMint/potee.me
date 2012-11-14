@@ -2,9 +2,10 @@ application:
   host: 'potee.me'
   hosts:
     - potee.me
+    - stage.potee.me
     - potee.ru
-    - 3007.vkontraste.ru
     - stage.potee.ru
+    - 3007.vkontraste.ru
     - localhost
 facebook:
   key: 
