@@ -24,6 +24,9 @@ class Potee.Views.DashboardView extends Backbone.View
       @resetWidth()
       @timeline_view.render()
 
+    $('#dashboard').bind "pinch", (e, obj) =>
+      @scalePixelsPerDay obj.scale
+
     @allowScrollByDrag()
 
     @currentForm = undefined
@@ -100,10 +103,16 @@ class Potee.Views.DashboardView extends Backbone.View
         @decPixelsPerDay()
 
   incPixelsPerDay: ->
-    @setPixelsPerDay Math.min(@model.pixels_per_day+5, MAX_PIXELS_PER_DAY)
+    @setPixelsPerDay @normalizedPixelsPerDay(@model.pixels_per_day+5)
 
   decPixelsPerDay: ->
-    @setPixelsPerDay Math.max(@model.pixels_per_day-5, MIN_PIXELS_PER_DAY)
+    @setPixelsPerDay @normalizedPixelsPerDay(@model.pixels_per_day-5)
+
+  scalePixelsPerDay: (scale) ->
+    @setPixelsPerDay @normalizedPixelsPerDay(@model.pixels_per_day * scale)
+
+  normalizedPixelsPerDay: (pixels_per_day) ->
+    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
 
   setPixelsPerDay: (pixels_per_day) ->
     scale = @getScaleForPixelsPerDay(pixels_per_day)
