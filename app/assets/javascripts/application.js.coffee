@@ -11,6 +11,7 @@
 #= require backbone_datalink
 #= require backbone/potee
 #= require bootstrap
+#= require jgestures
 #= require_tree .
 
 $ ->

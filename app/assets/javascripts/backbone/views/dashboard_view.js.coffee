@@ -3,6 +3,9 @@ class Potee.Views.DashboardView extends Backbone.View
   # tagName: 'div'
   #
 
+  MAX_PIXELS_PER_DAY = 150
+  MIN_PIXELS_PER_DAY = 4
+
   initialize: (options)->
     @viewport = $('#viewport')
     @model.view = this
@@ -16,6 +19,13 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
     $('#projects').dblclick(@newProject)
+
+    $(window).resize =>
+      @resetWidth()
+      @timeline_view.render()
+
+    $('#dashboard').bind "pinch", (e, obj) =>
+      @scalePixelsPerDay obj.scale
 
     @allowScrollByDrag()
 
@@ -35,7 +45,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @projects_view.newProject()
     return false
 
-  resetTodayLink: (date)->
+  resetTodayLink: ->
     if @model.dateIsOnDashboard @model.today
       return unless @todayLink
       @todayLink.remove()
@@ -61,32 +71,75 @@ class Potee.Views.DashboardView extends Backbone.View
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
 
+  Keys =
+    Enter: 13
+    Escape: 27
+    Space: 32
+    Plus: 187
+    Minus: 189
+
   keydown: (e) =>
     e ||= window.event
-
     switch e.keyCode
-      when 27 # нажатие escape - отмена формы
+      when Keys.Escape
+        # отмена формы
         e.preventDefault()
         e.stopPropagation()
         @cancelCurrentForm(e)
-      when 13 # нажатие enter - созднаие проекта
+      when Keys.Enter
+        # новый проект
         @newProject(e) unless @currentForm
-      when 32 # нажатие space - передвинуться на "сегодня"
+      when Keys.Space
+        # перейти на сегодня
         unless @currentForm
           e.preventDefault()
           e.stopPropagation()
           @gotoToday()
+      when Keys.Plus
+        # масштаб
+        @incPixelsPerDay()
+      when Keys.Minus
+        # масштаб
+        @decPixelsPerDay()
 
-  setScale: (scale) ->
-    @timeline_view.resetScale scale
+  incPixelsPerDay: ->
+    @setPixelsPerDay @model.pixels_per_day+5
+
+  decPixelsPerDay: ->
+    @setPixelsPerDay @model.pixels_per_day-5
+
+  scalePixelsPerDay: (scale) ->
+    @setPixelsPerDay @model.pixels_per_day * scale
+
+  setPixelsPerDay: (pixels_per_day) ->
+    pixels_per_day = @normalizedPixelsPerDay(pixels_per_day)
+    scale = @getScaleForPixelsPerDay(pixels_per_day)
+    @model.set "scale", scale if scale != @model.get("scale")
+    @model.pixels_per_day = pixels_per_day
+    @setScale()
+    @gotoCurrentDate(animate: false)
+
+  normalizedPixelsPerDay: (pixels_per_day) ->
+    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
+
+  getScaleForPixelsPerDay: (pixels_per_day)->
+    if pixels_per_day > @model.MONTH_PIXELS_PER_DAY
+      "week"
+    else if pixels_per_day > @model.YEAR_PIXELS_PER_DAY
+      "month"
+    else
+      "year"
+
+  setScale: ->
+    @timeline_view.resetScale()
     @update()
 
   gotoToday: ->
     @model.setToday()
     @gotoDate @model.getCurrentDate()
 
-  gotoCurrentDate: ->
-    @gotoDate @model.getCurrentDate()
+  gotoCurrentDate: (options={animate:true}) ->
+    @gotoDate @model.getCurrentDate(), options
 
   cancelCurrentForm: (e) =>
     @setCurrentForm undefined
@@ -130,14 +183,18 @@ class Potee.Views.DashboardView extends Backbone.View
 
   # Перейти на указанную дату (отцентировать).
   # @param [Date] date
-  gotoDate: (date) ->
+  gotoDate: (date, options = {animate: true}) ->
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
-    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
-    setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
-    setTimeout (=>@resetTodayLink undefined), 1000
-
+    if  options.animate
+      @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
+      setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
+      setTimeout (=>@resetTodayLink()), 1000
+    else
+      @viewport.scrollLeft x
+      @programmedScrolling = false
+      @resetTodayLink()
 
   #
   allowScrollByDrag: ->

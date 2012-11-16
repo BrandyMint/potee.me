@@ -37,7 +37,7 @@ protected
 
   def redirect_domains
     unless Settings.application.hosts.include? request.host
-      redirect_to canonical_url, :status => :moved_permanently 
+      redirect_to canonical_url, :status => :moved_permanently
     end
   end
 
