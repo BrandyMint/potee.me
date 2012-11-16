@@ -45,7 +45,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @projects_view.newProject()
     return false
 
-  resetTodayLink: (date)->
+  resetTodayLink: ->
     if @model.dateIsOnDashboard @model.today
       return unless @todayLink
       @todayLink.remove()
@@ -103,22 +103,24 @@ class Potee.Views.DashboardView extends Backbone.View
         @decPixelsPerDay()
 
   incPixelsPerDay: ->
-    @setPixelsPerDay @normalizedPixelsPerDay(@model.pixels_per_day+5)
+    @setPixelsPerDay @model.pixels_per_day+5
 
   decPixelsPerDay: ->
-    @setPixelsPerDay @normalizedPixelsPerDay(@model.pixels_per_day-5)
+    @setPixelsPerDay @model.pixels_per_day-5
 
   scalePixelsPerDay: (scale) ->
-    @setPixelsPerDay @normalizedPixelsPerDay(@model.pixels_per_day * scale)
-
-  normalizedPixelsPerDay: (pixels_per_day) ->
-    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
+    @setPixelsPerDay @model.pixels_per_day * scale
 
   setPixelsPerDay: (pixels_per_day) ->
+    pixels_per_day = @normalizedPixelsPerDay(pixels_per_day)
     scale = @getScaleForPixelsPerDay(pixels_per_day)
     @model.set "scale", scale if scale != @model.get("scale")
     @model.pixels_per_day = pixels_per_day
     @setScale()
+    @gotoCurrentDate(animate: false)
+
+  normalizedPixelsPerDay: (pixels_per_day) ->
+    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
 
   getScaleForPixelsPerDay: (pixels_per_day)->
     if pixels_per_day > @model.MONTH_PIXELS_PER_DAY
@@ -136,8 +138,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @model.setToday()
     @gotoDate @model.getCurrentDate()
 
-  gotoCurrentDate: ->
-    @gotoDate @model.getCurrentDate()
+  gotoCurrentDate: (options={animate:true}) ->
+    @gotoDate @model.getCurrentDate(), options
 
   cancelCurrentForm: (e) =>
     @setCurrentForm undefined
@@ -181,14 +183,18 @@ class Potee.Views.DashboardView extends Backbone.View
 
   # Перейти на указанную дату (отцентировать).
   # @param [Date] date
-  gotoDate: (date) ->
+  gotoDate: (date, options = {animate: true}) ->
     x = @model.middleOffsetOf date
     return if @viewport.scrollLeft() == x
     @programmedScrolling = true
-    @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
-    setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
-    setTimeout (=>@resetTodayLink undefined), 1000
-
+    if  options.animate
+      @viewport.stop().animate { scrollLeft: x }, 1000, 'easeInOutExpo' #, => @programmedScrolling = false
+      setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
+      setTimeout (=>@resetTodayLink()), 1000
+    else
+      @viewport.scrollLeft x
+      @programmedScrolling = false
+      @resetTodayLink()
 
   #
   allowScrollByDrag: ->
