@@ -37,7 +37,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   destroy: () ->
     window.projects.remove @model
     @$el.slideUp('fast', ->
-      @remove
+      $(this).remove()
+      Backbone.pEvent.trigger 'savePositions'
     )
     @$el.closest('div#projects').sortable("refresh")
     false

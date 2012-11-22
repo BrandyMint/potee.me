@@ -18,7 +18,7 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
-    $('#projects').dblclick(@newProject)
+    $('#projects').live('dblclick', @newProject_from_dbclick)
 
     $(window).resize =>
       @resetWidth()
@@ -35,14 +35,25 @@ class Potee.Views.DashboardView extends Backbone.View
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
       @cancelCurrentForm()
+  
+  newProject_from_dbclick: (e)=>
+    # определяем вертикльную позицию клика относительно блока projects
+    project_height = $('.project').height()
+    topScroll = $('#projects').scrollTop()
+    topOffset = $('#projects').offset().top
+    topshift = e.pageY - topOffset + topScroll
+    position = Math.round(topshift/project_height)
 
-  newProject: (e)=>
+    # определяем дату по месту клика
+    date = window.dashboard.datetimeAt(e.pageX - window.dashboard.view.$el.offset().left)
+    @newProject(e, date, position)
+
+  newProject: (e, startFrom = moment(), position = 0)=>
     e.stopPropagation()
     e.preventDefault()
 
     $('#project_new').addClass('active')
-
-    @projects_view.newProject()
+    @projects_view.newProject(startFrom, position)
     return false
 
   resetTodayLink: ->
@@ -196,7 +207,6 @@ class Potee.Views.DashboardView extends Backbone.View
       @programmedScrolling = false
       @resetTodayLink()
 
-  #
   allowScrollByDrag: ->
     $('#dashboard').mousedown (e) =>
       if e.offsetX >= $('#dashboard').width() - 20 # вертикальный скролл справа.

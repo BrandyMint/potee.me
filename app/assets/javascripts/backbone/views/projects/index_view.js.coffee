@@ -9,9 +9,17 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   initialize: () ->
     @options.projects.bind('reset', @addAll)
     @render()
+    Backbone.pEvent.on 'savePositions', this.savePositions
   
   addAll: =>
     @options.projects.each((project, i) => @addOne(project, false))
+
+  insertToPosition: (project, position) =>
+    view = new Potee.Views.Projects.ProjectView
+      model : project
+    current_project = $(".project:eq(" + position + ")")
+    current_project.before(view.render().$el)
+    view
 
   addOne: (project, prepend) =>
     view = new Potee.Views.Projects.ProjectView
@@ -34,15 +42,18 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       )
     this
 
-  newProject: ->
-    project = new Potee.Models.Project
-    project_view = @addOne project, true
+  newProject: (startFrom = moment(), position = 0) ->
+    project = new Potee.Models.Project({}, {}, startFrom)
+    if position != 0
+      project_view = @insertToPosition project, position
+    else
+      project_view = @addOne project, true
     project_view.setTitleView 'new'
     
   savePositions: () ->
     projects = window.projects
     neworder = []
-    $('#projects div.project:visible').each(() ->
+    $('#projects div.project').each(() ->
       neworder.push $(this).attr("id")
     )
 
