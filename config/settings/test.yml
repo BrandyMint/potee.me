@@ -2,4 +2,3 @@ application:
   host: test.host
   hosts:
     - test.host
-
