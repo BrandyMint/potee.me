@@ -1,0 +1,26 @@
+application:
+  host: test.host
+  hosts:
+    - test.host
+devauth:
+  email:  
+  facebook:
+    login:
+    password:
+  twitter:
+    login:
+    password:
+  google:
+    email:
+    login:
+    password:
+facebook:
+  key:
+  secret:
+twitter:
+  key:
+  secret:
+google:
+  key:
+  secret:
+
