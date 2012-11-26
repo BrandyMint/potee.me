@@ -11,7 +11,6 @@ class Potee.Views.DashboardView extends Backbone.View
     @model.view = this
     @setElement($('#dashboard'))
     @update()
-
     @programmedScrolling = false
 
     @viewport.bind('scroll', @scroll)
@@ -115,7 +114,7 @@ class Potee.Views.DashboardView extends Backbone.View
     pixels_per_day = @normalizedPixelsPerDay(pixels_per_day)
     scale = @getScaleForPixelsPerDay(pixels_per_day)
     @model.set "scale", scale if scale != @model.get("scale")
-    @model.pixels_per_day = pixels_per_day
+    @model.updatePixelScale(pixels_per_day)
     @setScale()
     @gotoCurrentDate(animate: false)
 

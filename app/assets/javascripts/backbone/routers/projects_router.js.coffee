@@ -2,9 +2,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   initialize: (options) ->
     @projects = @getProjectsCollection(options.projects)
     window.projects = @projects
-
-    @dashboard = new Potee.Models.Dashboard {}, {}, @projects
-    window.dashboard = @dashboard
+    window.dashboard = @createDashboard()
 
   routes:
     ""          : "index"
@@ -17,6 +15,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     ":some"       : "index"
 
   index: ->
+    window.dashboard.pixels_per_day = window.dashboard.get('pixel_scale')
     @generateDashboardView()
 
   scaleToWeek: ->
@@ -30,10 +29,15 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   scaleToYear: ->
     window.dashboard.set 'scale', 'year'
     @generateDashboardView()
+  
+  createDashboard: ->
+    dashboard = new Potee.Models.Dashboard {}, {}, @projects
+    dashboard.fetch({async:false})
+    dashboard
 
   generateDashboardView: ->
     @dashboard_view ||= new Potee.Views.DashboardView
-      model: @dashboard
+      model: window.dashboard
     @dashboard_view.gotoCurrentDate()
 
   getProjectsCollection: (projects) ->
