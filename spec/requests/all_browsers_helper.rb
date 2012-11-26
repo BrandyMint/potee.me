@@ -12,10 +12,11 @@ RSpec.configure do |config|
       :url => "http://office.icfdev.ru:4444/wd/hub",
       :desired_capabilities => :internet_explorer)
   end
-
-  Capybara.run_server = false
-  Capybara.app_host = "http://stage.potee.ru"
-  Capybara.default_wait_time = 10
+  Capybara.default_host = '127.0.0.1'
+  Capybara.server_port = 30009
+  Capybara.app_host = "http://192.168.1.1:30009"
+  Capybara.server_boot_timeout = 60
+  Capybara.default_wait_time = 20
 
   # jenkins и обычный пользователь пускают X-ы на разных портах
   headless = Headless.new :destroy_at_exit => false, :display => `whoami`=~/jenkins/ ? 98 : 99

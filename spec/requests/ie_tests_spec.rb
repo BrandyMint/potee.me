@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'requests/all_browsers_helper'
+require 'requests/all_browsers_helper' if RSpec.configuration.inclusion_filter[:ie_test] == true
 
 describe "welcome page", :ie_test => true do
 
@@ -34,7 +34,7 @@ describe "welcome page", :ie_test => true do
 
   it "should allow to access 'How it works' info" do
     find_link("How it works").visible?
-    click_on "How it works"
+    click_on("How it works")
     current_path.should == "/pages/how_it_works"
   end
 
