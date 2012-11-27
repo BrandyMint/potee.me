@@ -1,11 +1,10 @@
 class Potee.Models.Project extends Backbone.Model
   paramRoot: 'project'
 
-  initialize: ->
-
+  initialize: (attributes, options, startFrom = moment()) ->
     # TODO Передавать номер дня на котором кликнули создание проекта
     # от него и начинать
-    @initNew() if @isNew()
+    @initNew(startFrom.startOf("day")) if @isNew()
 
     @setStartEndDates()
 
@@ -13,14 +12,12 @@ class Potee.Models.Project extends Backbone.Model
 
     @initProjectEventsCollection()
 
-  initNew: ->
+  initNew: (startFrom) ->
     @set 'color_index', window.projects.getNextColorIndex() if !@has('color_index')
     @set 'events', [] if !@has('events')
 
-    today = moment().startOf("day")
-
-    @set 'started_at', today.toString() if !@has('started_at')
-    @set 'finish_at', moment(today).add('days',7).toString() if !@has('finish_at')
+    @set 'started_at', startFrom.toString() if !@has('started_at')
+    @set 'finish_at', moment(startFrom).add('days',7).toString() if !@has('finish_at')
 
   initProjectEventsCollection: ->
     # Свойство events используется для событий Backbone модели, поэтому
@@ -56,7 +53,7 @@ class Potee.Models.Project extends Backbone.Model
 
   setStartEndDates: ->
     @started_at = moment(@get("started_at")).toDate()
-    @finish_at = moment(@get("finish_at")).toDate()
+    @finish_at  = moment(@get("finish_at")).toDate()
 
   duration: ->
     return moment(@finish_at).diff(moment(@started_at), "days") + 1

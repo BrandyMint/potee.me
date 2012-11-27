@@ -12,6 +12,8 @@ window.Potee =
 
 window.App = window.Potee
 
+Backbone.pEvent = _.extend({}, Backbone.Events);
+
 window.start = (options)->
     window.router = new App.Routers.ProjectsRouter(options)
     Backbone.history.start()
