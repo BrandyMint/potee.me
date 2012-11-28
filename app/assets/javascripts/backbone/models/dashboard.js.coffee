@@ -1,4 +1,13 @@
 class Potee.Models.Dashboard extends Backbone.Model
+  methodToURL:
+    'read': '/dashboard/read',
+    'update': '/dashboard/update'
+
+  sync: (method, model, options) ->
+    options = options || {}
+    options.url = model.methodToURL[method.toLowerCase()]
+    Backbone.sync(method, model, options)
+
   pixels_per_day: 150
   spanDays: 3
 
@@ -12,8 +21,10 @@ class Potee.Models.Dashboard extends Backbone.Model
   initialize: (attributes, options, @projects) ->
     @findStartEndDate()
     @on 'change:scale', @changeScale
-    @today = moment()
+    # такой вариант реализации почему-то не ловит изменение переменной pixels_per_day
+    #@on 'change:pixels_per_day', @updatePixelScale
 
+    @today = moment()
     @setToday()
     return
 
@@ -21,6 +32,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @currentDate = undefined
 
   getCurrentDate: ->
+    @currentDate = moment(@get ('current_date')).toDate()
     @currentDate || moment().startOf("day").add("hours", 12)
 
   setCurrentDate: (date) ->
@@ -28,6 +40,8 @@ class Potee.Models.Dashboard extends Backbone.Model
       @currentDate = undefined
     else
       @currentDate = date
+    this.set 'current_date', @currentDate.toString()
+    this.save()
     @view.resetTodayLink @currentDate
 
   changeScale: =>
@@ -40,6 +54,11 @@ class Potee.Models.Dashboard extends Backbone.Model
         @pixels_per_day = @YEAR_PIXELS_PER_DAY
     @setDuration()
     @view?.setScale()
+
+  updatePixelScale:(current_pixels_per_day) ->
+    @pixels_per_day = current_pixels_per_day
+    @.set 'pixel_scale', current_pixels_per_day
+    @.save()
 
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
