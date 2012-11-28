@@ -1,6 +1,8 @@
-require 'requests/requests_helper'
+# encoding: utf-8
 
-describe "welcome page" do
+require 'requests/all_browsers_helper' if RSpec.configuration.inclusion_filter[:ie_test] == true
+
+describe "welcome page", :ie_test => true do
 
   before do
     visit("/")
