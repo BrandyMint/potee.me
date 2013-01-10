@@ -44,10 +44,12 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   newProject: (startFrom = moment(), position = 0) ->
     project = new Potee.Models.Project({}, {}, startFrom)
-    if position != 0
+    projects_count = window.projects.length
+
+    if position > 0 and position < projects_count
       project_view = @insertToPosition project, position
     else
-      project_view = @addOne project, true
+      project_view = @addOne project, (position < projects_count)
     project_view.setTitleView 'new'
     
   savePositions: () ->

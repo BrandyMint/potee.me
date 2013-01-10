@@ -18,7 +18,7 @@ class Potee.Views.DashboardView extends Backbone.View
     $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
-    $('#projects').live('dblclick', @newProject_from_dbclick)
+    $('#projects').bind('dblclick', @newProject_from_dbclick)
 
     $(window).resize =>
       @resetWidth()
