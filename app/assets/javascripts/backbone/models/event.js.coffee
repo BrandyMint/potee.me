@@ -20,8 +20,9 @@ class Potee.Models.Event extends Backbone.Model
     @passed = (eventDate).diff(today, 'days') < 0
 
   setDateTime: (datetime) ->
-    @set("date", datetime.toDate())
-    @set("time", datetime.toDate())
+    @set({"date": datetime.toDate(), "time": datetime.toDate()})
+    @date = @get("date")
+    @time = @get("time")
     @setPassed()
     @view.rerender()
 

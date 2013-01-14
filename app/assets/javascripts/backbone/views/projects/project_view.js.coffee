@@ -25,7 +25,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     eventElement = @renderEvent(event, x)
     eventElement.effect('bounce', {times: 3}, 150)
-    @$el.resizable("option", "minWidth", @minWidthForResize())
+    @resetResizeMinWidth()
 
   edit: (e)->
     e.stopPropagation()
@@ -103,7 +103,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @$el.resizable(
       grid: window.dashboard.pixels_per_day,
-      minWidth: @minWidthForResize()
+      minWidth: @calculateResizeMinWidth()
       handles: 'e'
       stop: (event, ui) =>
         @durationChanged(ui.size.width)
@@ -111,14 +111,17 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     return this
 
-  minWidthForResize: ->
-    lastEvent = @model.projectEvents.last() || null
-    if lastEvent == null
-      return window.dashboard.pixels_per_day
-    else
-      date = moment(lastEvent.date).clone().add("days", 1)
+  resetResizeMinWidth: ->
+    @$el.resizable("option", "minWidth", @calculateResizeMinWidth())
+
+  calculateResizeMinWidth: ->
+    if @model.projectEvents.length > 0
+      date = ( @model.projectEvents.max (num) -> num.date).date
+      date = moment(date).clone().add("days", 1)
       diff = date.diff(moment(@model.started_at), "days")
       return diff * window.dashboard.pixels_per_day
+    else
+      return window.dashboard.pixels_per_day
 
   durationChanged: (width) ->
     duration = Math.round(width / window.dashboard.pixels_per_day)
@@ -151,4 +154,4 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     datetime = window.dashboard.datetimeAt(offset)
     event.setDateTime(datetime)
     event.save()
-
+    event.project.view.resetResizeMinWidth()

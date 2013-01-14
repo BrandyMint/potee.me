@@ -65,8 +65,8 @@ class Potee.Views.Events.EventView extends Backbone.View
     @model.save(null,
       success : (model) =>
         @model = model
-
         @renderShow()
+        @model.project.resetResizeMinWidth()
     )
 
 
@@ -85,6 +85,7 @@ class Potee.Views.Events.EventView extends Backbone.View
     e.preventDefault()
     e.stopPropagation()
     @model.collection.remove @model
+    @model.project.view.resetResizeMinWidth()
 
     @$el.fadeOut('fast', =>
       @remove()
@@ -145,6 +146,3 @@ class Potee.Views.Events.EventView extends Backbone.View
       @dragging = true if @mousedown
     $(document).mouseup =>
       @mousedown = false
-
-
-
