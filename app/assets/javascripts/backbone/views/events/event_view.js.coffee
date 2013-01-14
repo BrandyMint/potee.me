@@ -66,7 +66,7 @@ class Potee.Views.Events.EventView extends Backbone.View
       success : (model) =>
         @model = model
         @renderShow()
-        @model.project.resetResizeMinWidth()
+        @model.project.view.resetResizeMinWidth()
     )
 
 
