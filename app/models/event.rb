@@ -10,8 +10,10 @@ class Event < ActiveRecord::Base
 
   before_validation do
     self.title ||= 'Some event'
+    self.title = self.title[0..254]
   end
 
   validates :date, presence: true
   validates :time, presence: true
+
 end

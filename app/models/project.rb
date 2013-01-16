@@ -13,6 +13,7 @@ class Project < ActiveRecord::Base
     self.started_at ||= Date.today()
     self.finish_at ||= self.started_at + 1.months
     self.color_index ||= 1
+    self.title = self.title[0..254] unless self.title.blank?
   end
 
   validates :title, :presence => true #, :uniqueness => true
