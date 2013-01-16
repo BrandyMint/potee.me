@@ -9,7 +9,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @model.view = this
 
   events:
-    "click .title" : "edit"
+    "click .title" : "title_click"
     "click .progress .bar" : "add_event"
     "mousedown": (e)->
       if e.target == @$(".ui-resizable-e")[0]
@@ -27,9 +27,25 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     eventElement.effect('bounce', {times: 3}, 150)
     @resetResizeMinWidth()
 
-  edit: (e)->
+  title_click: (e) ->
     e.stopPropagation()
+    if this.titleView.sticky_pos == undefined
+      @edit()
+    else
+      @gotoProjectEdge()
+
+  edit: () ->
     @setTitleView 'edit'
+
+  gotoProjectEdge:() ->
+    dashboard_view = window.dashboard.view
+    switch this.titleView.sticky_pos
+      when 'left'
+        project_finish = moment(this.model.get('finish_at')).toDate()
+        dashboard_view.gotoDate(project_finish) 
+      when 'right' 
+        project_start = moment(this.model.get('started_at')).toDate() 
+        dashboard_view.gotoDate(project_start)
 
   bounce: ->
     @$el.effect('bounce', {times: 5}, 200)
@@ -39,6 +55,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @$el.slideUp('fast', ->
       $(this).remove()
       Backbone.pEvent.trigger 'savePositions'
+      Backbone.pEvent.trigger 'resetStickyTitles'
     )
     @$el.closest('div#projects').sortable("refresh")
     false
@@ -100,7 +117,6 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @setLeftMargin()
     @setDuration()
-
     @$el.resizable(
       grid: window.dashboard.pixels_per_day,
       minWidth: @calculateResizeMinWidth()
@@ -155,3 +171,29 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     event.setDateTime(datetime)
     event.save()
     event.project.view.resetResizeMinWidth()
+
+  stickTitle: (position = 'left') ->
+    @.titleView.sticky_pos = position
+    top_value = @$el.offset().top + 49 #отступ для каждого title
+    title_dom = @.titleView.$el
+    title_dom.addClass('sticky')
+    title_dom.css({
+      'top': top_value + 'px'
+    })
+    switch position
+      when 'left'  then title_dom.css('left','0px')
+      when 'right' then title_dom.css('right','0px')
+
+  unstickTitle: () ->
+    @.titleView.sticky_pos = undefined
+    title_dom = @.titleView.$el
+    title_dom.removeClass('sticky')
+    title_dom.css({
+      'top':'',
+      'left':'',
+      'right':''
+    })
+      
+  correctStickyTitlePosition: () ->  
+    top_value = @$el.offset().top + 49
+    @.titleView.$el.css('top', top_value + 'px')
