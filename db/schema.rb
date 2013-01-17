@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121110063852) do
+ActiveRecord::Schema.define(:version => 20121127133100) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -51,6 +51,16 @@ ActiveRecord::Schema.define(:version => 20121110063852) do
     t.string  "uid",      :null => false
     t.integer "user_id",  :null => false
   end
+
+  create_table "dashboards", :force => true do |t|
+    t.integer  "pixels_per_day", :default => 145
+    t.date     "current_date"
+    t.integer  "user_id",                         :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "dashboards", ["user_id"], :name => "index_dashboards_on_user_id", :unique => true
 
   create_table "events", :force => true do |t|
     t.string   "title",      :null => false

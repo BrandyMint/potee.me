@@ -70,14 +70,14 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
   leftMargin: ->
     dashboardStart = moment(window.dashboard.min_with_span())
     offsetInDays = moment(@model.started_at).diff(dashboardStart, "days")
-    return offsetInDays * window.dashboard.pixels_per_day
+    return offsetInDays * window.dashboard.get('pixels_per_day')
 
   # Project's line width
   setDuration: ->
     @$el.css('width', @width())
 
   width: ->
-    return @model.duration() * window.dashboard.pixels_per_day
+    return @model.duration() * window.dashboard.get('pixels_per_day')
 
   setTitleView: (state)->
     switch state
@@ -118,7 +118,7 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
     @setLeftMargin()
     @setDuration()
     @$el.resizable(
-      grid: window.dashboard.pixels_per_day,
+      grid: window.dashboard.get('pixels_per_day'),
       minWidth: @calculateResizeMinWidth()
       handles: 'e'
       stop: (event, ui) =>
@@ -135,12 +135,12 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       date = ( @model.projectEvents.max (num) -> num.date).date
       date = moment(date).clone().add("days", 1)
       diff = date.diff(moment(@model.started_at), "days")
-      return diff * window.dashboard.pixels_per_day
+      return diff * window.dashboard.get('pixels_per_day')
     else
-      return window.dashboard.pixels_per_day
+      return window.dashboard.get('pixels_per_day')
 
   durationChanged: (width) ->
-    duration = Math.round(width / window.dashboard.pixels_per_day)
+    duration = Math.round(width / window.dashboard.get('pixels_per_day'))
     @model.setDuration(duration)
 
     totalWidth = @width() + @leftMargin()
@@ -193,7 +193,3 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       'left':'',
       'right':''
     })
-      
-  correctStickyTitlePosition: () ->  
-    top_value = @$el.offset().top + 49
-    @.titleView.$el.css('top', top_value + 'px')

@@ -19,6 +19,8 @@ Potee::Application.routes.draw do
 
   resources :projects
   resources :events
+  match 'dashboard/read', to: 'dashboards#read'
+  match 'dashboard/update', to: 'dashboards#update'
 
   resources :pages, :only => [] do
     collection do

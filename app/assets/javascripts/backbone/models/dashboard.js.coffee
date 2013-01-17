@@ -1,5 +1,15 @@
 class Potee.Models.Dashboard extends Backbone.Model
-  pixels_per_day: 150
+  url: '/'
+
+  methodToURL:
+    'read': '/dashboard/read',
+    'update': '/dashboard/update'
+
+  sync: (method, model, options) ->
+    options = options || {}
+    options.url = model.methodToURL[method.toLowerCase()]
+    Backbone.sync(method, model, options)
+
   spanDays: 3
 
   WEEK_PIXELS_PER_DAY: 150
@@ -8,6 +18,7 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   defaults:
     scale: 'week'
+    pixels_per_day: 150
 
   initialize: (attributes, options, @projects) ->
     @findStartEndDate()
@@ -18,26 +29,24 @@ class Potee.Models.Dashboard extends Backbone.Model
     return
 
   setToday: ->
-    @currentDate = undefined
+    @set 'current_date', undefined
 
   getCurrentDate: ->
-    @currentDate || moment().startOf("day").add("hours", 12)
+    moment(@get('current_date')).toDate()
 
   setCurrentDate: (date) ->
-    if date == @today
-      @currentDate = undefined
-    else
-      @currentDate = date
-    @view.resetTodayLink @currentDate
+    @set 'current_date', date.toString()
+    @save()
+    @view.resetTodayLink @get('current_date')
 
   changeScale: =>
     switch @get('scale')
       when "week"
-        @pixels_per_day = @WEEK_PIXELS_PER_DAY
+        @set 'pixels_per_day', @WEEK_PIXELS_PER_DAY
       when "month"
-        @pixels_per_day = @MONTH_PIXELS_PER_DAY
+        @set 'pixels_per_day', @MONTH_PIXELS_PER_DAY
       when "year"
-        @pixels_per_day = @YEAR_PIXELS_PER_DAY
+        @set 'pixels_per_day', @YEAR_PIXELS_PER_DAY
     @setDuration()
     @view?.setScale()
 
@@ -104,15 +113,15 @@ class Potee.Models.Dashboard extends Backbone.Model
     # Это Дата?
     if _.isObject(day)
       minutes = moment(day).diff(moment(@min_with_span()), 'minutes') 
-      (@pixels_per_day * minutes) / (24*60)
+      (@get('pixels_per_day') * minutes) / (24*60)
     else
-      day * @pixels_per_day
+      day * @get('pixels_per_day')
 
   dayOfOffset: (offset) ->
-    Math.round( offset / @pixels_per_day )
+    Math.round( offset / @get('pixels_per_day') )
 
   dayOfMiddleOffset: (offset) ->
-    @dayOfOffset( offset + (@view.viewportWidth() / 2) - @pixels_per_day / 2)
+    @dayOfOffset( offset + (@view.viewportWidth() / 2) - @get('pixels_per_day') / 2)
 
   dateOfMiddleOffset: (offset) ->
     @datetimeAt offset + (@view.viewportWidth() / 2)
@@ -144,13 +153,13 @@ class Potee.Models.Dashboard extends Backbone.Model
   #
   # @param [Integer] x X-координата
   datetimeAt: (x) ->
-    days = Math.floor(x / @pixels_per_day)
-    daysWidth = days * @pixels_per_day
+    days = Math.floor(x / @get('pixels_per_day'))
+    daysWidth = days * @get('pixels_per_day')
 
-    hours = Math.floor((x - daysWidth) / (@pixels_per_day / 24))
-    hoursWidth = Math.round(hours * (@pixels_per_day / 24))
+    hours = Math.floor((x - daysWidth) / (@get('pixels_per_day') / 24))
+    hoursWidth = Math.round(hours * (@get('pixels_per_day') / 24))
 
-    minutes = Math.round((x - daysWidth - hoursWidth) / (@pixels_per_day / (24 * 60)))
+    minutes = Math.round((x - daysWidth - hoursWidth) / (@get('pixels_per_day') / (24 * 60)))
     return moment(@min_with_span()).clone().add("days", days).hours(hours).minutes(minutes)
 
   # Возвращает количество дней перед днем старта 1 проекта
@@ -158,9 +167,20 @@ class Potee.Models.Dashboard extends Backbone.Model
     moment(@min).diff(@min_with_span(), 'days')
 
   width: ->
-    return @days * @pixels_per_day
+    return @days * @get('pixels_per_day')
 
   setWidth: (width) ->
-    duration = Math.round(width / @pixels_per_day)
+    duration = Math.round(width / @get('pixels_per_day'))
     @max = moment(@min_with_span()).clone().add("days", duration)
     @setDuration()
+
+  getScaleForPixelsPerDay: (pixels_per_day)->
+    if pixels_per_day == @WEEK_PIXELS_PER_DAY
+      "week"
+    else if pixels_per_day == @MONTH_PIXELS_PER_DAY
+      "month"
+    else
+      "year"
+
+  calculateCurrentScaleByPixels: ->
+    @getScaleForPixelsPerDay(@get('pixels_per_day'))

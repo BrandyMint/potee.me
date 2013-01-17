@@ -116,7 +116,7 @@ class Potee.Views.Events.EventView extends Backbone.View
 
   calcOffset: ->
     d = window.router.dashboard
-    columnWidth = d.pixels_per_day
+    columnWidth = d.get('pixels_per_day')
     diff = moment(@model.date).diff(moment(@model.project_started_at), "days")
     daysOffset  = diff * columnWidth
 

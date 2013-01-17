@@ -71,6 +71,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     dashboard = window.dashboard
     projects_top_point = $('#projects').offset().top
     projects_bot_point = $('#projects').height() + projects_top_point
+    current_date = dashboard.getCurrentDate()
     window.projects.each((project, i) ->
       project_start_date = moment(project.get("started_at")).toDate()
       project_title_pos = project.view.titleView.sticky_pos
@@ -79,7 +80,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       valid_y_position = project_top_point > projects_top_point and project_bot_point < projects_bot_point
 
       if !dashboard.dateIsOnDashboard(project_start_date) and valid_y_position
-        if dashboard.currentDate > project_start_date
+        if current_date > project_start_date
           project.view.stickTitle('left')
         else
           project.view.stickTitle('right')

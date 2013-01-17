@@ -37,7 +37,7 @@ describe "Potee.Views.DashboardView", ->
         expect(@$today_column.nextAll("td").length).toEqual days
 
       it "should have appropriate width", ->
-        expect(@view.$el.width()).toEqual (3 + 1 + (moment().add("months", 1).endOf("month").diff(moment().startOf("day"), "days") + 3)) * @model.pixels_per_day
+        expect(@view.$el.width()).toEqual (3 + 1 + (moment().add("months", 1).endOf("month").diff(moment().startOf("day"), "days") + 3)) * @model.get('pixels_per_day')
 
   describe "actions", ->
     describe "new project via 'New project' button", ->
@@ -53,12 +53,12 @@ describe "Potee.Views.DashboardView", ->
 
     describe "user scroll the timeline", ->
       beforeEach ->
-        @offset = @model.pixels_per_day * 3 # на три дня влево
+        @offset = @model.get('pixels_per_day') * 3 # на три дня влево
         @view.viewport.scrollLeft @offset
         @view.viewport.trigger "scroll"
 
       it "should change current date", ->
-        expect(@model.getCurrentDate()).toEqual @model.datetimeAt(@offset + (@view.viewportWidth() / 2))
+        expect(@model.getCurrentDate()).toEqual @model.datetimeAt(@offset + (@view.viewportWidth() / 2)).toDate()
 
   describe "go to date", ->
     describe "in week scale", ->
@@ -67,7 +67,7 @@ describe "Potee.Views.DashboardView", ->
 
         runs =>
           # чтобы наверняка смогли отцентировать.
-          days_after_today = Math.ceil($(document).width() / @model.pixels_per_day)
+          days_after_today = Math.ceil($(document).width() / @model.get('pixels_per_day'))
           $today_column = $("tbody td.day.current")
           @$dayColumn = $($today_column.nextAll()[days_after_today-1])
           @view.gotoDate moment().add("days", days_after_today).startOf("day").add("hours", 12)
@@ -82,8 +82,8 @@ describe "Potee.Views.DashboardView", ->
 
   describe "#gotoCurrentDate", ->
     beforeEach ->
-      @currentDate = moment().add("days", Math.ceil($(document).width() / @model.pixels_per_day)).toDate()
-      @model.setCurrentDate @currentDate
+      @model.set 'current_date', moment().add("days", Math.ceil($(document).width() / @model.get('pixels_per_day'))).toDate()
+     @model.setCurrentDate @currentDate
 
     it "should not change current date", ->
       flag = false

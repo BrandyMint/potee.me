@@ -84,7 +84,6 @@ class Potee.Views.DashboardView extends Backbone.View
       @$el.stop()
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
-    Backbone.pEvent.trigger 'resetStickyTitles'
 
   Keys =
     Enter: 13
@@ -118,19 +117,19 @@ class Potee.Views.DashboardView extends Backbone.View
         @decPixelsPerDay()
 
   incPixelsPerDay: ->
-    @setPixelsPerDay @model.pixels_per_day+5
+    @setPixelsPerDay @model.get('pixels_per_day')+5
 
   decPixelsPerDay: ->
-    @setPixelsPerDay @model.pixels_per_day-5
+    @setPixelsPerDay @model.get('pixels_per_day')-5
 
   scalePixelsPerDay: (scale) ->
-    @setPixelsPerDay @model.pixels_per_day * scale
+    @setPixelsPerDay @model.get('pixels_per_day') * scale
 
   setPixelsPerDay: (pixels_per_day) ->
     pixels_per_day = @normalizedPixelsPerDay(pixels_per_day)
     scale = @getScaleForPixelsPerDay(pixels_per_day)
     @model.set "scale", scale if scale != @model.get("scale")
-    @model.pixels_per_day = pixels_per_day
+    @model.set 'pixels_per_day', pixels_per_day
     @setScale()
     @gotoCurrentDate(animate: false)
 
