@@ -79,27 +79,3 @@ describe "Potee.Views.DashboardView", ->
           actual = @$dayColumn.offset().left + @$dayColumn.width() / 2
           expected = $(document).width() / 2
           expect(Math.abs(expected - actual)).toBeLessThan(5)
-
-  describe "#gotoCurrentDate", ->
-    beforeEach ->
-      @model.set 'current_date', moment().add("days", Math.ceil($(document).width() / @model.get('pixels_per_day'))).toDate()
-     @model.setCurrentDate @currentDate
-
-    it "should not change current date", ->
-      flag = false
-
-      runs ->
-        @model.set 'scale', 'week'
-        @view.gotoCurrentDate()
-        setTimeout (-> flag = true), 1200
-
-      waitsFor (->flag), "gotoCurrentDate not finished", 1300
-
-      runs ->
-        flag = false
-        expect(@model.getCurrentDate()).toEqual @currentDate
-
-
-
-
-

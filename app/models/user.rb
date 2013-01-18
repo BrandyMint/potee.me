@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   private
 
   def create_dashboard
-    Dashboard.create(user: self, current_date: Time.now)
+    Dashboard.create(user: self, current_date: Time.now, pixels_per_day: 150)
   end
 
 end

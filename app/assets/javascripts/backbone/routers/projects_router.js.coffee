@@ -18,6 +18,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     ":some"       : "index"
 
   index: ->
+#    alert()
     window.dashboard.set 'scale', window.dashboard.calculateCurrentScaleByPixels()
     @generateDashboardView()
 
