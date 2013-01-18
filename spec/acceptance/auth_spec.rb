@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'requests/requests_helper'
+require 'acceptance/acceptance_helper'
 require 'support/auth_support'
 
 feature "auth", :js => true do
