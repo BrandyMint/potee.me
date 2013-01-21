@@ -19,3 +19,10 @@ Original post - http://blog.genue.ru/post/14561230063
 
 Rumble site of the project - http://potee.r12.railsrumble.com/
 
+
+License
+========
+
+[Attribution-Share Alike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0/)
+
+![Creative Commons](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)
