@@ -68,7 +68,7 @@ RSpec.configure do |config|
   end
 
   def multibrowser_testing &block
-    [:webkit, :remote_firefox, :remote_ie].each do |driver|
+    [:webkit, :remote_firefox].each do |driver|
       if driver == :webkit
         Capybara.app_host = "http://test.host:30009"
         Capybara.default_wait_time = 10
