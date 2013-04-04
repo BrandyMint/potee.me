@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.11'
+gem 'rails', '~> 3.2.13'
 
 gem 'airbrake'
 
@@ -11,7 +11,6 @@ gem 'inherited_resources'
 
 gem 'pg'
 
-gem 'rvm'
 gem 'unicorn'
 
 gem "haml", ">= 3.0.0"
@@ -53,13 +52,13 @@ group :development do
   gem 'capistrano'
   gem 'capistrano_colors'
   gem 'capistrano-recipes0', '>= 1.1.0', :git => 'git://github.com/BrandyMint/capistrano-recipes0.git'
-  gem 'rvm-capistrano'
   gem 'debugger'
 
   gem 'guard'
   gem 'guard-rspec'
   gem 'rb-fsevent', :require => false
   gem 'rb-inotify', :require => false
+  gem 'holepicker', :require => false
 end
 
 group :development, :test do
