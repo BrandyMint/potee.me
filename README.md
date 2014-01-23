@@ -18,7 +18,8 @@ Exec
 2. add config/settings/development.yml
 3. bundle
 4. vendorer
-5. rails s
+5. bower install
+6. rails s
 
 Background
 ==========

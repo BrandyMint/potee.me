@@ -1,0 +1,18 @@
+{
+  "name": "Potee",
+  "version": "0.1",
+  "dependencies": {
+    "jquery"                : "latest",
+    "jquery-outside-events" : "latest",
+    "momentjs"              : "1.7.2",
+    "moment-range"          : "latest",
+    "underscore"            : "latest",
+    "backbone"              : "0.9.2",
+    "backbone.localstorage" : "latest",
+    "backbone.marionette"   : "latest"
+  },
+  "ignore": [
+    "**/.*",
+    "components"
+  ]
+}
