@@ -52,8 +52,6 @@ group :development do
   gem 'capistrano'
   gem 'capistrano_colors'
   gem 'capistrano-recipes0', '>= 1.1.0', :git => 'git://github.com/BrandyMint/capistrano-recipes0.git'
-  gem 'debugger'
-
   gem 'guard'
   gem 'guard-rspec'
   gem 'rb-fsevent', :require => false
@@ -72,14 +70,14 @@ group :development, :test do
   gem 'sinon-rails'
 end
 
-group :test do
-  gem 'capybara'
-  gem 'capybara-webkit'
-  gem 'rr'
-  gem 'database_cleaner'
-  gem 'factory_girl_rails'
-  gem 'launchy'
-end
+#group :test do
+  #gem 'capybara'
+  #gem 'capybara-webkit'
+  #gem 'rr'
+  #gem 'database_cleaner'
+  #gem 'factory_girl_rails'
+  #gem 'launchy'
+#end
 
 group :production do
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes

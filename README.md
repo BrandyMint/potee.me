@@ -12,6 +12,14 @@ http://potee.me/ or http://potee.ru/
 
 ![original post](http://f.cl.ly/items/323N272z1T0k230W441K/100.png)
 
+Exec
+
+1. create config/database.yml
+2. add config/settings/development.yml
+3. bundle
+4. vendorer
+5. rails s
+
 Background
 ==========
 
