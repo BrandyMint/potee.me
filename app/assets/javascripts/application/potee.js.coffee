@@ -17,3 +17,20 @@ Backbone.pEvent = _.extend({}, Backbone.Events);
 window.start = (options)->
     window.router = new App.Routers.ProjectsRouter(options)
     Backbone.history.start()
+
+
+@PoteeApp = do (Backbone, Marionette) ->
+
+  App = new Marionette.Application
+  
+  App.addRegions
+    navbarRegion   : "#navbar-region"
+  
+  #App.addInitializer ->
+    #App.module("FooterApp").start()
+  
+  App.on "initialize:after", ->
+    if Backbone.history
+      Backbone.history.start
+  
+  App

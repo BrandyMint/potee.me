@@ -10,7 +10,7 @@
 #= require backbone.marionette/lib/backbone.marionette
 #= require backbone_rails_sync
 #= require backbone_datalink
-#= require backbone/potee
+#= require application/potee
 #= require bootstrap
 #= require jgestures
 #= require_tree .
