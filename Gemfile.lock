@@ -124,6 +124,10 @@ GEM
       activesupport (>= 3.1, < 4.1)
       haml (~> 3.1)
       railties (>= 3.1, < 4.1)
+    haml_coffee_assets (1.16.0)
+      coffee-script (~> 2.0)
+      sprockets (~> 2.0)
+      tilt (~> 1.1)
     has_scope (0.5.1)
     hashie (1.2.0)
     headless (0.3.1)
@@ -321,12 +325,14 @@ DEPENDENCIES
   carrierwave
   coffee-rails (~> 3.2.1)
   compass-rails
+  execjs
   foreverb
   guard
   guard-jasmine
   guard-rspec
   haml (>= 3.0.0)
   haml-rails
+  haml_coffee_assets
   headless
   holepicker
   inherited_resources

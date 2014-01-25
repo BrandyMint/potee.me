@@ -1,7 +1,7 @@
 Potee.Views.Timelines ||= {}
 
 class Potee.Views.Timelines.MonthsView extends Backbone.View
-  template: JST["backbone/templates/timelines/months"]
+  template: JST["application/templates/timelines/months"]
 
   tagName: 'div'
   className: 'months'

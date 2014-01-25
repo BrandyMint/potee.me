@@ -1,3 +1,4 @@
+#= require hamlcoffee
 #= require jquery
 #= require jquery_ujs
 #= require jquery.effects.bounce
@@ -10,9 +11,11 @@
 #= require backbone.marionette/lib/backbone.marionette
 #= require backbone_rails_sync
 #= require backbone_datalink
+
+#= require_tree ./application/config
 #= require application/potee
 #= require bootstrap
-#= require jgestures
+#= require jGestures/jgestures
 #= require_tree .
 
 $ ->

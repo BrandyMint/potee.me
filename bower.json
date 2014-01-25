@@ -5,9 +5,10 @@
     "jquery"                : "latest",
     "jquery-outside-events" : "latest",
     "momentjs"              : "1.7.2",
+    "jGestures"             : "git://github.com/BrandyMint/jGestures",
     "moment-range"          : "latest",
     "underscore"            : "latest",
-    "backbone"              : "1.0.0",
+    "backbone"              : "1.1.0",
     "backbone.localstorage" : "latest",
     "backbone.marionette"   : "latest"
   },

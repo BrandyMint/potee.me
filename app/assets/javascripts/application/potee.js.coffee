@@ -1,36 +1,25 @@
-#= require_self
-#= require_tree ./templates
-#= require_tree ./models
-#= require_tree ./views
-#= require_tree ./routers
+@Potee = do (Backbone, Marionette) ->
 
-window.Potee =
-  Models: {}
-  Collections: {}
-  Routers: {}
-  Views: {}
+  App = new Marionette.Application
 
-window.App = window.Potee
+  App.addRegions
+    navbarRegion: "#navbar-region"
+  
+  App.addInitializer ->
+    App.module("NavbarApp").start()
+  
+  App.on "initialize:after", ->
+    if Backbone.history
+      Backbone.history.start()
+  
+  App
+
+@Potee.Models =  {}
+@Potee.Collections = {}
+@Potee.Routers = {}
+@Potee.Views = {}
 
 Backbone.pEvent = _.extend({}, Backbone.Events);
 
 window.start = (options)->
-    window.router = new App.Routers.ProjectsRouter(options)
-    Backbone.history.start()
-
-
-@PoteeApp = do (Backbone, Marionette) ->
-
-  App = new Marionette.Application
-  
-  App.addRegions
-    navbarRegion   : "#navbar-region"
-  
-  #App.addInitializer ->
-    #App.module("FooterApp").start()
-  
-  App.on "initialize:after", ->
-    if Backbone.history
-      Backbone.history.start
-  
-  App
+  window.router = new @Potee.Routers.ProjectsRouter(options)
