@@ -1,8 +1,8 @@
 Potee.Views.Events ||= {}
 
 class Potee.Views.Events.EventView extends Backbone.View
-  template_show: JST["backbone/templates/events/event"]
-  template_edit: JST["backbone/templates/events/edit"]
+  template_show: JST["application/templates/events/event"]
+  template_edit: JST["application/templates/events/edit"]
   tagName: "div"
   className: "event"
 

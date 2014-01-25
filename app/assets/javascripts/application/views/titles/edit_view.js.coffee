@@ -1,7 +1,7 @@
 Potee.Views.Titles ||= {}
 
 class Potee.Views.Titles.EditView extends Backbone.View
-  template: JST["backbone/templates/titles/edit"]
+  template: JST["application/templates/titles/edit"]
   tagName: "div"
   className: 'project-title'
 

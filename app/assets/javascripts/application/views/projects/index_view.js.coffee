@@ -1,7 +1,7 @@
 Potee.Views.Projects ||= {}
 
 class Potee.Views.Projects.IndexView extends Backbone.View
-  template: JST["backbone/templates/projects/index"]
+  template: JST["application/templates/projects/index"]
 
   tagName: 'div'
   id: 'projects'

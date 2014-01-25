@@ -1,7 +1,7 @@
 Potee.Views.Timelines ||= {}
 
 class Potee.Views.Timelines.DaysView extends Backbone.View
-  template: JST["backbone/templates/timelines/days"]
+  template: JST["application/templates/timelines/days"]
 
   tagName: 'div'
   className: 'days'

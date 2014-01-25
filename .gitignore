@@ -20,6 +20,7 @@ public/uploads/*
 capybara-*.html
 .rspec
 /.bundle
+/vendor/assets/components/
 /vendor/bundle
 /log/*
 /tmp/*
