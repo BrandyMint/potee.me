@@ -9,7 +9,7 @@ class Potee.Views.Events.EventView extends Backbone.View
   DEFAULT_Z_INDEX = 150
   ACTIVE_Z_INDEX = 200
 
-  initialize: ->
+  initialize: (@options) ->
     @model.resetDate()
     @model.view = @
     @setDragDetector()

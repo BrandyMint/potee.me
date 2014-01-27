@@ -5,7 +5,7 @@ class Potee.Views.Titles.ShowView extends Backbone.View
   tagName: "div"
   className: 'project-title'
 
-  initialize: ->
+  initialize: (@options) ->
     @sticky_pos = undefined
 
   render: ->

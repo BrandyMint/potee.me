@@ -6,7 +6,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   tagName: 'div'
   id: 'projects'
 
-  initialize: () ->
+  initialize: (@options) ->
     @options.projects.bind('reset', @addAll)
     @render()
     Backbone.pEvent.on 'savePositions', this.savePositions
@@ -61,7 +61,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     )
 
     _.each(neworder, (cid, i) ->
-      project = projects.getByCid(cid)
+      project = projects.get(cid)
       project.set('position', i)
       project.save()
     )

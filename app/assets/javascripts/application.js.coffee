@@ -3,15 +3,16 @@
 #= require jquery.effects.bounce
 #= require jquery.ui.resizable
 #= require jquery.ui.draggable
-#= require underscore
-#= require moment
-#= require moment-range
-#= require backbone
+#= require underscore/underscore
+#= require momentjs/moment
+#= require moment-range/lib/moment-range
+#= require backbone/backbone
+#= require marionette/lib/backbone.marionette
 #= require backbone_rails_sync
 #= require backbone_datalink
 #= require backbone/potee
 #= require bootstrap
-#= require jgestures
+#= require jGestures/jgestures
 #= require_tree .
 
 $ ->

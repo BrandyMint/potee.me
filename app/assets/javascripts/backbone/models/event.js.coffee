@@ -15,8 +15,8 @@ class Potee.Models.Event extends Backbone.Model
     @date = moment(@get("date")).toDate()
 
   setPassed: ->
-    eventDate = moment(@get('date')).eod()
-    today = moment().eod()
+    eventDate = moment(@get('date')).endOf('day')
+    today = moment().endOf('day')
     @passed = (eventDate).diff(today, 'days') < 0
 
   setDateTime: (datetime) ->
