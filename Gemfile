@@ -72,7 +72,8 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'capybara-webkit'
+  gem 'poltergeist'
+  #gem 'capybara-webkit'
   gem 'rr'
   gem 'database_cleaner'
   gem 'factory_girl_rails'

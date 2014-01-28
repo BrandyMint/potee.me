@@ -2,31 +2,34 @@ require 'spec_helper'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'headless'
+require 'capybara/poltergeist'
+
 
 USER_NAME = 'Barak Obama'
 
 RSpec.configure do |config|
 
-  Capybara.javascript_driver = :webkit # :webkit пока нормально не работает (https://github.com/thoughtbot/capybara-webkit/issues/366)
+  # :webkit пока нормально не работает (https://github.com/thoughtbot/capybara-webkit/issues/366)
+  Capybara.javascript_driver = :poltergeist
   Capybara.default_host = '127.0.0.1'
   Capybara.server_port = 30009
   Capybara.app_host = "http://test.host:30009"
   #Capybara.server_boot_timeout = 60
   Capybara.default_wait_time = 10
 
-  Capybara.register_driver :remote_firefox do |app|
-    Capybara::Selenium::Driver.new(app,
-                                   :browser => :remote,
-                                   :url => "http://office.icfdev.ru:4444/wd/hub",
-                                   :desired_capabilities => :firefox)
-  end
+  #Capybara.register_driver :remote_firefox do |app|
+    #Capybara::Selenium::Driver.new(app,
+                                   #:browser => :remote,
+                                   #:url => "http://office.icfdev.ru:4444/wd/hub",
+                                   #:desired_capabilities => :firefox)
+  #end
 
-  Capybara.register_driver :remote_ie do |app|
-    Capybara::Selenium::Driver.new(app,
-                                   :browser => :remote,
-                                   :url => "http://office.icfdev.ru:4444/wd/hub",
-                                   :desired_capabilities => :ie)
-  end
+  #Capybara.register_driver :remote_ie do |app|
+    #Capybara::Selenium::Driver.new(app,
+                                   #:browser => :remote,
+                                   #:url => "http://office.icfdev.ru:4444/wd/hub",
+                                   #:desired_capabilities => :ie)
+  #end
 
   # jenkins и обычный пользователь пускают X-ы на разных портах
   headless = Headless.new :destroy_at_exit => false, :display => `whoami`=~/jenkins/ ? 98 : 99

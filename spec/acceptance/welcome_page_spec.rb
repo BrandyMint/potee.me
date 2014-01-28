@@ -1,40 +1,40 @@
+# encoding: utf-8
+
 require 'acceptance/acceptance_helper'
-multibrowser_testing do
-  feature "welcome page", {:driver => @driver} do
 
-    before do
-      visit "/"
-    end
-
-    it "should allow everybody to get started by click on 'Get started' link" do
-      find_link("Get started").visible?
-      click_on("Get started")
-      current_path.should == "/projects"
-    end
-
-    it "should allow everybody to get started by click on logo" do
-      find(".welcome-logo a").visible?
-      find(".welcome-logo a").click
-      current_path.should == "/projects"
-    end
-
-    it "should allow to access about info" do
-      find_link("About").visible?
-      click_on "About"
-      current_path.should == "/pages/about"
-    end
-
-    it "should allow to access team info" do
-      find_link("Team").visible?
-      click_on "Team"
-      current_path.should == "/pages/team"
-    end
-
-    it "should allow to access 'How it works' info" do
-      find_link("How it works").visible?
-      click_on "How it works"
-      current_path.should == "/pages/how_it_works"
-    end
-
+feature "welcome page", :js => true do
+  before do
+    visit "/"
   end
+
+  it "should allow everybody to get started by click on 'Get started' link" do
+    find_link("Get started").visible?
+    click_on("Get started")
+    current_path.should == "/projects"
+  end
+
+  it "should allow everybody to get started by click on logo" do
+    find(".welcome-logo a").visible?
+    find(".welcome-logo a").click
+    current_path.should == "/projects"
+  end
+
+  it "should allow to access about info" do
+    find_link("About").visible?
+    click_on "About"
+    current_path.should == "/pages/about"
+  end
+
+  it "should allow to access team info" do
+    find_link("Team").visible?
+    click_on "Team"
+    current_path.should == "/pages/team"
+  end
+
+  it "should allow to access 'How it works' info" do
+    find_link("How it works").visible?
+    click_on "How it works"
+    current_path.should == "/pages/how_it_works"
+  end
+
 end

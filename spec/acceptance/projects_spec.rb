@@ -18,6 +18,7 @@ feature "projects", :js => true do
 
 
   scenario "add project" do
+    pending
     # click "create project"
     find_link("new-project-link").visible?
     click_on("new-project-link")
@@ -58,6 +59,7 @@ feature "projects", :js => true do
 
     within("#projects .project.project-color-2") do
       first(".event .event-bar").click
+      pending
       within(".event form#edit-event") do
         fill_in "title", :with => "get started"
         click_on "submit"

@@ -3,3 +3,5 @@ rvm:
   - 2.0.0-p353
 before_script:
   - cp ./config/database_test.yml ./config/database.yml
+  - npm install -g bower
+  - bower install
