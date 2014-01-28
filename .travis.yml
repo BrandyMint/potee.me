@@ -1,7 +1,10 @@
 language: ruby
 rvm:
   - 2.0.0-p353
+script:
+  - RAILS_ENV=test bundle exec rake --trace db:migrate
 before_script:
   - cp ./config/database_test.yml ./config/database.yml
   - npm install -g bower
   - bower install
+  - psql -c 'create database potee_test' -U postgres
