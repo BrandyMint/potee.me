@@ -27,6 +27,10 @@ Original post - http://blog.genue.ru/post/14561230063
 
 Rumble site of the project - http://potee.r12.railsrumble.com/
 
+Links
+=====
+
+* [errbit](http://errbit.brandymint.ru/apps/507bc454687d9c7dde000106)
 
 License
 ========

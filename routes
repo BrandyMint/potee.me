@@ -1,0 +1,84 @@
+                        admin_root            /admin(.:format)                              admin/dashboard#index
+batch_action_admin_authentications POST       /admin/authentications/batch_action(.:format) admin/authentications#batch_action
+             admin_authentications GET        /admin/authentications(.:format)              admin/authentications#index
+                                   POST       /admin/authentications(.:format)              admin/authentications#create
+          new_admin_authentication GET        /admin/authentications/new(.:format)          admin/authentications#new
+         edit_admin_authentication GET        /admin/authentications/:id/edit(.:format)     admin/authentications#edit
+              admin_authentication GET        /admin/authentications/:id(.:format)          admin/authentications#show
+                                   PUT        /admin/authentications/:id(.:format)          admin/authentications#update
+                                   DELETE     /admin/authentications/:id(.:format)          admin/authentications#destroy
+       batch_action_admin_projects POST       /admin/projects/batch_action(.:format)        admin/projects#batch_action
+                    admin_projects GET        /admin/projects(.:format)                     admin/projects#index
+                                   POST       /admin/projects(.:format)                     admin/projects#create
+                 new_admin_project GET        /admin/projects/new(.:format)                 admin/projects#new
+                edit_admin_project GET        /admin/projects/:id/edit(.:format)            admin/projects#edit
+                     admin_project GET        /admin/projects/:id(.:format)                 admin/projects#show
+                                   PUT        /admin/projects/:id(.:format)                 admin/projects#update
+                                   DELETE     /admin/projects/:id(.:format)                 admin/projects#destroy
+          batch_action_admin_users POST       /admin/users/batch_action(.:format)           admin/users#batch_action
+                       admin_users GET        /admin/users(.:format)                        admin/users#index
+                                   POST       /admin/users(.:format)                        admin/users#create
+                    new_admin_user GET        /admin/users/new(.:format)                    admin/users#new
+                   edit_admin_user GET        /admin/users/:id/edit(.:format)               admin/users#edit
+                        admin_user GET        /admin/users/:id(.:format)                    admin/users#show
+                                   PUT        /admin/users/:id(.:format)                    admin/users#update
+                                   DELETE     /admin/users/:id(.:format)                    admin/users#destroy
+    batch_action_admin_admin_users POST       /admin/admin_users/batch_action(.:format)     admin/admin_users#batch_action
+                 admin_admin_users GET        /admin/admin_users(.:format)                  admin/admin_users#index
+                                   POST       /admin/admin_users(.:format)                  admin/admin_users#create
+              new_admin_admin_user GET        /admin/admin_users/new(.:format)              admin/admin_users#new
+             edit_admin_admin_user GET        /admin/admin_users/:id/edit(.:format)         admin/admin_users#edit
+                  admin_admin_user GET        /admin/admin_users/:id(.:format)              admin/admin_users#show
+                                   PUT        /admin/admin_users/:id(.:format)              admin/admin_users#update
+                                   DELETE     /admin/admin_users/:id(.:format)              admin/admin_users#destroy
+                   admin_dashboard            /admin/dashboard(.:format)                    admin/dashboard#index
+         batch_action_admin_events POST       /admin/events/batch_action(.:format)          admin/events#batch_action
+                      admin_events GET        /admin/events(.:format)                       admin/events#index
+                                   POST       /admin/events(.:format)                       admin/events#create
+                   new_admin_event GET        /admin/events/new(.:format)                   admin/events#new
+                  edit_admin_event GET        /admin/events/:id/edit(.:format)              admin/events#edit
+                       admin_event GET        /admin/events/:id(.:format)                   admin/events#show
+                                   PUT        /admin/events/:id(.:format)                   admin/events#update
+                                   DELETE     /admin/events/:id(.:format)                   admin/events#destroy
+       batch_action_admin_comments POST       /admin/comments/batch_action(.:format)        admin/comments#batch_action
+                    admin_comments GET        /admin/comments(.:format)                     admin/comments#index
+                                   POST       /admin/comments(.:format)                     admin/comments#create
+                     admin_comment GET        /admin/comments/:id(.:format)                 admin/comments#show
+            new_admin_user_session GET        /admin/login(.:format)                        active_admin/devise/sessions#new
+                admin_user_session POST       /admin/login(.:format)                        active_admin/devise/sessions#create
+        destroy_admin_user_session DELETE|GET /admin/logout(.:format)                       active_admin/devise/sessions#destroy
+               admin_user_password POST       /admin/password(.:format)                     active_admin/devise/passwords#create
+           new_admin_user_password GET        /admin/password/new(.:format)                 active_admin/devise/passwords#new
+          edit_admin_user_password GET        /admin/password/edit(.:format)                active_admin/devise/passwords#edit
+                                   PUT        /admin/password(.:format)                     active_admin/devise/passwords#update
+                                              /404(.:format)                                errors#not_found
+                                              /auth/:provider/callback(.:format)            sessions#create
+                      auth_failure            /auth/failure(.:format)                       :controller#:action
+                            logout            /logout(.:format)                             sessions#destroy
+                              root            /                                             welcome#index
+                          projects GET        /projects(.:format)                           projects#index
+                                   POST       /projects(.:format)                           projects#create
+                       new_project GET        /projects/new(.:format)                       projects#new
+                      edit_project GET        /projects/:id/edit(.:format)                  projects#edit
+                           project GET        /projects/:id(.:format)                       projects#show
+                                   PUT        /projects/:id(.:format)                       projects#update
+                                   DELETE     /projects/:id(.:format)                       projects#destroy
+                            events GET        /events(.:format)                             events#index
+                                   POST       /events(.:format)                             events#create
+                         new_event GET        /events/new(.:format)                         events#new
+                        edit_event GET        /events/:id/edit(.:format)                    events#edit
+                             event GET        /events/:id(.:format)                         events#show
+                                   PUT        /events/:id(.:format)                         events#update
+                                   DELETE     /events/:id(.:format)                         events#destroy
+                    dashboard_read            /dashboard/read(.:format)                     dashboards#read
+                  dashboard_update            /dashboard/update(.:format)                   dashboards#update
+                       about_pages GET        /pages/about(.:format)                        pages#about
+                        team_pages GET        /pages/team(.:format)                         pages#team
+                how_it_works_pages GET        /pages/how_it_works(.:format)                 pages#how_it_works
+                       jasminerice            /jasmine                                      Jasminerice::Engine
+
+Routes for Jasminerice::Engine:
+           GET /spec/:spec_id/fixtures/*filename(.:format) jasminerice/spec#fixtures
+spec_index GET /spec(.:format)                             jasminerice/spec#index
+               /fixtures/*filename(.:format)               jasminerice/spec#fixtures
+      root     /                                           jasminerice/spec#index

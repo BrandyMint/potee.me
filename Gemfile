@@ -15,7 +15,7 @@ gem 'unicorn'
 
 gem "haml", ">= 3.0.0"
 gem "haml-rails"
-gem "omniauth", "~> 1.1.0"
+gem "omniauth"
 gem "omniauth-facebook"
 gem "omniauth-twitter"
 gem "omniauth-google-oauth2"
