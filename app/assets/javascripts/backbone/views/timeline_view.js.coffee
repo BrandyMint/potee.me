@@ -4,7 +4,7 @@ class Potee.Views.TimelineView extends Backbone.View
 
   scale: 'days'
 
-  initialize: ->
+  initialize: (@options)->
     @dashboard = @options.dashboard
     @view = @options.view
 

@@ -17,7 +17,7 @@ Exec
 1. create config/database.yml
 2. add config/settings/development.yml
 3. bundle
-4. vendorer
+4. bower install
 5. rails s
 
 Background

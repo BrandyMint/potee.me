@@ -5,7 +5,7 @@ class Potee.Views.Titles.EditView extends Backbone.View
   tagName: "div"
   className: 'project-title'
 
-  initialize: ->
+  initialize: (@options) ->
     @collection = window.projects
     @model = @options.model
 

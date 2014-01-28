@@ -14,6 +14,15 @@ window.App = window.Potee
 
 Backbone.pEvent = _.extend({}, Backbone.Events);
 
-window.start = (options)->
-    window.router = new App.Routers.ProjectsRouter(options)
-    Backbone.history.start()
+@PoteeApp = do (Backbone, Marionette) ->
+
+  App = new Marionette.Application
+  
+  App.addInitializer (options) ->
+    window.router = new window.App.Routers.ProjectsRouter(options)
+
+  App.on "initialize:after", ->
+    if Backbone.history
+      Backbone.history.start()
+  
+  App
