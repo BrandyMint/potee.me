@@ -7,6 +7,5 @@
 
 :javascript
   $(function() {
-    window.start({projects: #{@projects.to_json(include: :events).html_safe}});
+    PoteeApp.start({projects: #{@projects.to_json(include: :events).html_safe}});
   })
-
