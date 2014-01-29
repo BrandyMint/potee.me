@@ -2,15 +2,16 @@
   "name": "Potee",
   "version": "0.1",
   "dependencies": {
-    "jquery"                : "latest",
-    "jquery-outside-events" : "latest",
-    "momentjs"              : "latest",
-    "jGestures"             : "git://github.com/BrandyMint/jGestures",
-    "moment-range"          : "latest",
-    "underscore"            : "latest",
-    "backbone"              : "1.1.0",
-    "backbone.localstorage" : "latest",
-    "marionette"            : "latest"
+    "jquery": "latest",
+    "jquery-outside-events": "latest",
+    "momentjs": "latest",
+    "jGestures": "git://github.com/BrandyMint/jGestures",
+    "moment-range": "latest",
+    "underscore": "latest",
+    "backbone": "1.1.0",
+    "backbone.localstorage": "latest",
+    "marionette": "latest",
+    "jquery.ui": "~1.10.4"
   },
   "ignore": [
     "**/.*",

@@ -1,8 +1,13 @@
 #= require jquery
 #= require jquery_ujs
-#= require jquery.effects.bounce
-#= require jquery.ui.resizable
-#= require jquery.ui.draggable
+#= require jquery.ui/ui/jquery.ui.core
+#= require jquery.ui/ui/jquery.ui.widget
+#= require jquery.ui/ui/jquery.ui.mouse
+#= require jquery.ui/ui/jquery.ui.effect
+#= require jquery.ui/ui/jquery.ui.effect-bounce
+#= require jquery.ui/ui/jquery.ui.resizable
+#= require jquery.ui/ui/jquery.ui.draggable
+#= require jquery.ui/ui/jquery.ui.sortable
 #= require underscore/underscore
 #= require momentjs/moment
 #= require moment-range/lib/moment-range

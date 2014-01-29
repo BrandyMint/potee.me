@@ -36,9 +36,6 @@ group :assets do
   gem 'compass-rails'
 end
 
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-
 gem 'rails-backbone'
 gem 'bootstrap-sass'
 
