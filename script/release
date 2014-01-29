@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+#
+echo "Следующая версия релиза:"
+
+semver inc patch
+semver meta `git rev-parse HEAD`
+semver
+git semtag
+git add .
+git commit -m `semver`
+git push --tags
+
+# sudo pip instal gitchangelog
+#gitchangelog > Changelog.txt

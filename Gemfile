@@ -5,6 +5,7 @@ gem 'rails', '~> 3.2.13'
 gem 'airbrake'
 
 gem 'inherited_resources'
+gem 'semver2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

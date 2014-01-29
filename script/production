@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ssh wwwmasha@masha.brandymint.ru -p 227
