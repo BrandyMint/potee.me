@@ -40,8 +40,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 gem 'rails-backbone'
-gem 'vendorer'
-
 gem 'bootstrap-sass'
 
 gem 'activeadmin'
