@@ -3,6 +3,8 @@ Potee
 
 Simple visual project management.
 
+![travis build state](https://api.travis-ci.org/BrandyMint/Potee.png)
+
 New way of planning.
 Now you know what is the next step in your projects.
 
