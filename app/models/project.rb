@@ -8,6 +8,7 @@ class Project < ActiveRecord::Base
 
   belongs_to :user
   has_many :events, :dependent => :destroy
+  has_many :project_connections
 
   before_validation do
     self.started_at ||= Date.today()

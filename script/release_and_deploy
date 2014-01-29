@@ -1,0 +1,1 @@
+./scripts/release; git push; bundle exec cap production deploy
