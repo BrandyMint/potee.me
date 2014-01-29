@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   has_many :authentications, :dependent => :destroy
   has_many :owned_projects, :dependent => :destroy, class_name: 'Project'
 
-  has_many :project_connections
+  has_many :project_connections, dependent: :destroy
   has_many :projects, through: :project_connections
 
   has_one  :dashboard, :dependent => :destroy

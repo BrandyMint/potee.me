@@ -22,6 +22,11 @@ class Project < ActiveRecord::Base
   validates :color_index, :presence => true
   validates :user_id, presence: true
 
+  after_create do
+    ProjectConnection.create project: self, user: user
+  end
+
+
   # Вирутальный аттрибут от backbone
   def cid= value
 

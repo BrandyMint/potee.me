@@ -61,6 +61,21 @@ group :development do
 end
 
 group :development, :test do
+  gem 'pry-rails'
+  gem 'pry-theme'
+
+  gem 'pry-pretty-numeric'
+  gem 'pry-syntax-hacks'
+  gem 'pry-highlight'
+  gem 'pry-git'
+  gem 'pry-developer_tools'
+
+  gem 'pry-remote'
+  gem 'pry-nav'
+  gem 'pry-doc'
+  gem 'pry-docmore'
+
+
   gem 'rspec-rails'
   gem 'headless'
 
