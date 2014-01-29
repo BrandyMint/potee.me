@@ -10,6 +10,7 @@ ActiveAdmin.register ProjectConnection do
     column :user
     column :project
     column :position
+    column :share_key
     actions
   end
 
