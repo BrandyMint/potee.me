@@ -30,7 +30,7 @@ set :bundle_flags, "--deployment --quiet --binstubs"
 
 before 'deploy:restart', 'deploy:migrate'
 after 'deploy:restart', "deploy:cleanup"
-after 'deploy:finalize_update', 'potee:symlink_configs'
+after 'deploy:finalize_update', 'potee:symlink_configs', 'potee:bowerinstall'
 
 #RVM, Bundler
 load 'deploy/assets'
@@ -43,6 +43,9 @@ require "recipes0/nginx"
 namespace :potee do
    task :symlink_configs, :except => { :no_release => true } do
       run "cp -r -s --force --remove-destination #{shared_path}/config #{release_path}"
+   end
+   task :bowerinstall, :except => { :no_release => true } do
+       run "cd #{release_path} && bower install"
    end
 end
 
