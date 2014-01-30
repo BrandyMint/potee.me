@@ -25,6 +25,3 @@ class Potee.Models.Event extends Backbone.Model
     @time = @get("time")
     @setPassed()
     @view.rerender()
-
-  toTemplate: ->
-    @toJSON()
