@@ -1,15 +1,14 @@
 Potee.Views.Titles ||= {}
 
-class Potee.Views.Titles.EditView extends Backbone.View
+class Potee.Views.Titles.EditView extends Marionette.ItemView
   template: JST["backbone/templates/titles/edit"]
-  tagName: "div"
-  className: 'project-title'
+  className: "project-title"
 
   initialize: (@options) ->
     @collection = window.projects
     @model = @options.model
 
-  events :
+  events:
     "submit #edit-project" : "update"
     "click #submit"        : "update"
     'click #cancel'        : 'cancelEvent'
@@ -27,9 +26,9 @@ class Potee.Views.Titles.EditView extends Backbone.View
         @model.view.setTitleView 'show'
     )
 
-  render: ->
-
   destroyProject: (e) ->
+    e.preventDefault()
+
     if confirm("Sure to delete?")
       @model.destroy()
 
@@ -44,8 +43,6 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
     $('#project_new').removeClass('active')
 
-  render: ->
-    $(@el).html(@template(@options.project_view.model.toJSON() ))
-
-    @.$("form").backboneLink(@model)
-    return this
+  onRender: ->
+    @$("form").backboneLink(@model)
+    @
