@@ -1,4 +1,4 @@
-window.Potee.Mediators.Keystrokes ||= {}
+window.Potee.Mediators ||= {}
 
 class Potee.Mediators.Keystrokes
   Keys =
@@ -8,9 +8,9 @@ class Potee.Mediators.Keystrokes
     Plus: 187
     Minus: 189
 
-  constructor: (dashboard) ->
-    @dashboard = dashboard
-    $(document).bind('keydown', @keydown)
+  constructor: (options) ->
+    @dashboard = options.dashboard
+    $(document).bind 'keydown', @keydown
 
   keydown: (e) =>
     e ||= window.event

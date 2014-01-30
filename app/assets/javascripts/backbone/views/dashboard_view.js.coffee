@@ -14,7 +14,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @programmedScrolling = false
 
-    @keystrokes_mediator = new Potee.Mediators.Keystrokes
+    @keystrokes_mediator = new Potee.Mediators.Keystrokes dashboard: @
 
     @viewport.bind('scroll', @scroll)
     $(document).bind('click', @click)
