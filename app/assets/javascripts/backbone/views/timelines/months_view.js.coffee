@@ -7,18 +7,21 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
   className: 'months'
 
   initialize: (options) ->
-    @start = moment(options.date_start, "YYYY-MM-DD")
-    @end = moment(options.date_finish, "YYYY-MM-DD")
+    @start = moment options.date_start, "YYYY-MM-DD"
+    @end = moment options.date_finish, "YYYY-MM-DD"
+
+    # Добавляем месяцев справа, чтобы было куда продолжать и заполнить dashboard
+    @end = @end.add "months", 12
     @columnWidth = options.column_width
 
   months: () ->
     months = []
 
-    months.push(@month(@start, @start.clone().endOf('month')))
+    months.push @month(@start, @start.clone().endOf('month'))
 
-    range = moment().range(@start.clone().add("months", 1).startOf("month"),
-                           @end.clone().subtract("months", 1).endOf("month"))
-    range.by('M', (m) =>
+    range = moment().range @start.clone().add("months", 1).startOf("month"),
+                           @end.clone().subtract("months", 1).endOf("month")
+    range.by 'M', (m) =>
       start = m.clone().startOf('month')
       end = m.clone().endOf('month')
 
@@ -26,10 +29,9 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
       # значение может быть больше конца интервала, поэтому приходится это
       # проверять.
       if end < @end
-        months.push(@month(start, end))
-    )
+        months.push @month(start, end)
 
-    months.push(@month(@end.clone().startOf('month'), @end.clone().add("days", 1)))
+    months.push @month(@end.clone().startOf('month'), @end.clone().add("days", 1))
 
     return months
 
@@ -39,8 +41,11 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
     return { title: title, width: width }
 
   index_of_current_month: ->
-    moment().diff(moment(@start), 'months')
+    moment().diff moment(@start), 'months'
 
   render: =>
-    $(@el).html(@template(months: @months(), current_month: @index_of_current_month()))
-    return this
+    $(@el).html @template
+        months: @months()
+        current_month: @index_of_current_month()
+
+    @
