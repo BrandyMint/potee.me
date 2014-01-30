@@ -62,8 +62,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     _.each(neworder, (cid, i) ->
       project = projects.get(cid)
-      project.set('position', i)
-      project.save()
+
+      if project? && !project.isNew()
+        project.set('position', i)
+        project.save()
     )
 
   resetStickyTitles: () ->

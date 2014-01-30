@@ -16,12 +16,9 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
       success: (project) =>
         $('#project_new').removeClass('active')
 
-        project.view = @model.view
-        @model = project
-        @model.view.model = project
-        @model.view.setTitleView 'show'
-        @model.view.$el.attr('id', @model.cid)
-        Backbone.pEvent.trigger 'savePositions'
+        project_view = @model.view
+        project_view.resetModel project
+        project_view.setTitleView 'show'
         window.location.hash = '/'
 
       error: (project, jqXHR) =>

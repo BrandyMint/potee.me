@@ -4,6 +4,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   template: JST["backbone/templates/projects/project"]
   tagName: "div"
   className: 'project'
+  modelEvents: () ->
+    'destroy': @close
 
   initialize: ->
     @model.view = this
@@ -47,19 +49,30 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
         project_start = moment(this.model.get('started_at')).toDate() 
         dashboard_view.gotoDate(project_start)
 
+  resetModel: (new_model) ->
+    @undelegateEvents()
+    @model = new_model
+    @model.view = @
+    @delegateEvents()
+    @$el.attr 'id', @model.cid
+    Backbone.pEvent.trigger 'savePositions'
+
   bounce: ->
     @$el.effect('bounce', {times: 5}, 200)
 
-  destroy: () ->
-    window.projects.remove @model
-    @$el.slideUp('fast', ->
-      $(this).remove()
-      Backbone.pEvent.trigger 'savePositions'
-      Backbone.pEvent.trigger 'resetStickyTitles'
-    )
-    @$el.closest('div#projects').sortable("refresh")
-    false
+  remove: () ->
+    @$el.slideUp 'fast'
+    @stopListening()
 
+  onClose: () ->
+    @model.projectEvents.each((event)=>
+      event.close()
+    )
+    Backbone.pEvent.trigger 'savePositions'
+    Backbone.pEvent.trigger 'resetStickyTitles'
+
+  onBeforeClose: () ->
+    @$el.closest('div#projects').sortable("refresh")
 
   # Project's line left margin (when does it start)
   setLeftMargin: ->
@@ -196,7 +209,3 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       'right':''
     })
 
-  onClose: () ->
-    @model.projectEvents.each((event)=>
-      event.close()
-    )
