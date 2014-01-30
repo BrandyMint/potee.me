@@ -28,6 +28,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       @$el.append view.render().el
     view
 
+  resetScale: ->
+    @options.projects.each (project) =>
+      project.view.render()
+
   render: ->
     @addAll()
     @$el.sortable
@@ -42,7 +46,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @$el.bind 'scroll', =>
       Backbone.pEvent.trigger 'resetStickyTitles'
 
-    this
+    @
 
   newProject: (startFrom = moment(), position = 0) ->
     project = new Potee.Models.Project({}, {}, startFrom)

@@ -115,7 +115,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @model.set "scale", scale if scale != @model.get("scale")
     @model.set 'pixels_per_day', pixels_per_day
     @setScale()
-    @gotoCurrentDate(animate: false)
+    @gotoCurrentDate animate: false
 
   normalizedPixelsPerDay: (pixels_per_day) ->
     Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
@@ -130,6 +130,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   setScale: ->
     @timeline_view.resetScale()
+    @projects_view.resetScale()
     @resetWidth()
 
   gotoToday: ->
@@ -155,7 +156,7 @@ class Potee.Views.DashboardView extends Backbone.View
     viewportWidth = @viewportWidth()
     if viewportWidth > @model.width()
       @model.setWidth(viewportWidth)
-    @$el.css('width', @model.width())
+    @$el.css 'width', @model.width()
 
   viewportWidth: ->
     @viewport.width()

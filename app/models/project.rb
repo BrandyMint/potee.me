@@ -4,32 +4,20 @@ class Project < ActiveRecord::Base
   # FIX
   attr_protected :secret
 
-  default_scope order(:started_at)
+  default_scope order :started_at
 
-  belongs_to :user
-  has_many :events, :dependent => :destroy
-  has_many :project_connections
+  belongs_to :owner
+  has_many :events, dependent: :destroy
+  has_many :project_connections, dependent: :destroy
 
   before_validation do
     self.started_at ||= Date.today()
     self.finish_at ||= self.started_at + 1.months
-    self.color_index ||= 1
     self.title = self.title[0..254] unless self.title.blank?
   end
 
-  validates :title, :presence => true #, :uniqueness => true
-  validates :started_at, :presence => true
-  validates :color_index, :presence => true
-  validates :user_id, presence: true
-
-  after_create do
-    ProjectConnection.create project: self, user: user
-  end
-
-
-  # Вирутальный аттрибут от backbone
-  def cid= value
-
-  end
+  validates :title, presence: true
+  validates :started_at, presence: true
+  validates :owner_id, presence: true
 
 end
