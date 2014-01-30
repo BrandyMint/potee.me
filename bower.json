@@ -11,7 +11,9 @@
     "backbone": "~1.1.0",
     "backbone.localstorage": "~1.1.7",
     "marionette": "~1.5.1",
-    "jquery.ui": "~1.9.2"
+    "jquery.ui": "~1.9.2",
+    "mousetrap": "~1.4.6",
+    "requirejs": "~2.1.10"
   },
   "ignore": [
     "**/.*",

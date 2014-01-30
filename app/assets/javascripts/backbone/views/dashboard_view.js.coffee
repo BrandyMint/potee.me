@@ -14,8 +14,9 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @programmedScrolling = false
 
+    @keystrokes_mediator = new Potee.Mediators.Keystrokes
+
     @viewport.bind('scroll', @scroll)
-    $(document).bind('keydown', @keydown)
     $(document).bind('click', @click)
     $('#new-project-link').bind('click', @newProject)
     $('#dashboard').bind('dblclick', @newProject_from_dbclick)
@@ -36,7 +37,7 @@ class Potee.Views.DashboardView extends Backbone.View
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
       @cancelCurrentForm()
-  
+
   newProject_from_dbclick: (e)=>
     # определяем вертикльную позицию клика относительно блока projects
     project_height = $('.project').height()
@@ -84,37 +85,6 @@ class Potee.Views.DashboardView extends Backbone.View
       @$el.stop()
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
-
-  Keys =
-    Enter: 13
-    Escape: 27
-    Space: 32
-    Plus: 187
-    Minus: 189
-
-  keydown: (e) =>
-    e ||= window.event
-    switch e.keyCode
-      when Keys.Escape
-        # отмена формы
-        e.preventDefault()
-        e.stopPropagation()
-        @cancelCurrentForm(e)
-      when Keys.Enter
-        # новый проект
-        @newProject(e) unless @currentForm
-      when Keys.Space
-        # перейти на сегодня
-        unless @currentForm
-          e.preventDefault()
-          e.stopPropagation()
-          @gotoToday()
-      when Keys.Plus
-        # масштаб
-        @incPixelsPerDay()
-      when Keys.Minus
-        # масштаб
-        @decPixelsPerDay()
 
   incPixelsPerDay: ->
     @setPixelsPerDay @model.get('pixels_per_day')+5
