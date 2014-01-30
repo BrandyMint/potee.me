@@ -102,14 +102,11 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @bounce() if state == 'new'
 
   serializeData: ->
-    {
-      width: @width()
-    }
+    return width: @width()
 
   onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
 
-    #@$el.html(@template(width: @width()))
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
     closest_event = @model.projectEvents.getClosestEvent()
