@@ -1,14 +1,9 @@
 Potee.Views.Titles ||= {}
 
-class Potee.Views.Titles.ShowView extends Backbone.View
+class Potee.Views.Titles.ShowView extends Marionette.ItemView
   template: JST["backbone/templates/titles/show"]
   tagName: "div"
   className: 'project-title'
 
   initialize: (@options) ->
     @sticky_pos = undefined
-
-  render: ->
-    $(@el).html(@template(@options.project_view.model.toJSON() ))
-
-    return this
