@@ -65,9 +65,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @stopListening()
 
   onClose: () ->
-    @model.projectEvents.each((event)=>
-      event.close()
-    )
+    @model.projectEvents.each (event) -> event?.close()
+
     Backbone.pEvent.trigger 'savePositions'
     Backbone.pEvent.trigger 'resetStickyTitles'
 
