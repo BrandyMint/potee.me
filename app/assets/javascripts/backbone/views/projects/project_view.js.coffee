@@ -8,30 +8,36 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     'destroy': @close
 
   initialize: ->
+    _.extend @, Backbone.Events
     @model.view = this
 
   events:
     "click .title" : "title_click"
     "click .progress .bar" : "add_event"
-    "mousedown": (e)->
-      if e.target == @$(".ui-resizable-e")[0]
-        e.stopPropagation()
+    "mousedown": 'mousedown'
 
-  add_event: (js_event) ->
+  mousedown: (e) ->
+    @trigger 'select'
+    if e.target == @$(".ui-resizable-e")[0]
+      e.stopPropagation()
+
+  add_event: (js_event) =>
+    @trigger 'select'
     x = js_event.clientX - @$el.offset().left
     datetime = window.router.dashboard.datetimeAt(x + @leftMargin())
-    event = @model.projectEvents.create(
-      date: datetime.toDate(),
-      time: datetime.toDate(),
-      project_id: @model.id)
+    event = @model.projectEvents.create
+      date: datetime.toDate()
+      time: datetime.toDate()
+      project_id: @model.id
 
     eventElement = @renderEvent(event, x)
     eventElement.effect('bounce', {times: 3}, 150)
     @resetResizeMinWidth()
 
   title_click: (e) ->
+    @trigger 'select'
     e.stopPropagation()
-    if this.titleView.sticky_pos == undefined
+    if @titleView.sticky_pos == undefined
       @edit()
     else
       @gotoProjectEdge()

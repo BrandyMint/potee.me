@@ -7,21 +7,34 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   id: 'projects'
 
   initialize: (@options) ->
+    @selected_project_view = undefined
     @options.projects.bind 'reset', @addAll
+
+  selectProjectView: (project_view) ->
+    if @selected_project_view
+      @selected_project_view.$el.css 'z-index', 100
+
+    @selected_project_view = project_view
+    @selected_project_view.$el.css 'z-index', 150
+
+  buildProjectView: (project) ->
+    view = new Potee.Views.Projects.ProjectView
+      model : project
+    @listenTo view, 'select', =>
+      @selectProjectView view
+    view
 
   addAll: =>
     @options.projects.each((project, i) => @addOne(project, false))
 
   insertToPosition: (project, position) =>
-    view = new Potee.Views.Projects.ProjectView
-      model : project
-    current_project = $(".project:eq(" + position + ")")
-    current_project.before(view.render().$el)
+    view = @buildProjectView project
+    current_project = $ ".project:eq(" + position + ")"
+    current_project.before view.render().$el
     view
 
   addOne: (project, prepend) =>
-    view = new Potee.Views.Projects.ProjectView
-      model : project
+    view = @buildProjectView project
     if prepend
       @$el.prepend view.render().el
     else
