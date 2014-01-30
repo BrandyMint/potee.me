@@ -61,15 +61,16 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @$el.effect('bounce', {times: 5}, 200)
 
   remove: () ->
-    @$el.slideUp 'fast'
+    @$el.slideUp 'fast', =>
+      # Пересчет позиций нужно делать именно после пропадания проекта из DOM-а
+      Backbone.pEvent.trigger 'savePositions'
+      Backbone.pEvent.trigger 'resetStickyTitles'
+
     @stopListening()
 
   onClose: () ->
     @model.projectEvents.each (event) ->
-      event.close() if event.close?
-
-    Backbone.pEvent.trigger 'savePositions'
-    Backbone.pEvent.trigger 'resetStickyTitles'
+      event.view.close() if event.view.close?
 
   onBeforeClose: () ->
     @$el.closest('div#projects').sortable("refresh")

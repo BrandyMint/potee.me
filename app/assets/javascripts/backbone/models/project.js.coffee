@@ -1,5 +1,7 @@
 class Potee.Models.Project extends Backbone.Model
   paramRoot: 'project'
+  events:
+    "change:color_index" : "change_color"
 
   initialize: (attributes, options, startFrom = moment()) ->
     # TODO Передавать номер дня на котором кликнули создание проекта
@@ -9,6 +11,7 @@ class Potee.Models.Project extends Backbone.Model
     @setStartEndDates()
 
     @on 'change:color_index', @change_color
+    @on 'remove', @remove_events
 
     @initProjectEventsCollection()
 
@@ -27,9 +30,6 @@ class Potee.Models.Project extends Backbone.Model
 
     @unset 'events',
       silent: true
-
-  events:
-    "change:color_index" : "change_color"
 
   defaults:
     title: 'Your project name'

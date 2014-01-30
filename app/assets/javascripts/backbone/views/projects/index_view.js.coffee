@@ -9,8 +9,8 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   initialize: (@options) ->
     @options.projects.bind('reset', @addAll)
     @render()
-    Backbone.pEvent.on 'savePositions', this.savePositions
-    Backbone.pEvent.on 'resetStickyTitles', this.resetStickyTitles
+    Backbone.pEvent.on 'savePositions', @savePositions
+    Backbone.pEvent.on 'resetStickyTitles', @resetStickyTitles
 
   addAll: =>
     @options.projects.each((project, i) => @addOne(project, false))
@@ -56,9 +56,8 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   savePositions: () ->
     projects = window.projects
     neworder = []
-    $('#projects div.project').each(() ->
+    $('#projects div.project').each () ->
       neworder.push $(this).attr("id")
-    )
 
     _.each(neworder, (cid, i) ->
       project = projects.get(cid)
