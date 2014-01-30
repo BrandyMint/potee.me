@@ -33,7 +33,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   render: ->
     @addAll()
-    this.$el.sortable( 
+    @$el.sortable( 
       axis: "y",
       containment: "parent",
       distance: 20,
@@ -41,6 +41,11 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       update: (event, ui) =>
         @savePositions()
       )
+
+    # Корректируем sticky titles при вертикальном скроллинге
+    @$el.bind 'scroll', =>
+      Backbone.pEvent.trigger 'resetStickyTitles'
+
     this
 
   newProject: (startFrom = moment(), position = 0) ->

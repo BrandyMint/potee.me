@@ -9,17 +9,21 @@ class Potee.Views.DashboardView extends Backbone.View
   initialize: (options)->
     @viewport = $('#viewport')
     @model.view = this
-    @setElement($('#dashboard'))
+    @setElement $('#dashboard')
     @update()
 
     @programmedScrolling = false
 
     @keystrokes_mediator = new Potee.Mediators.Keystrokes dashboard: @
 
-    @viewport.bind('scroll', @scroll)
-    $(document).bind('click', @click)
-    $('#new-project-link').bind('click', @newProject)
-    $('#dashboard').bind('dblclick', @newProject_from_dbclick)
+    @viewport.bind 'scroll', @scroll
+
+    # Следим за вертикальным скроллингом dashboard-а, чтобы подравнивать sticky titles
+    #@$el.bind 'scroll', @scroll
+    $(document).bind 'click', @click
+
+    $('#new-project-link').bind 'click', @newProject
+    $('#dashboard').bind 'dblclick', @newProject_from_dbclick
 
     $(window).resize =>
       @resetWidth()
@@ -158,6 +162,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @projects_view = new Potee.Views.Projects.IndexView
       projects: @model.projects
     @$el.append @projects_view.el
+
     this
 
   update: ->
