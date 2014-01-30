@@ -35,8 +35,11 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @generateDashboardView()
 
   generateDashboardView: ->
-    @dashboard_view ||= new Potee.Views.DashboardView
-      model: window.dashboard
+    unless @dashboard_view
+      @dashboard_view = new Potee.Views.DashboardView
+        model: window.dashboard
+      @dashboard_view.update()
+
     @dashboard_view.gotoCurrentDate()
 
   getProjectsCollection: (projects) ->

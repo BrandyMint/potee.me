@@ -7,36 +7,43 @@ class Potee.Views.DashboardView extends Backbone.View
   MIN_PIXELS_PER_DAY = 4
 
   initialize: (options)->
-    @viewport = $('#viewport')
-    @model.view = this
     @setElement $('#dashboard')
-    @update()
+    @viewport = $('#viewport')
+    @model.view = @
 
+    @currentForm = undefined
+    @todayLink = undefined
     @programmedScrolling = false
 
-    @keystrokes_mediator = new Potee.Mediators.Keystrokes dashboard: @
+    @timeline_view = new Potee.Views.TimelineView
+      dashboard: @model
+      dashboard_view: @
+
+    @projects_view = new Potee.Views.Projects.IndexView
+      projects: @model.projects
+
+    new Potee.Controllers.DashboardPersistenter
+    new Potee.Controllers.TitleSticker
+    new Potee.Mediators.Keystrokes dashboard: @
+    new Potee.Controllers.DragScroller
+      $dashboard_el: @$el,
+      viewport: @viewport,
+      projects_view: @projects_view
 
     @viewport.bind 'scroll', @scroll
 
-    # Следим за вертикальным скроллингом dashboard-а, чтобы подравнивать sticky titles
-    #@$el.bind 'scroll', @scroll
     $(document).bind 'click', @click
 
     $('#new-project-link').bind 'click', @newProject
     $('#dashboard').bind 'dblclick', @newProject_from_dbclick
 
-    $(window).resize =>
-      @resetWidth()
-      @timeline_view.render()
 
     $('#dashboard').bind "pinch", (e, obj) =>
       @scalePixelsPerDay obj.scale
 
-    @allowScrollByDrag()
-
-    @currentForm = undefined
-    @todayLink = undefined
-
+    $(window).resize =>
+      @resetWidth()
+      @timeline_view.render()
 
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
@@ -153,17 +160,10 @@ class Potee.Views.DashboardView extends Backbone.View
   render: ->
     $(@el).html('')
 
-    @timeline_view ||= new Potee.Views.TimelineView
-      dashboard: @model
-      dashboard_view: this
-    @timeline_view.render()
-    @$el.append @timeline_view.el
+    @$el.append @timeline_view.render().el
+    @$el.append @projects_view.render().el
 
-    @projects_view = new Potee.Views.Projects.IndexView
-      projects: @model.projects
-    @$el.append @projects_view.el
-
-    this
+    @
 
   update: ->
     @resetWidth()
@@ -184,32 +184,3 @@ class Potee.Views.DashboardView extends Backbone.View
       @viewport.scrollLeft x
       @programmedScrolling = false
       @resetTodayLink()
-
-  allowScrollByDrag: ->
-    $('#dashboard').mousedown (e) =>
-      if e.offsetX >= $('#dashboard').width() - 20 # вертикальный скролл справа.
-        return
-      @prev_x = e.screenX
-      @prev_y = e.screenY
-      @mouse_down = true
-      @dragging = false
-
-    $document = $(document)
-
-    $document.mousemove (e) =>
-      if @mouse_down && !@dragging
-        @dragging = true
-        @viewport.css("cursor", "move")
-
-      if @dragging
-        @viewport.scrollLeft @viewport.scrollLeft() - (e.screenX - @prev_x)
-        $projects = @projects_view.$el
-        $projects.scrollTop $projects.scrollTop() - (e.screenY - @prev_y)
-        @prev_x = e.screenX
-        @prev_y = e.screenY
-
-    $document.mouseup =>
-      @mouse_down = false
-      if @dragging
-        @dragging = false
-        @viewport.css("cursor", "")

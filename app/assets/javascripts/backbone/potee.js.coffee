@@ -2,6 +2,7 @@
 #= require_tree ./templates
 #= require_tree ./models
 #= require_tree ./collections
+#= require_tree ./controllers
 #= require_tree ./views
 #= require_tree ./routers
 #= require_tree ./mediators
@@ -11,6 +12,8 @@ window.Potee =
   Collections: {}
   Routers: {}
   Views: {}
+  Controllers: {}
+  Mediators: {}
 
 window.App = window.Potee
 
@@ -29,7 +32,7 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
     mainRegion:   '#main'
 
   App.addInitializer (options) ->
-    window.router = new window.App.Routers.ProjectsRouter(options)
+    window.router = new window.App.Routers.ProjectsRouter options
 
   App.on "initialize:after", ->
     if Backbone.history
