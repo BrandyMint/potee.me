@@ -11,7 +11,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @render()
     Backbone.pEvent.on 'savePositions', this.savePositions
     Backbone.pEvent.on 'resetStickyTitles', this.resetStickyTitles
-  
+
   addAll: =>
     @options.projects.each((project, i) => @addOne(project, false))
 
@@ -52,7 +52,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     else
       project_view = @addOne project, (position < projects_count)
     project_view.setTitleView 'new'
-    
+
   savePositions: () ->
     projects = window.projects
     neworder = []

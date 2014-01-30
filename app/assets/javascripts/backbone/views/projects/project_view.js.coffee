@@ -1,6 +1,6 @@
 Potee.Views.Projects ||= {}
 
-class Potee.Views.Projects.ProjectView extends Backbone.View
+class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   template: JST["backbone/templates/projects/project"]
   tagName: "div"
   className: 'project'
@@ -101,13 +101,18 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @bounce() if state == 'new'
 
-  render: ->
+  serializeData: ->
+    {
+      width: @width()
+    }
+
+  onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
 
-    @$el.html(@template(width: @width()))
+    #@$el.html(@template(width: @width()))
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
-    closest_event = @model.projectEvents.getClosestEvent()  
+    closest_event = @model.projectEvents.getClosestEvent()
     @model.projectEvents.each((event)=>
       current_event = @renderEvent(event)
       current_event.addClass('closest') if event == closest_event
@@ -193,3 +198,8 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       'left':'',
       'right':''
     })
+
+  onClose: () ->
+    @model.projectEvents.each((event)=>
+      event.close()
+    )
