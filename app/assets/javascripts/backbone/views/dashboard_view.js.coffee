@@ -24,6 +24,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
     new Potee.Controllers.DashboardPersistenter
     new Potee.Controllers.TitleSticker
+      projects_view: @projects_view
     new Potee.Mediators.Keystrokes dashboard: @
     new Potee.Controllers.DragScroller
       $dashboard_el: @$el,
@@ -65,8 +66,11 @@ class Potee.Views.DashboardView extends Backbone.View
     e.stopPropagation()
     e.preventDefault()
 
+    if window.dashboard.get('scale') == 'year'
+      window.dashboard.set 'scale', 'month'
+
     $('#project_new').addClass('active')
-    @projects_view.newProject(startFrom, position)
+    @projects_view.newProject startFrom, position
     Backbone.pEvent.trigger 'resetStickyTitles'
     return false
 
@@ -127,7 +131,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   setScale: ->
     @timeline_view.resetScale()
-    @update()
+    @resetWidth()
 
   gotoToday: ->
     @model.setToday()
@@ -158,16 +162,11 @@ class Potee.Views.DashboardView extends Backbone.View
     @viewport.width()
 
   render: ->
-    $(@el).html('')
-
     @$el.append @timeline_view.render().el
     @$el.append @projects_view.render().el
 
-    @
-
-  update: ->
     @resetWidth()
-    @render()
+    @
 
   # Перейти на указанную дату (отцентировать).
   # @param [Date] date

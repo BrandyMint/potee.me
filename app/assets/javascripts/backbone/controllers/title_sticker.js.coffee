@@ -1,12 +1,14 @@
 class Potee.Controllers.TitleSticker
-  constructor: ->
+  constructor: (options)->
+    @projects_view = options.projects_view
     Backbone.pEvent.on 'resetStickyTitles', @resetStickyTitles
 
-  resetStickyTitles: () ->
+  resetStickyTitles: () =>
+    return false unless @projects_view.el
     # переменная @model в цикле не достпна
     dashboard = window.dashboard
-    projects_top_point = $('#projects').offset().top
-    projects_bot_point = $('#projects').height() + projects_top_point
+    projects_top_point = @projects_view.$el.offset().top
+    projects_bot_point = @projects_view.$el.height() + projects_top_point
     current_date = dashboard.getCurrentDate()
     window.projects.each (project, i) ->
       project_start_date = moment(project.get("started_at")).toDate()
