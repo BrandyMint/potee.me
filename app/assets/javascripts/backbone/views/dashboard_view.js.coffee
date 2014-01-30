@@ -38,7 +38,6 @@ class Potee.Views.DashboardView extends Backbone.View
     $('#new-project-link').bind 'click', @newProject
     $('#dashboard').bind 'dblclick', @newProject_from_dbclick
 
-
     $('#dashboard').bind "pinch", (e, obj) =>
       @scalePixelsPerDay obj.scale
 
@@ -111,8 +110,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @setPixelsPerDay @model.get('pixels_per_day') * scale
 
   setPixelsPerDay: (pixels_per_day) ->
-    pixels_per_day = @normalizedPixelsPerDay(pixels_per_day)
-    scale = @getScaleForPixelsPerDay(pixels_per_day)
+    pixels_per_day = @normalizedPixelsPerDay pixels_per_day
+    scale = @getScaleForPixelsPerDay pixels_per_day
     @model.set "scale", scale if scale != @model.get("scale")
     @model.set 'pixels_per_day', pixels_per_day
     @setScale()
