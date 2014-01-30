@@ -43,7 +43,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   resetScale: ->
     @options.projects.each (project) =>
-      project.view.render()
+      project.view.setDuration()
 
   render: ->
     @addAll()

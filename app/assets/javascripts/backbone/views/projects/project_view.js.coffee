@@ -94,7 +94,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   # Project's line width
   setDuration: ->
-    @$el.css('width', @width())
+    @$el.css 'width', @width()
 
   width: ->
     return @model.duration() * window.dashboard.get('pixels_per_day')
@@ -135,19 +135,19 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       current_event.addClass('closest') if event == closest_event
     )
 
-    @setTitleView('show')
+    @setTitleView 'show'
 
     @setLeftMargin()
     @setDuration()
-    @$el.resizable(
+
+    @$el.resizable
       grid: window.dashboard.get('pixels_per_day'),
       minWidth: @calculateResizeMinWidth()
       handles: 'e'
       stop: (event, ui) =>
         @durationChanged(ui.size.width)
-    )
 
-    return this
+    @
 
   resetResizeMinWidth: ->
     @$el.resizable("option", "minWidth", @calculateResizeMinWidth())
