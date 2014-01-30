@@ -5,6 +5,10 @@ class ProjectsController < ApplicationController
 
   protected
 
+  def end_of_association_chain
+    current_user.owned_projects
+  end
+
   def begin_of_association_chain
     current_user
   end
