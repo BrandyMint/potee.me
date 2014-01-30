@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140129111008) do
+ActiveRecord::Schema.define(:version => 20140130183109) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -74,12 +74,13 @@ ActiveRecord::Schema.define(:version => 20140129111008) do
   add_index "events", ["project_id"], :name => "index_events_on_project_id"
 
   create_table "project_connections", :force => true do |t|
-    t.integer  "project_id",                :null => false
-    t.integer  "user_id",                   :null => false
-    t.integer  "position",   :default => 0, :null => false
-    t.string   "share_key",                 :null => false
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.integer  "project_id",                 :null => false
+    t.integer  "user_id",                    :null => false
+    t.integer  "position",    :default => 0, :null => false
+    t.string   "share_key",                  :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.integer  "color_index", :default => 0, :null => false
   end
 
   add_index "project_connections", ["project_id"], :name => "index_project_connections_on_project_id"
@@ -88,14 +89,12 @@ ActiveRecord::Schema.define(:version => 20140129111008) do
   add_index "project_connections", ["user_id", "project_id"], :name => "index_project_connections_on_user_id_and_project_id", :unique => true
 
   create_table "projects", :force => true do |t|
-    t.string   "title",                      :null => false
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-    t.date     "started_at",                 :null => false
+    t.string   "title",      :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.date     "started_at", :null => false
     t.date     "finish_at"
-    t.integer  "color_index", :default => 0, :null => false
-    t.integer  "user_id"
-    t.integer  "position"
+    t.integer  "owner_id"
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_title"

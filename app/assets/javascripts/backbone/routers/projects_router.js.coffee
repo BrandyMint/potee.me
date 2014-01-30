@@ -35,7 +35,9 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @generateDashboardView()
 
   generateDashboardView: ->
-    unless @dashboard_view
+    if @dashboard_view
+      @dashboard_view.resetWidth()
+    else
       @dashboard_view = new Potee.Views.DashboardView
         model: window.dashboard
       @dashboard_view.render()

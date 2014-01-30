@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   scope :without_authentications, where('id not in (select user_id from authentications)')
 
   has_many :authentications, :dependent => :destroy
-  has_many :owned_projects, :dependent => :destroy, class_name: 'Project'
+  has_many :owned_projects, :dependent => :destroy, class_name: 'Project', foreign_key: :owner_id
 
   has_many :project_connections, dependent: :destroy
   has_many :projects, through: :project_connections

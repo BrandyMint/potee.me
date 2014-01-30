@@ -23,7 +23,7 @@ class Potee.Views.TimelineView extends Backbone.View
     switch scale
       when 'week'   then @scaleClass = Potee.Views.Timelines.DaysView
       when 'month'  then @scaleClass = Potee.Views.Timelines.DaysView # scale: 'week' #WeeksView
-      when 'year' then @scaleClass = Potee.Views.Timelines.MonthsView
+      when 'year'   then @scaleClass = Potee.Views.Timelines.MonthsView
       else console.log('unknown scale ' + scale)
 
     @currentView = new @scaleClass
@@ -31,7 +31,7 @@ class Potee.Views.TimelineView extends Backbone.View
       date_finish: moment(@dashboard.max_with_span())
       column_width: @dashboard.get('pixels_per_day')
       dashboard: @dashboard
-      time_line: this
+      time_line: @
 
     @$el.html @currentView.render().el
 
@@ -42,5 +42,4 @@ class Potee.Views.TimelineView extends Backbone.View
     if $.browser.mozilla
       @$el.find('td').css('display', 'table-cell')
 
-    return this
-
+    @
