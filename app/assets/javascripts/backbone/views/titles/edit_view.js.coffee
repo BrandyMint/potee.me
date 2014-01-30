@@ -31,19 +31,18 @@ class Potee.Views.Titles.EditView extends Backbone.View
 
   destroyProject: (e) ->
     if confirm("Sure to delete?")
-      @model.view.destroy()
+      @model.destroy()
 
   cancelEvent: (e) ->
     window.dashboard.view.cancelCurrentForm()
 
   cancel: ->
     if @model.isNew()
-      @model.view.destroy()
+      @model.destroy()
     else
       @model.view.setTitleView 'show'
 
     $('#project_new').removeClass('active')
-
 
   render: ->
     $(@el).html(@template(@options.project_view.model.toJSON() ))

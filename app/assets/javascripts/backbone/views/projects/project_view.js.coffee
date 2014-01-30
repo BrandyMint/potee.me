@@ -1,9 +1,11 @@
 Potee.Views.Projects ||= {}
 
-class Potee.Views.Projects.ProjectView extends Backbone.View
+class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   template: JST["backbone/templates/projects/project"]
   tagName: "div"
   className: 'project'
+  modelEvents: () ->
+    'destroy': @close
 
   initialize: ->
     @model.view = this
@@ -47,19 +49,30 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
         project_start = moment(this.model.get('started_at')).toDate() 
         dashboard_view.gotoDate(project_start)
 
+  resetModel: (new_model) ->
+    @undelegateEvents()
+    @model = new_model
+    @model.view = @
+    @delegateEvents()
+    @$el.attr 'id', @model.cid
+    Backbone.pEvent.trigger 'savePositions'
+
   bounce: ->
     @$el.effect('bounce', {times: 5}, 200)
 
-  destroy: () ->
-    window.projects.remove @model
-    @$el.slideUp('fast', ->
-      $(this).remove()
-      Backbone.pEvent.trigger 'savePositions'
-      Backbone.pEvent.trigger 'resetStickyTitles'
-    )
-    @$el.closest('div#projects').sortable("refresh")
-    false
+  remove: () ->
+    @$el.slideUp 'fast'
+    @stopListening()
 
+  onClose: () ->
+    @model.projectEvents.each (event) ->
+      event.close() if event.close?
+
+    Backbone.pEvent.trigger 'savePositions'
+    Backbone.pEvent.trigger 'resetStickyTitles'
+
+  onBeforeClose: () ->
+    @$el.closest('div#projects').sortable("refresh")
 
   # Project's line left margin (when does it start)
   setLeftMargin: ->
@@ -101,13 +114,15 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
 
     @bounce() if state == 'new'
 
-  render: ->
+  serializeData: ->
+    return width: @width()
+
+  onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
 
-    @$el.html(@template(width: @width()))
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
-    closest_event = @model.projectEvents.getClosestEvent()  
+    closest_event = @model.projectEvents.getClosestEvent()
     @model.projectEvents.each((event)=>
       current_event = @renderEvent(event)
       current_event.addClass('closest') if event == closest_event
@@ -193,3 +208,4 @@ class Potee.Views.Projects.ProjectView extends Backbone.View
       'left':'',
       'right':''
     })
+

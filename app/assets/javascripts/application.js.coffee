@@ -20,5 +20,5 @@
 #= require jGestures/jgestures
 #= require_tree .
 
-$ ->
-  $('[rel=tooltip]').tooltip()
+#$ ->
+  #$('[rel=tooltip]').tooltip()
