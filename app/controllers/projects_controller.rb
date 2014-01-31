@@ -29,7 +29,7 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project_connection = current_user.project_connections.find params[:project][:id]
+    @project_connection = current_user.project_connections.find( params[:id] || params[:project][:id] )
 
     @project_connection.destroy
   end
