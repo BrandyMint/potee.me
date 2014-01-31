@@ -8,6 +8,7 @@
 #= require jquery.ui/ui/jquery.ui.resizable
 #= require jquery.ui/ui/jquery.ui.draggable
 #= require jquery.ui/ui/jquery.ui.sortable
+#= require async/lib/async
 #= require underscore/underscore
 #= require momentjs/moment
 #= require moment-range/lib/moment-range

@@ -18,7 +18,9 @@ Potee::Application.routes.draw do
   root to: 'welcome#index'
 
   resources :projects
+  resources :project_connections
   resources :events
+
   match 'dashboard/read', to: 'dashboards#read'
   match 'dashboard/update', to: 'dashboards#update'
 

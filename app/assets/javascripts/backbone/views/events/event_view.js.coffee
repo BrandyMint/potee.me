@@ -1,17 +1,16 @@
 Potee.Views.Events ||= {}
 
 class Potee.Views.Events.EventView extends Marionette.ItemView
+  DEFAULT_Z_INDEX = 150
+  ACTIVE_Z_INDEX = 200
 
   getTemplate: ->
     if @mode is "show"
       return JST["backbone/templates/events/event"]
     else
       return JST["backbone/templates/events/edit"]
-  
-  className: "event"
-  DEFAULT_Z_INDEX = 150
-  ACTIVE_Z_INDEX = 200
 
+  className: "event"
   initialize: (@options) ->
     @mode = "show"
     @model.resetDate()
@@ -131,11 +130,32 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     else
       @$el.removeClass 'passed'
 
+  saveDateTime: (offset) ->
+    datetime = window.dashboard.datetimeAt offset
+    @model.setDateTime datetime
+    @model.save()
+
+    # TODO вынести на change:date_time в project_view
+    @options.project_view.resetResizeMinWidth()
+
+  setPosition: (x = undefined) ->
+    @$el.css 'left', x || @calcOffset()
+
   onRender: ->
     unless @mode is "edit"
       @setShowMode()
-      @$el.addClass('passed') if @model.passed
-      @$el.css('left', @options.x || @calcOffset())
+      @$el.addClass 'passed'  if @model.passed
+
+      @setPosition @options.x
+
+      @$el.draggable
+        axis: 'x',
+        containment: "parent",
+        distance: '3',
+        stop: (jsEvent, ui) =>
+          @saveDateTime ui.position.left + @options.project_view.leftMargin()
+
+      @$el.css "position", "absolute"
 
   setDragDetector: ->
     @$el.mousedown =>

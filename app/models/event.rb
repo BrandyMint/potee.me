@@ -15,5 +15,6 @@ class Event < ActiveRecord::Base
 
   validates :date, presence: true
   validates :time, presence: true
+  validates :project, presence: true
 
 end

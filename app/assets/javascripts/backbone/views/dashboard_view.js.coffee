@@ -50,6 +50,7 @@ class Potee.Views.DashboardView extends Backbone.View
       @cancelCurrentForm()
 
   newProject_from_dbclick: (e)=>
+    return if @currentForm
     # определяем вертикльную позицию клика относительно блока projects
     project_height = $('.project').height()
     topScroll = $('#projects').scrollTop()

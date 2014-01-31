@@ -30,7 +30,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       time: datetime.toDate()
       project_id: @model.id
 
-    eventElement = @renderEvent(event, x)
+    eventElement = @renderEvent event, x
     eventElement.effect('bounce', {times: 3}, 150)
     @resetResizeMinWidth()
 
@@ -74,16 +74,16 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     @stopListening()
 
-  onClose: () ->
+  onClose: ->
     @model.projectEvents.each (event) ->
       event.view.close() if event.view.close?
 
-  onBeforeClose: () ->
+  onBeforeClose: ->
     @$el.closest('div#projects').sortable("refresh")
 
   # Project's line left margin (when does it start)
-  setLeftMargin: ->
-    @$el.css('margin-left', @leftMargin())
+  setLeftMargin: =>
+    @$el.css 'margin-left', @leftMargin()
 
   # Смещение полосы проекта относительно начала дэшборда.
   # @retrun [Number] смещение в пикселях.
@@ -93,7 +93,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     return offsetInDays * window.dashboard.get('pixels_per_day')
 
   # Project's line width
-  setDuration: ->
+  setDuration: =>
     @$el.css 'width', @width()
 
   width: ->
@@ -124,16 +124,26 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   serializeData: ->
     return width: @width()
 
+  resetScale: ->
+    async.parallel [
+      @setDuration,
+      @setLeftMargin,
+      @resetEventsPositions
+    ]
+
+  resetEventsPositions: =>
+    @model.projectEvents.each (event) =>
+      event.view.setPosition()
+
   onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
 
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
     closest_event = @model.projectEvents.getClosestEvent()
-    @model.projectEvents.each((event)=>
-      current_event = @renderEvent(event)
+    @model.projectEvents.each (event)=>
+      current_event = @renderEvent event
       current_event.addClass('closest') if event == closest_event
-    )
 
     @setTitleView 'show'
 
@@ -145,54 +155,40 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       minWidth: @calculateResizeMinWidth()
       handles: 'e'
       stop: (event, ui) =>
-        @durationChanged(ui.size.width)
+        @changeDuration ui.size.width
 
     @
 
   resetResizeMinWidth: ->
-    @$el.resizable("option", "minWidth", @calculateResizeMinWidth())
+    @$el.resizable "option", "minWidth", @calculateResizeMinWidth()
 
   calculateResizeMinWidth: ->
     if @model.projectEvents.length > 0
       date = ( @model.projectEvents.max (num) -> num.date).date
       date = moment(date).clone().add("days", 1)
-      diff = date.diff(moment(@model.started_at), "days")
+      diff = date.diff moment(@model.started_at), "days"
       return diff * window.dashboard.get('pixels_per_day')
     else
-      return window.dashboard.get('pixels_per_day')
+      return window.dashboard.get 'pixels_per_day'
 
-  durationChanged: (width) ->
+  changeDuration: (width) ->
     duration = Math.round(width / window.dashboard.get('pixels_per_day'))
-    @model.setDuration(duration)
+    @model.setDuration duration
 
     totalWidth = @width() + @leftMargin()
     if totalWidth > window.dashboard.width()
       dashboard.findStartEndDate()
-      dashboard.view.update()
+      #dashboard.view.update()
 
-  renderEvent: (event,x = undefined) ->
+  renderEvent: (event, x = undefined) ->
     event_view = new Potee.Views.Events.EventView
       model: event
+      project_view: @
       x: x
 
     @$el.append event_view.render().$el
 
-    event_view.$el.draggable(
-      axis: 'x',
-      containment: "parent",
-      distance: '3',
-      stop: (jsEvent, ui) =>
-        @eventDateTimeChanged(event, ui.position.left + @leftMargin())
-    )
-
-    event_view.$el.css("position", "absolute")
-    return event_view.$el
-
-  eventDateTimeChanged: (event, offset) ->
-    datetime = window.dashboard.datetimeAt(offset)
-    event.setDateTime(datetime)
-    event.save()
-    event.project.view.resetResizeMinWidth()
+    event_view.$el
 
   stickTitle: (position = 'left') ->
     @.titleView.sticky_pos = position
