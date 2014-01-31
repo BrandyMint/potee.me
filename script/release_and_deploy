@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-./scripts/release; git push; bundle exec cap production deploy
+./script/release; git push; bundle exec cap production deploy
