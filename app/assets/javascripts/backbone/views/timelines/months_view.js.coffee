@@ -1,7 +1,7 @@
 Potee.Views.Timelines ||= {}
 
 class Potee.Views.Timelines.MonthsView extends Marionette.ItemView
-  template: JST["backbone/templates/timelines/months"]
+  template: "templates/timelines/months"
 
   tagName: 'div'
   className: 'months'

@@ -1,8 +1,7 @@
 Potee.Views.Projects ||= {}
 
 class Potee.Views.Projects.ProjectView extends Marionette.ItemView
-  template: JST["backbone/templates/projects/project"]
-  tagName: "div"
+  template: "templates/projects/project"
   className: 'project'
   modelEvents: () ->
     'destroy': @close

@@ -6,9 +6,9 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
 
   getTemplate: ->
     if @mode is "show"
-      return JST["backbone/templates/events/event"]
+      return "templates/events/event"
     else
-      return JST["backbone/templates/events/edit"]
+      return "templates/events/edit"
 
   className: "event"
   initialize: (@options) ->

@@ -1,7 +1,7 @@
 Potee.Views.Timelines ||= {}
 
 class Potee.Views.Timelines.DaysView extends Marionette.ItemView
-  template: JST["backbone/templates/timelines/days"]
+  template: "templates/timelines/days"
 
   className: 'days'
 
