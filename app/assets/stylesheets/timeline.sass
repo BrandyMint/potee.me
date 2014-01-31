@@ -38,11 +38,14 @@
   display: table-cell
   white-space: nowrap
   padding: 0px
+  &.day
+    overflow: hidden
   &.day_6
     border-right: 1px solid #909090 // lighten($timelineLineColor, 10)
 
 .timeline_day_header
   +opacity(1)
+  overflow: overlay
 
 .day_title
   font-size: 18px

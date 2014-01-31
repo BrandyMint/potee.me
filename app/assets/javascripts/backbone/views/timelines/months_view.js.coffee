@@ -1,6 +1,6 @@
 Potee.Views.Timelines ||= {}
 
-class Potee.Views.Timelines.MonthsView extends Backbone.View
+class Potee.Views.Timelines.MonthsView extends Marionette.ItemView
   template: JST["backbone/templates/timelines/months"]
 
   tagName: 'div'
@@ -43,9 +43,6 @@ class Potee.Views.Timelines.MonthsView extends Backbone.View
   index_of_current_month: ->
     moment().diff moment(@start), 'months'
 
-  render: =>
-    $(@el).html @template
-        months: @months()
-        current_month: @index_of_current_month()
-
-    @
+  serializeData: ->
+    months: @months()
+    current_month: @index_of_current_month()

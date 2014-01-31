@@ -1,6 +1,6 @@
 Potee.Views.Timelines ||= {}
 
-class Potee.Views.Timelines.WeeksView extends Backbone.View
+class Potee.Views.Timelines.WeeksView extends Marionette.ItemView
   template: JST["backbone/templates/timelines/weeks"]
 
   tagName: 'div'
@@ -45,7 +45,8 @@ class Potee.Views.Timelines.WeeksView extends Backbone.View
     return res
 
   index_of_current_week: ->
+    0
 
-  render: =>
-    $(@el).html @template( weeks: @weeks() )
-    return this
+  serializeData: ->
+    weeks: @weeks()
+    current_week: @index_of_current_week()

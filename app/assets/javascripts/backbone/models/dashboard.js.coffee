@@ -12,21 +12,32 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   spanDays: 3
 
-  WEEK_PIXELS_PER_DAY: 150
-  MONTH_PIXELS_PER_DAY: 34
-  YEAR_PIXELS_PER_DAY: 4
+  WEEK_PIXELS_PER_DAY= 150
+  MONTH_PIXELS_PER_DAY= 35
+  YEAR_PIXELS_PER_DAY= 10
+  MAX_PIXELS_PER_DAY = 150
+  MIN_PIXELS_PER_DAY = 4
+
 
   defaults:
     scale: 'week'
     pixels_per_day: 150
 
-  initialize: (attributes, options, @projects) ->
+  initialize: ->
+    @projects = window.projects
     @findStartEndDate()
-    @on 'change:scale', @changeScale
+    #@on 'change:pixels_per_day', @updateScale
+    @on 'change:pixels_per_day', @changedPixelsPerDay
+
+    # TODO Сохранять с задержкой в 3 секунды
+    #@on 'change', => @save()
+
     @today = moment()
 
     @setToday()
-    return
+
+  changedPixelsPerDay: (a,b) ->
+    console.log "scale: #{@get('scale')}, pixels: #{@get('pixels_per_day')}"
 
   setToday: ->
     @set 'current_date', undefined
@@ -36,20 +47,6 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   setCurrentDate: (date) ->
     @set 'current_date', date.toString()
-    @save()
-    @view.resetTodayLink @get('current_date')
-
-  changeScale: =>
-    switch @get('scale')
-      when "week"
-        @set 'pixels_per_day', @WEEK_PIXELS_PER_DAY
-      when "month"
-        @set 'pixels_per_day', @MONTH_PIXELS_PER_DAY
-      when "year"
-        @set 'pixels_per_day', @YEAR_PIXELS_PER_DAY
-    console.log "scale: #{@get('scale')}, pixels: #{@get('pixels_per_day')}"
-    @setDuration()
-    @view?.setScale()
 
   # По списку проектов находит крайние левую и правые даты
   findStartEndDate: ->
@@ -175,13 +172,49 @@ class Potee.Models.Dashboard extends Backbone.Model
     @max = moment(@min_with_span()).clone().add("days", duration)
     @setDuration()
 
-  getScaleForPixelsPerDay: (pixels_per_day)->
-    if pixels_per_day == @WEEK_PIXELS_PER_DAY
+  setTitle: (title) ->
+    switch title
+      when 'week' then @set 'pixels_per_day', WEEK_PIXELS_PER_DAY
+      when 'month' then @set 'pixels_per_day', MONTH_PIXELS_PER_DAY
+      when 'year' then @set 'pixels_per_day', YEAR_PIXELS_PER_DAY
+      else throw "Unknown scale title #{title}"
+
+  getTitle: ->
+    #if pixels_per_day == WEEK_PIXELS_PER_DAY
+      #"week"
+    #else if pixels_per_day == MONTH_PIXELS_PER_DAY
+      #"month"
+    #else
+      #"year"
+
+    if @get('pixels_per_day') > MONTH_PIXELS_PER_DAY
       "week"
-    else if pixels_per_day == @MONTH_PIXELS_PER_DAY
+    else if @get('pixels_per_day') > YEAR_PIXELS_PER_DAY
       "month"
     else
       "year"
 
-  calculateCurrentScaleByPixels: ->
-    @getScaleForPixelsPerDay(@get('pixels_per_day'))
+  #
+  # PixelsPerDay
+  # 
+ 
+  # Изменение масштаба крутилкой мышки
+  pinch: (scale) ->
+    @set 'pixels_per_day', @model.get('pixels_per_day') * scale
+
+  incPixelsPerDay: ->
+    diff = 5 
+    diff = 3 if @get('pixels_per_day') < 100
+    diff = 1 if @get('pixels_per_day') < 50
+    new_value = @get('pixels_per_day')+diff
+    @set 'pixels_per_day', new_value
+
+  decPixelsPerDay: ->
+    diff = 5 
+    diff = 3 if @get('pixels_per_day') < 100
+    diff = 1 if @get('pixels_per_day') < 50
+    new_value = @normalizePixelsPerDay @get('pixels_per_day')-diff
+    @set 'pixels_per_day', new_value
+
+  normalizePixelsPerDay: (pixels_per_day) ->
+    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY

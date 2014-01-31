@@ -9,6 +9,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   initialize: (@options) ->
     @selected_project_view = undefined
     @options.projects.bind 'reset', @addAll
+    @listenTo window.dashboard, 'change:pixels_per_day', @resetScale
 
   selectProjectView: (project_view) ->
     if @selected_project_view
@@ -41,7 +42,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       @$el.append view.render().el
     view
 
-  resetScale: ->
+  resetScale: =>
     @options.projects.each (project) =>
       project.view.resetScale()
 

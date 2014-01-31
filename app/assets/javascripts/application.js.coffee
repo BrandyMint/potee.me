@@ -9,6 +9,7 @@
 #= require jquery.ui/ui/jquery.ui.draggable
 #= require jquery.ui/ui/jquery.ui.sortable
 #= require async/lib/async
+#= require mousetrap/mousetrap
 #= require underscore/underscore
 #= require momentjs/moment
 #= require moment-range/lib/moment-range

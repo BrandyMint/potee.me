@@ -32,6 +32,14 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
     mainRegion:   '#main'
 
   App.addInitializer (options) ->
+    window.projects = new Potee.Collections.ProjectsCollection options.projects
+
+    window.dashboard = new Potee.Models.Dashboard options.dashboard
+    #dashboard.fetch async:false
+
+    window.dashboard_view = new Potee.Views.DashboardView model: window.dashboard
+    window.dashboard_view.render()
+
     window.router = new window.App.Routers.ProjectsRouter options
 
   App.on "initialize:after", ->
@@ -39,5 +47,7 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
       Backbone.history.start()
 
   App.mobile = isMobile()
+
+  #Backbone.pEvent = App.vent
 
   App

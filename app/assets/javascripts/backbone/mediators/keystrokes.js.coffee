@@ -1,39 +1,33 @@
 window.Potee.Mediators ||= {}
 
 class Potee.Mediators.Keystrokes
-  Keys =
-    Enter: 13
-    Escape: 27
-    Space: 32
-    Plus: 187
-    Minus: 189
-
   constructor: (options) ->
+    @dashboard_view = options.dashboard_view
     @dashboard = options.dashboard
-    $(document).bind 'keydown', @keydown
 
-  keydown: (e) =>
-    e ||= window.event
-    switch e.keyCode
-      when Keys.Escape
-        # отмена формы
+    Mousetrap.bind '=', =>
+      unless @dashboard_view.currentForm
+        @dashboard.setTitle 'week'
+
+    Mousetrap.bind '+', =>
+      unless @dashboard_view.currentForm
+        @dashboard.incPixelsPerDay()
+
+    Mousetrap.bind '-', =>
+      unless @dashboard_view.currentForm
+        @dashboard.decPixelsPerDay()
+
+    Mousetrap.bind 'esc', =>
+      # отмена формы
+      e.preventDefault()
+      e.stopPropagation()
+      @dashboard_view.cancelCurrentForm(e)
+
+    Mousetrap.bind 'enter', (e)=>
+      @dashboard_view.newProject(e) unless @dashboard_view.currentForm
+
+    Mousetrap.bind 'space', (e)=>
+      unless @dashboard_view.currentForm
         e.preventDefault()
         e.stopPropagation()
-        @dashboard.cancelCurrentForm(e)
-      when Keys.Enter
-        # новый проект
-        @dashboard.newProject(e) unless @dashboard.currentForm
-      when Keys.Space
-        # перейти на сегодня
-        unless @dashboard.currentForm
-          e.preventDefault()
-          e.stopPropagation()
-          @dashboard.gotoToday()
-      when Keys.Plus
-        # масштаб
-        unless @dashboard.currentForm
-          @dashboard.incPixelsPerDay()
-      when Keys.Minus
-        # масштаб
-        unless @dashboard.currentForm
-          @dashboard.decPixelsPerDay()
+        @dashboard_view.gotoToday()

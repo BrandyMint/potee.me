@@ -3,9 +3,6 @@ class Potee.Views.DashboardView extends Backbone.View
   # tagName: 'div'
   #
 
-  MAX_PIXELS_PER_DAY = 150
-  MIN_PIXELS_PER_DAY = 4
-
   initialize: (options)->
     @setElement $('#dashboard')
     @viewport = $('#viewport')
@@ -20,12 +17,14 @@ class Potee.Views.DashboardView extends Backbone.View
       dashboard_view: @
 
     @projects_view = new Potee.Views.Projects.IndexView
-      projects: @model.projects
+      projects: window.projects
 
     new Potee.Controllers.DashboardPersistenter
     new Potee.Controllers.TitleSticker
       projects_view: @projects_view
-    new Potee.Mediators.Keystrokes dashboard: @
+    new Potee.Mediators.Keystrokes
+      dashboard_view: @
+      dashboard: @model
     new Potee.Controllers.DragScroller
       $dashboard_el: @$el,
       viewport: @viewport,
@@ -39,11 +38,14 @@ class Potee.Views.DashboardView extends Backbone.View
     $('#dashboard').bind 'dblclick', @newProject_from_dbclick
 
     $('#dashboard').bind "pinch", (e, obj) =>
-      @scalePixelsPerDay obj.scale
+      @model.pinch obj.scale
 
     $(window).resize =>
       @resetWidth()
       @timeline_view.render()
+
+    @listenTo @model, 'change:current_date', @resetTodayLink
+    @listenTo @model, 'change:pixels_per_day', @resetWidth
 
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
@@ -74,7 +76,7 @@ class Potee.Views.DashboardView extends Backbone.View
     Backbone.pEvent.trigger 'resetStickyTitles'
     return false
 
-  resetTodayLink: ->
+  resetTodayLink: =>
     if @model.dateIsOnDashboard @model.today
       return unless @todayLink
       @todayLink.remove()
@@ -101,38 +103,10 @@ class Potee.Views.DashboardView extends Backbone.View
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
 
-  incPixelsPerDay: ->
-    @setPixelsPerDay @model.get('pixels_per_day')+5
-
-  decPixelsPerDay: ->
-    @setPixelsPerDay @model.get('pixels_per_day')-5
-
-  scalePixelsPerDay: (scale) ->
-    @setPixelsPerDay @model.get('pixels_per_day') * scale
-
-  setPixelsPerDay: (pixels_per_day) ->
-    pixels_per_day = @normalizedPixelsPerDay pixels_per_day
-    scale = @getScaleForPixelsPerDay pixels_per_day
-    @model.set "scale", scale if scale != @model.get("scale")
-    @model.set 'pixels_per_day', pixels_per_day
-    @setScale()
-    @gotoCurrentDate animate: false
-
-  normalizedPixelsPerDay: (pixels_per_day) ->
-    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
-
-  getScaleForPixelsPerDay: (pixels_per_day)->
-    if pixels_per_day > @model.MONTH_PIXELS_PER_DAY
-      "week"
-    else if pixels_per_day > @model.YEAR_PIXELS_PER_DAY
-      "month"
-    else
-      "year"
-
-  setScale: ->
-    @timeline_view.resetScale()
-    @projects_view.resetScale()
-    @resetWidth()
+  #setPixelsPerDay: (pixels_per_day) ->
+    #@model.set 'pixels_per_day', pixels_per_day
+    #@setScale()
+    #@gotoCurrentDate animate: false
 
   gotoToday: ->
     @model.setToday()

@@ -125,14 +125,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     return width: @width()
 
   resetScale: ->
-    async.parallel [
-      @setDuration,
-      @setLeftMargin,
-      @resetEventsPositions
-    ]
-
+    @setLeftMargin()
+    @resetEventsPositions()
+    @setDuration()
+    
   resetEventsPositions: =>
-    @model.projectEvents.each (event) =>
+    async.each @model.projectEvents, (event) ->
       event.view.setPosition()
 
   onRender: ->
