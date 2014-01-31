@@ -4,9 +4,9 @@ class Project < ActiveRecord::Base
   # FIX
   attr_protected :secret
 
-  default_scope order :started_at
+  # default_scope order :started_at
 
-  belongs_to :owner
+  belongs_to :owner, class_name: 'User'
   has_many :events, dependent: :destroy
   has_many :project_connections, dependent: :destroy
 
