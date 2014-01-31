@@ -47,6 +47,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
+      window.PoteeApp.execute "end:edit:project"
       @cancelCurrentForm()
 
   newProject_from_dbclick: (e)=>

@@ -2,7 +2,7 @@ Potee.Views.Titles ||= {}
 
 class Potee.Views.Titles.ShowView extends Marionette.ItemView
 
-  template: JST["backbone/templates/titles/show"]
+  template: "templates/titles/show"
   tagName: "div"
   className: 'project-title'
 

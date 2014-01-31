@@ -15,6 +15,7 @@
 #= require marionette/lib/backbone.marionette
 #= require backbone_rails_sync
 #= require backbone_datalink
+#= require_tree ./backbone/config
 #= require backbone/potee
 #= require bootstrap
 #= require jGestures/jgestures

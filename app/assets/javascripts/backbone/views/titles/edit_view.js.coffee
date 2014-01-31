@@ -2,7 +2,7 @@ Potee.Views.Titles ||= {}
 
 class Potee.Views.Titles.EditView extends Marionette.ItemView
   FOREGROUNG_Z_INDEX: 300
-  template: JST["backbone/templates/titles/edit"]
+  template: "templates/titles/edit"
   className: "project-title"
 
   initialize: (@options) ->
