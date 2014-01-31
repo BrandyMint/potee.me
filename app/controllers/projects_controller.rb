@@ -32,6 +32,8 @@ class ProjectsController < ApplicationController
     @project_connection = current_user.project_connections.find( params[:id] || params[:project][:id] )
 
     @project_connection.destroy
+
+    render json: true
   end
 
   protected
