@@ -1,15 +1,10 @@
 Potee.Views.Timelines ||= {}
 
-class Potee.Views.Timelines.DaysView extends Marionette.ItemView
+class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
   template: "templates/timelines/days"
 
   className: 'days'
-
-  initialize: (options) ->
-    @start = moment(options.date_start, "YYYY-MM-DD")
-    @end   = moment(options.date_finish, "YYYY-MM-DD")
-    @range = moment().range(@start, @end)
-    @column_width = options.column_width
+  columnRate: 1
 
   days: () ->
     days = []
@@ -28,16 +23,9 @@ class Potee.Views.Timelines.DaysView extends Marionette.ItemView
       days.push day
     days
 
-  setColumnWidth: () ->
-    columnWidth = @column_width - 1 # 1px на правую границу
-    @$el.find('table td').attr('width', columnWidth + "px")
-
   index_of_current_day: ->
     moment().diff(moment(@start), 'days') - 1
 
   serializeData: ->
     days: @days()
     current_day: @index_of_current_day()
-
-  onRender: =>
-    @setColumnWidth()

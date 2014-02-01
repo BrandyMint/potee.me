@@ -3,12 +3,11 @@ Potee.Views.Projects ||= {}
 class Potee.Views.Projects.IndexView extends Backbone.View
   template: JST["backbone/templates/projects/index"]
 
-  tagName: 'div'
-  id: 'projects'
-
-  initialize: (@options) ->
+  initialize: ->
     @selected_project_view = undefined
-    @options.projects.bind 'reset', @addAll
+
+    @projects = window.projects
+    @projects.bind 'reset', @addAll
     @listenTo window.dashboard, 'change:pixels_per_day', @resetScale
 
   selectProjectView: (project_view) ->
@@ -26,13 +25,14 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     view
 
   addAll: =>
-    @options.projects.each((project, i) => @addOne(project, false))
+    @projects.each((project, i) => @addOne(project, false))
 
   insertToPosition: (project, position) =>
     view = @buildProjectView project
     current_project = $ ".project:eq(" + position + ")"
     current_project.before view.render().$el
     view
+    Backbone.pEvent.trigger 'projects:reorder'
 
   addOne: (project, prepend) =>
     view = @buildProjectView project
@@ -43,7 +43,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     view
 
   resetScale: =>
-    @options.projects.each (project) =>
+    @projects.each (project) =>
       project.view.resetScale()
 
   render: ->

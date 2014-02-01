@@ -27,7 +27,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @projects = window.projects
     @findStartEndDate()
     #@on 'change:pixels_per_day', @updateScale
-    @on 'change:pixels_per_day', @changedPixelsPerDay
+    @on 'change:pixels_per_day', @setTitleFromPixels
 
     # TODO Сохранять с задержкой в 3 секунды
     #@on 'change', => @save()
@@ -36,8 +36,8 @@ class Potee.Models.Dashboard extends Backbone.Model
 
     @setToday()
 
-  changedPixelsPerDay: (a,b) ->
-    console.log "scale: #{@get('scale')}, pixels: #{@get('pixels_per_day')}"
+  setTitleFromPixels: (a,b) ->
+    console.log "scale: #{@getTitle()}, pixels: #{@get('pixels_per_day')}"
 
   setToday: ->
     @set 'current_date', undefined
@@ -78,7 +78,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @days = moment(max).diff(moment(min), "days") + 1
 
   min_with_span: () ->
-    switch @get('scale')
+    switch @getTitle()
       when "week"
        return moment(@min).clone().subtract('days', @spanDays).toDate()
       when "month"
@@ -87,7 +87,7 @@ class Potee.Models.Dashboard extends Backbone.Model
         return moment(@min).clone().startOf("month").toDate()
 
   max_with_span: () ->
-    switch @get('scale')
+    switch @getTitle()
       when "week"
         return moment(@max).clone().add('days', @spanDays).toDate()
       when "month"
@@ -180,6 +180,13 @@ class Potee.Models.Dashboard extends Backbone.Model
       else throw "Unknown scale title #{title}"
 
   getTitle: ->
+    p = @get 'pixels_per_day'
+    if p <= YEAR_PIXELS_PER_DAY
+      return 'year'
+    else if p <= MONTH_PIXELS_PER_DAY
+      return 'month'
+    else
+      return 'week'
     #if pixels_per_day == WEEK_PIXELS_PER_DAY
       #"week"
     #else if pixels_per_day == MONTH_PIXELS_PER_DAY
@@ -187,12 +194,12 @@ class Potee.Models.Dashboard extends Backbone.Model
     #else
       #"year"
 
-    if @get('pixels_per_day') > MONTH_PIXELS_PER_DAY
-      "week"
-    else if @get('pixels_per_day') > YEAR_PIXELS_PER_DAY
-      "month"
-    else
-      "year"
+    #if @get('pixels_per_day') > MONTH_PIXELS_PER_DAY
+      #"week"
+    #else if @get('pixels_per_day') > YEAR_PIXELS_PER_DAY
+      #"month"
+    #else
+      #"year"
 
   #
   # PixelsPerDay

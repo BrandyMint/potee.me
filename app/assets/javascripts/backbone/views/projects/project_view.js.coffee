@@ -8,7 +8,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   initialize: ->
     _.extend @, Backbone.Events
-    @model.view = this
+    @model.view = @
 
   events:
     "click .title" : "title_click"
@@ -23,7 +23,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   add_event: (js_event) =>
     @trigger 'select'
     x = js_event.clientX - @$el.offset().left
-    datetime = window.router.dashboard.datetimeAt(x + @leftMargin())
+    datetime = window.dashboard.datetimeAt x + @leftMargin()
     event = @model.projectEvents.create
       date: datetime.toDate()
       time: datetime.toDate()
@@ -87,8 +87,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   # Смещение полосы проекта относительно начала дэшборда.
   # @retrun [Number] смещение в пикселях.
   leftMargin: ->
-    dashboardStart = moment(window.dashboard.min_with_span())
+    dashboardStart = moment window.dashboard.min_with_span()
     offsetInDays = moment(@model.started_at).diff(dashboardStart, "days")
+    console.log "dashboardStart: #{dashboardStart}, offsetInDays: #{offsetInDays}"
     return offsetInDays * window.dashboard.get('pixels_per_day')
 
   # Project's line width
@@ -192,9 +193,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     top_value = @$el.offset().top + 49 #отступ для каждого title
     title_dom = @.titleView.$el
     title_dom.addClass('sticky')
-    title_dom.css({
-      'top': top_value + 'px'
-    })
+    title_dom.css
+      top: top_value + 'px'
+
     switch position
       when 'left'  then title_dom.css('left','0px')
       when 'right' then title_dom.css('right','0px')
@@ -203,9 +204,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @.titleView.sticky_pos = undefined
     title_dom = @.titleView.$el
     title_dom.removeClass('sticky')
-    title_dom.css({
-      'top':'',
-      'left':'',
-      'right':''
-    })
-
+    title_dom.css
+      top:  ''
+      left: ''
+      right:''

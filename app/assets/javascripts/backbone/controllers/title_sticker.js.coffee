@@ -1,7 +1,9 @@
 class Potee.Controllers.TitleSticker
   constructor: (options)->
     @projects_view = options.projects_view
-    Backbone.pEvent.on 'resetStickyTitles', @resetStickyTitles
+    Backbone.pEvent.on 'dashboard:scroll', @resetStickyTitles
+    Backbone.pEvent.on 'projects:reorder', @resetStickyTitles
+    Backbone.pEvent.on 'timeline:render', @resetStickyTitles
 
   resetStickyTitles: () =>
     return false unless @projects_view.el
@@ -11,6 +13,7 @@ class Potee.Controllers.TitleSticker
     projects_bot_point = @projects_view.$el.height() + projects_top_point
     current_date = dashboard.getCurrentDate()
     window.projects.each (project, i) ->
+      return unless project.view?.titleView?
       project_start_date = moment(project.get("started_at")).toDate()
       project_title_pos = project.view.titleView.sticky_pos
       project_top_point = project.view.titleView.$el.offset().top

@@ -1,15 +1,10 @@
 Potee.Views.Timelines ||= {}
 
-class Potee.Views.Timelines.WeeksView extends Marionette.ItemView
+class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
   template: "templates/timelines/weeks"
 
-  tagName: 'div'
   className: 'weeks'
-
-  initialize: (options) ->
-    @start = moment(options.date_start, "YYYY-MM-DD")
-    @end = moment(options.date_finish, "YYYY-MM-DD")
-    @columnWidth = options.column_width
+  columnRate: 7
 
   weeks: () ->
     weeks = []
@@ -23,8 +18,8 @@ class Potee.Views.Timelines.WeeksView extends Marionette.ItemView
     return weeks
 
   week: (start, end) ->
-    month = start.format('MMMM YYYY')
-    end_month = end.format('MMMM YYYY')
+    month = start.format 'MMMM'
+    end_month = end.format 'MMMM'
 
     unless month==end_month
       month += ' - ' + end_month
@@ -37,7 +32,7 @@ class Potee.Views.Timelines.WeeksView extends Marionette.ItemView
 
     # start.format("D.MM.YYYY") + " - " + end.format("D.MM.YYYY")
     res =
-      width: (end.diff(start, "days") + 1) * @columnWidth - 1 # 1px на правую границу
+      width: (end.diff(start, "days") + 1) * @columnWidth() - 1 # 1px на правую границу
       month: month
       details: details
       css_class: css_class

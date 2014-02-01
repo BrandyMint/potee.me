@@ -3,9 +3,17 @@
    <tr>
    <% for(var i = 0; i < months.length; i++) { %>
      <% if (i == current_month) { %>
-       <td width="<%= months[i].width %>px" class="current"><%= months[i].title %></td>
+       <td width="<%= months[i].width %>px" class="current">
+         <%= months[i].year %>
+         <br/>
+         <%= months[i].month %>
+     </td>
      <% } else {%>
-       <td width="<%= months[i].width %>px"><%= months[i].title %></td>
+       <td width="<%= months[i].width %>px">
+         <%= months[i].year %>
+         <br/>
+         <%= months[i].month %>
+     </td>
      <% } %>
    <% } %>
    </tr>

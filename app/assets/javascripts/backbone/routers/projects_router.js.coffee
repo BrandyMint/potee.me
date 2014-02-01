@@ -3,20 +3,20 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   routes:
     ""          : "index"
     "index"     : "index"
-    'week'      : 'week'
-    'month'     : 'month'
-    'year'      : 'year'
+    'days'      : 'days'
+    'weeks'     : 'weeks'
+    'months'    : 'months'
     ".*"        : "index"
     # иначе не ловится редирект из фейсбука #_=_
     ":some"       : "index"
 
   index: ->
 
-  week: ->
+  days: ->
     window.dashboard.setTitle 'week'
 
-  month: ->
+  weeks: ->
     window.dashboard.setTitle 'month'
 
-  year: ->
+  months: ->
     window.dashboard.setTitle 'year'

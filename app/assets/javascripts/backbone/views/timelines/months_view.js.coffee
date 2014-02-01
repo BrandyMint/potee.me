@@ -1,20 +1,13 @@
 Potee.Views.Timelines ||= {}
 
-class Potee.Views.Timelines.MonthsView extends Marionette.ItemView
+class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   template: "templates/timelines/months"
 
-  tagName: 'div'
   className: 'months'
-
-  initialize: (options) ->
-    @start = moment options.date_start, "YYYY-MM-DD"
-    @end = moment options.date_finish, "YYYY-MM-DD"
-
-    # Добавляем месяцев справа, чтобы было куда продолжать и заполнить dashboard
-    @end = @end.add "months", 12
-    @columnWidth = options.column_width
+  columnRate: 30
 
   months: () ->
+    @end = @end.add "months", 12
     months = []
 
     months.push @month(@start, @start.clone().endOf('month'))
@@ -35,13 +28,18 @@ class Potee.Views.Timelines.MonthsView extends Marionette.ItemView
 
     return months
 
-  month: (start, end) ->
-    title = start.format('MMMM, YYYY')
-    width = end.diff(start, "days") * @columnWidth - 1 # 1 px на правую границу
-    return { title: title, width: width }
+  month: (start, end) =>
+    # TODO Учитывать в ширине месяца колличество дней
+    month: start.format 'MMMM'
+    year:  start.format 'YYYY'
+    width: @columnWidth() - 1 # 1 px на правую границу
+    #width: end.diff(start, "days") * @columnWidth() - 1 # 1 px на правую границу
 
   index_of_current_month: ->
     moment().diff moment(@start), 'months'
+
+  setColumnsWidth: ->
+    # empty
 
   serializeData: ->
     months: @months()

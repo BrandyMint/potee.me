@@ -13,11 +13,14 @@ class Potee.Views.DashboardView extends Backbone.View
     @programmedScrolling = false
 
     @timeline_view = new Potee.Views.TimelineView
+      el: $('#timeline')
       dashboard: @model
       dashboard_view: @
 
     @projects_view = new Potee.Views.Projects.IndexView
-      projects: window.projects
+      el: $('#projects')
+
+    new Potee.Controllers.ScalePanel dashboard: @model
 
     new Potee.Controllers.DashboardPersistenter
     new Potee.Controllers.TitleSticker
@@ -45,7 +48,20 @@ class Potee.Views.DashboardView extends Backbone.View
       @timeline_view.render()
 
     @listenTo @model, 'change:current_date', @resetTodayLink
-    @listenTo @model, 'change:pixels_per_day', @resetWidth
+    @listenTo @model, 'change:pixels_per_day', @updateScale
+
+  updateScale: =>
+    scale = @model.getTitle()
+
+    @$el.removeClass("scale-week")
+    @$el.removeClass("scale-month")
+    @$el.removeClass("scale-year")
+
+    @$el.addClass("scale-#{scale}")
+
+    @resetWidth()
+    # Нужно его обновлять именно следующим
+    window.dashboard_view.timeline_view.render()
 
   click: (e) =>
     if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
@@ -73,7 +89,6 @@ class Potee.Views.DashboardView extends Backbone.View
 
     $('#project_new').addClass('active')
     @projects_view.newProject startFrom, position
-    Backbone.pEvent.trigger 'resetStickyTitles'
     return false
 
   resetTodayLink: =>
@@ -87,7 +102,7 @@ class Potee.Views.DashboardView extends Backbone.View
       @todayLink.render()
 
   scroll: (e)=>
-    Backbone.pEvent.trigger 'resetStickyTitles'
+    Backbone.pEvent.trigger 'dashboard:scroll'
     if @programmedScrolling
       return false
 
@@ -120,9 +135,8 @@ class Potee.Views.DashboardView extends Backbone.View
 
   setCurrentForm: (form_view) =>
     if @currentForm
-      form = @currentForm
+      @currentForm.close()
       @currentForm = undefined
-      form.cancel()
     @currentForm = form_view
 
   # переустановить шируину дэшборда.
@@ -137,8 +151,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @viewport.width()
 
   render: ->
-    @$el.append @timeline_view.render().el
-    @$el.append @projects_view.render().el
+    @timeline_view.render()
+    @projects_view.render()
 
     @resetWidth()
     @

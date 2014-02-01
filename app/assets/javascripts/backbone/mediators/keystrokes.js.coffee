@@ -5,7 +5,7 @@ class Potee.Mediators.Keystrokes
     @dashboard_view = options.dashboard_view
     @dashboard = options.dashboard
 
-    Mousetrap.bind '=', =>
+    Mousetrap.bind '0', =>
       unless @dashboard_view.currentForm
         @dashboard.setTitle 'week'
 
@@ -17,7 +17,7 @@ class Potee.Mediators.Keystrokes
       unless @dashboard_view.currentForm
         @dashboard.decPixelsPerDay()
 
-    Mousetrap.bind 'esc', =>
+    Mousetrap.bind 'esc', (e)=>
       # отмена формы
       e.preventDefault()
       e.stopPropagation()
