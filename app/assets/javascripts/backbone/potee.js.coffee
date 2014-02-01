@@ -6,6 +6,7 @@
 #= require_tree ./views
 #= require_tree ./routers
 #= require_tree ./mediators
+#= require_tree ./apps
 
 window.Potee =
   Models: {}
@@ -28,8 +29,8 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
     return (/iPhone|iPod|iPad|Android|BlackBerry|Opera Mini|IEMobile/).test(userAgent)
 
   App.addRegions
-    headerRegion: '#header'
-    mainRegion:   '#main'
+    navbarRegion   : "#navbar-region"
+    topPanelRegion : "#toppanel-region"
 
   App.addInitializer (options) ->
     window.projects = new Potee.Collections.ProjectsCollection options.projects

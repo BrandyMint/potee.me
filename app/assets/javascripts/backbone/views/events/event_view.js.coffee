@@ -95,6 +95,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
   setEditMode: ->
     return true if @mode is 'edit'
 
+    window.PoteeApp.vent.trigger "event:edit:start", @model
     window.dashboard.view.setCurrentForm @
 
     @mode = 'edit'

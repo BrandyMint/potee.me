@@ -34,6 +34,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @resetResizeMinWidth()
 
   title_click: (e) ->
+    window.PoteeApp.vent.trigger "project:edit:start", @model
     @trigger 'select'
     e.stopPropagation()
     if @titleView.sticky_pos == undefined
@@ -106,7 +107,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       when 'new'  then title_view_class = Potee.Views.Titles.NewView
 
     options =
-      project_view: this
+      project_view: @
       model: @model
 
     if @titleView
