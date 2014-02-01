@@ -10,10 +10,9 @@ class Potee.Views.Titles.EditView extends Marionette.ItemView
     @model = @options.model
 
   events:
-    'keyup'                : 'keyup'
     "submit #edit-project" : "update"
     "click #submit"        : "update"
-    'click #cancel'        : 'cancelEvent'
+    'click #cancel'        : 'cancel'
     'click #destroy'       : 'destroyProject'
     'mousedown': (e) -> e.stopPropagation()
 
@@ -24,7 +23,7 @@ class Potee.Views.Titles.EditView extends Marionette.ItemView
     @model.save(null,
       success : (project) =>
         @model = project
-        window.dashboard.view.cancelCurrentForm()
+        #window.dashboard.view.cancelCurrentForm()
         @model.view.setTitleView 'show'
     )
 
@@ -34,8 +33,8 @@ class Potee.Views.Titles.EditView extends Marionette.ItemView
     if confirm("Sure to delete?")
       @model.destroy()
 
-  cancelEvent: (e) ->
-    window.dashboard.view.cancelCurrentForm()
+  cancel: =>
+    @close()
 
   onClose: ->
     if @model.isNew()
@@ -43,13 +42,12 @@ class Potee.Views.Titles.EditView extends Marionette.ItemView
     else
       @model.view.setTitleView 'show'
 
-    $('#project_new').removeClass('active')
+    $('#project_new').removeClass 'active'
 
   onRender: ->
     @$("form").backboneLink @model
+    @$('input#title').focus()
+
     @$el.css 'z-index', @FOREGROUNG_Z_INDEX
+    PoteeApp.vent.trigger 'current_form:set', @
     @
-
-  keyup: (e) =>
-    @cancelEvent() if e.which == 27
-

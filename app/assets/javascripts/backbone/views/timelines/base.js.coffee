@@ -1,23 +1,33 @@
 Potee.Views.Timelines ||= {}
 
 class Potee.Views.Timelines.BaseView extends Marionette.ItemView
+  borderWidth: 1
 
   initialize: (options) ->
-    @reset(options)
+    @reset options
+
+    @projects = window.projects
+
+  # startDate
+  # finishDate
+  # getDateOfDay
 
   reset: (options) ->
-    @start = moment options.date_start, "YYYY-MM-DD"
-    @end   = moment options.date_finish, "YYYY-MM-DD"
-    @range = moment().range(@start, @end)
-
     console.log "columnWidth: #{@columnWidth()}"
 
+  dateRange: ->
+    moment().range @startDate(), @finishDate()
+
   columnWidth: ->
-    @options.dashboard.get('pixels_per_day') * @columnRate
+    window.dashboard.get('pixels_per_day') * @columnRate
+
+  totalWidth: ->
+    @columnWidth()*@days().length
 
   setColumnsWidth: ->
-    columnWidth = @columnWidth() - 1 # 1px на правую границу
-    @$el.find('table td').attr('width', columnWidth + "px")
+    columnWidth = @columnWidth() - @borderWidth
+    @$el.find('table td').width columnWidth
+    @$el.find('table').width @totalWidth()
 
   onRender: =>
     @setColumnsWidth()
@@ -25,4 +35,3 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
     if $.browser.mozilla
       @$el.find('td').css('display', 'table-cell')
 
-    Backbone.pEvent.trigger 'timeline:render'

@@ -7,25 +7,23 @@ class Potee.Views.DashboardView extends Backbone.View
     @viewport = $('#viewport')
     @model.view = @
 
-    @currentForm = undefined
     @todayLink = undefined
     @programmedScrolling = false
 
     @projects_view = options.projects_view
     @timeline_view = options.timeline_view
+    @dashboard_info = options.dashboard_info
 
     @viewport.bind 'scroll', @scroll
-
-    $(document).bind 'click', @click
-
-    $('#new-project-link').bind 'click', @newProject
-    $('#dashboard').bind 'dblclick', @newProject_from_dbclick
 
     $('#dashboard').bind "pinch", (e, obj) =>
       @model.pinch obj.scale
 
     @listenTo @model, 'change:current_date', @resetTodayLink
     @listenTo @model, 'change:pixels_per_day', @updateScale
+
+    # Устанавливаем ширину dashboard-а на основании ширины timeline, как только она изменилась
+    PoteeApp.vent.on 'timeline:stretched', @resetWidth
 
   updateScale: =>
     scale = @model.getTitle()
@@ -36,37 +34,9 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @$el.addClass("scale-#{scale}")
 
-    @resetWidth()
+    #@resetWidth()
     # Нужно его обновлять именно следующим
-    window.dashboard_view.timeline_view.render()
-
-  click: (e) =>
-    if @currentForm and $(e.target).closest(@currentForm.$el).length == 0
-      @cancelCurrentForm()
-
-  newProject_from_dbclick: (e)=>
-    return if @currentForm
-    # определяем вертикльную позицию клика относительно блока projects
-    project_height = $('.project').height()
-    topScroll = $('#projects').scrollTop()
-    topOffset = $('#projects').offset().top
-    topshift = e.pageY - topOffset + topScroll
-    position = Math.round(topshift/project_height)
-
-    # определяем дату по месту клика
-    date = window.dashboard.datetimeAt(e.pageX - window.dashboard.view.$el.offset().left)
-    @newProject(e, date, position)
-
-  newProject: (e, startFrom = moment(), position = 0)=>
-    e.stopPropagation()
-    e.preventDefault()
-
-    if window.dashboard.get('scale') == 'year'
-      window.dashboard.set 'scale', 'month'
-
-    $('#project_new').addClass('active')
-    @projects_view.newProject startFrom, position
-    return false
+    #window.dashboard_view.timeline_view.render()
 
   resetTodayLink: =>
     if @model.dateIsOnDashboard @model.today
@@ -85,7 +55,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
     # Если мы сменили масштаб где физиески нельзя поставить сегодняшнюю дату
     # 
-    if @viewportWidth() >= @$el.width()
+    if @viewport.width() >= @$el.width()
       return true
 
     # TODO Тоже для правого края
@@ -95,11 +65,6 @@ class Potee.Views.DashboardView extends Backbone.View
       date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
       @model.setCurrentDate date
 
-  #setPixelsPerDay: (pixels_per_day) ->
-    #@model.set 'pixels_per_day', pixels_per_day
-    #@setScale()
-    #@gotoCurrentDate animate: false
-
   gotoToday: ->
     @model.setToday()
     @gotoDate @model.getCurrentDate()
@@ -107,25 +72,15 @@ class Potee.Views.DashboardView extends Backbone.View
   gotoCurrentDate: (options={animate:true}) ->
     @gotoDate @model.getCurrentDate(), options
 
-  cancelCurrentForm: (e) =>
-    @setCurrentForm undefined
-
-  setCurrentForm: (form_view) =>
-    if @currentForm
-      @currentForm.close()
-      @currentForm = undefined
-    @currentForm = form_view
-
   # переустановить шируину дэшборда.
-  resetWidth: ->
-    @model.findStartEndDate()
-    viewportWidth = @viewportWidth()
-    if viewportWidth > @model.width()
-      @model.setWidth(viewportWidth)
-    @$el.css 'width', @model.width()
+  resetWidth: =>
+    #Backbone.pEvent.trigger 'dashboard:reset_width'
+    @$el.css 'width', @viewport.width()
 
-  viewportWidth: ->
-    @viewport.width()
+    #viewportWidth = @viewport.width()
+    #if viewportWidth > @model.width()
+      #@model.setWidth viewportWidth
+    #@$el.css 'width', @model.width()
 
   render: ->
     @timeline_view.render()
@@ -133,6 +88,9 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @resetWidth()
     @
+
+  left: ->
+    @$el.offset().left
 
   # Перейти на указанную дату (отцентировать).
   # @param [Date] date

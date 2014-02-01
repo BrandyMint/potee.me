@@ -18,11 +18,12 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @setDragDetector()
 
   events:
+    'keyup input'                : 'keyup'
     "click .event-title-el"      : "click"
     "click .event-bar"           : "click"
     "submit #edit-event"         : "update"
     "click #submit"              : "update"
-    "click #cancel"              : "cancelEvent"
+    "click #cancel"              : "cancel"
     "click #destroy"             : "destroyEvent"
     "mouseenter .event-title-el" : "mouseenter"
     "mouseenter .event-bar"      : "mouseenter"
@@ -41,14 +42,17 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     else
       @setEditMode()
 
+  isEditing: ->
+    PoteeApp.reqres.request 'current_form:editing?'
+
   mouseenter: (e) ->
-    return true if window.dashboard.view.currentForm
+    return true if @isEditing()
     @$el.addClass 'event-handled'
     true
 
   mouseleave: (e) ->
     #e.stopPropagation()
-    return true if window.dashboard.view.currentForm
+    return true if @isEditing()
     return true if @$el.hasClass('ui-draggable-dragging')
     if @$el.hasClass('event-handled')
       @$el.removeClass('event-handled')
@@ -70,13 +74,13 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
         @setShowMode()
     )
 
-  cancelEvent: (e) ->
-    e.preventDefault()
-    e.stopPropagation()
-    window.dashboard.view.setCurrentForm undefined
+  cancel: (e) ->
+    if e
+      e.preventDefault()
+      e.stopPropagation()
 
-  cancel: ->
     view = @
+    @trigger 'cancel'
     @$el.removeClass 'event-handled'
     @$el.find('form').fadeOut('fast')
     @setShowMode()
@@ -95,7 +99,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
   setEditMode: ->
     return true if @mode is 'edit'
 
-    window.dashboard.view.setCurrentForm @
+    PoteeApp.vent.trigger 'current_form:set', @
 
     @mode = 'edit'
     @render()
@@ -131,8 +135,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       @$el.removeClass 'passed'
 
   saveDateTime: (offset) ->
-    datetime = window.dashboard.datetimeAt offset
-    @model.setDateTime datetime
+    @model.setDateTime window.dashboard.momentAt offset
     @model.save()
 
     # TODO вынести на change:date_time в project_view
@@ -144,7 +147,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
   onRender: ->
     unless @mode is "edit"
       @setShowMode()
-      @$el.addClass 'passed'  if @model.passed
+      @$el.addClass 'passed' if @model.passed
 
       @setPosition @options.x
 
@@ -164,3 +167,8 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       @dragging = true if @mousedown
     $(document).mouseup =>
       @mousedown = false
+
+  # Непонятно почему, но общий медиатор не ловит эскейпы когда редактируется форма
+  # события
+  keyup: (e) =>
+    @cancel() if e.which == 27

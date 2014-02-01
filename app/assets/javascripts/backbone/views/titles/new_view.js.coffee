@@ -3,7 +3,7 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
   events :
     "submit #new-project"  : "create"
     "click #submit"        : "create"
-    'click #cancel'        : 'cancelEvent'
+    'click #cancel'        : 'cancel'
     'mousedown': (e) -> e.stopPropagation()
 
   create: (e) ->
@@ -24,4 +24,3 @@ class Potee.Views.Titles.NewView extends Potee.Views.Titles.EditView
       error: (project, jqXHR) =>
         @model.set({errors: $.parseJSON(jqXHR.responseText)})
     )
-

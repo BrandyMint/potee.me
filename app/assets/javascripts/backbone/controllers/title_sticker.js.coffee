@@ -2,6 +2,7 @@ class Potee.Controllers.TitleSticker
   constructor: (options)->
     @projects_view = options.projects_view
     Backbone.pEvent.on 'dashboard:scroll', @resetStickyTitles
+    Backbone.pEvent.on 'projects:scroll', @resetStickyTitles
     Backbone.pEvent.on 'projects:reorder', @resetStickyTitles
     Backbone.pEvent.on 'timeline:render', @resetStickyTitles
 

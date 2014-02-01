@@ -17,8 +17,6 @@ window.Potee =
 
 window.App = window.Potee
 
-Backbone.pEvent = _.extend({}, Backbone.Events)
-
 @PoteeApp = do (Backbone, Marionette) ->
 
   App = new Marionette.Application
@@ -30,15 +28,31 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
   App.addRegions
     headerRegion: '#header'
     mainRegion:   '#main'
+    timelineRegion: '#timelint'
+    projectsRegion: '#projects'
+    dashboardRegion: '#dashboard'
+
+  App.mobile = isMobile()
+
+  Backbone.pEvent = App.vent
 
   App.addInitializer (options) ->
-    window.projects = new Potee.Collections.ProjectsCollection options.projects
+    #window.projects_info = new Potee.Model.ProjectsInfo
+    window.projects = new Potee.Collections.ProjectsCollection options.projects #, projects_info: window.projects_info
 
-    window.dashboard = new Potee.Models.Dashboard options.dashboard
-    #dashboard.fetch async:false
-
+    window.viewport = $('#viewport')
+    window.dashboard = new Potee.Models.Dashboard
     window.scale_panel = new Potee.Controllers.ScalePanel dashboard: window.dashboard
+    window.di = window.dashboard_info = new Potee.Models.DashboardInfo
+
+    # Нужно устанавливать данные после ScalePanel, чтобы она поставила правильное обозначение масштаба
+    window.dashboard.set options.dashboard
+
     new Potee.Controllers.DashboardPersistenter projects: window.projects
+
+    new Potee.Mediators.DashboardDater
+      projects: window.projects
+      dashboard_info: window.dashboard_info
 
     window.timeline_view = new Potee.Views.TimelineView
       el: $('#timeline')
@@ -48,6 +62,10 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
       el: $('#projects')
 
     new Potee.Controllers.TitleSticker projects_view: window.projects_view
+
+    new Potee.Controllers.NewProject
+      projects_view: window.projects_view
+      dashboard_view: window.dashboard_view
 
     new Potee.Controllers.DragScroller
       dashboard_el: $('#dashboard')
@@ -59,10 +77,13 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
       model: window.dashboard
       projects_view: window.projects_view
       timeline_view: window.timeline_view
+      dashboard_info: window.dashboard_info
 
     new Potee.Mediators.Keystrokes
       dashboard_view: window.dashboard_view
       dashboard: window.dashboard
+
+    new Potee.Controllers.CurrentForm
 
     window.dashboard_view.render()
 
@@ -75,9 +96,5 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
   App.on "initialize:after", ->
     if Backbone.history
       Backbone.history.start()
-
-  App.mobile = isMobile()
-
-  #Backbone.pEvent = App.vent
 
   App

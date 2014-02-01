@@ -9,6 +9,13 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @projects = window.projects
     @projects.bind 'reset', @addAll
     @listenTo window.dashboard, 'change:pixels_per_day', @resetScale
+    PoteeApp.vent.on 'timeline:stretched', @resetWidth
+  # переустановить шируину дэшборда.
+  #
+  resetWidth: =>
+    #Backbone.pEvent.trigger 'dashboard:reset_width'
+    @$el.css 'width', window.timeline_view.width()
+
 
   selectProjectView: (project_view) ->
     if @selected_project_view
@@ -31,8 +38,9 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     view = @buildProjectView project
     current_project = $ ".project:eq(" + position + ")"
     current_project.before view.render().$el
-    view
+    view.bounce() if view.isNew()
     Backbone.pEvent.trigger 'projects:reorder'
+    view
 
   addOne: (project, prepend) =>
     view = @buildProjectView project
@@ -40,6 +48,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       @$el.prepend view.render().el
     else
       @$el.append view.render().el
+    view.bounce() if view.isNew()
     view
 
   resetScale: =>
@@ -58,17 +67,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     # Корректируем sticky titles при вертикальном скроллинге
     @$el.bind 'scroll', =>
-      Backbone.pEvent.trigger 'resetStickyTitles'
+      Backbone.pEvent.trigger 'projects:scroll'
 
     @
-
-  newProject: (startFrom = moment(), position = 0) ->
-    project = new Potee.Models.Project({}, {}, startFrom)
-    projects_count = window.projects.length
-
-    if position > 0 and position < projects_count
-      project_view = @insertToPosition project, position
-    else
-      project_view = @addOne project, (position < projects_count)
-    project_view.setTitleView 'new'
 

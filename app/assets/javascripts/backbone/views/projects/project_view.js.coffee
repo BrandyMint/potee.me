@@ -23,7 +23,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   add_event: (js_event) =>
     @trigger 'select'
     x = js_event.clientX - @$el.offset().left
-    datetime = window.dashboard.datetimeAt x + @leftMargin()
+    datetime = window.timeline_view.momentAt x + @leftMargin()
     event = @model.projectEvents.create
       date: datetime.toDate()
       time: datetime.toDate()
@@ -84,20 +84,21 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   setLeftMargin: =>
     @$el.css 'margin-left', @leftMargin()
 
+  #leftOffsetInDays: ->
+    #moment(@model.started_at).diff window.timeline_view.startDate(), "days"
+
   # Смещение полосы проекта относительно начала дэшборда.
   # @retrun [Number] смещение в пикселях.
   leftMargin: ->
-    dashboardStart = moment window.dashboard.min_with_span()
-    offsetInDays = moment(@model.started_at).diff(dashboardStart, "days")
-    console.log "dashboardStart: #{dashboardStart}, offsetInDays: #{offsetInDays}"
-    return offsetInDays * window.dashboard.get('pixels_per_day')
+    window.timeline_view.offsetInPixels @model.started_at
+    #@leftOffsetInDays() * window.dashboard.get('pixels_per_day')
 
   # Project's line width
-  setDuration: =>
+  setWidth: =>
     @$el.css 'width', @width()
 
   width: ->
-    return @model.duration() * window.dashboard.get('pixels_per_day')
+    @model.duration() * window.dashboard.get('pixels_per_day')
 
   setTitleView: (state)->
     switch state
@@ -106,20 +107,16 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       when 'new'  then title_view_class = Potee.Views.Titles.NewView
 
     options =
-      project_view: this
+      project_view: @
       model: @model
 
     if @titleView
-      @titleView.remove()
+      @titleView.close()
 
     @titleView = new title_view_class options
     @$el.append @titleView.render().el
-    window.dashboard.view.cancelCurrentForm()
-    window.dashboard.view.setCurrentForm @titleView unless state == 'show'
 
-    @$el.find('input#title').focus()
-
-    @bounce() if state == 'new'
+    #@bounce() if state == 'new'
 
   serializeData: ->
     return width: @width()
@@ -127,8 +124,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   resetScale: ->
     @setLeftMargin()
     @resetEventsPositions()
-    @setDuration()
-    
+    @setWidth()
+
   resetEventsPositions: =>
     async.each @model.projectEvents, (event) ->
       event.view.setPosition()
@@ -138,29 +135,36 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     @$el.attr('id', @model.cid)
     @$el.addClass('project-color-'+@model.get('color_index'))
+
     closest_event = @model.projectEvents.getClosestEvent()
     @model.projectEvents.each (event)=>
       current_event = @renderEvent event
       current_event.addClass('closest') if event == closest_event
 
-    @setTitleView 'show'
+    if @isNew()
+      @setTitleView 'new'
+    else
+      @setTitleView 'show'
 
     @setLeftMargin()
-    @setDuration()
+    @setWidth()
 
     @$el.resizable
       grid: window.dashboard.get('pixels_per_day'),
-      minWidth: @calculateResizeMinWidth()
+      minWidth: @_getResizeMinWidth()
       handles: 'e'
       stop: (event, ui) =>
         @changeDuration ui.size.width
 
     @
 
-  resetResizeMinWidth: ->
-    @$el.resizable "option", "minWidth", @calculateResizeMinWidth()
+  isNew: ->
+    @model.isNew()
 
-  calculateResizeMinWidth: ->
+  resetResizeMinWidth: ->
+    @$el.resizable "option", "minWidth", @_getResizeMinWidth()
+
+  _getResizeMinWidth: ->
     if @model.projectEvents.length > 0
       date = ( @model.projectEvents.max (num) -> num.date).date
       date = moment(date).clone().add("days", 1)
@@ -175,8 +179,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     totalWidth = @width() + @leftMargin()
     if totalWidth > window.dashboard.width()
-      dashboard.findStartEndDate()
-      #dashboard.view.update()
+      Backbone.pEvent.trigger 'dashboard:stretch'
 
   renderEvent: (event, x = undefined) ->
     event_view = new Potee.Views.Events.EventView
