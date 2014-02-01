@@ -55,15 +55,15 @@ class Potee.Views.DashboardView extends Backbone.View
 
     # Если мы сменили масштаб где физиески нельзя поставить сегодняшнюю дату
     # 
-    if @viewport.width() >= @$el.width()
-      return true
+    #if @viewport.width() >= @$el.width()
+      #return true
 
     # TODO Тоже для правого края
 
-    if @model.currentDate or @viewport.scrollLeft() > 1
-      @$el.stop()
-      date =  @model.dateOfMiddleOffset @viewport.scrollLeft()
-      @model.setCurrentDate date
+    #if @viewport.scrollLeft() > 1
+    @$el.stop() # Прекращаем все анимации
+    #date = 
+    @model.setCurrentDate @model.momentOfMiddleOffset @viewport.scrollLeft()
 
   gotoToday: ->
     @model.setToday()

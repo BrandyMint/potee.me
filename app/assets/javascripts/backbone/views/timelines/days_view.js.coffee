@@ -7,6 +7,9 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
   columnRate: 1
   spanDays: 5
 
+
+  #@days = moment(max).diff(moment(min), "days") + 1
+
   offsetInPixels: (day) ->
     #day * @get('pixels_per_day')
     throw "Откуда взялась такая дата? #{day}" unless _.isObject(day)

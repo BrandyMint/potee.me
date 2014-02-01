@@ -1,4 +1,5 @@
 class Potee.Models.Project extends Backbone.Model
+  MAX_COLOR_INDEX: 7
   paramRoot: 'project'
   events:
     "change:color_index" : "change_color"
@@ -25,8 +26,8 @@ class Potee.Models.Project extends Backbone.Model
   initProjectEventsCollection: ->
     # Свойство events используется для событий Backbone модели, поэтому
     # использовать его для обозначения списка событий не получается.
-    @projectEvents = new Potee.Collections.EventsCollection(project: this)
-    @projectEvents.reset(@get("events"))
+    @projectEvents = new Potee.Collections.EventsCollection project: @
+    @projectEvents.reset @get("events")
 
     @unset 'events',
       silent: true

@@ -12,7 +12,17 @@ class Potee.Collections.ProjectsCollection extends Backbone.Collection
   # Ищем следующий свободный цвет
   getNextColorIndex: ->
     return 0 if @length == 0
-    (@last().get('color_index')+1) % 7
+    max = Potee.Models.Project.prototype.MAX_COLOR_INDEX
+
+    if @length>=max
+      return (@last().get('color_index')+1) % max
+    else
+      i=0
+      while (i<=max)
+        return i unless @findWhere color_index: i
+        i++
+      return 0
+
 
   # TODO cache
   firstDate: ->

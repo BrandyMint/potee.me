@@ -29,7 +29,7 @@ class Potee.Controllers.NewProject
     @_newProject()
     return false
 
-  _newProject: (startFrom = moment(), position = 0) =>
+  _newProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) =>
     project = new Potee.Models.Project {}, {}, startFrom
     projects_count = window.projects.length
 

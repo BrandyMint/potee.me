@@ -41,18 +41,15 @@ class Potee.Models.Dashboard extends Backbone.Model
   setToday: ->
     @set 'current_date', undefined
 
+  getCurrentMoment: ->
+    moment @get('current_date')
+
   getCurrentDate: ->
-    moment(@get('current_date')).toDate()
+    @getCurrentMoment().toDate()
 
   setCurrentDate: (date) ->
+    console.log "set current_date = #{date.toString()}"
     @set 'current_date', date.toString()
-
-  setDuration: () ->
-    debugger
-    throw 'err'
-    min = @min_with_span()
-    max = @max_with_span()
-    @days = moment(max).diff(moment(min), "days") + 1
 
   min_with_span: () ->
     debugger
@@ -91,12 +88,8 @@ class Potee.Models.Dashboard extends Backbone.Model
   dayOfOffset: (offset) ->
     Math.round( offset / @get('pixels_per_day') )
 
-  dayOfMiddleOffset: (offset) ->
-    @dayOfOffset( offset + (@viewport.width() / 2) - @get('pixels_per_day') / 2)
-
-  dateOfMiddleOffset: (offset) ->
-    debugger
-    @datetimeAt offset + (@viewport.width() / 2)
+  momentOfMiddleOffset: (offset) ->
+    window.timeline_view.momentAt offset + (@viewport.width() / 2)
 
   # Возвращает индекс элемента
   #
@@ -121,12 +114,8 @@ class Potee.Models.Dashboard extends Backbone.Model
     offset =  @offsetOf(@today)
     offset < left
 
-  # Возвращает количество дней перед днем старта 1 проекта
-  days_before_min: ->
-    moment(@min).diff(@min_with_span(), 'days')
-
-  width: ->
-    return @days * @get('pixels_per_day')
+  #width: ->
+    #return @days * @get('pixels_per_day')
 
   #setWidth: (width) ->
     #duration = Math.round(width / @get('pixels_per_day'))
@@ -141,11 +130,6 @@ class Potee.Models.Dashboard extends Backbone.Model
       return 'month'
     else
       return 'week'
-
-  setMinMax: (min, max) ->
-    @min = min
-    @max = max
-    @setDuration()
 
   #
   # PixelsPerDay
