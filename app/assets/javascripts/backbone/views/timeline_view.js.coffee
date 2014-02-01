@@ -1,7 +1,6 @@
 class Potee.Views.TimelineView extends Backbone.View
   initialize: (options)->
     @dashboard = options.dashboard
-    @view = options.view
 
   resetScale: =>
     # Если title не изменился, то и класс менять не надо

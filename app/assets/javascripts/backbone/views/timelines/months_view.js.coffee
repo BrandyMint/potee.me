@@ -7,7 +7,6 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   columnRate: 30
 
   months: () ->
-    @end = @end.add "months", 12
     months = []
 
     months.push @month(@start, @start.clone().endOf('month'))

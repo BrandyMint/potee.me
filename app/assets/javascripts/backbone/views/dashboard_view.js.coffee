@@ -4,7 +4,6 @@ class Potee.Views.DashboardView extends Backbone.View
   #
 
   initialize: (options)->
-    @setElement $('#dashboard')
     @viewport = $('#viewport')
     @model.view = @
 
@@ -12,26 +11,8 @@ class Potee.Views.DashboardView extends Backbone.View
     @todayLink = undefined
     @programmedScrolling = false
 
-    @timeline_view = new Potee.Views.TimelineView
-      el: $('#timeline')
-      dashboard: @model
-      dashboard_view: @
-
-    @projects_view = new Potee.Views.Projects.IndexView
-      el: $('#projects')
-
-    new Potee.Controllers.ScalePanel dashboard: @model
-
-    new Potee.Controllers.DashboardPersistenter
-    new Potee.Controllers.TitleSticker
-      projects_view: @projects_view
-    new Potee.Mediators.Keystrokes
-      dashboard_view: @
-      dashboard: @model
-    new Potee.Controllers.DragScroller
-      $dashboard_el: @$el,
-      viewport: @viewport,
-      projects_view: @projects_view
+    @projects_view = options.projects_view
+    @timeline_view = options.timeline_view
 
     @viewport.bind 'scroll', @scroll
 
@@ -42,10 +23,6 @@ class Potee.Views.DashboardView extends Backbone.View
 
     $('#dashboard').bind "pinch", (e, obj) =>
       @model.pinch obj.scale
-
-    $(window).resize =>
-      @resetWidth()
-      @timeline_view.render()
 
     @listenTo @model, 'change:current_date', @resetTodayLink
     @listenTo @model, 'change:pixels_per_day', @updateScale

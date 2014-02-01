@@ -37,8 +37,38 @@ Backbone.pEvent = _.extend({}, Backbone.Events)
     window.dashboard = new Potee.Models.Dashboard options.dashboard
     #dashboard.fetch async:false
 
-    window.dashboard_view = new Potee.Views.DashboardView model: window.dashboard
+    window.scale_panel = new Potee.Controllers.ScalePanel dashboard: window.dashboard
+    new Potee.Controllers.DashboardPersistenter projects: window.projects
+
+    window.timeline_view = new Potee.Views.TimelineView
+      el: $('#timeline')
+      dashboard: window.dashboard
+
+    window.projects_view = new Potee.Views.Projects.IndexView
+      el: $('#projects')
+
+    new Potee.Controllers.TitleSticker projects_view: window.projects_view
+
+    new Potee.Controllers.DragScroller
+      dashboard_el: $('#dashboard')
+      viewport_el: $('#viewport')
+      projects_view: window.projects_view
+
+    window.dashboard_view = new Potee.Views.DashboardView
+      el: $('#dashboard')
+      model: window.dashboard
+      projects_view: window.projects_view
+      timeline_view: window.timeline_view
+
+    new Potee.Mediators.Keystrokes
+      dashboard_view: window.dashboard_view
+      dashboard: window.dashboard
+
     window.dashboard_view.render()
+
+    $(window).resize =>
+      window.dashboard_view.resetWidth()
+      window.timeline_view.render()
 
     window.router = new window.App.Routers.ProjectsRouter options
 

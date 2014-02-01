@@ -10,13 +10,18 @@ class Potee.Models.Dashboard extends Backbone.Model
     options.url = model.methodToURL[method.toLowerCase()]
     Backbone.sync(method, model, options)
 
-  spanDays: 3
+  spanDays: 5
 
-  WEEK_PIXELS_PER_DAY= 150
-  MONTH_PIXELS_PER_DAY= 35
-  YEAR_PIXELS_PER_DAY= 10
-  MAX_PIXELS_PER_DAY = 150
-  MIN_PIXELS_PER_DAY = 4
+  MAX_PIXELS_PER_DAY: 200
+  MIN_PIXELS_PER_DAY: 4
+
+  DEFAULT_WEEK_PIXELS_PER_DAY:  150
+
+  START_MONTH_PIXELS_PER_DAY:   50
+  DEFAULT_MONTH_PIXELS_PER_DAY: 35
+
+  START_YEAR_PIXELS_PER_DAY:    30
+  DEFAULT_YEAR_PIXELS_PER_DAY:  10
 
 
   defaults:
@@ -26,7 +31,7 @@ class Potee.Models.Dashboard extends Backbone.Model
   initialize: ->
     @projects = window.projects
     @findStartEndDate()
-    #@on 'change:pixels_per_day', @updateScale
+
     @on 'change:pixels_per_day', @setTitleFromPixels
 
     # TODO Сохранять с задержкой в 3 секунды
@@ -172,34 +177,14 @@ class Potee.Models.Dashboard extends Backbone.Model
     @max = moment(@min_with_span()).clone().add("days", duration)
     @setDuration()
 
-  setTitle: (title) ->
-    switch title
-      when 'week' then @set 'pixels_per_day', WEEK_PIXELS_PER_DAY
-      when 'month' then @set 'pixels_per_day', MONTH_PIXELS_PER_DAY
-      when 'year' then @set 'pixels_per_day', YEAR_PIXELS_PER_DAY
-      else throw "Unknown scale title #{title}"
-
   getTitle: ->
     p = @get 'pixels_per_day'
-    if p <= YEAR_PIXELS_PER_DAY
+    if p <= @START_YEAR_PIXELS_PER_DAY
       return 'year'
-    else if p <= MONTH_PIXELS_PER_DAY
+    else if p <= @START_MONTH_PIXELS_PER_DAY
       return 'month'
     else
       return 'week'
-    #if pixels_per_day == WEEK_PIXELS_PER_DAY
-      #"week"
-    #else if pixels_per_day == MONTH_PIXELS_PER_DAY
-      #"month"
-    #else
-      #"year"
-
-    #if @get('pixels_per_day') > MONTH_PIXELS_PER_DAY
-      #"week"
-    #else if @get('pixels_per_day') > YEAR_PIXELS_PER_DAY
-      #"month"
-    #else
-      #"year"
 
   #
   # PixelsPerDay
@@ -213,7 +198,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     diff = 5 
     diff = 3 if @get('pixels_per_day') < 100
     diff = 1 if @get('pixels_per_day') < 50
-    new_value = @get('pixels_per_day')+diff
+    new_value = @normalizePixelsPerDay @get('pixels_per_day')+diff
     @set 'pixels_per_day', new_value
 
   decPixelsPerDay: ->
@@ -224,4 +209,4 @@ class Potee.Models.Dashboard extends Backbone.Model
     @set 'pixels_per_day', new_value
 
   normalizePixelsPerDay: (pixels_per_day) ->
-    Math.max Math.min(pixels_per_day, MAX_PIXELS_PER_DAY), MIN_PIXELS_PER_DAY
+    Math.max Math.min(pixels_per_day, @MAX_PIXELS_PER_DAY), @MIN_PIXELS_PER_DAY
