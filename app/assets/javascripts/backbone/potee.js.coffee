@@ -50,16 +50,10 @@ window.App = window.Potee
     # Нужно устанавливать данные после ScalePanel, чтобы она поставила правильное обозначение масштаба
     window.dashboard.set options.dashboard
 
-    new Potee.Controllers.DashboardPersistenter projects: window.projects
-
     # Инициализурется до projects_view
     new Potee.Controllers.GotoDate
       dashboard: window.dashboard
       $viewport: window.viewport
-
-    new Potee.Mediators.DashboardDater
-      projects: window.projects
-      dashboard_info: window.dashboard_info
 
     window.timeline_view = new Potee.Views.TimelineView
       el: $('#timeline')
@@ -72,7 +66,13 @@ window.App = window.Potee
       projects: window.projects
       timeline_view: window.timeline_view
 
-    new Potee.Controllers.TitleSticker projects_view: window.projects_view
+    new Potee.Controllers.TitleSticker
+      projects_view: window.projects_view
+
+    new Potee.Controllers.DashboardPersistenter
+      projects: window.projects
+      projects_view: window.projects_view
+      dashboard: window.dashboard
 
     new Potee.Controllers.NewProject
       projects_view: window.projects_view

@@ -5,8 +5,25 @@ class Potee.Observers.HorizontalScroll
     @dashboard_view = options.dashboard_view
     @timeline = window.timeline_view
 
-    @$viewport.bind 'scroll', @scrollCallback
+    @bindScrollingCallback()
+
     @intentionalScrolling = false
+
+  intentionalScroll: (offset) =>
+    @unbindScrollingCallback()
+    @$viewport.scrollLeft offset
+
+    # Байндим через некоторое время, потому что иначе байнд
+    # успевает привязаться до того, как скроллинг закончен
+    setTimeout @bindScrollingCallback, 100
+
+  bindScrollingCallback: =>
+    console.log 'bind horizontal scrolling'
+    @$viewport.bind 'scroll', @scrollCallback
+
+  unbindScrollingCallback: =>
+    console.log 'unbind horizontal scrolling'
+    @$viewport.unbind 'scroll', @scrollCallback
 
   deactivateIntentionalScrolling: ->
     console.log 'deactivate intentional scrolling'
@@ -17,6 +34,7 @@ class Potee.Observers.HorizontalScroll
     @intentionalScrolling = true
 
   scrollCallback: (e)=>
+    # Ловит TitleSticker
     Backbone.pEvent.trigger 'dashboard:scroll'
 
     return false if @intentionalScrolling

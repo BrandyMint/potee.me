@@ -8,7 +8,7 @@ class DashboardsController < ApplicationController
 
   def update
     dashboard = current_user.dashboard
-    dashboard.update_attributes pixels_per_day: params[:pixels_per_day], current_date: params[:current_date]
+    dashboard.update_attributes params.slice :pixels_per_day, :current_date, :scroll_top
     render json: dashboard.to_json
   end
 end

@@ -62,6 +62,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   render: ->
     @addAll()
     @scrollToCurrentDate()
+    @scrollToLastScrollTop()
 
     # Перемещаемся на текущее место
     #PoteeApp.commands.setHandler 'gotoCurrentDate'
@@ -80,6 +81,11 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     @
 
-  scrollToCurrentDate: ->
-    window.viewport.scrollLeft @timeline.middleOffsetOf window.dashboard.getCurrentDate()
+  scrollToLastScrollTop: ->
+    console.log "scroll top", @dashboard.get('scroll_top')
+    @$el.scrollTop @dashboard.get('scroll_top')
 
+  scrollToCurrentDate: ->
+    # Отключаем автоматическое обновление даты по скроллингу
+
+    window.hs.intentionalScroll @timeline.middleOffsetOf window.dashboard.getCurrentDate()
