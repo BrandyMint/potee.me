@@ -7,16 +7,22 @@ class Potee.Controllers.DashboardPersistenter
     Backbone.pEvent.on 'savePositions', @savePositions
     Backbone.pEvent.on 'projects:scroll', @updateScrollTop
 
-    @timeout = undefined
+    $( window ).unload =>
+      @_clearTimeout()
+      @_saveDashboard()
 
-    # TODO Сохранять с задержкой в 3 секунды
+    @_timeout = undefined
+
     @dashboard.on 'change', @saveDashboard
 
   updateScrollTop: =>
     @dashboard.set 'scroll_top', @projects_view.$el.scrollTop()
 
+  _clearTimeout: =>
+    window.clearTimeout @_timeout if @_timeout?
+
   saveDashboard: (dashboard) =>
-    window.clearTimeout @timeout if @timeout?
+    @_clearTimeout()
     @timeout = window.setTimeout @_saveDashboard, 1000
 
   _saveDashboard: =>
