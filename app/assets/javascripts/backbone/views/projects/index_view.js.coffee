@@ -3,19 +3,21 @@ Potee.Views.Projects ||= {}
 class Potee.Views.Projects.IndexView extends Backbone.View
   template: JST["backbone/templates/projects/index"]
 
-  initialize: ->
+  initialize: (options)->
+
+    @timeline = options.timeline_view
+    @projects = options.projects
+    @dashboard = options.dashboard
+
     @selected_project_view = undefined
-
-    @projects = window.projects
     @projects.bind 'reset', @addAll
-    @listenTo window.dashboard, 'change:pixels_per_day', @resetScale
-    PoteeApp.vent.on 'timeline:stretched', @resetWidth
-  # переустановить шируину дэшборда.
-  #
-  resetWidth: =>
-    #Backbone.pEvent.trigger 'dashboard:reset_width'
-    @$el.css 'width', window.timeline_view.width()
 
+    @listenTo @dashboard, 'change:pixels_per_day', @resetScale
+    PoteeApp.vent.on 'timeline:stretched', @resetWidth
+
+  # переустановить шируину дэшборда.
+  resetWidth: =>
+    @$el.css 'width', @timeline.width()
 
   selectProjectView: (project_view) ->
     if @selected_project_view
@@ -36,9 +38,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   insertToPosition: (project, position) =>
     view = @buildProjectView project
-    current_project = $ ".project:eq(" + position + ")"
-    current_project.before view.render().$el
+    some_project = $ ".project:eq(" + position + ")"
+    some_project.before view.render().$el
     view.bounce() if view.isNew()
+    Backbone.pEvent.trigger 'project:rendered', view
     Backbone.pEvent.trigger 'projects:reorder'
     view
 
@@ -49,6 +52,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     else
       @$el.append view.render().el
     view.bounce() if view.isNew()
+    Backbone.pEvent.trigger 'project:rendered', view
     view
 
   resetScale: =>
@@ -57,6 +61,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   render: ->
     @addAll()
+    @scrollToCurrentDate()
+
+    # Перемещаемся на текущее место
+    #PoteeApp.commands.setHandler 'gotoCurrentDate'
     @$el.sortable
       axis: "y",
       containment: "parent",
@@ -66,8 +74,12 @@ class Potee.Views.Projects.IndexView extends Backbone.View
         Backbone.pEvent.trigger 'savePositions'
 
     # Корректируем sticky titles при вертикальном скроллинге
+    # TODO Пусть sticky titles сами вешаются на on 'render' списка проектов
     @$el.bind 'scroll', =>
       Backbone.pEvent.trigger 'projects:scroll'
 
     @
+
+  scrollToCurrentDate: ->
+    window.viewport.scrollLeft @timeline.middleOffsetOf window.dashboard.getCurrentDate()
 

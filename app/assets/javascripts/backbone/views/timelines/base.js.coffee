@@ -12,6 +12,9 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
   # finishDate
   # getDateOfDay
 
+  #getDateOfDay: (day) ->
+     #moment(@projects.firstDate()).clone().add('days', day - @spanDays) #.toDate()
+
   reset: (options) ->
     console.log "columnWidth: #{@columnWidth()}"
 

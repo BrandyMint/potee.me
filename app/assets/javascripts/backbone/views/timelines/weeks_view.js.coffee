@@ -6,6 +6,12 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
   className: 'weeks'
   columnRate: 7
 
+  startDate: ->
+    moment(@projects.firstDate()).clone().day(0).toDate()
+
+  finishDate: ->
+    moment(@projects.lastDate()).clone().day(6).toDate()
+
   weeks: () ->
     weeks = []
 

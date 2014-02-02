@@ -6,6 +6,12 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   className: 'months'
   columnRate: 30
 
+  startDate: ->
+    moment(@projects.firstDate()).clone().startOf("month").toDate()
+
+  finishDate: ->
+    moment(@proejcts.lastDate()).clone().endOf("month")
+
   months: () ->
     months = []
 

@@ -135,7 +135,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       @$el.removeClass 'passed'
 
   saveDateTime: (offset) ->
-    @model.setDateTime window.dashboard.momentAt offset
+    @model.setDateTime window.timeline_view.momentAt offset
     @model.save()
 
     # TODO вынести на change:date_time в project_view

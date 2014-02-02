@@ -1,3 +1,4 @@
+# TODO Перевести на Marionette + Region
 class Potee.Views.TodayView extends Backbone.View
   tagName: 'li'
 
@@ -5,10 +6,11 @@ class Potee.Views.TodayView extends Backbone.View
     'click #today-link' : 'click'
 
   click: ->
-    window.dashboard.view.gotoToday()
+    # gotoToday переместить в модель
+    PoteeApp.commands.execute 'gotoToday'
 
   render: ->
-    if window.dashboard.todayIsPassed()
+    if window.timeline_view.todayIsPassed()
       title = '&larr; move to today'
     else
       title = 'move to today &rarr;'
@@ -16,5 +18,5 @@ class Potee.Views.TodayView extends Backbone.View
     @$el.html "<a href='javascript:void()' id='today-link'>#{title}</a>"
     $('#today-nav').html @$el
 
-    return this
+    @
 

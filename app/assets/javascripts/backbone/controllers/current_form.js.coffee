@@ -44,3 +44,4 @@ class Potee.Controllers.CurrentForm
       console.log 'remove current_form'
       @stopListening @currentForm
       @currentForm = undefined
+

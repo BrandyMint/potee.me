@@ -23,9 +23,6 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
   finishDate: ->
     moment(@projects.lastDate()).clone().add('days', @spanDays).toDate()
 
-  getDateOfDay: (day) ->
-     moment(@projects.firstDate()).clone().add('days', day - @spanDays) #.toDate()
-
   days: ->
     days = []
     # iterate by 1 day

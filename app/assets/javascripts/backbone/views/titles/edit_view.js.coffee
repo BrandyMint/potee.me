@@ -3,7 +3,6 @@ Potee.Views.Titles ||= {}
 class Potee.Views.Titles.EditView extends Marionette.ItemView
   FOREGROUNG_Z_INDEX: 300
   template: "templates/titles/edit"
-  className: "project-title"
 
   initialize: (@options) ->
     @collection = window.projects
@@ -49,5 +48,4 @@ class Potee.Views.Titles.EditView extends Marionette.ItemView
     @$('input#title').focus()
 
     @$el.css 'z-index', @FOREGROUNG_Z_INDEX
-    PoteeApp.vent.trigger 'current_form:set', @
     @

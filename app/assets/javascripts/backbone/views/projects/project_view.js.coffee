@@ -46,13 +46,11 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   gotoProjectEdge:() ->
     dashboard_view = window.dashboard.view
-    switch this.titleView.sticky_pos
+    switch @titleView.sticky_pos
       when 'left'
-        project_finish = moment(this.model.get('finish_at')).toDate()
-        dashboard_view.gotoDate(project_finish) 
+        PoteeApp.commands.execute 'gotoDate', @model.finish_at
       when 'right' 
-        project_start = moment(this.model.get('started_at')).toDate() 
-        dashboard_view.gotoDate(project_start)
+        PoteeApp.commands.execute 'gotoDate', @model.started_at
 
   resetModel: (new_model) ->
     @undelegateEvents()
@@ -82,7 +80,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   # Project's line left margin (when does it start)
   setLeftMargin: =>
-    @$el.css 'margin-left', @leftMargin()
+    #@$el.css 'margin-left', @leftMargin()
+    @$el.offset left: @leftMargin()
 
   #leftOffsetInDays: ->
     #moment(@model.started_at).diff window.timeline_view.startDate(), "days"
@@ -101,22 +100,24 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @model.duration() * window.dashboard.get('pixels_per_day')
 
   setTitleView: (state)->
+    @state = state
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
       when 'edit' then title_view_class = Potee.Views.Titles.EditView
       when 'new'  then title_view_class = Potee.Views.Titles.NewView
 
-    options =
+    @titleView = new title_view_class
       project_view: @
       model: @model
 
-    if @titleView
-      @titleView.close()
+    #@titleView.on 'dom:refresh', (a) =>
+      #debugger
 
-    @titleView = new title_view_class options
-    @$el.append @titleView.render().el
+    @titleRegion.show @titleView
 
-    #@bounce() if state == 'new'
+    # Событие должно генерироваться после вставки вьюхи в реальный DOM
+    if state == 'edit' or state == 'new'
+      PoteeApp.vent.trigger 'current_form:set', @titleView
 
   serializeData: ->
     return width: @width()
@@ -133,8 +134,10 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
 
-    @$el.attr('id', @model.cid)
-    @$el.addClass('project-color-'+@model.get('color_index'))
+    @titleRegion ||= new Marionette.Region el: @$('.project-title')
+
+    @$el.attr 'id', @model.cid
+    @$el.addClass 'project-color-'+@model.get('color_index')
 
     closest_event = @model.projectEvents.getClosestEvent()
     @model.projectEvents.each (event)=>
@@ -157,6 +160,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
         @changeDuration ui.size.width
 
     @
+
+  isEditing: ->
+    @state != 'show'
 
   isNew: ->
     @model.isNew()
@@ -203,7 +209,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       when 'left'  then title_dom.css('left','0px')
       when 'right' then title_dom.css('right','0px')
 
-  unstickTitle: () ->
+  unstickTitle: ->
     @.titleView.sticky_pos = undefined
     title_dom = @.titleView.$el
     title_dom.removeClass('sticky')

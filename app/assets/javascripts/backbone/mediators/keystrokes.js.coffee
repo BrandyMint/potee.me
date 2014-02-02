@@ -36,7 +36,7 @@ class Potee.Mediators.Keystrokes
       unless @isEditing()
         e.preventDefault()
         e.stopPropagation()
-        @dashboard_view.gotoToday()
+        PoteeApp.commands.execute 'gotoToday'
 
   isEditing: ->
     PoteeApp.reqres.request 'current_form:editing?'

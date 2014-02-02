@@ -3,6 +3,7 @@
 #= require_tree ./models
 #= require_tree ./collections
 #= require_tree ./controllers
+#= require_tree ./observers
 #= require_tree ./views
 #= require_tree ./routers
 #= require_tree ./mediators
@@ -14,6 +15,7 @@ window.Potee =
   Views: {}
   Controllers: {}
   Mediators: {}
+  Observers: {}
 
 window.App = window.Potee
 
@@ -50,16 +52,25 @@ window.App = window.Potee
 
     new Potee.Controllers.DashboardPersistenter projects: window.projects
 
+    # Инициализурется до projects_view
+    new Potee.Controllers.GotoDate
+      dashboard: window.dashboard
+      $viewport: window.viewport
+
     new Potee.Mediators.DashboardDater
       projects: window.projects
       dashboard_info: window.dashboard_info
 
     window.timeline_view = new Potee.Views.TimelineView
       el: $('#timeline')
+      $viewport: window.viewport
       dashboard: window.dashboard
 
     window.projects_view = new Potee.Views.Projects.IndexView
       el: $('#projects')
+      dashboard: window.dashboard
+      projects: window.projects
+      timeline_view: window.timeline_view
 
     new Potee.Controllers.TitleSticker projects_view: window.projects_view
 
@@ -67,17 +78,25 @@ window.App = window.Potee
       projects_view: window.projects_view
       dashboard_view: window.dashboard_view
 
+    new Potee.Controllers.EditFormPositioner
+
     new Potee.Controllers.DragScroller
       dashboard_el: $('#dashboard')
-      viewport_el: $('#viewport')
+      viewport_el: window.viewport
       projects_view: window.projects_view
 
     window.dashboard_view = new Potee.Views.DashboardView
       el: $('#dashboard')
       model: window.dashboard
+      $viewport    : window.viewport
       projects_view: window.projects_view
       timeline_view: window.timeline_view
       dashboard_info: window.dashboard_info
+
+    window.hs = new Potee.Observers.HorizontalScroll
+      $viewport: window.viewport
+      dashboard: window.dashboard
+      dashboard_view: window.dashboard_view
 
     new Potee.Mediators.Keystrokes
       dashboard_view: window.dashboard_view

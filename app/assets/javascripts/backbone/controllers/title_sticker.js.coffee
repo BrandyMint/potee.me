@@ -1,6 +1,8 @@
 class Potee.Controllers.TitleSticker
   constructor: (options)->
     @projects_view = options.projects_view
+    @timeline_view = window.timeline_view
+    @dashboard = window.dashboard
     Backbone.pEvent.on 'dashboard:scroll', @resetStickyTitles
     Backbone.pEvent.on 'projects:scroll', @resetStickyTitles
     Backbone.pEvent.on 'projects:reorder', @resetStickyTitles
@@ -10,10 +12,9 @@ class Potee.Controllers.TitleSticker
     return false unless @projects_view.el
 
     # переменная @model в цикле не достпна
-    dashboard = window.dashboard
     projects_top_point = @projects_view.$el.offset().top
     projects_bot_point = @projects_view.$el.height() + projects_top_point
-    current_date = dashboard.getCurrentDate()
+    current_date = @dashboard.getCurrentDate()
 
     window.projects.each (project, i) ->
       return unless project.view?.titleView?
@@ -25,7 +26,7 @@ class Potee.Controllers.TitleSticker
       # По высоте проект вообще виден?
       valid_y_position = project_top_point > projects_top_point and project_bot_point < projects_bot_point
 
-      if !dashboard.dateIsOnDashboard(project.started_at) and valid_y_position
+      if !@timeline_view.isDateOnDashboard(project.started_at) and valid_y_position
         if project.started_at < current_date
           project.view.stickTitle 'left'
         else
