@@ -17,7 +17,7 @@ class Potee.Controllers.NewProject
     date = window.timeline_view.momentAt x
     position = @_getClickPosition(e)
 
-    @_newProject date, position
+    @_buildProject date, position
 
     return false
 
@@ -26,25 +26,25 @@ class Potee.Controllers.NewProject
     # TODO if window.dashboard.get('scale') == 'year'
       #window.dashboard.set 'scale', 'month'
 
-    # TODO вынести в обсервер
     $('#project_new').addClass('active')
+
+    @_newProject()
 
     return false
 
-  _newProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) =>
+  _newProject: =>
     scrollTop = @$projects.scrollTop()
     if scrollTop > 100
       @$projects.animate scrollTop: 0, {
         easing: 'easeOutQuart'
         always: =>
-          @_buildProject startFrom, position
+          @_buildProject()
       }
     else
       @$projects.scrollTop 0 if scrollTop > 0
-      @_buildProject startFrom, position
+      @_buildProject()
 
-
-  _buildProject: (startFrom, position) =>
+  _buildProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) =>
       project = new Potee.Models.Project {}, {}, startFrom
       projects_count = window.projects.length
 
