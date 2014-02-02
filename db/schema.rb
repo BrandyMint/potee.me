@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140130183109) do
+ActiveRecord::Schema.define(:version => 20140202161618) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(:version => 20140130183109) do
 
   create_table "dashboards", :force => true do |t|
     t.integer  "pixels_per_day", :default => 145
-    t.date     "current_date"
+    t.datetime "current_date"
     t.integer  "user_id",                         :null => false
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false

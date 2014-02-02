@@ -50,7 +50,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     @set 'current_date', date?.toString()
 
   setToday: ->
-    @set 'current_date', undefined
+    @setCurrentDate undefined
 
   # Возвращает индекс элемента
   #
