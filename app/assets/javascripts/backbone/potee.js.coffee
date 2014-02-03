@@ -28,11 +28,13 @@ window.App = window.Potee
     return (/iPhone|iPod|iPad|Android|BlackBerry|Opera Mini|IEMobile/).test(userAgent)
 
   App.addRegions
-    headerRegion: '#header'
-    mainRegion:   '#main'
-    timelineRegion: '#timelint'
-    projectsRegion: '#projects'
-    dashboardRegion: '#dashboard'
+    headerRegion    : "#header"
+    navbarRegion    : "#navbar-region"
+    topPanelRegion  : "#toppanel-region"
+    mainRegion      : "#main"
+    timelineRegion  : "#timelint"
+    projectsRegion  : "#projects"
+    dashboardRegion : "#dashboard"
 
   App.mobile = isMobile()
 
@@ -84,6 +86,8 @@ window.App = window.Potee
       dashboard_el: $('#dashboard')
       viewport_el: window.viewport
       projects_view: window.projects_view
+
+    new Potee.Controllers.TopPanel()
 
     window.dashboard_view = new Potee.Views.DashboardView
       el: $('#dashboard')
