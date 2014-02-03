@@ -19,18 +19,27 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   resetWidth: =>
     @$el.css 'width', @timeline.width()
 
-  selectProjectView: (project_view) ->
+  _unselectProjectView: (project_view) =>
+    @selected_project_view?.$el.css 'z-index', 100
+    @selected_project_view = undefined
+    @trigger 'project:unselected', project_view.model
+
+  _selectProjectView: (project_view) =>
     if @selected_project_view
       @selected_project_view.$el.css 'z-index', 100
 
     @selected_project_view = project_view
     @selected_project_view.$el.css 'z-index', 150
 
+    @trigger 'project:selected', project_view.model
+
   buildProjectView: (project) ->
     view = new Potee.Views.Projects.ProjectView
       model : project
     @listenTo view, 'select', =>
-      @selectProjectView view
+      @_selectProjectView view
+    @listenTo view, 'unselect', =>
+      @_unselectProjectView view
     view
 
   addAll: =>

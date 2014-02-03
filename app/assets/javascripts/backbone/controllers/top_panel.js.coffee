@@ -1,13 +1,16 @@
 class Potee.Controllers.TopPanel extends Marionette.Controller
 
-  initialize: ->
+  initialize: (options) ->
+    { @projects_view } = options
+
     @topPanelRegion = new Backbone.Marionette.Region el: "#toppanel-region"
 
-    PoteeApp.vent.on 'edit:start', @editProject
+    @projects_view.on 'project:selected', @_projectSelectedCallback
+    @projects_view.on 'project:unselected', @_closeView
 
-  editProject: (project) =>
+  _projectSelectedCallback: (project) ->
     editProjectView = new Potee.Views.TopPanel.EditProject model: project
     @topPanelRegion.show editProjectView
-    
-  close: ->
-    @topPanelRegion.close()
+
+  _closeView: ->
+    @topPanelRegion.topPanelRegion.close()

@@ -32,8 +32,6 @@ class Potee.Controllers.CurrentForm
 
     console.log "set current_form = #{form_view}"
 
-    PoteeApp.vent.trigger "edit:start", @currentForm.model
-
     @listenTo @currentForm, 'close', =>
       @canceled @currentForm
 
