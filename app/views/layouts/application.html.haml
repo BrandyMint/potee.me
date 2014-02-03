@@ -19,11 +19,11 @@
   %body
     - if controller.is_a? ProjectsController
       %header
+        #editmenu-region
         .navbar.navbar-fixed-top.navbar-inverse#navbar-region
           %nav.navbar-inner
             .container
               = render 'layouts/navigation'
-        #toppanel-region
 
     = yield
     = render 'layouts/google_analytics' if Rails.env.production?
