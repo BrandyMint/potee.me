@@ -14,6 +14,16 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
 
   #getDateOfDay: (day) ->
      #moment(@projects.firstDate()).clone().add('days', day - @spanDays) #.toDate()
+  totalWidth: ->
+    @columnWidth() * @columns_count()
+
+  # Для месяцев придется переопределить
+  offsetInPixels: (day) ->
+    #day * @get('pixels_per_day')
+    throw "Откуда взялась такая дата? #{day}" unless _.isObject(day)
+
+    minutes = moment(day).diff @startDate(), 'minutes'
+    (window.dashboard.get('pixels_per_day') * minutes) / (24*60)
 
   reset: (options) ->
     console.log "columnWidth: #{@columnWidth()}"
@@ -23,9 +33,6 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
 
   columnWidth: ->
     window.dashboard.get('pixels_per_day') * @columnRate
-
-  totalWidth: ->
-    @columnWidth()*@days().length
 
   setColumnsWidth: ->
     columnWidth = @columnWidth() - @borderWidth

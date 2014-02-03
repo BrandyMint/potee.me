@@ -12,13 +12,20 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
   finishDate: ->
     moment(@projects.lastDate()).clone().day(6).toDate()
 
+  columns_count: ->
+    @weeks_count()
+
+  weeks_count: ->
+    @weeks.length
+
+  # TODO кешировать недели, сбрасывать при resetScale
   weeks: () ->
     weeks = []
 
-    range = moment().range(@start.clone(), @end.clone())
+    range = moment().range(@startDate(), @finishDate())
     range.by("w", (m) =>
-      if m < @end
-        weeks.push(@week(m, m.clone().day(6)))
+      if m < @finishDate()
+        weeks.push @week(m, m.clone().day(6))
     )
 
     return weeks
@@ -46,6 +53,7 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
     return res
 
   index_of_current_week: ->
+    # TODO
     0
 
   serializeData: ->

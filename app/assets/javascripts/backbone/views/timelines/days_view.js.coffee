@@ -10,18 +10,14 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
 
   #@days = moment(max).diff(moment(min), "days") + 1
 
-  offsetInPixels: (day) ->
-    #day * @get('pixels_per_day')
-    throw "Откуда взялась такая дата? #{day}" unless _.isObject(day)
-
-    minutes = moment(day).diff @startDate(), 'minutes'
-    (window.dashboard.get('pixels_per_day') * minutes) / (24*60)
-
   startDate: ->
     moment(@projects.firstDate()).clone().subtract('days', @spanDays).toDate()
 
   finishDate: ->
     moment(@projects.lastDate()).clone().add('days', @spanDays).toDate()
+
+  columns_count: ->
+    @days().length
 
   days: ->
     days = []

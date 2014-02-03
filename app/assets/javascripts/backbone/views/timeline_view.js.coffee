@@ -3,10 +3,11 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = options.dashboard
     @$viewport = options.$viewport
 
+    @listenTo @dashboard, 'change:pixels_per_day', @resetScale
+
   resetScale: =>
     # Если title не изменился, то и класс менять не надо
-    if @last_scale == scale && @currentView?
-      @currentView.reset()
+    if @last_scale == @dashboard.getTitle() && @currentView?
       @currentView.render()
     else
       scale = @dashboard.getTitle()

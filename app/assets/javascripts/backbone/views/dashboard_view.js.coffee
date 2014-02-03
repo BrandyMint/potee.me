@@ -14,7 +14,7 @@ class Potee.Views.DashboardView extends Backbone.View
     $('#dashboard').bind "pinch", (e, obj) =>
       @model.pinch obj.scale
 
-    # Это должно происходить при изменеии вида timeline-а,
+    # Это должно происходить при изменеии вида timeline-а в timeline-е
     # а не на каждый пиксель
     @listenTo @model, 'change:pixels_per_day', @updateScaleCss
 

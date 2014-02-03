@@ -7,18 +7,22 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   columnRate: 30
 
   startDate: ->
-    moment(@projects.firstDate()).clone().startOf("month").toDate()
+    moment(@projects.firstDate()).clone().startOf("month")#.toDate()
 
   finishDate: ->
-    moment(@proejcts.lastDate()).clone().endOf("month")
+    moment(@projects.lastDate()).clone().endOf("month")#.toDate()
 
+  columns_count: ->
+    @months().length
+
+  # TODO cache
   months: () ->
     months = []
 
-    months.push @month(@start, @start.clone().endOf('month'))
+    months.push @month(@startDate(), @startDate().endOf('month'))
 
-    range = moment().range @start.clone().add("months", 1).startOf("month"),
-                           @end.clone().subtract("months", 1).endOf("month")
+    range = moment().range @finishDate().add("months", 1).startOf("month"),
+                           @startDate().subtract("months", 1).endOf("month")
     range.by 'M', (m) =>
       start = m.clone().startOf('month')
       end = m.clone().endOf('month')
@@ -26,10 +30,10 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
       # Алгорит range.by работает таким образом, что последнее переданное
       # значение может быть больше конца интервала, поэтому приходится это
       # проверять.
-      if end < @end
+      if end < @finishDate()
         months.push @month(start, end)
 
-    months.push @month(@end.clone().startOf('month'), @end.clone().add("days", 1))
+    months.push @month(@finishDate().startOf('month'), @finishDate().add("days", 1))
 
     return months
 
@@ -41,9 +45,9 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
     #width: end.diff(start, "days") * @columnWidth() - 1 # 1 px на правую границу
 
   index_of_current_month: ->
-    moment().diff moment(@start), 'months'
+    moment().diff moment(@startDate), 'months'
 
-  setColumnsWidth: ->
+    #setColumnsWidth: ->
     # empty
 
   serializeData: ->

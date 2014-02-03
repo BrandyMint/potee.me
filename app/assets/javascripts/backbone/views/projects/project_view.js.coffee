@@ -80,8 +80,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   # Project's line left margin (when does it start)
   setLeftMargin: =>
-    #@$el.css 'margin-left', @leftMargin()
-    @$el.offset left: @leftMargin()
+    @$el.css 'margin-left', @leftMargin()
+    #@$el.offset left: @leftMargin()
 
   #leftOffsetInDays: ->
     #moment(@model.started_at).diff window.timeline_view.startDate(), "days"

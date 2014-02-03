@@ -23,7 +23,7 @@ class Potee.Controllers.DashboardPersistenter
 
   saveDashboard: (dashboard) =>
     @_clearTimeout()
-    @timeout = window.setTimeout @_saveDashboard, 1000
+    @_timeout = window.setTimeout @_saveDashboard, 1000
 
   _saveDashboard: =>
       console.log 'saveDashboard'

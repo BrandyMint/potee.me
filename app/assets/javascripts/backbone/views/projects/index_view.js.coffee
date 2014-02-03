@@ -56,6 +56,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     view
 
   resetScale: =>
+    @scrollToCurrentDate()
     @projects.each (project) =>
       project.view.resetScale()
 

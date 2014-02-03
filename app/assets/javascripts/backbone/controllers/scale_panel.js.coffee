@@ -1,9 +1,9 @@
 class Potee.Controllers.ScalePanel
   constructor: (options)->
     @dashboard = options.dashboard
-    @dashboard.on 'change:pixels_per_day', @resetScale
+    @dashboard.on 'change:pixels_per_day', @updateCSS
 
-  resetScale: =>
+  updateCSS: =>
     scale = @dashboard.getTitle()
 
     $('#scale-nav a').removeClass('active')
