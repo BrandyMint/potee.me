@@ -5,9 +5,10 @@ class Potee.Controllers.DashboardPersistenter
     Backbone.pEvent.on 'savePositions', @savePositions
     Backbone.pEvent.on 'projects:scroll', @updateScrollTop
 
-    $( window ).unload =>
+    $( window ).on 'beforeunload', =>
       @_clearTimeout()
       @_saveDashboard()
+      return undefined
 
     @_timeout = undefined
 
@@ -24,12 +25,12 @@ class Potee.Controllers.DashboardPersistenter
     @_timeout = window.setTimeout @_saveDashboard, 1000
 
   _saveDashboard: =>
-      console.log 'saveDashboard'
-      @dashboard.save {},
-        silent: true  # Гасим звук, иначе она рассылает change и зацикливается
-        parse: false  # Отключаем разбор данных с сервера, иначе у нас current_date будет постоянно скакать.
-                      # Возможно от этого можно избавитья есл округлять current_date до минуты на сервере
-                      # и на клиенте
+    console.log 'saveDashboard'
+    @dashboard.save {},
+      silent: true  # Гасим звук, иначе она рассылает change и зацикливается
+      parse: false  # Отключаем разбор данных с сервера, иначе у нас current_date будет постоянно скакать.
+                    # Возможно от этого можно избавитья есл округлять current_date до минуты на сервере
+                    # и на клиенте
 
   savePositions: () ->
     neworder = []

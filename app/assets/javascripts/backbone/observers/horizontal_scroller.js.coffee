@@ -3,10 +3,10 @@ class Potee.Observers.HorizontalScroll
     { @$viewport, @dashboard, @dashboard_view } = options
     @timeline = window.timeline_view
 
+    @_unbindes = 0
     @bindScrollingCallback()
 
     @intentionalScrolling = false
-    @_bindes = 0
 
   intentionalScroll: (offset) =>
     @unbindScrollingCallback()
@@ -18,11 +18,11 @@ class Potee.Observers.HorizontalScroll
 
   bindScrollingCallback: =>
     console.log 'bind horizontal scrolling'
-    @$viewport.bind 'scroll', @scrollCallback if ++@_bindes==1
+    @$viewport.bind 'scroll', @scrollCallback if ++@_unbindes==1
 
   unbindScrollingCallback: =>
     console.log 'unbind horizontal scrolling'
-    @$viewport.unbind 'scroll', @scrollCallback if --@_bindes==0
+    @$viewport.unbind 'scroll', @scrollCallback if --@_unbindes==0
 
   deactivateIntentionalScrolling: ->
     console.log 'deactivate intentional scrolling'
