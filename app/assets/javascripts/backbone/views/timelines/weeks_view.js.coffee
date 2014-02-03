@@ -7,10 +7,25 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
   columnRate: 7
 
   startDate: ->
-    moment(@projects.firstDate()).clone().day(0).toDate()
+    moment(@projects.firstDate()).clone().day(0)
 
   finishDate: ->
-    moment(@projects.lastDate()).clone().day(6).toDate()
+    @_finishDate().add 'weeks', @_extraWeeks()
+
+  _extraWeeks: ->
+    offset = @offsetInPixels @_finishDate()
+    extra_weeks_pixels = window.viewport.width() - offset
+
+    minimal = @columnWidth() * 1.5
+    extra_weeks_pixels = minimal if extra_weeks_pixels<minimal
+    extra_week = Math.round extra_weeks_pixels/@columnWidth()
+    extra_week = 1 if extra_week < 1
+
+    extra_week
+
+
+  _finishDate: ->
+    moment(@projects.lastDate()).clone().day(6)
 
   columns_count: ->
     @weeks_count()
@@ -22,7 +37,7 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
   weeks: () ->
     weeks = []
 
-    range = moment().range(@startDate(), @finishDate())
+    range = moment().range @startDate(), @finishDate()
     range.by("w", (m) =>
       if m < @finishDate()
         weeks.push @week(m, m.clone().day(6))

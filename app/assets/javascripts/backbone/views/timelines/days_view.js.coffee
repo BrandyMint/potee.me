@@ -8,8 +8,6 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
   spanDays: 5
 
 
-  #@days = moment(max).diff(moment(min), "days") + 1
-
   startDate: ->
     moment(@projects.firstDate()).clone().subtract('days', @spanDays).toDate()
 
@@ -17,6 +15,7 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
     moment(@projects.lastDate()).clone().add('days', @spanDays).toDate()
 
   columns_count: ->
+    #@days = moment(max).diff(moment(min), "days") + 1
     @days().length
 
   days: ->
@@ -36,9 +35,9 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
       days.push day
     days
 
-  index_of_current_day: ->
+  index_of_current_column: ->
     moment().diff(moment(@start), 'days') - 1
 
   serializeData: ->
     days: @days()
-    current_day: @index_of_current_day()
+    current_day: @index_of_current_column()

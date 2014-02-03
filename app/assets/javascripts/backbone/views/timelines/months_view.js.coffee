@@ -7,13 +7,28 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   columnRate: 30
 
   startDate: ->
-    moment(@projects.firstDate()).clone().startOf("month")#.toDate()
+    moment(@projects.firstDate()).clone().startOf("month")
 
   finishDate: ->
-    moment(@projects.lastDate()).clone().endOf("month")#.toDate()
+    @_finishDate().add "months", @_extraMonths()
+
+  _finishDate: ->
+    moment(@projects.lastDate()).clone().endOf("month")
 
   columns_count: ->
     @months().length
+
+  _extraMonths: ->
+    offset = @offsetInPixels @_finishDate()
+    extra_months_pixels = window.viewport.width() - offset
+
+    # 50 дней сбоку
+    minimal = @columnWidth() * 1.5
+    extra_months_pixels = minimal if extra_months_pixels<minimal
+    extra_month = Math.round extra_months_pixels/@columnWidth()
+    extra_month = 1 if extra_month < 1
+
+    extra_month
 
   # TODO cache
   months: () ->
@@ -21,8 +36,10 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
 
     months.push @month(@startDate(), @startDate().endOf('month'))
 
-    range = moment().range @finishDate().add("months", 1).startOf("month"),
-                           @startDate().subtract("months", 1).endOf("month")
+    range = moment().range @startDate(), @finishDate()
+    # @finishDate().add("months", 1).startOf("month"),
+    #                       @startDate().subtract("months", 1).endOf("month")
+
     range.by 'M', (m) =>
       start = m.clone().startOf('month')
       end = m.clone().endOf('month')

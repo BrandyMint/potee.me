@@ -41,6 +41,9 @@ class Potee.Views.TimelineView extends Backbone.View
   # Набор хелперов
   #
 
+  columnWidth: ->
+    @currentView.columnWidth()
+
   startDate: ->
     @currentView.startDate()
 

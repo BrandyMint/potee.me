@@ -30,16 +30,27 @@ class Potee.Views.DashboardView extends Backbone.View
 
     @$el.addClass("scale-#{scale}")
 
+
+    if @timeline_view.columnWidth()<=65
+      @$el.addClass 'scale-week-ultra'
+    else
+      @$el.removeClass 'scale-week-ultra'
+
+
   resetWidth: =>
     @$el.css 'width', @viewport.width()
 
   left: ->
     @$el.offset().left
 
+  width: ->
+    @$el.width()
+
   render: ->
     @timeline_view.render()
     @projects_view.render()
 
     @resetWidth()
+    @updateScaleCss()
 
     @

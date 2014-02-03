@@ -8,6 +8,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   initialize: ->
     _.extend @, Backbone.Events
+    @dashboard_view = window.dashboard_view
     @model.view = @
     $(document).bind 'click', @_clickOutside
     @listenTo PoteeApp.vent, 'escape', => @trigger 'unselect'
@@ -51,7 +52,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @setTitleView 'edit'
 
   gotoProjectEdge:() ->
-    dashboard_view = window.dashboard.view
     switch @titleView.sticky_pos
       when 'left'
         PoteeApp.commands.execute 'gotoDate', @model.finish_at
@@ -191,7 +191,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @model.setDuration duration
 
     totalWidth = @width() + @leftMargin()
-    if totalWidth > window.dashboard.width()
+    if totalWidth > @dashboard_view.width()
       Backbone.pEvent.trigger 'dashboard:stretch'
 
   renderEvent: (event, x = undefined) ->
