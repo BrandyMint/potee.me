@@ -28,10 +28,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     if @selected_project_view
       @selected_project_view.$el.css 'z-index', 100
 
+    @trigger 'project:selected', project_view.model unless @selected_project_view != project_view
     @selected_project_view = project_view
     @selected_project_view.$el.css 'z-index', 150
 
-    @trigger 'project:selected', project_view.model
 
   buildProjectView: (project) ->
     view = new Potee.Views.Projects.ProjectView

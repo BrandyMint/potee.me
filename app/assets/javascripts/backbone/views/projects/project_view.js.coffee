@@ -10,7 +10,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     _.extend @, Backbone.Events
     @model.view = @
     $(document).bind 'click', @_clickOutside
-    @listenTo PoteeApp.vent, 'escape', @_clickOutside
+    @listenTo PoteeApp.vent, 'escape', => @trigger 'unselect'
 
   _clickOutside: (e) =>
     if $(e.target).closest(@$el).length == 0
