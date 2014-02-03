@@ -88,7 +88,7 @@ window.App = window.Potee
       viewport_el: window.viewport
       projects_view: window.projects_view
 
-    new Potee.Controllers.TopPanel
+    new Potee.Controllers.EditMenu
       projects_view: window.projects_view
 
     window.dashboard_view = new Potee.Views.DashboardView
