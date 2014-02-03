@@ -5,6 +5,7 @@
 #= require_tree ./controllers
 #= require_tree ./observers
 #= require_tree ./views
+#= require_tree ./regions
 #= require_tree ./routers
 #= require_tree ./mediators
 
@@ -14,6 +15,7 @@ window.Potee =
   Routers: {}
   Views: {}
   Controllers: {}
+  Regions: {}
   Mediators: {}
   Observers: {}
 
