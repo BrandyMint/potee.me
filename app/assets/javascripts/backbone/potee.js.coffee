@@ -30,7 +30,6 @@ window.App = window.Potee
   App.addRegions
     headerRegion    : "#header"
     navbarRegion    : "#navbar-region"
-    topPanelRegion  : "#toppanel-region"
     mainRegion      : "#main"
     timelineRegion  : "#timelint"
     projectsRegion  : "#projects"
