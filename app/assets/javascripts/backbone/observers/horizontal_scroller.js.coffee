@@ -1,8 +1,6 @@
 class Potee.Observers.HorizontalScroll
   constructor: (options) ->
-    @$viewport = options.$viewport
-    @dashboard = options.dashboard
-    @dashboard_view = options.dashboard_view
+    { @$viewport, @dashboard, @dashboard_view } = options
     @timeline = window.timeline_view
 
     @bindScrollingCallback()

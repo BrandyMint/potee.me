@@ -1,7 +1,6 @@
 class Potee.Controllers.GotoDate
   constructor: (options)->
-    @dashboard = options.dashboard
-    @$viewport = options.$viewport
+    { @dashboard, @$viewport } = options
 
     PoteeApp.commands.setHandler 'gotoDate', @moveToDate
     PoteeApp.commands.setHandler 'gotoToday', @moveToDate

@@ -1,8 +1,6 @@
 class Potee.Controllers.DashboardPersistenter
   constructor: (options) ->
-    @dashboard = options.dashboard
-    @projects = options.projects
-    @projects_view = options.projects_view
+    { @dashboard, @projects, @projects_view } = options
 
     Backbone.pEvent.on 'savePositions', @savePositions
     Backbone.pEvent.on 'projects:scroll', @updateScrollTop
