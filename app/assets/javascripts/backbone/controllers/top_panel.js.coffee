@@ -1,10 +1,13 @@
 class Potee.Controllers.TopPanel extends Marionette.Controller
 
   initialize: ->
+    @topPanelRegion = new Backbone.Marionette.Region el: "#toppanel-region"
+
     PoteeApp.vent.on 'edit:start', @editProject
 
-  editProject: (project) ->
+  editProject: (project) =>
     editProjectView = new Potee.Views.TopPanel.EditProject model: project
-    PoteeApp.topPanelRegion.show editProjectView
+    @topPanelRegion.show editProjectView
+    
   close: ->
-    PoteeApp.topPanelRegion.close()
+    @topPanelRegion.close()
