@@ -1,8 +1,14 @@
 class Potee.Regions.SlideInSlideOutRegion extends Backbone.Marionette.Region
 
   open: (view) ->
-    @$el.hide()
+    # Если в регионе уже есть вьюха,
+    currentView = @currentView
+    if currentView
+      currentView.close()
+    else
+      @$el.hide()
     @$el.html view.el
+    @$el.css 'background-color', 'white'
     @$el.slideDown "fast"
 
   close: ->
@@ -10,7 +16,6 @@ class Potee.Regions.SlideInSlideOutRegion extends Backbone.Marionette.Region
     return if !view
     
     that = @
-    @$el.css 'background-color', 'white'
     @$el.slideUp "fast", ->
       if view.close 
         view.close()
