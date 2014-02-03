@@ -6,6 +6,7 @@ class Potee.Observers.HorizontalScroll
     @bindScrollingCallback()
 
     @intentionalScrolling = false
+    @_bindes = 0
 
   intentionalScroll: (offset) =>
     @unbindScrollingCallback()
@@ -17,11 +18,11 @@ class Potee.Observers.HorizontalScroll
 
   bindScrollingCallback: =>
     console.log 'bind horizontal scrolling'
-    @$viewport.bind 'scroll', @scrollCallback
+    @$viewport.bind 'scroll', @scrollCallback if ++@_bindes==1
 
   unbindScrollingCallback: =>
     console.log 'unbind horizontal scrolling'
-    @$viewport.unbind 'scroll', @scrollCallback
+    @$viewport.unbind 'scroll', @scrollCallback if --@_bindes==0
 
   deactivateIntentionalScrolling: ->
     console.log 'deactivate intentional scrolling'
