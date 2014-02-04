@@ -14,6 +14,7 @@
 #= require momentjs/moment
 #= require moment-range/lib/moment-range
 #= require backbone/backbone
+#= require backbone.stickit/backbone.stickit
 #= require marionette/lib/backbone.marionette
 #= require backbone_rails_sync
 #= require backbone_datalink
