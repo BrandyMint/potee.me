@@ -18,10 +18,12 @@
 #= require marionette/lib/backbone.marionette
 #= require backbone_rails_sync
 #= require backbone_datalink
-#= require backbone/potee
+#= require lib/seb
 #= require bootstrap
+#= require potee/app
 #= require jGestures/jgestures
 #= require_tree .
 
 #$ ->
   #$('[rel=tooltip]').tooltip()
+  #

@@ -2,7 +2,7 @@ class Potee.Controllers.NewProject
   constructor: (options) ->
     { @projects_view, @dashboard_view } = options
     @$projects = $('#projects')
-    
+
     $('#new-project-link').bind 'click', @link
     $('#dashboard').bind 'dblclick', @dblclick
 

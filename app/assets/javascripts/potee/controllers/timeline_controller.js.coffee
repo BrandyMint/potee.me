@@ -3,9 +3,11 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = options.dashboard
     @$viewport = options.$viewport
 
-    @listenTo @dashboard, 'change:pixels_per_day', @resetScale
+    $(window).resize @resizeCallback
 
-  resetScale: =>
+    @listenTo @dashboard, 'change:pixels_per_day', @render
+
+  render: =>
     # Если title не изменился, то и класс менять не надо
     if @last_scale == @dashboard.getTitle() && @currentView?
       @currentView.render()
@@ -28,14 +30,14 @@ class Potee.Views.TimelineView extends Backbone.View
 
       @$el.html @currentView.render().el
 
-    Backbone.pEvent.trigger 'timeline:stretched'
+      Backbone.pEvent.trigger 'timeline:render'
 
     @last_scale = scale
 
-  render: ->
-    @resetScale()
-
     @
+
+  resizeCallback: ->
+    # TODO Произошли изменения размера экрана
 
   #
   # Набор хелперов

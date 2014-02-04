@@ -9,7 +9,7 @@
 #= require_tree ./routers
 #= require_tree ./mediators
 
-window.Potee =
+@Potee =
   Models: {}
   Collections: {}
   Routers: {}
@@ -19,10 +19,9 @@ window.Potee =
   Mediators: {}
   Observers: {}
 
-window.App = window.Potee
+@App = @Potee
 
 @PoteeApp = do (Backbone, Marionette) ->
-
   App = new Marionette.Application
 
   isMobile = () ->
@@ -40,6 +39,8 @@ window.App = window.Potee
   App.mobile = isMobile()
 
   Backbone.pEvent = App.vent
+
+  App.seb = new A.StatedEventBroadcaster
 
   App.addInitializer (options) ->
     #window.projects_info = new Potee.Model.ProjectsInfo
@@ -111,10 +112,6 @@ window.App = window.Potee
     new Potee.Controllers.CurrentForm
 
     window.dashboard_view.render()
-
-    $(window).resize =>
-      window.dashboard_view.resetWidth()
-      window.timeline_view.render()
 
     window.router = new window.App.Routers.ProjectsRouter options
 

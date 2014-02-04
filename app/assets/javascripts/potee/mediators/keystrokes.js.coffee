@@ -1,5 +1,3 @@
-window.Potee.Mediators ||= {}
-
 class Potee.Mediators.Keystrokes
   constructor: (options) ->
     @dashboard_view = options.dashboard_view
