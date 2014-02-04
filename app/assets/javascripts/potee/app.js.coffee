@@ -65,7 +65,7 @@
       dashboard: window.dashboard
 
     window.projects_view = new Potee.Views.Projects.IndexView
-      el: $('#projects')
+      el: $('#projects-index')
       dashboard: window.dashboard
       projects: window.projects
       timeline_view: window.timeline_view
@@ -113,6 +113,9 @@
 
     new Potee.Controllers.ProjectSelector
       projects: window.projects
+
+    new Potee.Controllers.ProjectsVisibility
+      project_view: window.project_view
 
     window.dashboard_view.render()
 

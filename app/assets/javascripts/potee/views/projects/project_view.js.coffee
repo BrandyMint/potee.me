@@ -82,7 +82,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       event.view.close() if event.view.close?
 
   onBeforeClose: ->
-    @$el.closest('div#projects').sortable("refresh")
+    @$el.closest( window.projects_view.$el ).sortable("refresh")
 
   # Project's line left margin (when does it start)
   setLeftMargin: =>
@@ -166,6 +166,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
         @changeDuration ui.size.width
 
     @
+
+  onScroll: (e)=>
+    console.log e
 
   isEditing: ->
     @state != 'show'

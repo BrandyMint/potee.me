@@ -72,8 +72,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     # Корректируем sticky titles при вертикальном скроллинге
     # TODO Пусть sticky titles сами вешаются на on 'render' списка проектов
-    @$el.bind 'scroll', =>
-      Backbone.pEvent.trigger 'projects:scroll'
+    $('#projects').bind 'scroll', (e) -> PoteeApp.vent.trigger 'projects:scroll', e
 
     @
 
