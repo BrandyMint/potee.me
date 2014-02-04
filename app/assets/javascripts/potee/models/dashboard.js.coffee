@@ -27,8 +27,7 @@ class Potee.Models.Dashboard extends Backbone.Model
 
     @on 'change:pixels_per_day', @setTitleFromPixels
 
-    @on 'change:current_date', =>
-      console.log "set current_date = #{@get('current_date')?.toString()}"
+    # @on 'change:current_date', => console.log "set current_date = #{@get('current_date')?.toString()}"
 
     @today = moment()
 

@@ -13,11 +13,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @projects.bind 'reset', @addAll
 
     @listenTo @dashboard, 'change:pixels_per_day', @resetScale
-    PoteeApp.vent.on 'timeline:stretched', @resetWidth
+    PoteeApp.seb.on 'timeline:reset_width', @resetWidth
 
-  # переустановить шируину дэшборда.
-  resetWidth: =>
-    @$el.css 'width', @timeline.width()
+  resetWidth: (width) =>
+    @$el.css 'width', width # @timeline.width()
 
   _unselectProjectView: (project_view) =>
     @selected_project_view?.$el.css 'z-index', 100

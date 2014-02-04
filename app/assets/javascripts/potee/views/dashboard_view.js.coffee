@@ -19,7 +19,7 @@ class Potee.Views.DashboardView extends Backbone.View
     @listenTo @model, 'change:pixels_per_day', @updateScaleCss
 
     # Устанавливаем ширину dashboard-а на основании ширины timeline, как только она изменилась
-    PoteeApp.vent.on 'timeline:stretched', @resetWidth
+    PoteeApp.seb.on 'timeline:reset_width', @resetWidth
 
   updateScaleCss: =>
     scale = @model.getTitle()
@@ -36,10 +36,9 @@ class Potee.Views.DashboardView extends Backbone.View
     else
       @$el.removeClass 'scale-week-ultra'
 
-
-  resetWidth: =>
+  resetWidth: (width) =>
     # А может быть он должен быть размером с projects? Ведь он их вмещает
-    @$el.css 'width', @viewport.width()
+    @$el.css 'width', width #@viewport.width()
 
   left: ->
     @$el.offset().left
@@ -51,7 +50,6 @@ class Potee.Views.DashboardView extends Backbone.View
     @timeline_view.render()
     @projects_view.render()
 
-    @resetWidth()
     @updateScaleCss()
 
     @

@@ -5,6 +5,7 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
     @topPanelRegion = new Marionette.Region el: "#header_container"
 
+    # TODO Перейти на PoteeApp.seb
     @projects_view.on 'project:selected', @_projectSelectedCallback
     @projects_view.on 'project:unselected', @_closeView
 

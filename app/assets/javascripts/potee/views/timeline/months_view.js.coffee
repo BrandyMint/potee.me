@@ -7,28 +7,19 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   columnRate: 30
 
   startDate: ->
+    @_startDate().subtract 'months', @columnsOnTheScreenCount()/2
+
+  _startDate: ->
     moment(@projects.firstDate()).clone().startOf("month")
 
   finishDate: ->
-    @_finishDate().add "months", @_extraMonths()
+    @_finishDate().add "months",  @columnsOnTheScreenCount()/2
 
   _finishDate: ->
     moment(@projects.lastDate()).clone().endOf("month")
 
   columns_count: ->
     @months().length
-
-  _extraMonths: ->
-    offset = @offsetInPixels @_finishDate()
-    extra_months_pixels = window.viewport.width() - offset
-
-    # 50 дней сбоку
-    minimal = @columnWidth() * 1.5
-    extra_months_pixels = minimal if extra_months_pixels<minimal
-    extra_month = Math.round extra_months_pixels/@columnWidth()
-    extra_month = 1 if extra_month < 1
-
-    extra_month
 
   # TODO cache
   months: () ->
