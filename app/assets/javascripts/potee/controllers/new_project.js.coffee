@@ -9,7 +9,10 @@ class Potee.Controllers.NewProject
     PoteeApp.vent.on 'new_project', @_newProject
 
   dblclick: (e)=>
-    return true if PoteeApp.reqres.request 'current_form:editing?'
+    # Идем дальше если кликнули на проекте
+    return false unless $(e.target).closest('.project .progress').length == 0
+
+    return false if PoteeApp.reqres.request 'current_form:editing?'
 
     x = e.pageX - window.dashboard_view.left()
 

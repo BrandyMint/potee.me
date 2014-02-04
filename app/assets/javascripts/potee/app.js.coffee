@@ -111,6 +111,9 @@
 
     new Potee.Controllers.CurrentForm
 
+    new Potee.Controllers.ProjectSelector
+      projects: window.projects
+
     window.dashboard_view.render()
 
     window.router = new window.App.Routers.ProjectsRouter options

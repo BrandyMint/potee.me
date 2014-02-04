@@ -11,24 +11,23 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @dashboard_view = window.dashboard_view
     @model.view = @
     $(document).bind 'click', @_clickOutside
-    @listenTo PoteeApp.vent, 'escape', => @trigger 'unselect'
 
   _clickOutside: (e) =>
     if $(e.target).closest(@$el).length == 0
-      @trigger 'unselect'
+      PoteeApp.seb.fire 'project:current', undefined if PoteeApp.seb.get('project:current') == @model
 
   events:
     "click .title" : "title_click"
-    "click .progress .bar" : "add_event"
+    "dblclick .progress .bar" : "add_event"
     "mousedown": 'mousedown'
 
   mousedown: (e) ->
-    @trigger 'select'
+    PoteeApp.seb.fire 'project:current', @model
     if e.target == @$(".ui-resizable-e")[0]
       e.stopPropagation()
 
   add_event: (js_event) =>
-    @trigger 'select'
+    PoteeApp.seb.fire 'project:current', @model
     x = js_event.clientX - @$el.offset().left
     datetime = window.timeline_view.momentAt x + @leftMargin()
     event = @model.projectEvents.create
@@ -41,7 +40,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @resetResizeMinWidth()
 
   title_click: (e) ->
-    @trigger 'select'
+    PoteeApp.seb.fire 'project:current', @model
     e.stopPropagation()
     if @titleView.sticky_pos == undefined
       @edit()
