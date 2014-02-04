@@ -3,7 +3,7 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
   initialize: (options) ->
     { @projects_view } = options
 
-    @topPanelRegion = new Potee.Regions.SlideInSlideOutRegion el: "#toppanel-region"
+    @topPanelRegion = new Marionette.Region el: "#header_container"
 
     @projects_view.on 'project:selected', @_projectSelectedCallback
     @projects_view.on 'project:unselected', @_closeView
