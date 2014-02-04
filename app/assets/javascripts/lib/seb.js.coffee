@@ -5,6 +5,7 @@ window.A = {}
 class A.StatedEventBroadcaster extends Backbone.Model
   fire: (path, value)    -> @set path, value
   on:   (path, callback) ->
-    Backbone.Model.prototype.on  "change:#{path}", (m, value) -> callback value 
+    Backbone.Model.prototype.on.call @, "change:#{path}", (m, value) -> callback value 
+
   off:  (path, callback) ->
-    Backbone.Model.prototype.off "change:#{path}", (m, value) -> callback value
+    Backbone.Model.prototype.off.call @, "change:#{path}", (m, value) -> callback value

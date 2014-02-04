@@ -42,14 +42,17 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     view
 
   addAll: =>
-    @projects.each((project, i) => @addOne(project, false))
+    @projects.each (project, i) => @addOne(project, false)
+
+  totalHeight: ->
+    @projects.length * @$('.project').height()
 
   insertToPosition: (project, position) =>
     view = @buildProjectView project
     some_project = $ ".project:eq(" + position + ")"
     some_project.before view.render().$el
     view.bounce() if view.isNew()
-    Backbone.pEvent.trigger 'project:rendered', view
+
     Backbone.pEvent.trigger 'projects:reorder'
     view
 
@@ -60,7 +63,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     else
       @$el.append view.render().el
     view.bounce() if view.isNew()
-    Backbone.pEvent.trigger 'project:rendered', view
+
     view
 
   resetScale: =>
