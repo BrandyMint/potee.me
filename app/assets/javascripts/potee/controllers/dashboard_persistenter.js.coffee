@@ -34,8 +34,8 @@ class Potee.Controllers.DashboardPersistenter
 
   savePositions: () ->
     neworder = []
-    $('#projects div.project').each () ->
-      neworder.push $(this).attr("id")
+    window.projects_view.$el.find('.project').each () ->
+      neworder.push $(@).attr("id")
 
     _.each neworder, (cid, i) ->
       project = @projects.get(cid)

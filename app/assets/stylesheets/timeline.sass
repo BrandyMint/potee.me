@@ -13,11 +13,12 @@ $timelineHeaderHeight: 30px
 
 #timeline // to #timeline
   position: absolute
-  height: $dashboardHeight
+  height: $timelineHeight
   z-index: 1
 
 #timeline table // timeline table
-  height: $dashboardHeight - $timelineHeaderHeight
+  // # $timelineHeight - $timelineHeaderHeight
+  // height: 100%
   white-space: nowrap
 
 #timeline table thead td
@@ -26,7 +27,7 @@ $timelineHeaderHeight: 30px
     padding-bottom: 20px
 
 #timeline table tbody td
-  height: 720px
+  height: $timelineHeight - $timelineHeaderHeight
 
 //#timeline table thead td.current
   // background-image: image-url('low_contrast_linen.png')
