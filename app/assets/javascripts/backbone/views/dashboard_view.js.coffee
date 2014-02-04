@@ -38,6 +38,7 @@ class Potee.Views.DashboardView extends Backbone.View
 
 
   resetWidth: =>
+    # А может быть он должен быть размером с projects? Ведь он их вмещает
     @$el.css 'width', @viewport.width()
 
   left: ->
