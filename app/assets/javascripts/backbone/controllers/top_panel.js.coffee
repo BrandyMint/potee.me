@@ -17,4 +17,5 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
   _closeView: =>
 
     @topPanelRegion.close()
+    $('#header_container').empty()
     $('#header_container').append @saved_dom
