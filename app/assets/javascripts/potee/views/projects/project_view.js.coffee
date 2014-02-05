@@ -159,9 +159,23 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @setWidth()
 
     @$el.resizable
-      grid: window.dashboard.get('pixels_per_day'),
+      # grid: window.dashboard.get('pixels_per_day')
       minWidth: @_getResizeMinWidth()
+      #autoResize: '#projects-container'
       handles: 'e'
+      #ghost: true
+      resize: (event, ui) =>
+        if event.pageX > window.viewport.width() - window.timeline_view.columnWidth()
+          console.log event.pageX
+          window.viewport.animate { scrollLeft: window.viewport.scrollLeft() + window.timeline_view.columnWidth() },
+            duration: 200,
+            easing: 'easeInOutExpo',
+
+        #@leftMargin
+        #@$el.
+        #ui.originalElement
+        #debugger
+        #console.log ui.size
       stop: (event, ui) =>
         @changeDuration ui.size.width
 
