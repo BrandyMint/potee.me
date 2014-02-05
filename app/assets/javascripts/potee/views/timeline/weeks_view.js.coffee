@@ -6,7 +6,6 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
   className: 'weeks'
   columnRate: 7
 
-
   startDate: ->
     @_startDate().subtract 'weeks', @columnsOnTheScreenCount()/2
 
@@ -23,7 +22,7 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
     @weeks_count()
 
   weeks_count: ->
-    @weeks.length
+    @weeks().length
 
   # TODO кешировать недели, сбрасывать при resetScale
   weeks: () ->

@@ -27,7 +27,7 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
     days_width = (@finishDate().diff( @startDate(), 'days' ) + 1) * window.dashboard.get('pixels_per_day')
     width = @columnWidth() * @columns_count()
 
-    console.log "Ширина в днях #{days_width} не равна ширине в пикселях #{width}" unless days_width == width
+    console.log "!!! Ширина в днях #{days_width} не равна ширине в пикселях #{width}" unless days_width == width
 
     return width
 
