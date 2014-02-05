@@ -10,8 +10,8 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
   changeCurrentProject: (project) =>
     if project?
-      editProjectView = new Potee.Views.TopPanel.EditProject model: project
-      @topPanelRegion.show editProjectView
+      projectDetailInfo = new Potee.Views.TopPanel.ProjectDetailView model: project
+      @topPanelRegion.show projectDetailInfo
     else
       @topPanelRegion.close()
 
