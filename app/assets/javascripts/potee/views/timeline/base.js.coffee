@@ -32,7 +32,9 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
     return width
 
   columnsOnTheScreenCount: ->
-    w = window.dashboard_view.width() / @columnWidth()
+    # Можно было бы использовать window.dashboard_view.width()
+    # но пробелма в том, что при первом старте ширина может быть еще не установлена
+    window.viewport.width() / @columnWidth()
 
     #console.log 'columnsOnTheScreenCount', w
 
