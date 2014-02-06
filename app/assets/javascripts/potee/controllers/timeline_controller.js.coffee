@@ -32,10 +32,8 @@ class Potee.Views.TimelineView extends Backbone.View
 
       Backbone.pEvent.trigger 'timeline:render'
 
-      @resetHeight() # TODO Если рисуем первый раз
-
     @last_scale = scale
-
+    @resetHeight()
 
     @
 
