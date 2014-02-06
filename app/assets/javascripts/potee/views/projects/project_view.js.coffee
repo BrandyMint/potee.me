@@ -109,7 +109,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @state = state
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
-      when 'edit' then title_view_class = Potee.Views.Titles.EditView
+      when 'edit' then return
       when 'new'  then title_view_class = Potee.Views.Titles.NewView
 
     @titleView = new title_view_class
