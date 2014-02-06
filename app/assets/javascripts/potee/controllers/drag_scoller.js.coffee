@@ -3,7 +3,7 @@ class Potee.Controllers.DragScroller
     { @viewport_el, @dashboard_el, @projects_view } = options
     
     @dashboard_el.mousedown (e) =>
-      if e.offsetX = @dashboard_el.width() - 20 # вертикальный скролл справа.
+      if e.offsetX == @dashboard_el.width() - 20 # вертикальный скролл справа.
         return
       @prev_x = e.screenX
       @prev_y = e.screenY
