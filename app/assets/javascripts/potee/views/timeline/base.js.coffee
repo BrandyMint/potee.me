@@ -31,6 +31,10 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
 
     return width
 
+  # Целая половина колонок умещающихся на экране
+  halfColumns: ->
+    Math.round @columnsOnTheScreenCount()/2
+
   columnsOnTheScreenCount: ->
     # Можно было бы использовать window.dashboard_view.width()
     # но пробелма в том, что при первом старте ширина может быть еще не установлена

@@ -29,7 +29,11 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @projects.each (project, i) => @addOne(project, false)
 
   totalHeight: ->
-    @projects.length * @$('.project').height()
+    height = @projects.length * @$('.project').height()
+
+    console.log 'totalHeight', height
+
+    return height
 
   insertToPosition: (project, position) =>
     view = @buildProjectView project

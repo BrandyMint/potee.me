@@ -5,7 +5,7 @@ class Potee.Mediators.Keystrokes
 
     Mousetrap.bind '0', =>
       unless @isEditing()
-        @dashboard.setTitle 'week'
+        @dashboard.setScale 'week'
 
     Mousetrap.bind '+', =>
       unless @isEditing()

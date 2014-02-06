@@ -10,7 +10,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     _.extend @, Backbone.Events
     @dashboard_view = window.dashboard_view
     @model.view = @
-    $(document).bind 'click', @_clickOutside
+    $("#viewport").bind 'click', @_clickOutside
 
   _clickOutside: (e) =>
     if $(e.target).closest(@$el).length == 0
@@ -109,7 +109,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @state = state
     switch state
       when 'show' then title_view_class = Potee.Views.Titles.ShowView
-      when 'edit' then title_view_class = Potee.Views.Titles.EditView
+      when 'edit' then return
       when 'new'  then title_view_class = Potee.Views.Titles.NewView
 
     @titleView = new title_view_class

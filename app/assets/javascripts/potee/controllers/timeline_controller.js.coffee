@@ -3,7 +3,8 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = options.dashboard
     @$viewport = options.$viewport
 
-    $(window).resize @resizeCallback
+    #$(window).resize @resizeCallback
+    @$viewport.resize @resizeCallback
 
     @listenTo @dashboard, 'change:pixels_per_day', @render
 
@@ -32,15 +33,14 @@ class Potee.Views.TimelineView extends Backbone.View
 
       Backbone.pEvent.trigger 'timeline:render'
 
-      @resetHeight() # TODO Если рисуем первый раз
-
     @last_scale = scale
-
+    @resetHeight()
 
     @
 
   resetHeight: =>
     @$timeline_td = $('#timeline table tbody td')
+    console.log 'resetHeight', @$viewport.height()
     @$timeline_td.height @$viewport.height()
 
   resizeCallback: =>

@@ -59,6 +59,15 @@ class Potee.Models.Dashboard extends Backbone.Model
       #index = index + @spanDays
     #index
 
+  setScale: (period) ->
+    switch period
+      when 'week' then pixels = @DEFAULT_WEEK_PIXELS_PER_DAY
+      when 'month' then pixels = @DEFAULT_MONTH_PIXELS_PER_DAY
+      when 'year' then pixels = @DEFAULT_YEAR_PIXELS_PER_DAY
+      else throw "Unknown scale title #{period}"
+
+    @set 'pixels_per_day', pixels
+
   getTitle: ->
     p = @get 'pixels_per_day'
     if p <= @START_YEAR_PIXELS_PER_DAY

@@ -7,13 +7,13 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   columnRate: 30
 
   startDate: ->
-    @_startDate().subtract 'months', @columnsOnTheScreenCount()/2
+    @_startDate().subtract 'months', @halfColumns()
 
   _startDate: ->
     moment(@projects.firstDate()).clone().startOf("month")
 
   finishDate: ->
-    @_finishDate().add "months",  @columnsOnTheScreenCount()/2
+    @_finishDate().add "months",  @halfColumns()
 
   _finishDate: ->
     moment(@projects.lastDate()).clone().endOf("month")
@@ -25,7 +25,7 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   months: () ->
     months = []
 
-    months.push @month(@startDate(), @startDate().endOf('month'))
+    #months.push @month(@startDate(), @startDate().endOf('month'))
 
     range = moment().range @startDate(), @finishDate()
     # @finishDate().add("months", 1).startOf("month"),
