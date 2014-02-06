@@ -8,13 +8,13 @@ class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
   spanDays: 5
 
   startDate: ->
-    @_startDate().subtract 'days', @columnsOnTheScreenCount()/2
+    @_startDate().subtract 'days', @halfColumns()
 
   _startDate: ->
     moment(@projects.firstDate()).clone().subtract('days', @spanDays)
 
   finishDate: ->
-    @_finishDate().add 'days', @columnsOnTheScreenCount()/2 #@_extraColumns()
+    @_finishDate().add 'days', @halfColumns()
 
   _finishDate: ->
     moment(@projects.lastDate()).clone().add('days', @spanDays)
