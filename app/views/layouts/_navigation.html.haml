@@ -1,7 +1,6 @@
-.span2
-  = link_to root_path, :class => 'brand' do
-    = image_tag 'logo.png'
-    %span.version alfa
+= link_to root_path, :class => 'brand' do
+  = image_tag 'logo.png'
+  %span.version= Potee.version.format('%M.%m.%p%s')
 
-#header_container.span10
+#header_container
   = render 'layouts/main_header'
