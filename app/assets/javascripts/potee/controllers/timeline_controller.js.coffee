@@ -3,8 +3,8 @@ class Potee.Views.TimelineView extends Backbone.View
     @dashboard = options.dashboard
     @$viewport = options.$viewport
 
-    #$(window).resize @resizeCallback
-    @$viewport.resize @resizeCallback
+    # Причем именно за window, а не за #viewport
+    $(window).resize @resizeCallback
 
     @listenTo @dashboard, 'change:pixels_per_day', @render
 
