@@ -1,39 +1,45 @@
-#main_header
+%ul.nav#project_control
+  %li#project_new
+    = link_to '#/new', :id => 'new-project-link' do
+      %i.icon-folder
+      &nbsp;
+      New project
 
-  %ul.nav#scale-nav
+
+%ul.nav#scale-nav
+  %li.divider-vertical
+  %li
+    .btn-toolbar
+      .btn-group
+        %a.btn.btn-inverse.btn-mini#scale-week{:href=>'#days'} days
+        %a.btn.btn-inverse.btn-mini#scale-month{:href=>'#weeks'} weeks
+        %a.btn.btn-inverse.btn-mini#scale-year{:href=>'#months'} months
+
+%ul.nav#today-nav
+
+%ul.nav.pull-right{:style=>'font-size: 16px'}
+  - if !current_user or current_user.incognito?
+    %li.signup
+      .navbar-text
+        Sign up to save your projects &rarr;
+
+    = render :partial => 'auth/facebook'
+    = render :partial => 'auth/twitter'
+    = render :partial => 'auth/google'
+
+  - else
+    %li.signed_user
+      = link_to 'javascript: void()' do
+        -if current_user.avatar?
+          = image_tag current_user.avatar.thumb.url, class: 'avatar-thumb'
+        -else
+          %i.icon-user   
+        &nbsp;
+        = current_user
+    = render :partial => 'auth/facebook'
+    = render :partial => 'auth/twitter'
+    = render :partial => 'auth/google'
     %li.divider-vertical
-    %li
-      .btn-toolbar
-        .btn-group
-          %a.btn.btn-inverse.btn-mini#scale-week{:href=>'#days'} days
-          %a.btn.btn-inverse.btn-mini#scale-month{:href=>'#weeks'} weeks
-          %a.btn.btn-inverse.btn-mini#scale-year{:href=>'#months'} months
-
-  %ul.nav#today-nav
-
-  %ul.nav.pull-right{:style=>'font-size: 16px'}
-    - if !current_user or current_user.incognito?
-      %li.signup
-        .navbar-text
-          Sign up to save your projects &rarr;
-
-      = render :partial => 'auth/facebook'
-      = render :partial => 'auth/twitter'
-      = render :partial => 'auth/google'
-
-    - else
-      %li.signed_user
-        = link_to 'javascript: void()' do
-          -if current_user.avatar?
-            = image_tag current_user.avatar.thumb.url, class: 'avatar-thumb'
-          -else
-            %i.icon-user   
-          &nbsp;
-          = current_user
-      = render :partial => 'auth/facebook'
-      = render :partial => 'auth/twitter'
-      = render :partial => 'auth/google'
-      %li.divider-vertical
-      %li.signout
-        = link_to logout_path do
-          %i.icon-logout
+    %li.signout
+      = link_to logout_path do
+        %i.icon-logout
