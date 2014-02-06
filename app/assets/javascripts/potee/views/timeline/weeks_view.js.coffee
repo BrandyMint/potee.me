@@ -31,7 +31,7 @@ class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
     range = moment().range @startDate(), @finishDate()
     range.by("w", (m) =>
       if m < @finishDate()
-        weeks.push @week(m, m.clone().day(6))
+        weeks.push @week(m.clone().day(0), m.clone().day(6))
     )
 
     return weeks
