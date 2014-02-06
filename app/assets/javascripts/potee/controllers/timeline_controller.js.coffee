@@ -39,6 +39,7 @@ class Potee.Views.TimelineView extends Backbone.View
 
   resetHeight: =>
     @$timeline_td = $('#timeline table tbody td')
+    console.log 'resetHeight', @$viewport.height()
     @$timeline_td.height @$viewport.height()
 
   resizeCallback: =>
