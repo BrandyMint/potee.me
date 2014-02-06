@@ -25,7 +25,9 @@
   top: -24px
   z-index: 120
   // https://www.pivotaltracker.com/story/show/37732619
-  width: 200px
+  //# 200px не помню зачем ограничивали
+  width: auto
+  text-overflow: ellipsis
   position: relative
   font-size: 11px
   padding-left: 5px
@@ -35,6 +37,10 @@
   // +opacity(0.6)
   text-transform: uppercase
   letter-spacing: 1px
+  overflow: hidden
+
+.project-title-el
+
 
 .sticky
   position: fixed
