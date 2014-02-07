@@ -5,7 +5,7 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
     el = '#header_container'
     # @topPanelRegion = new Marionette.Region el: el
-    @saved_dom = $('#header_container').children().clone()
+    @saved_dom = $('#header_container').children().clone true
 
     @$el = $ el
 
