@@ -4,7 +4,7 @@ class Potee.Controllers.HideInactiveProjects extends Marionette.Controller
 
   changeCurrentProject: (current_project) =>
     window.projects.each (project) ->
-      if project == current_project
+      if project == current_project || !current_project?
         project.view.active()
       else
         project.view.inactive()
