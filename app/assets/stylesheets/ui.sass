@@ -28,10 +28,6 @@
   +border-radius(4px)
   margin-top: -4px
   
-#projects
-  .progress
-    // # cursor: pointer
-
 @for $i from 1 through 9
   $pColor: hsl($i*50,80%,40%)
   .project-#{$i}
@@ -43,11 +39,12 @@
       color: $pColor
     .event-point
       background-color: lighten($pColor,30%)
-      
+
     &:hover
       .progress
         +box-shadow(0 0 10px 0 $pColor)
       .project-name
         color: lighten($pColor,20%)
 
-
+.project.inactive
+  +opacity(0.4)

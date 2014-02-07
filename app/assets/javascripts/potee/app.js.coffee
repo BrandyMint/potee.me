@@ -84,6 +84,8 @@
 
     new Potee.Controllers.EditFormPositioner
 
+    new Potee.Controllers.HideInactiveProjects
+
     new Potee.Controllers.DragScroller
       dashboard_el: $('#dashboard')
       viewport_el: window.viewport
