@@ -1,5 +1,3 @@
-Potee.Views.TopPanel = {}
-
 class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
   template: "templates/top_panel/project_detail_view"
   id: "toppanel"

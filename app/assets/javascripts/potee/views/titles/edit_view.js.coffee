@@ -8,6 +8,10 @@ class Potee.Views.Titles.EditView extends Marionette.ItemView
     @collection = window.projects
     @model = @options.model
 
+  modelEvents:
+    "destroy": ->
+      PoteeApp.execute "project:create:cancel"
+
   events:
     "submit #edit-project" : "update"
     "click #submit"        : "update"
