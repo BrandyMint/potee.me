@@ -4,11 +4,14 @@ class ProjectConnectionsController < ApplicationController
   respond_to :json
 
   def show
-    project = Project.find_by_share_key params[:id]
-    @shared_project = SharedProject.new project, params[:id]
+    @shared_project = ProjectConnection.where(share_key: params[:id]).first!
 
-    @projects = current_user_projects
+    if current_user.projects.include?(pc.project)
+      redirect_to projects_path 
+    else
+      @projects = current_user_projects
 
-    render 'projects/index'
+      render 'projects/index'
+    end
   end
 end
