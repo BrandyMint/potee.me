@@ -19,7 +19,6 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @dashboard_view.show()
 
   index: ->
-    console.log 'Router index'
     window.dashboard_view.show()
 
   days: ->

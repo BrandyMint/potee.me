@@ -1,4 +1,4 @@
-= link_to root_path, :class => 'brand' do
+= link_to projects_path, class: 'brand j-link', data: { fragment: '/' } do
   = image_tag 'logo.png'
   %span.version= Potee.version.format('%M.%m.%p%s')
 

@@ -133,4 +133,14 @@
     #Potee.history = new Potee.History
     Backbone.history.start()
 
+  App.on "initialize:after", ->
+    $(document).on 'click', '.j-link', (e) ->
+      e.preventDefault()
+
+      _.defer =>
+        # Снимаем текущий проект хотябы тогда когда по логотипу ждем
+        PoteeApp.seb.fire 'project:current', undefined
+        Backbone.history.navigate $(@).attr('data-fragment'), trigger: true
+      false
+
   App
