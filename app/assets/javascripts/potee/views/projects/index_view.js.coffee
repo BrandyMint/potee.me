@@ -1,20 +1,13 @@
 Potee.Views.Projects ||= {}
 
 class Potee.Views.Projects.IndexView extends Backbone.View
-  template: JST["backbone/templates/projects/index"]
-
   initialize: (options)->
-
-
     @timeline = options.timeline_view
     @projects = options.projects
     @dashboard = options.dashboard
 
     @selected_project_view = undefined
-    @projects.bind 'reset', @addAll
-
-    @listenTo @dashboard, 'change:pixels_per_day', @resetScale
-    PoteeApp.seb.on 'timeline:reset_width', @resetWidth
+    @_shown = false
 
   resetWidth: (width) =>
     @$el.css 'width', width # @timeline.width()
@@ -74,11 +67,20 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       update: (event, ui) =>
         Backbone.pEvent.trigger 'savePositions'
 
+    @_bindes()
+
+    @
+
+  _bindes: ->
     # Корректируем sticky titles при вертикальном скроллинге
     # TODO Пусть sticky titles сами вешаются на on 'render' списка проектов
     $('#projects').bind 'scroll', (e) -> PoteeApp.vent.trigger 'projects:scroll', e
 
-    @
+    @projects.bind 'reset', @addAll
+
+    @listenTo @dashboard, 'change:pixels_per_day', @resetScale
+    PoteeApp.seb.on 'timeline:reset_width', @resetWidth
+
 
   scrollToLastScrollTop: ->
     console.log "scroll top", @dashboard.get('scroll_top')

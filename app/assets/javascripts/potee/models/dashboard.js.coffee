@@ -60,6 +60,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     #index
 
   setScale: (period) ->
+    return if period == @getTitle()
     switch period
       when 'week' then pixels = @DEFAULT_WEEK_PIXELS_PER_DAY
       when 'month' then pixels = @DEFAULT_MONTH_PIXELS_PER_DAY

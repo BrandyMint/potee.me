@@ -39,7 +39,6 @@
   App.mobile = isMobile()
 
   Backbone.pEvent = App.vent
-
   App.seb = new A.StatedEventBroadcaster
 
   App.addInitializer (options) ->
@@ -119,12 +118,19 @@
     new Potee.Controllers.ProjectsVisibility
       project_view: window.project_view
 
-    window.dashboard_view.render()
+    window.nav = new Potee.Navigator
+      dashboard: window.dashboard
 
-    window.router = new window.App.Routers.ProjectsRouter options
+    window.router = new Potee.Routers.ProjectsRouter
+      dashboard:      window.dashboard
+      dashboard_view: window.dashboard_view
+    window.router2 = new Potee.Routers.ProjectsRouter
+      dashboard:      window.dashboard
+      dashboard_view: window.dashboard_view
+
 
   App.on "initialize:after", ->
-    if Backbone.history
-      Backbone.history.start()
+    #Potee.history = new Potee.History
+    Backbone.history.start()
 
   App

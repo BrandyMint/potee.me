@@ -10,7 +10,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     _.extend @, Backbone.Events
     @dashboard_view = window.dashboard_view
     @model.view = @
-    $("#viewport").bind 'click', @_clickOutside
 
   _clickOutside: (e) =>
     if $(e.target).closest(@$el).length == 0
@@ -164,6 +163,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       handles: 'e'
       stop: (event, ui) =>
         @changeDuration ui.size.width
+
+    $("#viewport").bind 'click', @_clickOutside
 
     @
 

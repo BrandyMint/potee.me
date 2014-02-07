@@ -1,5 +1,7 @@
 class Potee.Routers.ProjectsRouter extends Backbone.Router
   initialize: (options) ->
+    { @dashboard, @dashboard_view } = options
+
   routes:
     ""          : "index"
     "index"     : "index"
@@ -10,7 +12,15 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     # иначе не ловится редирект из фейсбука #_=_
     ":some"       : "index"
 
+    "scale/:pixels" : 'scale'
+
+  scale: (pixels) ->
+    @dashboard.set 'pixels_per_day', parseInt(pixels)
+    @dashboard_view.show()
+
   index: ->
+    console.log 'Router index'
+    window.dashboard_view.show()
 
   days: ->
     @setScale 'week'
@@ -22,5 +32,5 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @setScale 'year'
 
   setScale: (scale_name) ->
-    return if scale_name == window.dashboard.getTitle()
-    window.dashboard.setScale scale_name
+    @dashboard.setScale scale_name
+    @dashboard_view.show()

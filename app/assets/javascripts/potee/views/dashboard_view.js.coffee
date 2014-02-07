@@ -11,17 +11,10 @@ class Potee.Views.DashboardView extends Backbone.View
     @timeline_view = options.timeline_view
     @dashboard_info = options.dashboard_info
 
-    $('#dashboard').bind "pinch", (e, obj) =>
-      @model.pinch obj.scale
-
-    # Это должно происходить при изменеии вида timeline-а в timeline-е
-    # а не на каждый пиксель
-    @listenTo @model, 'change:pixels_per_day', @updateScaleCss
-
-    # Устанавливаем ширину dashboard-а на основании ширины timeline, как только она изменилась
-    PoteeApp.seb.on 'timeline:reset_width', @resetWidth
+    @_shown = false
 
   updateScaleCss: =>
+
     scale = @model.getTitle()
 
     @$el.removeClass("scale-week")
@@ -46,7 +39,25 @@ class Potee.Views.DashboardView extends Backbone.View
   width: ->
     @$el.width()
 
+  show: ->
+    unless @_shown
+      @_bindes()
+      @render()
+
+    @_shown = true
+
+  _bindes: ->
+    $('#dashboard').bind "pinch", (e, obj) => @model.pinch obj.scale
+
+    # Это должно происходить при изменеии вида timeline-а в timeline-е
+    # а не на каждый пиксель
+    @listenTo @model, 'change:pixels_per_day', @updateScaleCss
+
+    # Устанавливаем ширину dashboard-а на основании ширины timeline, как только она изменилась
+    PoteeApp.seb.on 'timeline:reset_width', @resetWidth
+
   render: ->
+
     @timeline_view.render()
     @projects_view.render()
 
