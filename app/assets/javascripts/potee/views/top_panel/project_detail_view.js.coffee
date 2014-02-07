@@ -20,6 +20,9 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
         # Корректно выводим спецсимволы
         _.unescape val
 
+  modelEvents:
+    "destroy" : "closePanel"
+
   events:
     "focus @ui.title"        : "showControlButtons"
     "keyup @ui.title"        : "checkChanges"
@@ -44,7 +47,6 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
         @model = project
         #window.dashboard.view.cancelCurrentForm()
         @model.view.setTitleView "show"
-        @closePanel()
     )
 
   cancelChanges: (e) ->
@@ -81,7 +83,6 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
 
     if confirm("Sure to delete?")
       @model.destroy()
-      @closePanel()
 
   closePanel: ->
     PoteeApp.seb.fire "project:current", undefined
