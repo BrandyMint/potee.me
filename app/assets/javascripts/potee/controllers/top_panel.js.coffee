@@ -14,7 +14,7 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
     PoteeApp.seb.on 'project:current', @changeCurrentProject
 
   changeCurrentProject: (project) =>
-    return if @current_project?.project == project
+    return if @current_project?.model == project
 
     @current_project?.close()
     if project?
