@@ -2,12 +2,15 @@ Potee.Views.TopPanel = {}
 
 class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
   template: "templates/top_panel/project_detail_view"
+  id: "toppanel"
 
   ui:
-    form: "form"
-    title: "input#title"
-    submitButton: "#submit-btn"
-    cancelButton: "#cancel-btn"
+    form         : "form"
+    title        : "input#title"
+    submitButton : "#submit-btn"
+    cancelButton : "#cancel-btn"
+    deleteButton : "#delete-btn"
+    closeButton  : "#close-btn" 
 
   bindings:
     "#title":
@@ -23,6 +26,8 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     "blur @ui.title"         : "hideControlButtons"
     "click @ui.submitButton" : "saveChanges"
     "click @ui.cancelButton" : "cancelChanges"
+    "click @ui.deleteButton" : "deleteProject"
+    "click @ui.closeButton"  : "closePanel"
     "submit @ui.form"        : "saveChanges"
 
   saveChanges: (e) ->
@@ -39,7 +44,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
         @model = project
         #window.dashboard.view.cancelCurrentForm()
         @model.view.setTitleView "show"
-        PoteeApp.seb.fire "project:current", undefined
+        @closePanel()
     )
 
   cancelChanges: (e) ->
@@ -70,6 +75,16 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     setTimeout ->
       $("#control-buttons").addClass "hidden"
     , 100
+
+  deleteProject: (e) ->
+    e.preventDefault()
+
+    if confirm("Sure to delete?")
+      @model.destroy()
+      @closePanel()
+
+  closePanel: ->
+    PoteeApp.seb.fire "project:current", undefined
 
   onRender: ->
     @stickit()
