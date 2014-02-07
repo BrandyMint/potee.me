@@ -20,4 +20,12 @@ class Project < ActiveRecord::Base
   validates :started_at, presence: true
   validates :owner_id, presence: true
 
+  def self.find_by_share_key key
+    ProjectConnection.where(share_key: key).first!.project
+  end
+
+  def as_json *args
+    serializable_hash ProjectPresentation
+  end
+
 end

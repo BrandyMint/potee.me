@@ -113,6 +113,9 @@
 
     new Potee.Controllers.CurrentForm
 
+    new Potee.Controllers.SharedProject
+      projects_view: window.projects_view
+
     new Potee.Controllers.ProjectSelector
       projects: window.projects
 

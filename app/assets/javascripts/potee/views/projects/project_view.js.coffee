@@ -17,7 +17,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   events:
     "click .title" : "title_click"
-    "dblclick .progress .bar" : "add_event"
+    #"dblclick .progress .bar" : "add_event"
+    "dblclick" : "add_event"
     "mousedown": 'mousedown'
 
   mousedown: (e) ->

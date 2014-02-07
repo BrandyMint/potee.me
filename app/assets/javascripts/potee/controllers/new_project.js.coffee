@@ -10,7 +10,8 @@ class Potee.Controllers.NewProject
 
   dblclick: (e)=>
     # Идем дальше если кликнули на проекте
-    return false unless $(e.target).closest('.project .progress').length == 0
+    #return false unless $(e.target).closest('.project .progress').length == 0
+    return false unless $(e.target).closest('.project').length == 0
 
     return false if PoteeApp.reqres.request 'current_form:editing?'
 
@@ -52,9 +53,9 @@ class Potee.Controllers.NewProject
       projects_count = window.projects.length
 
       if position > 0 and position < projects_count
-        project_view = @projects_view.insertToPosition project, position
+        @projects_view.insertToPosition project, position
       else
-        project_view = @projects_view.addOne project, (position < projects_count)
+        @projects_view.addOne project, (position < projects_count)
 
 
   _getClickPosition: (e) ->

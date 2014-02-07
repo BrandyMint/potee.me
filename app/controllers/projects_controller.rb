@@ -5,11 +5,15 @@ class ProjectsController < ApplicationController
   respond_to :js, :json, :html
 
   def index
-    @projects = current_user.project_connections.includes(:project, :events).order(:position)
+    @projects = current_user_projects
   end
 
   def create
-    @project = current_user.owned_projects.create! project_params
+    if params[:project][:share_key]
+      @project = Project.find_by_share_key params[:project][:share_key]
+    else
+      @project = current_user.owned_projects.create! project_params
+    end
 
     @project_connection = ProjectConnection.create! project_connection_params.merge project: @project, user: current_user
 

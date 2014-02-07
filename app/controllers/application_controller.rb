@@ -1,12 +1,16 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  helper_method :current_user
+  helper_method :current_user, :current_user_projects
   helper_method :canonical_url
 
   before_filter :redirect_domains
 
 protected
+
+  def current_user_projects
+    current_user.project_connections.includes(:project, :events).order(:position, :created_at)
+  end
 
   def current_user
     return @current_user if @current_user

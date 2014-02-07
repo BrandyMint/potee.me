@@ -18,3 +18,10 @@
       dashboard: #{current_user.dashboard.to_json.html_safe}
       });
   })
+
+- if @shared_project.present?
+  :javascript
+    $(function() {
+      PoteeApp.commands.execute('add_shared_project', #{@shared_project.to_json.html_safe})
+    })
+

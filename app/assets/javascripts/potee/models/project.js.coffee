@@ -45,12 +45,11 @@ class Potee.Models.Project extends Backbone.Model
 
     return res
 
-  change_color: (model, olor_index)->
-#    @calculateDays()
+  change_color: (model, color_index)->
+    # TODO Перенести во вьюху
     if @view
       @view.render()
       @view.bounce()
-    # @view.$el.find('.progress').addClass('active')
 
   setStartEndDates: ->
     @started_at = moment(@get("started_at")).toDate()

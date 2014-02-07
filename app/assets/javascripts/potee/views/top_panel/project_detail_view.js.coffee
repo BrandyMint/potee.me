@@ -10,7 +10,8 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     submitButton : "#submit-btn"
     cancelButton : "#cancel-btn"
     deleteButton : "#delete-btn"
-    closeButton  : "#close-btn" 
+    closeButton  : "#close-btn"
+    shareLink    : '#share-link'
 
   bindings:
     "#title":
@@ -19,6 +20,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
       onGet: (val) ->
         # Корректно выводим спецсимволы
         _.unescape val
+
 
   modelEvents:
     "destroy" : "closePanel"
@@ -89,3 +91,4 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
 
   onRender: ->
     @stickit()
+
