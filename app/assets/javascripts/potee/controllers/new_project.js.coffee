@@ -3,7 +3,7 @@ class Potee.Controllers.NewProject
     { @projects_view, @dashboard_view } = options
     @$projects = @projects_view.$el
 
-    $('#new-project-link').bind 'click', @link
+    $(document).on 'click', '#new-project-link', @link
     $('#dashboard').bind 'dblclick', @dblclick
 
     PoteeApp.vent.on 'new_project', @_newProject
@@ -50,6 +50,8 @@ class Potee.Controllers.NewProject
   _buildProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) =>
       project = new Potee.Models.Project {}, {}, startFrom
       projects_count = window.projects.length
+
+      PoteeApp.vent.trigger "project:create:start", project
 
       if position > 0 and position < projects_count
         project_view = @projects_view.insertToPosition project, position
