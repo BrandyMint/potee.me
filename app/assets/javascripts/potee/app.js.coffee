@@ -92,10 +92,11 @@
 
     new Potee.Controllers.TopPanel
       projects_view: window.projects_view
+      dashboard:     window.dashboard
 
     window.dashboard_view = new Potee.Views.DashboardView
       el: $('#dashboard')
-      model: window.dashboard
+      model:         window.dashboard
       $viewport    : window.viewport
       projects_view: window.projects_view
       timeline_view: window.timeline_view
@@ -124,10 +125,6 @@
     window.router = new Potee.Routers.ProjectsRouter
       dashboard:      window.dashboard
       dashboard_view: window.dashboard_view
-    window.router2 = new Potee.Routers.ProjectsRouter
-      dashboard:      window.dashboard
-      dashboard_view: window.dashboard_view
-
 
   App.on "initialize:after", ->
     #Potee.history = new Potee.History

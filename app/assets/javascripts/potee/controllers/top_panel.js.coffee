@@ -1,7 +1,7 @@
 class Potee.Controllers.TopPanel extends Marionette.Controller
 
   initialize: (options) ->
-    { @projects_view } = options
+    { @projects_view, @dashboard } = options
 
     el = '#header_container'
     # @topPanelRegion = new Marionette.Region el: el
@@ -11,7 +11,12 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
     @current_project = undefined
 
+    @listenTo @dashboard, 'change:pixels_per_day', @closePanel
+
     PoteeApp.seb.on 'project:current', @changeCurrentProject
+
+  closePanel: =>
+    PoteeApp.seb.fire 'project:current', undefined
 
   changeCurrentProject: (project) =>
     return if @current_project?.model == project
@@ -22,9 +27,6 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
       @$el.html projectDetailInfo.render().$el.hide()
       projectDetailInfo.$el.fadeIn()
     else
-
-      $('#header_container').empty()
-      $('#header_container').append @saved_dom.hide()
-      @saved_dom.fadeIn()
+      @closePanel()
 
     @current_project = projectDetailInfo

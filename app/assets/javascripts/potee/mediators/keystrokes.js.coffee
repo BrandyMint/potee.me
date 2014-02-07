@@ -4,16 +4,17 @@ class Potee.Mediators.Keystrokes
     @dashboard = options.dashboard
 
     Mousetrap.bind '0', =>
-      unless @isEditing()
+      #unless @isEditing()
+      if @dashboard.getTitle() == 'week'
+        @dashboard.setScale 'year'
+      else
         @dashboard.setScale 'week'
 
     Mousetrap.bind '+', =>
-      unless @isEditing()
-        @dashboard.incPixelsPerDay()
+      @dashboard.incPixelsPerDay()
 
     Mousetrap.bind '-', =>
-      unless @isEditing()
-        @dashboard.decPixelsPerDay()
+      @dashboard.decPixelsPerDay()
 
     Mousetrap.bind 'esc', (e)=>
       # отмена формы
@@ -23,7 +24,7 @@ class Potee.Mediators.Keystrokes
       PoteeApp.vent.trigger 'escape'
 
     Mousetrap.bind 'enter', (e)=>
-      return if @isEditing()
+      #return if @isEditing()
 
       e.stopPropagation()
       e.preventDefault()
@@ -31,10 +32,9 @@ class Potee.Mediators.Keystrokes
       PoteeApp.vent.trigger 'new_project'
 
     Mousetrap.bind 'space', (e)=>
-      unless @isEditing()
-        e.preventDefault()
-        e.stopPropagation()
-        PoteeApp.commands.execute 'gotoToday'
+      e.preventDefault()
+      e.stopPropagation()
+      PoteeApp.commands.execute 'gotoToday'
 
   isEditing: ->
     PoteeApp.reqres.request 'current_form:editing?'
