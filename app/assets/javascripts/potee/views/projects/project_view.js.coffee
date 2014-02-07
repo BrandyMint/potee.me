@@ -206,6 +206,22 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     event_view.$el
 
+  inactive: ->
+    @_inactive = true
+    #unless @$el.css('opacity')> 0.4
+    @$el.animate { opacity: 0.4 },
+      easing: 'easeInCirc'
+      duration: 300
+        #@$el.addClass 'inactive'
+
+  active: ->
+    @_inactive = false
+    #unless @$el.css('opacity')<1
+    @$el.animate { opacity: 1 },
+      easing: 'easeOutQuint'
+      duration: 300
+    #@$el.removeClass 'inactive'
+
   stickTitle: (position = 'left') ->
     @.titleView.sticky_pos = position
     top_value = @$el.offset().top + 49 #отступ для каждого title
