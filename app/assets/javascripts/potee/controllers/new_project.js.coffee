@@ -51,6 +51,8 @@ class Potee.Controllers.NewProject
       project = new Potee.Models.Project {}, {}, startFrom
       projects_count = window.projects.length
 
+      PoteeApp.vent.trigger "project:create:start", project
+
       if position > 0 and position < projects_count
         project_view = @projects_view.insertToPosition project, position
       else
