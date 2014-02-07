@@ -211,7 +211,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     #unless @$el.css('opacity')> 0.4
     @$el.animate { opacity: 0.4 },
       easing: 'easeInCirc'
-      duration: 300
+      duration: 200
         #@$el.addClass 'inactive'
 
   active: ->
