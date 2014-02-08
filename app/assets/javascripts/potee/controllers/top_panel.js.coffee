@@ -18,9 +18,6 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
     PoteeApp.seb.on 'project:current', @changeCurrentProject
 
-  closePanel: =>
-    PoteeApp.seb.fire 'project:current', undefined
-
   changeCurrentProject: (project) =>
     return if @current_project?.model == project
 
@@ -33,3 +30,12 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
       @closePanel()
 
     @current_project = projectDetailInfo
+
+  closePanel: =>
+    @restoreSavedDOM()
+
+  restoreSavedDOM: =>
+    $('#header_container').empty()
+    $('#header_container').append @saved_dom.hide()
+    setTimeout =>
+      @saved_dom.fadeIn()
