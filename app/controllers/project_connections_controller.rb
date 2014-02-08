@@ -6,8 +6,8 @@ class ProjectConnectionsController < ApplicationController
   def show
     @shared_project = ProjectConnection.where(share_key: params[:id]).first!
 
-    if current_user.projects.include?(pc.project)
-      redirect_to projects_path 
+    if current_user.projects.include?(@shared_project.project)
+      redirect_to projects_path
     else
       @projects = current_user_projects
 

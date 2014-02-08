@@ -16,7 +16,7 @@ class Potee.Controllers.GotoDate
   # @param [Date] date
   # - undefined - today
   moveToDate: (date = undefined, animate = true) =>
-    x = @timeline().middleOffsetOf date || @dashboard.today
+    x = @timeline().middleOffsetOf date || moment()
 
     if @$viewport.scrollLeft() == x
       @dashboard.setCurrentDate date

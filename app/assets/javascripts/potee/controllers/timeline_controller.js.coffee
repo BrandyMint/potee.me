@@ -1,7 +1,6 @@
 class Potee.Views.TimelineView extends Backbone.View
   initialize: (options)->
-    @dashboard = options.dashboard
-    @$viewport = options.$viewport
+    { @dashboard, @$viewport } = options
 
     # Причем именно за window, а не за #viewport
     $(window).resize @resizeCallback
@@ -10,15 +9,17 @@ class Potee.Views.TimelineView extends Backbone.View
 
   render: =>
     # Если title не изменился, то и класс менять не надо
-    if @last_scale == @dashboard.getTitle() && @currentView?
+    if @last_scale == @getScaleMode() && @currentView?
       @currentView.render()
     else
-      scale = @dashboard.getTitle()
+      scale = @getScaleMode()
+
+      PoteeApp.seb.fire 'timeline:scale_mode', scale
 
       switch scale
-        when 'week'   then @scaleClass = Potee.Views.Timelines.DaysView
-        when 'month'  then @scaleClass = Potee.Views.Timelines.WeeksView
-        when 'year'   then @scaleClass = Potee.Views.Timelines.MonthsView
+        when 'days'   then @scaleClass = Potee.Views.Timelines.DaysView
+        when 'weeks'  then @scaleClass = Potee.Views.Timelines.WeeksView
+        when 'months'   then @scaleClass = Potee.Views.Timelines.MonthsView
         else console.log('unknown scale ' + scale)
 
       @currentView?.close()
@@ -109,3 +110,12 @@ class Potee.Views.TimelineView extends Backbone.View
      x = Math.round @offsetInPixels( day ) - (@$viewport.width() / 2)
      return 0 if x < 0
      return x
+
+  getScaleMode: ->
+    p = @dashboard.get 'pixels_per_day'
+    if p <= Potee.Controllers.Scaller.prototype.START_YEAR_PIXELS_PER_DAY
+      return 'months'
+    else if p <= Potee.Controllers.Scaller.prototype.START_MONTH_PIXELS_PER_DAY
+      return 'weeks'
+    else
+      return 'days'

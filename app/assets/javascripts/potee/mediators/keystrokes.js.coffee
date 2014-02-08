@@ -3,19 +3,6 @@ class Potee.Mediators.Keystrokes
     @dashboard_view = options.dashboard_view
     @dashboard = options.dashboard
 
-    Mousetrap.bind '0', =>
-      #unless @isEditing()
-      if @dashboard.getTitle() == 'week'
-        @dashboard.setScale 'year'
-      else
-        @dashboard.setScale 'week'
-
-    Mousetrap.bind '+', =>
-      @dashboard.incPixelsPerDay()
-
-    Mousetrap.bind '-', =>
-      @dashboard.decPixelsPerDay()
-
     Mousetrap.bind 'esc', (e)=>
       # отмена формы
       #e.preventDefault()
@@ -25,7 +12,6 @@ class Potee.Mediators.Keystrokes
 
     Mousetrap.bind 'enter', (e)=>
       #return if @isEditing()
-
       e.stopPropagation()
       e.preventDefault()
 

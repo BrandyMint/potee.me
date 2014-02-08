@@ -46,12 +46,9 @@
     window.projects = new Potee.Collections.ProjectsCollection options.projects #, projects_info: window.projects_info
 
     window.viewport = $('#viewport')
-    window.dashboard = new Potee.Models.Dashboard
-    window.scale_panel = new Potee.Controllers.ScalePanel dashboard: window.dashboard
-    window.di = window.dashboard_info = new Potee.Models.DashboardInfo
-
-    # Нужно устанавливать данные после ScalePanel, чтобы она поставила правильное обозначение масштаба
-    window.dashboard.set options.dashboard
+    window.dashboard = new Potee.Models.Dashboard options.dashboard
+    window.scaller = new Potee.Controllers.Scaller
+      dashboard: window.dashboard
 
     # Инициализурется до projects_view
     new Potee.Controllers.GotoDate
@@ -125,7 +122,9 @@
     window.nav = new Potee.Navigator
       dashboard: window.dashboard
 
+
     window.router = new Potee.Routers.ProjectsRouter
+      scaller:        scaller
       dashboard:      window.dashboard
       dashboard_view: window.dashboard_view
 

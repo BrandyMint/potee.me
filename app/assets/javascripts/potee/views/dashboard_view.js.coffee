@@ -1,28 +1,19 @@
 class Potee.Views.DashboardView extends Backbone.View
-  # id: 'dashboard'
-  # tagName: 'div'
-  #
-
   initialize: (options)->
-    @model.view = @
+    { @viewport, @projects_view, @timeline_view, @dashboard_info } = options
 
-    @viewport = options.$viewport
-    @projects_view = options.projects_view
-    @timeline_view = options.timeline_view
-    @dashboard_info = options.dashboard_info
+    @model.view = @
 
     @_shown = false
 
   updateScaleCss: =>
-
-    scale = @model.getTitle()
+    scale = @timeline_view.getScaleMode()
 
     @$el.removeClass("scale-week")
     @$el.removeClass("scale-month")
     @$el.removeClass("scale-year")
 
     @$el.addClass("scale-#{scale}")
-
 
     if @timeline_view.columnWidth()<=65
       @$el.addClass 'scale-week-ultra'

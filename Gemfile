@@ -34,6 +34,8 @@ group :assets do
 
   gem 'uglifier', '>= 1.0.3'
   gem 'compass-rails'
+  gem 'haml_coffee_assets'
+  gem 'execjs'
 end
 
 gem 'rails-backbone'

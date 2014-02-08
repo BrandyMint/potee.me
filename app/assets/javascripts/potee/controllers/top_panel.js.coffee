@@ -3,6 +3,9 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
   initialize: (options) ->
     { @projects_view, @dashboard } = options
 
+    sp = new Potee.Views.ScalePanel
+    sp.render()
+
     el = '#header_container'
     # @topPanelRegion = new Marionette.Region el: el
     @saved_dom = $('#header_container').children().clone true

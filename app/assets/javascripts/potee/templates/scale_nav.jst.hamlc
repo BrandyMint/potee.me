@@ -1,0 +1,8 @@
+-#%ul.nav#scale-nav
+%li.divider-vertical
+%li
+  .btn-toolbar
+    .btn-group
+      %a.btn.btn-inverse.btn-mini#scale-days{:href=>'#days'} days
+      %a.btn.btn-inverse.btn-mini#scale-weeks{:href=>'#weeks'} weeks
+      %a.btn.btn-inverse.btn-mini#scale-months{:href=>'#months'} months

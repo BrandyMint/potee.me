@@ -8,7 +8,7 @@ class Potee.Controllers.TodayLink
     #@resetTodayLink()
 
   resetTodayLink: =>
-    if @timeline.isDateOnDashboard @dashboard.today
+    if @timeline.isDateOnDashboard moment()
       return unless @todayLink
       @todayLink.remove()
       @todayLink = undefined
