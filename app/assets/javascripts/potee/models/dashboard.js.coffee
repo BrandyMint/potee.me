@@ -11,7 +11,7 @@ class Potee.Models.Dashboard extends Backbone.Model
     Backbone.sync(method, model, options)
 
   getCurrentDate: ->
-    @_getCurrentMoment().toDate()
+    @getCurrentMoment().toDate()
 
   setCurrentDate: (date) ->
     @set 'current_date', date?.toISOString()
@@ -19,6 +19,6 @@ class Potee.Models.Dashboard extends Backbone.Model
   setToday: ->
     @setCurrentDate undefined
 
-  _getCurrentMoment: ->
+  getCurrentMoment: ->
     moment @get('current_date')
 
