@@ -244,10 +244,11 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
 
-    @titleRegion ||= new Marionette.Region el: @$('.project-title')
+    @titleRegion = new Marionette.Region el: @$('.project-title')
 
     @$el.attr 'id', @model.cid
-    @$el.addClass 'project-color-'+@model.get('color_index')
+    @$el.removeClass 'project-color-' + @model.previous 'color_index'
+    @$el.addClass 'project-color-' + @model.get 'color_index'
 
     closest_event = @model.projectEvents.getClosestEvent()
     @model.projectEvents.each (event)=>

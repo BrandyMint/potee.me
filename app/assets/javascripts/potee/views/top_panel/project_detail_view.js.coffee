@@ -6,6 +6,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
 
   ui:
     form         : "form"
+    color_picker : "#color-picker"
     title        : "input#title"
     submitButton : "#submit-btn"
     cancelButton : "#cancel-btn"
@@ -20,20 +21,29 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
       onGet: (val) ->
         # Корректно выводим спецсимволы
         _.unescape val
+    "#color-picker":
+      attributes: [
+        name: 'class',
+        observe: "color_index"
+        onGet: 'formatIndexClass'
+      ]
 
+  formatIndexClass: (val) ->
+    "project-color-" + val
 
   modelEvents:
     "destroy" : "closePanel"
 
   events:
+    "click @ui.color_picker" : "changeProjectColor"
     "focus @ui.title"        : "showControlButtons"
     "keyup @ui.title"        : "checkChanges"
     "blur @ui.title"         : "hideControlButtons"
-    "click @ui.submitButton" : "saveChanges"
+    "click @ui.submitButton" : "submitForm"
     "click @ui.cancelButton" : "cancelChanges"
     "click @ui.deleteButton" : "deleteProject"
     "click @ui.closeButton"  : "closePanel"
-    "submit @ui.form"        : "saveChanges"
+    "submit @ui.form"        : "submitForm"
 
   checkChanges: (e) ->
     $el = $(e.target)
@@ -50,14 +60,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
       $("#submit-btn").removeAttr 'disabled'
       $("#cancel-btn").removeClass "hidden"
 
-  saveChanges: (e) ->
-    e.preventDefault()
-    e.stopPropagation()
-
-    $el = $(e.target)
-    return if $el.attr "disabled"
-    @setViewMode()
-    
+  saveChanges: ->
     # Все знаки переводим в безопасные спецсимволы
     @model.set "title", _.escape @ui.title.val()
     @model.save(null,
@@ -78,6 +81,20 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     e.stopPropagation()
 
     @ui.title.val @model.get "title"
+
+  submitForm: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
+
+    $el = $(e.target)
+    return if $el.attr "disabled"
+    @saveChanges()
+    @setViewMode()
+
+  changeProjectColor: ->
+    nextValue = @model.get("color_index") + 1
+    @model.set 'color_index', nextValue % 7
+    @saveChanges()
 
   showControlButtons: (e) ->
     $el = $(e.target)
@@ -104,4 +121,3 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
 
   onRender: ->
     @stickit()
-
