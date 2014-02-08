@@ -202,7 +202,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     event_view = new Potee.Views.Events.EventView
       model: event
       project_view: @
-      x: x
 
     @$el.append event_view.render().$el
 

@@ -81,10 +81,11 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @listenTo @dashboard, 'change:pixels_per_day', @resetScale
     PoteeApp.seb.on 'timeline:reset_width', @resetWidth
 
+  scrollTop: ->
+    @$el.parent().scrollTop()
 
   scrollToLastScrollTop: ->
-    console.log "scroll top", @dashboard.get('scroll_top')
-    @$el.scrollTop @dashboard.get('scroll_top')
+    @$el.parent().scrollTop @dashboard.get('scroll_top')
 
   scrollToCurrentDate: ->
     # Отключаем автоматическое обновление даты по скроллингу

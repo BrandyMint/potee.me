@@ -15,7 +15,7 @@ class Potee.Controllers.DashboardPersistenter
     @dashboard.on 'change', @saveDashboard
 
   updateScrollTop: =>
-    @dashboard.set 'scroll_top', @projects_view.$el.scrollTop()
+    @dashboard.set 'scroll_top', @projects_view.scrollTop()
 
   _clearTimeout: =>
     window.clearTimeout @_timeout if @_timeout?
