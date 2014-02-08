@@ -24,4 +24,7 @@ class Potee.Models.Event extends Backbone.Model
     @date = @get("date")
     @time = @get("time")
     @setPassed()
+
+    # TODO Вынести во вьюху. Проблема в том, что собыние разделено на два поля date/time
+    # а перерисовку нужно делать по одному datetime
     @view.rerender()

@@ -15,7 +15,6 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @mode = "show"
     @model.resetDate()
     @model.view = @
-    @setDragDetector()
 
   events:
     'keyup input'                : 'keyup'
@@ -91,10 +90,10 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @model.collection.remove @model
     @model.project.view.resetResizeMinWidth()
 
-    @$el.fadeOut('fast', =>
+    @$el.fadeOut 'fast', =>
+      # TODO curent_form сама должна отвязываться при удалении модели/onclose
+      PoteeApp.vent.trigger 'current_form:set', undefined
       @remove()
-      window.dashboard.view.currentForm = undefined
-    )
 
   setEditMode: ->
     return true if @mode is 'edit'
@@ -103,11 +102,6 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
 
     @mode = 'edit'
     @render()
-
-    @$el.addClass 'event-handled'
-    @$el.find('input#title').focus()
-    @$("form").backboneLink @model
-    @$el.css 'z-index', ACTIVE_Z_INDEX
 
   setShowMode: ->
     return true if @mode is 'show'
@@ -145,7 +139,8 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @$el.css 'left', x || @calcOffset()
 
   onRender: ->
-    unless @mode is "edit"
+    if @mode is 'show'
+      @_bindDragEvents()
       @setShowMode()
       @$el.addClass 'passed' if @model.passed
 
@@ -159,14 +154,35 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
           @saveDateTime ui.position.left + @options.project_view.leftMargin()
 
       @$el.css "position", "absolute"
+    else 
+      @_unbindDragEvents()
+      @$el.addClass 'event-handled'
+      @$el.find('input#title').focus()
+      @$("form").backboneLink @model
+      @$el.css 'z-index', ACTIVE_Z_INDEX
 
-  setDragDetector: ->
-    @$el.mousedown =>
-      @mousedown = true
-    $(document).mousemove =>
-      @dragging = true if @mousedown
-    $(document).mouseup =>
-      @mousedown = false
+
+  _bindDragEvents: ->
+    return if @_binded
+    @$el.bind 'mousedown', @_mousedown
+    $(document).bind 'mousemove', @_mousemove
+    $(document).bind 'mouseup', @_mouseup
+    @_binded = true
+
+  _mousedown: =>
+    @mousedown = true
+  _mousemove: =>
+    @dragging = true if @mousedown
+  _mouseup: =>
+    @mousedown = false
+
+  _unbindDragEvents: ->
+    return unless @_binded
+    @$el.unbind 'mousedown', @_mousedown
+    $(document).unbind 'mousemove', @_mousemove
+    $(document).unbind 'mouseup', @_mouseup
+    @_binded = false
+
 
   # Непонятно почему, но общий медиатор не ловит эскейпы когда редактируется форма
   # события

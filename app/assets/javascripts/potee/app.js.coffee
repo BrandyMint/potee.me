@@ -108,7 +108,7 @@
       dashboard_view: window.dashboard_view
       dashboard: window.dashboard
 
-    new Potee.Controllers.CurrentForm
+    window.current_form = new Potee.Controllers.CurrentForm
 
     new Potee.Controllers.SharedProject
       projects_view: window.projects_view
