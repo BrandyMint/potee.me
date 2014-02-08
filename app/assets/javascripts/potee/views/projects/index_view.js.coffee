@@ -16,6 +16,9 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     view = new Potee.Views.Projects.ProjectView
       model : project
 
+    @listenTo view, 'before:close', =>
+      @$el.sortable("refresh")
+
     view
 
   scrollToProject: (project) =>

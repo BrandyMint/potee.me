@@ -32,21 +32,25 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     { moving } = options
     total_height = @$projects.height()
 
-    max_top = total_height - @$el.height()
+    project_height = @$el.height()
+
+    min_top = 20
+
+    max_top = total_height - project_height
 
     top = @$el.position().top
 
     console.log moving
 
     if moving is 'up'
-      if top < 30
+      if top < min_top
         action = 'sunset'
       else if top > max_top
         action = 'sunrise'
       else
         action = 'middle'
     else if moving is 'down'
-      if top < 30
+      if top < min_top
         action = 'sunrise'
       else if top > max_top
         action = 'sunset'
@@ -185,9 +189,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @model.projectEvents.each (event) ->
       event.view.close() if event.view.close?
 
-  onBeforeClose: ->
-    @$el.closest( window.projects_view.$el ).sortable("refresh")
-
   # Project's line left margin (when does it start)
   setLeftMargin: =>
     @$el.css 'margin-left', @leftMargin()
@@ -233,6 +234,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     return width: @width()
 
   resetScale: ->
+    @correctOpacity()
     @setLeftMargin()
     @resetEventsPositions()
     @setWidth()
@@ -240,6 +242,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   resetEventsPositions: =>
     async.each @model.projectEvents, (event) ->
       event.view.setPosition()
+
+  setClosestEvent: ->
+    first_event = @model.projectEvents.getFirstEvent()
+    @model.projectEvents.each (event)=>
+      current_event = @renderEvent event
+      current_event.addClass 'closest'  if event == first_event
 
   onRender: ->
     # TODO Вынести progressbar в отдельную вьюху?
@@ -250,10 +258,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @$el.removeClass 'project-color-' + @model.previous 'color_index'
     @$el.addClass 'project-color-' + @model.get 'color_index'
 
-    closest_event = @model.projectEvents.getClosestEvent()
-    @model.projectEvents.each (event)=>
-      current_event = @renderEvent event
-      current_event.addClass('closest') if event == closest_event
+    @setClosestEvent()
 
     if @isNew()
       @setTitleView 'new'
