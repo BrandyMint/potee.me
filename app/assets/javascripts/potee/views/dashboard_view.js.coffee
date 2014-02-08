@@ -9,16 +9,16 @@ class Potee.Views.DashboardView extends Backbone.View
   updateScaleCss: =>
     scale = @timeline_view.getScaleMode()
 
-    @$el.removeClass("scale-week")
-    @$el.removeClass("scale-month")
-    @$el.removeClass("scale-year")
+    @$el.removeClass("scale-days")
+    @$el.removeClass("scale-weeks")
+    @$el.removeClass("scale-months")
 
     @$el.addClass("scale-#{scale}")
 
     if @timeline_view.columnWidth()<=65
-      @$el.addClass 'scale-week-ultra'
+      @$el.addClass 'scale-days-ultra'
     else
-      @$el.removeClass 'scale-week-ultra'
+      @$el.removeClass 'scale-days-ultra'
 
   resetWidth: (width) =>
     # А может быть он должен быть размером с projects? Ведь он их вмещает

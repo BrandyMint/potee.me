@@ -9,12 +9,10 @@ class Potee.Views.TimelineView extends Backbone.View
 
   render: =>
     # Если title не изменился, то и класс менять не надо
-    if @last_scale == @getScaleMode() && @currentView?
+    scale = @getScaleMode()
+    if @last_scale == scale && @currentView?
       @currentView.render()
     else
-      scale = @getScaleMode()
-
-      PoteeApp.seb.fire 'timeline:scale_mode', scale
 
       switch scale
         when 'days'   then @scaleClass = Potee.Views.Timelines.DaysView
@@ -32,10 +30,12 @@ class Potee.Views.TimelineView extends Backbone.View
 
       @$el.html @currentView.render().el
 
-      Backbone.pEvent.trigger 'timeline:render'
-
     @last_scale = scale
     @resetHeight()
+
+
+    # Делаем через defer, потому что иначе TitleSticker не чухнет
+    _.defer -> PoteeApp.seb.fire 'timeline:scale_mode', scale
 
     @
 

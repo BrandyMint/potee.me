@@ -18,6 +18,12 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     view
 
+  scrollToProject: (project) =>
+    return unless project?
+    # Почему 80?
+    $('#projects').scrollTop project.view.$el.postion.top-80
+
+
   addAll: =>
     @projects.each (project, i) => @addOne(project, false)
 
@@ -81,8 +87,11 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @listenTo @dashboard, 'change:pixels_per_day', @resetScale
     PoteeApp.seb.on 'timeline:reset_width', @resetWidth
 
-  scrollTop: ->
-    @$el.parent().scrollTop()
+  scrollTop: (arg = undefined) ->
+    if arg?
+      @$el.parent().scrollTop arg
+    else
+      @$el.parent().scrollTop()
 
   scrollToLastScrollTop: ->
     @$el.parent().scrollTop @dashboard.get('scroll_top')

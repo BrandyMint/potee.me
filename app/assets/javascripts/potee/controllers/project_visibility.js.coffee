@@ -2,7 +2,6 @@ class Potee.Controllers.ProjectsVisibility extends Marionette.Controller
   initialize: (options) ->
     { @dashboard_view } = options
 
-    @listenTo @dashboard_view, 'render', @showOrHideProjects
     PoteeApp.vent.on 'projects:scroll', @showOrHideProjects
 
     @lastScrollTop = 0
@@ -14,14 +13,15 @@ class Potee.Controllers.ProjectsVisibility extends Marionette.Controller
     return if scrollTop == @lastScrollTop
 
     _.defer =>
-
       # поползли вверх
       if scrollTop > @lastScrollTop
         window.projects.each (project) ->
-          project.view.correctOpacity()
+          project.view.correctOpacity
+            moving: 'up'
       # Поползли вниз
       else
         window.projects.each (project) ->
-          project.view.correctOpacity()
+          project.view.correctOpacity
+            moving: 'down'
 
-    @lastScrollTop = scrollTop
+      @lastScrollTop = scrollTop

@@ -6,14 +6,17 @@ class Potee.Controllers.TitleSticker
     Backbone.pEvent.on 'dashboard:scroll', @resetStickyTitles
     Backbone.pEvent.on 'projects:scroll', @resetStickyTitles
     Backbone.pEvent.on 'projects:reorder', @resetStickyTitles
-    Backbone.pEvent.on 'timeline:render', @resetStickyTitles
+    PoteeApp.seb.on 'timeline:scale_mode', @resetStickyTitles
+
+    @$projects = $ '#projects'
 
   resetStickyTitles: () =>
     return false unless @projects_view.el
+    console.log 'reset sticky titles'
 
     # переменная @model в цикле не достпна
-    projects_top_point = @projects_view.$el.offset().top
-    projects_bot_point = @projects_view.$el.height() + projects_top_point
+    projects_top_point = @$projects.offset().top
+    projects_bot_point = @$projects.height() + projects_top_point
     current_date = @dashboard.getCurrentDate()
 
     window.projects.each (project, i) ->

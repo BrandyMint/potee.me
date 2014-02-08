@@ -11,6 +11,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     _.extend @, Backbone.Events
     @dashboard_view = window.dashboard_view
     @model.view = @
+    @$projects = $('#projects')
 
   _clickOutside: (e) =>
     if $(e.target).closest(@$el).length == 0
@@ -27,29 +28,77 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     if e.target == @$(".ui-resizable-e")[0]
       e.stopPropagation()
 
-  correctOpacity: ->
-    total_height = $('#projects').height()
+  correctOpacity: (options = {}) ->
+    { moving } = options
+    total_height = @$projects.height()
 
-    project_height = 30
-    max_top = total_height - project_height - 40
+    max_top = total_height - @$el.height()
 
     top = @$el.position().top
-    if top >= max_top
-      x = 35 - (top - max_top)
-      x = 0 if x < 0
-      @setOpacity x/35
-    else if top > 35 && top < max_top
-      @setOpacity 1
-    else if top < 3 || top > max_top
-      @setOpacity 0
-    else if top < 35
-      @setOpacity top/35
 
-  setOpacity: (o) ->
+    console.log moving
+
+    if moving is 'up'
+      if top < 30
+        action = 'sunset'
+      else if top > max_top
+        action = 'sunrise'
+      else
+        action = 'middle'
+    else if moving is 'down'
+      if top < 30
+        action = 'sunrise'
+      else if top > max_top
+        action = 'sunset'
+      else
+        action = 'middle'
+
+    window.clearTimeout @_opacityTimer if @_opacityTimer?
+
+    if action is 'middle' or action is 'sunrise'
+      @setOpacity 1
+
+    return if action is 'middle'
+
+    timeout = 500
+
+    if action is 'sunrise' && top < 30
+      action = 'sunset'
+      timeout = 1500
+
+    switch action
+      when 'sunrise' then callback = @forceVisibility
+      when 'sunset'  then callback = @forceInvisibility
+
+    @_opacityTimer = window.setTimeout callback, timeout
+
+    return
+
+    if top >= max_top
+      x = 30 - (top - max_top)
+      x = 0 if x < 0
+      @setOpacity x/30, action
+    else if top > 30 && top < max_top
+      @setOpacity 1, action
+    else if top < 3 || top > max_top
+      @setOpacity 0, action
+    else if top < 30
+      @setOpacity top/30, action
+
+  setOpacity: (o, action) ->
     if @_inactive
       max = @INACTIVE_OPACITY
     else
       max = 1
+
+    opacity = parseInt @$el.css 'opacity'
+
+    console.log opacity,o,action if @model.id == 302
+
+    if action is 'sunrise'
+      return if o<=opacity
+    else if action is 'sunset'
+      return if o>=opacity
 
     o = max if o>max
     @$el.css opacity: o
@@ -63,8 +112,10 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   forceInvisibility: =>
     @$el.animate { opacity: 0 },
-      easing: 'easeOutQuint'
-      duration: 300
+      easing: 'easeInBounce'
+      duration: 500
+      #always: =>
+        #window.projects_view.scrollTop @$el.position().top + @$el.height() + 1
 
   forceVisibility: =>
     @$el.animate { opacity: @demOpacity() },
