@@ -25,7 +25,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     "mousedown": 'mousedown'
 
   click: ->
-    @bounce()
+    #@$el.effect 'bounce', {times: 1}, 100
     PoteeApp.seb.fire 'project:current', @model
 
   mousedown: (e) ->
@@ -178,7 +178,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     Backbone.pEvent.trigger 'savePositions'
 
   bounce: ->
-    @$el.effect 'bounce', {times: 5}, 200
+    @$el.effect 'bounce', {times: 2}, 200
 
   remove: () ->
     @$el.slideUp 'fast', =>
