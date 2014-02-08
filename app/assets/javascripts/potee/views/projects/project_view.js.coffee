@@ -1,9 +1,10 @@
 Potee.Views.Projects ||= {}
 
 class Potee.Views.Projects.ProjectView extends Marionette.ItemView
+  INACTIVE_OPACITY: 0.4
   template: "templates/projects/project"
   className: 'project'
-  modelEvents: () ->
+  modelEvents:  ->
     'destroy': @close
 
   initialize: ->
@@ -25,6 +26,38 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     PoteeApp.seb.fire 'project:current', @model
     if e.target == @$(".ui-resizable-e")[0]
       e.stopPropagation()
+
+  setOpacity: (o) ->
+    if @_inactive
+      max = @INACTIVE_OPACITY
+    else
+      max = 1
+
+    o = max if o>max
+    @$el.css opacity: o
+
+    if o<max
+      window.clearTimeout @_opacityTimer if @_opacityTimer?
+      if o>0.6
+        @_opacityTimer = window.setTimeout @forceVisibility, 1000
+      else
+        @_opacityTimer = window.setTimeout @forceInvisibility, 1000
+
+  forceInvisibility: =>
+    @$el.animate { opacity: 0 },
+      easing: 'easeOutQuint'
+      duration: 300
+
+  forceVisibility: =>
+    @$el.animate { opacity: @demOpacity() },
+      easing: 'easeOutQuint'
+      duration: 300
+
+  demOpacity: ->
+    if @_inactive
+      @INACTIVE_OPACITY
+    else
+      1
 
   add_event: (js_event) =>
     return false if PoteeApp.request 'current_form:editing?'
@@ -213,20 +246,15 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   inactive: ->
     @_inactive = true
     _.defer =>
-      #unless @$el.css('opacity')> 0.4
-      @$el.animate { opacity: 0.4 },
-        #easing: 'easeInCirc'
+      @$el.animate { opacity: @INACTIVE_OPACITY },
         duration: 100
-          #@$el.addClass 'inactive'
 
   active: ->
     @_inactive = false
     _.defer =>
-      #unless @$el.css('opacity')<1
       @$el.animate { opacity: 1 },
         easing: 'easeOutQuint'
         duration: 300
-      #@$el.removeClass 'inactive'
 
   stickTitle: (position = 'left') ->
     @.titleView.sticky_pos = position
