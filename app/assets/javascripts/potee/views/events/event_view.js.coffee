@@ -11,7 +11,8 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       return "templates/events/edit"
 
   className: "event"
-  initialize: (@options) ->
+  initialize: (options) ->
+    { @project, @project_view, @x } = options
     @mode = "show"
     @model.resetDate()
     @model.view = @
@@ -28,9 +29,15 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     "mouseenter .event-bar"      : "mouseenter"
     "mouseleave .event-title-el" : "mouseleave"
     "mouseleave .event-bar"      : "mouseleave"
-    "mousedown"                  : (e) -> e.stopPropagation() # Непонято зачем это?
+    "mousedown"                  : "mousedown"
+
+  mousedown: (e) =>
+    PoteeApp.seb.fire 'project:current', @project
+    e.stopPropagation() # Непонято зачем это?
 
   click: (e) ->
+    _.defer =>
+      PoteeApp.seb.fire 'project:current', @project
     # Останаавливаем клик чтобы он не перешел выше где
     # dashboard его поймает и решил закрыть эту форму
     e.preventDefault()
@@ -133,7 +140,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @model.save()
 
     # TODO вынести на change:date_time в project_view
-    @options.project_view.resetResizeMinWidth()
+    @project_view.resetResizeMinWidth()
 
   setPosition: (x = undefined) ->
     @$el.css 'left', x || @calcOffset()
@@ -144,14 +151,22 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       @setShowMode()
       @$el.addClass 'passed' if @model.passed
 
-      @setPosition @options.x
+      @setPosition @x
 
       @$el.draggable
         axis: 'x',
         containment: "parent",
         distance: '3',
         stop: (jsEvent, ui) =>
-          @saveDateTime ui.position.left + @options.project_view.leftMargin()
+          @saveDateTime ui.position.left + @project_view.leftMargin()
+
+          # Таким способом мы избавляемся от клика, который автоматически
+          # приходит после отпускания мышки при драггинге
+          # http://stackoverflow.com/questions/18032136/prevent-click-event-after-drag-in-jquery
+          # http://stackoverflow.com/questions/1771627/preventing-click-event-with-jquery-drag-and-drop
+          @dragging = true
+          _.defer =>
+            @dragging = false
 
       @$el.css "position", "absolute"
     else 
@@ -160,30 +175,6 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       @$el.find('input#title').focus()
       @$("form").backboneLink @model
       @$el.css 'z-index', ACTIVE_Z_INDEX
-
-
-  # Не понял зачем эти байнды, отключил пока
-  #_bindDragEvents: ->
-    #return if @_binded
-    #@$el.bind 'mousedown', @_mousedown
-    #$(document).bind 'mousemove', @_mousemove
-    #$(document).bind 'mouseup', @_mouseup
-    #@_binded = true
-
-  #_mousedown: =>
-    #@mousedown = true
-  #_mousemove: =>
-    #@dragging = true if @mousedown
-  #_mouseup: =>
-    #@mousedown = false
-
-  #_unbindDragEvents: ->
-    #return unless @_binded
-    #@$el.unbind 'mousedown', @_mousedown
-    #$(document).unbind 'mousemove', @_mousemove
-    #$(document).unbind 'mouseup', @_mouseup
-    #@_binded = false
-
 
   # WARN Непонятно почему, но общий медиатор не ловит эскейпы когда редактируется форма
   # события

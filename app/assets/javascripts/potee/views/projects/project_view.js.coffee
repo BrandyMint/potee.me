@@ -236,6 +236,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   renderEvent: (event, x = undefined) ->
     event_view = new Potee.Views.Events.EventView
       model: event
+      project: @model
       project_view: @
       x: x # Координаты нового эвента
 
