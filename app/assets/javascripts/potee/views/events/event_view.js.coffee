@@ -28,7 +28,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     "mouseenter .event-bar"      : "mouseenter"
     "mouseleave .event-title-el" : "mouseleave"
     "mouseleave .event-bar"      : "mouseleave"
-    "mousedown"                  : (e) -> e.stopPropagation()
+    "mousedown"                  : (e) -> e.stopPropagation() # Непонято зачем это?
 
   click: (e) ->
     # Останаавливаем клик чтобы он не перешел выше где
@@ -140,7 +140,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
 
   onRender: ->
     if @mode is 'show'
-      @_bindDragEvents()
+      #@_bindDragEvents()
       @setShowMode()
       @$el.addClass 'passed' if @model.passed
 
@@ -155,36 +155,37 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
 
       @$el.css "position", "absolute"
     else 
-      @_unbindDragEvents()
+      #@_unbindDragEvents()
       @$el.addClass 'event-handled'
       @$el.find('input#title').focus()
       @$("form").backboneLink @model
       @$el.css 'z-index', ACTIVE_Z_INDEX
 
 
-  _bindDragEvents: ->
-    return if @_binded
-    @$el.bind 'mousedown', @_mousedown
-    $(document).bind 'mousemove', @_mousemove
-    $(document).bind 'mouseup', @_mouseup
-    @_binded = true
+  # Не понял зачем эти байнды, отключил пока
+  #_bindDragEvents: ->
+    #return if @_binded
+    #@$el.bind 'mousedown', @_mousedown
+    #$(document).bind 'mousemove', @_mousemove
+    #$(document).bind 'mouseup', @_mouseup
+    #@_binded = true
 
-  _mousedown: =>
-    @mousedown = true
-  _mousemove: =>
-    @dragging = true if @mousedown
-  _mouseup: =>
-    @mousedown = false
+  #_mousedown: =>
+    #@mousedown = true
+  #_mousemove: =>
+    #@dragging = true if @mousedown
+  #_mouseup: =>
+    #@mousedown = false
 
-  _unbindDragEvents: ->
-    return unless @_binded
-    @$el.unbind 'mousedown', @_mousedown
-    $(document).unbind 'mousemove', @_mousemove
-    $(document).unbind 'mouseup', @_mouseup
-    @_binded = false
+  #_unbindDragEvents: ->
+    #return unless @_binded
+    #@$el.unbind 'mousedown', @_mousedown
+    #$(document).unbind 'mousemove', @_mousemove
+    #$(document).unbind 'mouseup', @_mouseup
+    #@_binded = false
 
 
-  # Непонятно почему, но общий медиатор не ловит эскейпы когда редактируется форма
+  # WARN Непонятно почему, но общий медиатор не ловит эскейпы когда редактируется форма
   # события
   keyup: (e) =>
     @cancel() if e.which == 27

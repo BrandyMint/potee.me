@@ -27,6 +27,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       e.stopPropagation()
 
   add_event: (js_event) =>
+    return false if PoteeApp.request 'current_form:editing?'
+
     PoteeApp.seb.fire 'project:current', @model
     x = js_event.clientX - @$el.offset().left
     datetime = window.timeline_view.momentAt x + @leftMargin()

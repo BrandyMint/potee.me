@@ -13,7 +13,7 @@ class Potee.Controllers.NewProject
     #return false unless $(e.target).closest('.project .progress').length == 0
     return false unless $(e.target).closest('.project').length == 0
 
-    return false if PoteeApp.reqres.request 'current_form:editing?'
+    return false if PoteeApp.request 'current_form:editing?'
 
     x = e.pageX - window.dashboard_view.left()
 
