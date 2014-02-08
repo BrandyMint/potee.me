@@ -117,7 +117,7 @@
       projects: window.projects
 
     new Potee.Controllers.ProjectsVisibility
-      project_view: window.project_view
+      dashboard_view: window.dashboard_view
 
     window.nav = new Potee.Navigator
       dashboard: window.dashboard

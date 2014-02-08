@@ -27,6 +27,24 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     if e.target == @$(".ui-resizable-e")[0]
       e.stopPropagation()
 
+  correctOpacity: ->
+    total_height = $('#projects').height()
+
+    project_height = 30
+    max_top = total_height - project_height - 40
+
+    top = @$el.position().top
+    if top >= max_top
+      x = 35 - (top - max_top)
+      x = 0 if x < 0
+      @setOpacity x/35
+    else if top > 35 && top < max_top
+      @setOpacity 1
+    else if top < 3 || top > max_top
+      @setOpacity 0
+    else if top < 35
+      @setOpacity top/35
+
   setOpacity: (o) ->
     if @_inactive
       max = @INACTIVE_OPACITY
@@ -199,6 +217,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       handles: 'e'
       stop: (event, ui) =>
         @changeDuration ui.size.width
+
+    @correctOpacity()
 
     $("#viewport").bind 'click', @_clickOutside
 
