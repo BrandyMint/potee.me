@@ -19,7 +19,7 @@ class Potee.Controllers.ProjectSelector extends Marionette.Controller
     PoteeApp.seb.fire 'project:current', undefined
 
   changeCurrentProjectCallback: (project) =>
-    console.log 'change project', project
+    # console.log 'change project', project
     @lastProject?.view.$el.css 'z-index', @Z_INDEX_UNSELECTED
     project?.view.$el.css 'z-index', @Z_INDEX_SELECTED
 
