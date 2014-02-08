@@ -37,16 +37,7 @@ class Potee.Controllers.NewProject
     return false
 
   _newProject: =>
-    scrollTop = @$projects.scrollTop()
-    if scrollTop > 100
-      @$projects.animate scrollTop: 0, {
-        easing: 'easeOutQuart'
-        always: =>
-          @_buildProject()
-      }
-    else
-      @$projects.scrollTop 0 if scrollTop > 0
-      @_buildProject()
+    @projects_view.scrollTopAndCallback @_buildProject
 
   _buildProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) =>
       project = new Potee.Models.Project {}, {}, startFrom

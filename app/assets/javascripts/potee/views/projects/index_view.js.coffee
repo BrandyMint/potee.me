@@ -5,6 +5,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @timeline = options.timeline_view
     @projects = options.projects
     @dashboard = options.dashboard
+    @$projects = $('#projects')
 
     @selected_project_view = undefined
     @_shown = false
@@ -90,6 +91,18 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @listenTo @dashboard, 'change:pixels_per_day', @resetScale
     PoteeApp.seb.on 'timeline:reset_width', @resetWidth
 
+  scrollTopAndCallback: (callback) ->
+    scrollTop = @$projects.scrollTop()
+    if scrollTop > 100
+      @$projects.animate scrollTop: 0, {
+        easing: 'easeOutQuart'
+        always: callback
+      }
+    else
+      @$projects.scrollTop 0 if scrollTop > 0
+      callback()
+
+
   scrollTop: (arg = undefined) ->
     if arg?
       @$el.parent().scrollTop arg
@@ -99,7 +112,9 @@ class Potee.Views.Projects.IndexView extends Backbone.View
   scrollToLastScrollTop: ->
     @$el.parent().scrollTop @dashboard.get('scroll_top')
 
+  scrollToMoment: (moment) ->
+    window.hs.intentionalScroll @timeline.middleOffsetOf moment
+
   scrollToCurrentDate: ->
     # Отключаем автоматическое обновление даты по скроллингу
-
-    window.hs.intentionalScroll @timeline.middleOffsetOf window.dashboard.getCurrentDate()
+    @scrollToMoment window.dashboard.getCurrentDate()

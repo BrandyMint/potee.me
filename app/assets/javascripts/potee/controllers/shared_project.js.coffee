@@ -7,4 +7,6 @@ class Potee.Controllers.SharedProject extends Marionette.Controller
 
       project = new Potee.Models.Project project
 
-      @projects_view.addOne project, true
+      @projects_view.scrollTopAndCallback =>
+        @projects_view.addOne project, true
+        @projects_view.scrollToMoment project.started_at
