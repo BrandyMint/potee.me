@@ -25,7 +25,11 @@ class Potee.Controllers.ProjectsVisibility extends Marionette.Controller
       window.projects.each (project) ->
         _.defer ->
           top = project.view.$el.position().top
-          if top > 35 && top < max_top
+          if top >= max_top
+            x = 35 - (top - max_top)
+            x = 0 if x < 0
+            project.view.$el.stop().css opacity: x/35
+          else if top > 35 && top < max_top
             project.view.$el.stop().css opacity: 1
           else if top < 3 || top > max_top
             project.view.$el.stop().css opacity: 0
