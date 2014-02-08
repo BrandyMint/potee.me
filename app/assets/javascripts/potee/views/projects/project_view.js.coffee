@@ -18,13 +18,17 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       PoteeApp.seb.fire 'project:current', undefined if PoteeApp.seb.get('project:current') == @model
 
   events:
-    "click .title" : "title_click"
+    #"click .title" : "title_click"
+    'click'        : 'click'
     #"dblclick .progress .bar" : "add_event"
     "dblclick" : "add_event"
     "mousedown": 'mousedown'
 
-  mousedown: (e) ->
+  click: ->
+    @bounce()
     PoteeApp.seb.fire 'project:current', @model
+
+  mousedown: (e) ->
     if e.target == @$(".ui-resizable-e")[0]
       e.stopPropagation()
 
@@ -174,7 +178,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     Backbone.pEvent.trigger 'savePositions'
 
   bounce: ->
-    @$el.effect('bounce', {times: 5}, 200)
+    @$el.effect 'bounce', {times: 5}, 200
 
   remove: () ->
     @$el.slideUp 'fast', =>
@@ -272,6 +276,10 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       grid: window.dashboard.get('pixels_per_day'),
       minWidth: @_getResizeMinWidth()
       handles: 'e'
+      start: =>
+        _.defer =>
+          PoteeApp.seb.fire 'project:current', @model
+
       stop: (event, ui) =>
         @changeDuration ui.size.width
 
