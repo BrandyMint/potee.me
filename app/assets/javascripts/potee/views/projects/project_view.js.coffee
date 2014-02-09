@@ -18,7 +18,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       PoteeApp.seb.fire 'project:current', undefined if PoteeApp.seb.get('project:current') == @model
 
   events:
-    #"click .title" : "title_click"
+    "click .title.sticky" : "title_click"
     'click'        : 'click'
     #"dblclick .progress .bar" : "add_event"
     "dblclick" : "add_event"
@@ -154,14 +154,14 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   title_click: (e) ->
     PoteeApp.seb.fire 'project:current', @model
     e.stopPropagation()
-    if @titleView.sticky_pos == undefined
-      @edit()
-    else
-      @gotoProjectEdge()
+    #if @titleView.sticky_pos == undefined
+      #@edit()
+    @gotoProjectEdge()
 
   edit: () ->
     @setTitleView 'edit'
 
+  # TODO вынести в controller
   gotoProjectEdge:() ->
     switch @titleView.sticky_pos
       when 'left'
