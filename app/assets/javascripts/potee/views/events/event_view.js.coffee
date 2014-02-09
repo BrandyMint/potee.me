@@ -98,8 +98,8 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @model.project.view.resetResizeMinWidth()
 
     @$el.fadeOut 'fast', =>
-      # TODO curent_form сама должна отвязываться при удалении модели/onclose
-      PoteeApp.vent.trigger 'current_form:set', undefined
+      # Нет смысла от сюда сбрасывать форму, потому что она сама сбросилась на закрытии
+      # вьюхи: PoteeApp.vent.trigger 'current_form:set', undefined
       @remove()
 
   setEditMode: ->

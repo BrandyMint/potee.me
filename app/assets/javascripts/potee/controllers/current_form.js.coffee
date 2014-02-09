@@ -23,6 +23,7 @@ class Potee.Controllers.CurrentForm
 
   setCurrentForm: (form_view) =>
     if form_view == @current_form
+      # TODO Перевсти current_form на PoteeApp.seb
       debugger # exception
       throw 'strange'
 
