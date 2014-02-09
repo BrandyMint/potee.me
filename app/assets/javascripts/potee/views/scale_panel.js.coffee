@@ -15,6 +15,8 @@ class Potee.Views.ScalePanel extends Marionette.ItemView
     @ui.weeks.attr 'href',  "#scale/" + Potee.Controllers.Scaller.prototype.DEFAULT_MONTH_PIXELS_PER_DAY
     @ui.months.attr 'href', "#scale/" + Potee.Controllers.Scaller.prototype.DEFAULT_YEAR_PIXELS_PER_DAY
 
+    @updateCSS window.timeline_view.getScaleMode()
+
   updateCSS: (scale_mode) =>
     @ui.all.removeClass 'active'
     @ui[scale_mode].addClass 'active'

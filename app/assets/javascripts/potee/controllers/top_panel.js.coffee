@@ -14,8 +14,6 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
     @current_project = undefined
 
-    @listenTo @dashboard, 'change:pixels_per_day', @closePanel
-
     PoteeApp.seb.on 'project:current', @changeCurrentProject
 
   changeCurrentProject: (project) =>
@@ -35,6 +33,7 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
     @restoreSavedDOM()
 
   restoreSavedDOM: =>
+    console.log 'restore'
     $('#header_container').empty()
     $('#header_container').append @saved_dom.hide()
     setTimeout =>
