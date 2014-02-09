@@ -12,7 +12,7 @@ class Potee.Controllers.TitleSticker
 
   resetStickyTitles: () =>
     return false unless @projects_view.el
-    console.log 'reset sticky titles'
+    #console.log 'reset sticky titles'
 
     # переменная @model в цикле не достпна
     projects_top_point = @$projects.offset().top
