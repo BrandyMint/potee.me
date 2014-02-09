@@ -29,6 +29,9 @@
   cursor: pointer
 
 .title
+  // Если поставить float:left то появляются артефакты
+  // в месячном режиме
+  //  http://gyazo.com/011076e948e4160b9e6f28a3545b04ef
   top: -24px
   z-index: 120
   // https://www.pivotaltracker.com/story/show/37732619
@@ -45,7 +48,6 @@
   text-transform: uppercase
   letter-spacing: 1px
   overflow: hidden
-  float: left
   cursor: pointer
 
 .sticky
