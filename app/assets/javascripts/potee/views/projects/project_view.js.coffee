@@ -44,8 +44,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     top = @$el.position().top
 
-    console.log moving
-
     if moving is 'up'
       if top < min_top
         action = 'sunset'
@@ -101,7 +99,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     opacity = parseInt @$el.css 'opacity'
 
-    console.log opacity,o,action if @model.id == 302
+    #console.log opacity,o,action if @model.id == 302
 
     if action is 'sunrise'
       return if o<=opacity
@@ -288,9 +286,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     $("#viewport").bind 'click', @_clickOutside
 
     @
-
-  onScroll: (e)=>
-    console.log e
 
   isEditing: ->
     @state != 'show'
