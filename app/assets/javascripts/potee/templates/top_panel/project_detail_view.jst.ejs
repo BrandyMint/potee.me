@@ -1,17 +1,21 @@
-<form id="edit-project" class="title-form project-form" name="project">
-  <div id="color-picker" class="project">
-    <div class="progress">
-      <div class="bar"></div>
+<span class="pull-left">
+  <form id="edit-project" class="title-form project-form" name="project">
+    <div id="color-picker" class="project">
+      <div class="progress">
+        <div class="bar"></div>
+      </div>
     </div>
-  </div>
-  <input type="text" name="title" id="title">
-  <span id="control-buttons" class="hidden">
-    <a href="#" id="submit-btn" disabled class="btn btn-success btn-small" rel="tooltip" title="Change the project">OK</a>
-    <a href="#" id="cancel-btn" class="btn btn-warning btn-small hidden" rel="tooltip" title="Cancel current changes">Cancel</a>
-  </span>
-</form>
-<a href='<%= share_link %>' class='btn btn-info btn-small share-link'>Share link</a>
+    <input type="text" name="title" id="title">
+    <span id="control-buttons" class="hidden">
+      <a href="#" id="submit-btn" disabled class="btn btn-success btn-small" rel="tooltip" title="Change the project">OK</a>
+      <a href="#" id="cancel-btn" class="btn btn-warning btn-small hidden" rel="tooltip" title="Cancel current changes">Cancel</a>
+    </span>
+  </form>
+</span>
+
 <span class="pull-right">
-  <a href="#" id="delete-btn" class="btn btn-danger btn-small" rel="tooltip" title="Delete the project">Delete</a>
-  <a href="#" id="close-btn" class="btn btn-inverse btn-small" rel="tooltip" title="Close project detail menu">X</a>
+  <a href='<%= share_link %>' class='btn btn-info btn-small share-link'>Share link</a>
+  <span class="divider-vertical"></span>
+  <a href="#" id="delete-btn" class="btn btn-link btn-small" rel="tooltip" title="Delete the project">Delete</a>
+  <a href="#" id="close-btn" class="btn btn-link btn-small" rel="tooltip" title="Close project detail menu">X</a>
 </span>
