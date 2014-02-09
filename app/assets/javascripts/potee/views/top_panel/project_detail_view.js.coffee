@@ -25,11 +25,9 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
       attributes: [
         name: 'class',
         observe: "color_index"
-        onGet: 'formatIndexClass'
+        onGet: (val) ->
+          "project-color-" + val
       ]
-
-  formatIndexClass: (val) ->
-    "project-color-" + val
 
   modelEvents:
     "destroy" : "closePanel"
@@ -54,11 +52,9 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
       return
 
     if $el.val() is @model.get "title"
-      $("#submit-btn").attr 'disabled', 'disabled'
-      $("#cancel-btn").addClass "hidden"
+      $("#submit-btn").addClass "hidden"
     else
-      $("#submit-btn").removeAttr 'disabled'
-      $("#cancel-btn").removeClass "hidden"
+      $("#submit-btn").removeClass "hidden"
 
   saveChanges: ->
     # Все знаки переводим в безопасные спецсимволы
@@ -101,8 +97,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
 
     $("#control-buttons").removeClass "hidden"
 
-    unless $el.val() is @model.get "title"
-      $("#cancel-btn").removeClass "hidden"
+    @checkChanges e
 
   hideControlButtons: ->
     setTimeout ->
