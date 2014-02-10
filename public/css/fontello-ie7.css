@@ -1,16 +1,17 @@
-[class^="icon-"],
-[class*=" icon-"] {
+[class^="icon-"], [class*=" icon-"] {
   font-family: 'fontello';
   font-style: normal;
   font-weight: normal;
-/* fix buttons height */
+ 
+  /* fix buttons height */
   line-height: 1em;
-/* you can be more comfortable with increased icons size */
-/* font-zize: 120%; */
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
 }
-
+ 
 .icon-th-list { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2630;&nbsp;'); }
-.icon-ok { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2713;&nbsp;'); }
+.icon-share { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe801;&nbsp;'); }
 .icon-ok-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2714;&nbsp;'); }
 .icon-cancel { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2715;&nbsp;'); }
 .icon-cancel-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2716;&nbsp;'); }
@@ -18,10 +19,12 @@
 .icon-minus-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2796;&nbsp;'); }
 .icon-logout { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe741;&nbsp;'); }
 .icon-facebook-rect { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf301;&nbsp;'); }
-.icon-twitter { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf302;&nbsp;'); }
+.icon-ok { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x2713;&nbsp;'); }
 .icon-twitter-bird { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf303;&nbsp;'); }
 .icon-github { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf308;&nbsp;'); }
 .icon-googleplus-rect { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf309;&nbsp;'); }
 .icon-tumblr-rect { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf310;&nbsp;'); }
 .icon-user { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x1f464;&nbsp;'); }
 .icon-folder { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#x1f4c1;&nbsp;'); }
+.icon-trash { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe729;&nbsp;'); }
+.icon-twitter { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf302;&nbsp;'); }
