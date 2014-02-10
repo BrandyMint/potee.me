@@ -8,3 +8,5 @@ before_script:
   - npm install -g bower
   - bower install
   - psql -c 'create database potee_test' -U postgres
+notifications:
+    email: false
