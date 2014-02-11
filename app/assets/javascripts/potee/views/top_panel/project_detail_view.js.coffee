@@ -11,7 +11,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     submitButton : "#submit-btn"
     cancelButton : "#cancel-btn"
     deleteButton : "#delete-btn"
-    closeButton  : "#close-btn"
+    entireButton : "#entire-btn"
     shareLink    : '#share-link'
 
   bindings:
@@ -40,7 +40,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     "click @ui.submitButton" : "submitForm"
     "click @ui.cancelButton" : "cancelChanges"
     "click @ui.deleteButton" : "deleteProject"
-    "click @ui.closeButton"  : "closePanel"
+    "click @ui.entireButton" : "showEntireProject"
     "submit @ui.form"        : "submitForm"
 
   checkChanges: (e) ->
@@ -109,6 +109,11 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
 
   closePanel: ->
     PoteeApp.seb.fire "project:current", undefined
+
+  showEntireProject: (e) ->
+    e.preventDefault()
+
+    PoteeApp.vent.trigger "project:current:focus", @model, 50
 
   _isEscapeButton: (evt, input) ->
     code = evt.charCode || evt.keyCode
