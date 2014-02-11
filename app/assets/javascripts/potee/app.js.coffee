@@ -87,6 +87,13 @@
       viewport_el: window.viewport
       projects_view: window.projects_view
 
+    new Potee.Controllers.EntireProject
+      $viewport     : window.viewport
+      projects_view : window.projects_view
+      dashboard     : window.dashboard
+      projects      : window.projects
+      scaller        : window.scaller
+
     new Potee.Controllers.TopPanel
       projects_view: window.projects_view
       dashboard:     window.dashboard
