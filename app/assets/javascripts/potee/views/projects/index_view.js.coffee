@@ -44,7 +44,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     some_project.before view.render().$el
     view.bounce() if view.isNew()
 
-    Backbone.pEvent.trigger 'projects:reorder'
+    PoteeApp.trigger 'projects:reorder'
     view
 
   addOne: (project, prepend) =>
@@ -61,6 +61,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     @scrollToCurrentDate()
     @projects.each (project) =>
       project.view.resetScale()
+    PoteeApp.trigger 'projects:reset_scale'
 
   render: ->
     @addAll()

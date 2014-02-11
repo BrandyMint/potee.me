@@ -66,7 +66,7 @@
       projects: window.projects
       timeline_view: window.timeline_view
 
-    new Potee.Controllers.TitleSticker
+    window.ts = new Potee.Controllers.TitleSticker
       projects_view: window.projects_view
 
     new Potee.Controllers.DashboardPersistenter
@@ -132,14 +132,14 @@
     #Potee.history = new Potee.History
     Backbone.history.start()
 
-  App.on "initialize:after", ->
-    $(document).on 'click', '.j-link', (e) ->
-      e.preventDefault()
+  #App.on "initialize:after", ->
+    #$(document).on 'click', '.j-link', (e) ->
+      #e.preventDefault()
 
-      _.defer =>
-        # Снимаем текущий проект хотябы тогда когда по логотипу ждем
-        PoteeApp.seb.fire 'project:current', undefined
-        Backbone.history.navigate $(@).attr('data-fragment'), trigger: true
-      false
+      #_.defer =>
+        ## Снимаем текущий проект хотябы тогда когда по логотипу ждем
+        #PoteeApp.seb.fire 'project:current', undefined
+        #Backbone.history.navigate $(@).attr('data-fragment'), trigger: true
+      #false
 
   App

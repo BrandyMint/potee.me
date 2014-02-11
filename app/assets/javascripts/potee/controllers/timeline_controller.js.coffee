@@ -33,9 +33,7 @@ class Potee.Views.TimelineView extends Backbone.View
     @last_scale = scale
     @resetHeight()
 
-
-    # Делаем через defer, потому что иначе TitleSticker не чухнет
-    _.defer -> PoteeApp.seb.fire 'timeline:scale_mode', scale
+    PoteeApp.seb.fire 'timeline:scale_mode', scale
 
     @
 
