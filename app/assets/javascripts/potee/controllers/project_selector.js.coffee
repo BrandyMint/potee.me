@@ -14,7 +14,6 @@ class Potee.Controllers.ProjectSelector extends Marionette.Controller
   unselectProjectCallback: (project) =>
     if project? and PoteeApp.seb.get('project:current') != @lastSelectedProject
       console.log "!!! Отклоняемый проект не равент текущему"
-      debugger
 
     PoteeApp.seb.fire 'project:current', undefined
 

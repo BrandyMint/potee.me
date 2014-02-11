@@ -3,38 +3,29 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
   initialize: (options) ->
     { @projects_view, @dashboard } = options
 
-    sp = new Potee.Views.ScalePanel
-    sp.render()
+    @$el = $ '#header_container'
 
-    el = '#header_container'
-    # @topPanelRegion = new Marionette.Region el: el
-    @saved_dom = $('#header_container').children().clone true
+    @current_view = undefined
 
-    @$el = $ el
+    @main_header = new Potee.Views.MainHeader
 
-    @current_project = undefined
+    @current_view = @main_header
+    @showCurrent()
 
     PoteeApp.seb.on 'project:current', @changeCurrentProject
 
   changeCurrentProject: (project) =>
-    return if @current_project?.model == project
+    return if @current_view?.model == project
 
-    @current_project?.close()
+    @current_view?.close()
+
     if project?
-      projectDetailInfo = new Potee.Views.TopPanel.ProjectDetailView model: project
-      @$el.html projectDetailInfo.render().$el.hide()
-      projectDetailInfo.$el.fadeIn()
+      @current_view = new Potee.Views.TopPanel.ProjectDetailView model: project
     else
-      @closePanel()
+      @current_view = @main_header
 
-    @current_project = projectDetailInfo
+    @showCurrent()
 
-  closePanel: =>
-    @restoreSavedDOM()
-
-  restoreSavedDOM: =>
-    console.log 'restore'
-    $('#header_container').empty()
-    $('#header_container').append @saved_dom.hide()
-    setTimeout =>
-      @saved_dom.fadeIn()
+  showCurrent: ->
+    @$el.html @current_view.render().$el.hide()
+    @current_view.$el.fadeIn()

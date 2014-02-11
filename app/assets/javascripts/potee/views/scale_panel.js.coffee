@@ -18,5 +18,8 @@ class Potee.Views.ScalePanel extends Marionette.ItemView
     @updateCSS window.timeline_view.getScaleMode()
 
   updateCSS: (scale_mode) =>
+    # Повторно байндим, потому что top_panel при удалении главного меню теряет привязки
+    @unbindUIElements()
+    @bindUIElements()
     @ui.all.removeClass 'active'
     @ui[scale_mode].addClass 'active'
