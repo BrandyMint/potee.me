@@ -4,8 +4,17 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   INACTIVE_OPACITY: 0.4
   template: "templates/projects/project"
   className: 'project'
+
+  events:
+    "click .title.sticky" : "title_click"
+    'click'        : 'click'
+    #"dblclick .progress .bar" : "add_event"
+    "dblclick" : "add_event"
+    "mousedown": 'mousedown'
+
   modelEvents:  ->
     'destroy': @close
+    'change:color_index': @change_color
 
   initialize: ->
     _.extend @, Backbone.Events
@@ -17,12 +26,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     if $(e.target).closest(@$el).length == 0
       PoteeApp.seb.fire 'project:current', undefined if PoteeApp.seb.get('project:current') == @model
 
-  events:
-    "click .title.sticky" : "title_click"
-    'click'        : 'click'
-    #"dblclick .progress .bar" : "add_event"
-    "dblclick" : "add_event"
-    "mousedown": 'mousedown'
+  change_color: ->
+    @render()
+    @bounce()
 
   click: ->
     #@$el.effect 'bounce', {times: 1}, 100

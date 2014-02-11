@@ -11,7 +11,6 @@ class Potee.Models.Project extends Backbone.Model
 
     @setStartEndDates()
 
-    @on 'change:color_index', @change_color
     @on 'remove', @remove_events
 
     @initProjectEventsCollection()
@@ -44,12 +43,6 @@ class Potee.Models.Project extends Backbone.Model
     res['cid'] = @cid
 
     return res
-
-  change_color: (model, color_index)->
-    # TODO Перенести во вьюху
-    if @view
-      @view.render()
-      @view.bounce()
 
   setStartEndDates: ->
     @started_at = moment(@get("started_at")).toDate()
