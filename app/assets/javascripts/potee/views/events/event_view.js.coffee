@@ -17,6 +17,9 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @model.resetDate()
     @model.view = @
 
+  modelEvents:
+    'change:datetime': 'rerender'
+
   events:
     'keyup input'                : 'keyup'
     "click .event-title-el"      : "click"
@@ -129,7 +132,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
 
     Math.round daysOffset + timeOffset
 
-  rerender: ->
+  rerender: =>
     if @model.passed
       @$el.addClass 'passed'
     else

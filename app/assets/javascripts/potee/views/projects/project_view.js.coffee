@@ -6,7 +6,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   className: 'project'
 
   events:
-    "click .title.sticky" : "title_click"
+    "click .title.sticky" : "sticky_title_click"
     'click'        : 'click'
     #"dblclick .progress .bar" : "add_event"
     "dblclick" : "add_event"
@@ -155,7 +155,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     eventElement.effect('bounce', {times: 3}, 150)
     @resetResizeMinWidth()
 
-  title_click: (e) ->
+  sticky_title_click: (e) ->
     PoteeApp.seb.fire 'project:current', @model
     e.stopPropagation()
     #if @titleView.sticky_pos == undefined

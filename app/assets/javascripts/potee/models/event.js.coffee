@@ -20,11 +20,9 @@ class Potee.Models.Event extends Backbone.Model
     @passed = (eventDate).diff(today, 'days') < 0
 
   setDateTime: (datetime) ->
-    @set({"date": datetime.toDate(), "time": datetime.toDate()})
-    @date = @get("date")
-    @time = @get("time")
+    @set date: datetime.toDate(), time: datetime.toDate()
+    @date = @get "date"
+    @time = @get "time"
     @setPassed()
 
-    # TODO Вынести во вьюху. Проблема в том, что собыние разделено на два поля date/time
-    # а перерисовку нужно делать по одному datetime
-    @view.rerender()
+    @trigger 'change:datetime'
