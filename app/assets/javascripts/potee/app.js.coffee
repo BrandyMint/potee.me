@@ -87,6 +87,10 @@
       viewport_el: window.viewport
       projects_view: window.projects_view
 
+    new Potee.Controllers.TodayLink
+      dashboard     : window.dashboard
+      timeline_view : window.timeline_view
+
     new Potee.Controllers.TopPanel
       projects_view: window.projects_view
       dashboard:     window.dashboard
