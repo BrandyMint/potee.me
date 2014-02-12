@@ -9,6 +9,7 @@
 #= require jquery.ui/ui/jquery.ui.resizable
 #= require jquery.ui/ui/jquery.ui.draggable
 #= require jquery.ui/ui/jquery.ui.sortable
+#= require zeroclipboard/ZeroClipboard.js
 #= require async/lib/async
 #= require mousetrap/mousetrap
 #= require underscore/underscore

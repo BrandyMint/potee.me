@@ -115,4 +115,7 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     if code == 27 then true else false
 
   onRender: ->
+    @client = new ZeroClipboard @ui.shareLink
+    @client.on 'complete', (client, args) ->
+      window.alert "The share link is copied to your clipboard"
     @stickit()
