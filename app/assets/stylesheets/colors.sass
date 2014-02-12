@@ -8,15 +8,15 @@ $inactive-color: #666
     .event-bar
       background-color: darken($inactive-color, 10)
     .event-title
-      color: darken($inactive-color, 10)
+      color: $inactive-color
     .project-title
       .title
-        color: darken($inactive-color, 10)
+        color: black
 
   &:hover
     opacity: 1
     .project-bar
-      background-color: lighten($color, 10)
+      background-color: $color
       +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
     .event-bar
       background-color: $event-color
