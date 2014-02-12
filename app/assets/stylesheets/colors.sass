@@ -1,6 +1,29 @@
+$inactive-color: #666
 @mixin project-color($color)
   $text-color: darken($color, 10)
   $event-color: darken($color, 20)
+  &.inactive
+    .project-bar
+      background-color: $inactive-color
+    .event-bar
+      background-color: darken($inactive-color, 10)
+    .event-title
+      color: darken($inactive-color, 10)
+    .project-title
+      .title
+        color: darken($inactive-color, 10)
+
+  &:hover
+    opacity: 1
+    .project-bar
+      background-color: lighten($color, 10)
+      +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
+    .event-bar
+      background-color: $event-color
+
+    .event-title
+      color: $text-color
+
   .project-bar
     cursor: pointer
     background-color: $color
@@ -12,9 +35,7 @@
       bottom: 5px
     +box-shadow(none)
     +border-radius($barHeight/2)
-    &:hover
-      background-color: lighten($color, 10)
-      +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
+
 
   .project-title
     width: auto
@@ -25,13 +46,13 @@
     // Временно отключил
     // width: 250px
     margin-left: 4px
+    &:hover
+      .title.sticky
+        color: $color
     .title
       color: darken($color, 40)
     input
       color: $color
-    &:hover
-      .title.sticky
-        color: $color
 
   .event-bar
     background-color: $event-color

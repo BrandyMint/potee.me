@@ -333,12 +333,16 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   inactive: ->
     @_inactive = true
     _.defer =>
+      @$el.addClass 'inactive'
+      @$el.removeClass 'active'
       @$el.animate { opacity: @INACTIVE_OPACITY },
         duration: 100
 
   active: ->
     @_inactive = false
     _.defer =>
+      @$el.removeClass 'inactive'
+      @$el.addClass 'active'
       @$el.animate { opacity: 1 },
         easing: 'easeOutQuint'
         duration: 300
