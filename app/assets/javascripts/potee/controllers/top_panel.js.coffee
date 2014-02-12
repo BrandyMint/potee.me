@@ -16,8 +16,7 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
     PoteeApp.seb.on 'project:hover', @hover
 
   hover: (project) =>
-    project = PoteeApp.seb.get 'project:current' unless project?
-    @changeCurrentProject project
+    @changeCurrentProject project || PoteeApp.seb.get( 'project:current' )
 
   changeCurrentProject: (project) =>
     return if @current_view?.model == project
