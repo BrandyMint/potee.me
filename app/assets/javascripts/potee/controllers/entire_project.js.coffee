@@ -6,6 +6,8 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
   initialize: (options) ->
     { project_id, @scaller, @$viewport, @dashboard, @projects } = options
 
+    @listenTo @dashboard, 'change:pixels_per_day', -> PoteeApp.seb.fire 'dashboard:entire', undefined
+
     project = @_getProjectByProjectId project_id
     if project?
       PoteeApp.seb.fire 'dashboard:mode', 'entire'
