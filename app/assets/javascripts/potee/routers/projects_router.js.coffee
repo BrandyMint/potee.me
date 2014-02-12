@@ -7,17 +7,12 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     "index"         : "index"
     ".*"            : "index"
     "home"          : "home"
-    "scale/:pixels" : "scale"
     "entire/:id"    : "entire"
 
   home: ->
     console.log 'home'
     PoteeApp.seb.fire 'project:current', undefined
-    @index()
-
-  scale: (pixels) ->
-    console.log 'SCALE'
-    @scaller.setScale parseInt pixels
+    PoteeApp.commands.execute 'gotoToday'
     @index()
 
   entire: (id) ->

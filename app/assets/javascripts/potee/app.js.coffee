@@ -132,6 +132,7 @@
       dashboard: window.dashboard
 
     new Potee.Routers.DashboardRouter
+      scaller:        scaller
       dashboard:      window.dashboard
       dashboard_view: window.dashboard_view  
 
