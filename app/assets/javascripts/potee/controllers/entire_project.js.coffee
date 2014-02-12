@@ -6,10 +6,13 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
   initialize: (options) ->
     { project_id, @scaller, @$viewport, @dashboard, @projects } = options
 
+    PoteeApp.seb.on 'project:current', ->
+      PoteeApp.seb.fire 'dashboard:entire', undefined
+
     project = @_getProjectByProjectId project_id
     if project?
-      PoteeApp.seb.fire 'dashboard:mode', 'entire'
       PoteeApp.seb.fire 'project:current', project
+      PoteeApp.seb.fire 'dashboard:entire', project_id
       @showEntireProject project, @INDENTS, @SPEED
 
   showEntireProject: (project, indents = 100, speed = 1000) =>
