@@ -127,6 +127,10 @@
     window.nav = new Potee.Navigator
       dashboard: window.dashboard
 
+    new Potee.Routers.DashboardRouter
+      dashboard:      window.dashboard
+      dashboard_view: window.dashboard_view  
+
     window.router = new Potee.Routers.ProjectsRouter
       scaller:        scaller
       dashboard:      window.dashboard
