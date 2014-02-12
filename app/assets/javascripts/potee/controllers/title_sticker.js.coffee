@@ -14,7 +14,7 @@ class Potee.Controllers.TitleSticker
 
   resetStickyTitles: () =>
     return false unless @projects_view.el
-    console.log 'reset sticky titles'
+    #console.log 'reset sticky titles'
 
     # переменная @model в цикле не достпна
     projects_top_point = @$projects.offset().top
@@ -23,7 +23,7 @@ class Potee.Controllers.TitleSticker
 
     window.projects.each (project, i) ->
       return unless project.view?.titleView?
-      console.log 'reset sticky titles', i
+      #console.log 'reset sticky titles', i
       project_start_date = project.started_at
       project_title_pos = project.view.titleView.sticky_pos
 
@@ -39,7 +39,7 @@ class Potee.Controllers.TitleSticker
       valid_y_position = project_top_point > projects_top_point and project_bot_point < projects_bot_point
 
       if !@timeline_view.isDateOnDashboard(project.started_at) and valid_y_position
-        console.log 'reset sticky titles 2', i
+        #console.log 'reset sticky titles 2', i
         if project.started_at < current_date
           project.view.stickTitle 'left'
         else
