@@ -60,6 +60,10 @@
       $viewport: window.viewport
       dashboard: window.dashboard
 
+    window.sp = new Potee.Views.ScalePanel
+      timeline_view: window.timeline_view
+    window.sp.render()
+
     window.projects_view = new Potee.Views.Projects.IndexView
       el: $('#projects-index')
       dashboard: window.dashboard

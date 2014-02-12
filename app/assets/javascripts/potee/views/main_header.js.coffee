@@ -5,15 +5,9 @@ class Potee.Views.MainHeader extends Marionette.ItemView
   serializeData: ->
     {}
 
-  onRender: ->
-    # @topPanelRegion = new Marionette.Region el: el
-    @sp = new Potee.Views.ScalePanel el: @$el.find('#scale-nav')
-    @sp.render()
+  #onRender: ->
+    ## @topPanelRegion = new Marionette.Region el: el
+    #_.defer =>
+      #@$el.fadeIn()
 
-    _.defer =>
-      @$el.fadeIn()
-
-    @$el
-
-  onClose: ->
-    @sp.close()
+    #@$el
