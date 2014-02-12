@@ -6,9 +6,11 @@ class Potee.Navigator extends Marionette.Controller
     @listenTo @dashboard, 'change:pixels_per_day', @updateUrl
 
   updateUrl: =>
-    return if PoteeApp.seb.get('dashboard:mode') is 'entire'
-    url = @fragment_pixels()
+    url = @getFragment()
     @history.navigate url
 
-  fragment_pixels: ->
-    '/scale/'+@dashboard.get('pixels_per_day')
+  getFragment: ->
+    if PoteeApp.seb.get('dashboard:entire')?
+      return '/entire/' + PoteeApp.seb.get('dashboard:entire')
+    else
+      '/scale/' + @dashboard.get('pixels_per_day')
