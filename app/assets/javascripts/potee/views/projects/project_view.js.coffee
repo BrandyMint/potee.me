@@ -33,11 +33,10 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @bounce()
 
   hover: ->
-    @excurrent = PoteeApp.seb.get 'project:current'
-    PoteeApp.seb.fire 'project:current', @model
+    PoteeApp.seb.fire 'project:hover', @model
 
   blur: ->
-    PoteeApp.seb.fire 'project:current', @excurrent
+    PoteeApp.seb.fire 'project:hover', null
 
   click: ->
     PoteeApp.seb.fire 'project:current', @model
