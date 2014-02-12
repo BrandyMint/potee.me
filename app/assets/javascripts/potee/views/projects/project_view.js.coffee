@@ -11,6 +11,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     #"dblclick .progress .bar" : "add_event"
     "dblclick" : "add_event"
     "mousedown": 'mousedown'
+    'hover' : 'hover'
+    'mouseleave'  : 'blur'
 
   modelEvents:  ->
     'destroy': @close
@@ -30,8 +32,14 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @render()
     @bounce()
 
+  hover: ->
+    @excurrent = PoteeApp.seb.get 'project:current'
+    PoteeApp.seb.fire 'project:current', @model
+
+  blur: ->
+    PoteeApp.seb.fire 'project:current', @excurrent
+
   click: ->
-    #@$el.effect 'bounce', {times: 1}, 100
     PoteeApp.seb.fire 'project:current', @model
 
   mousedown: (e) ->
