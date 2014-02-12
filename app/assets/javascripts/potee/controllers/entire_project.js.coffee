@@ -6,7 +6,8 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
   initialize: (options) ->
     { project_id, @scaller, @$viewport, @dashboard, @projects } = options
 
-    @listenTo @dashboard, 'change:pixels_per_day', -> PoteeApp.seb.fire 'dashboard:entire', undefined
+    @listenTo @dashboard, 'change:pixels_per_day', @_clear
+    PoteeApp.seb.on 'project:current', @_clear
 
     project = @_getProjectByProjectId project_id
     if project?
@@ -17,13 +18,16 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
   showEntireProject: (project, indents = 100, speed = 1000) =>
     @_scrollToProjectStart project.view, indents, speed
 
+  _clear: ->
+    PoteeApp.seb.fire 'dashboard:mode', null
+
   _scrollToProjectStart: (projectView, indents, speed) ->
     # Первоначальное значение margin-left проекта, до изменения масштаба
     startProjectBar     = projectView.leftMargin() - indents
     projectDuration     = projectView.model.duration()
     initialProjectWidth = projectView.width()
     finalProjectWidth   = @$viewport.width() - indents * 2
-    
+
     unless startProjectBar == @$viewport.scrollLeft()
       @scaller.setScale finalProjectWidth / projectDuration
       # Обновлённое значение отступа Проекта, после изменения масштаба
