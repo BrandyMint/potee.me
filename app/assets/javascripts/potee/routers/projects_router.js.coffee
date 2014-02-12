@@ -9,7 +9,6 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     # иначе не ловится редирект из фейсбука #_=_
     ":some"     : "index"
     "home"      : "home"
-    "aaa"       : 'aaa'
 
     "scale/:pixels" : 'scale'
 
