@@ -12,8 +12,8 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   home: ->
     console.log 'home'
     PoteeApp.seb.fire 'project:current', undefined
-    PoteeApp.commands.execute 'gotoToday'
     @index()
+    PoteeApp.commands.execute 'gotoToday'
 
   entire: (id) ->
     console.log "Displaying entire project with id = #{id}"
