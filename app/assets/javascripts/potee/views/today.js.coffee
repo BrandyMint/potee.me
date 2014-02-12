@@ -5,7 +5,8 @@ class Potee.Views.TodayView extends Backbone.View
   events:
     'click #today-link' : 'click'
 
-  click: ->
+  click: (e) ->
+    e.preventDefault()
     # gotoToday переместить в модель
     PoteeApp.commands.execute 'gotoToday'
 
@@ -15,8 +16,7 @@ class Potee.Views.TodayView extends Backbone.View
     else
       title = 'move to today &rarr;'
 
-    @$el.html "<a href='javascript:void()' id='today-link'>#{title}</a>"
+    @$el.html "<a href='#' id='today-link'>#{title}</a>"
     $('#today-nav').html @$el
 
     @
-

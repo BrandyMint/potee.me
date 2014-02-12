@@ -1,6 +1,6 @@
 class Potee.Controllers.TodayLink
   constructor: (options) ->
-    { @dashboard, @timeline } = options
+    { @dashboard, @timeline_view } = options
     
     @dashboard.on 'change:current_date', @resetTodayLink
 
@@ -8,7 +8,7 @@ class Potee.Controllers.TodayLink
     #@resetTodayLink()
 
   resetTodayLink: =>
-    if @timeline.isDateOnDashboard moment()
+    if @timeline_view.isDateOnDashboard moment()
       return unless @todayLink
       @todayLink.remove()
       @todayLink = undefined
