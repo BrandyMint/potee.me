@@ -32,4 +32,4 @@ class Potee.Controllers.TopPanel extends Marionette.Controller
 
   showCurrent: ->
     @$el.html @current_view.render().$el.hide()
-    @current_view.$el.fadeIn()
+    @current_view.$el.stop().fadeIn()
