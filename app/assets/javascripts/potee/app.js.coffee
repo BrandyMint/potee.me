@@ -116,8 +116,9 @@
     new Potee.Controllers.ProjectSelector
       projects: window.projects
 
-    new Potee.Controllers.ProjectsVisibility
-      dashboard_view: window.dashboard_view
+    # Отключил. Только мешается
+    #new Potee.Controllers.ProjectsVisibility
+      #dashboard_view: window.dashboard_view
 
     window.nav = new Potee.Navigator
       dashboard: window.dashboard
