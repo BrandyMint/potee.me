@@ -15,26 +15,11 @@
   float: left
   height: auto
 
-#color-picker .progress
+#color-picker .project-bar
   margin: 1.5px 3px 3px 0
   padding: 0
   width: 21px
   height: 21px
-
-.progress
-  overflow: visible
-  margin:
-    top: $barHeight
-    bottom: 5px
-  +gradient-vertical(rgba(245,245,245,0.2),rgba(249,249,249,0.2))
-  +transition(all 0.4s ease)
-  +box-shadow(none)
-  &:hover
-    +gradient-vertical(rgba(245,245,245,0.8),rgba(249,249,249,0.8))
-    +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
-  .bar
-    width: 100%
-    +border-radius(4px)
 
 .timeline-item-today
   background: rgba(255,255,255,0.1)
@@ -53,7 +38,7 @@
   .project-#{$i}
     width: 100%/$i
     margin-left: (100% - 100%/$i)/2
-    .progress .bar
+    .project-bar
       background: $pColor
     .project-name
       color: $pColor
@@ -61,7 +46,7 @@
       background-color: lighten($pColor,30%)
 
     &:hover
-      .progress
+      .project-bar
         +box-shadow(0 0 10px 0 $pColor)
       .project-name
         color: lighten($pColor,20%)

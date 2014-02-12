@@ -1,20 +1,30 @@
-$color0: #c0b393
-$color1: #f57969
-$color2: #55bae4
-$color3: #f6ab68
-$color4: #c1d170
-$color5: #ca7777
-$color6: #ab88c4
-
-@mixin progress($color)
-  .progress .bar
-    //+gradient-vertical(#ee5f5b, #c43c35)
-    $lastColor: darken($color, 10)
-    +gradient-vertical($color, $lastColor)
-
+@mixin project-color($color)
   $text-color: darken($color, 10)
   $event-color: darken($color, 20)
+  .project-bar
+    cursor: pointer
+    background-color: $color
+    overflow: visible
+    height: $barHeight
+    width: 100%
+    margin:
+      top: $eventsHeight
+      bottom: 5px
+    +box-shadow(none)
+    +border-radius($barHeight/2)
+    &:hover
+      background-color: lighten($color, 10)
+      +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
+
   .project-title
+    width: auto
+    max-width: 250px
+
+    // Чтобы кнопка 'ok' не выползала на следующую строку
+    // при редактировании в месячном режиме: #154
+    // Временно отключил
+    // width: 250px
+    margin-left: 4px
     .title
       color: darken($color, 40)
     input
@@ -34,16 +44,16 @@ $color6: #ab88c4
       color: $text-color
 
 .project-color-0
-  +progress($color0)
+  +project-color($color0)
 .project-color-1
-  +progress($color1)
+  +project-color($color1)
 .project-color-2
-  +progress($color2)
+  +project-color($color2)
 .project-color-3
-  +progress($color3)
+  +project-color($color3)
 .project-color-4
-  +progress($color4)
+  +project-color($color4)
 .project-color-5
-  +progress($color5)
+  +project-color($color5)
 .project-color-6
-  +progress($color6)
+  +project-color($color6)
