@@ -17,7 +17,7 @@
     = yield(:head)
 
   %body
-    - if controller.is_a? ProjectsController
+    - if controller.is_a?(ProjectsController) || controller.is_a?(ProjectConnectionsController)
       %header
         .navbar.navbar-fixed-top.navbar-inverse#navbar-region
           %nav.navbar-inner
