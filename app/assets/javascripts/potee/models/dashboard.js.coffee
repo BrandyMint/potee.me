@@ -21,4 +21,3 @@ class Potee.Models.Dashboard extends Backbone.Model
 
   getCurrentMoment: ->
     moment @get('current_date')
-

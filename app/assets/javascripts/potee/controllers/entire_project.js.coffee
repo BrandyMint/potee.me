@@ -8,6 +8,7 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
 
     project = @_getProjectByProjectId project_id
     if project?
+      PoteeApp.seb.fire 'dashboard:mode', 'entire'
       PoteeApp.seb.fire 'project:current', project
       @showEntireProject project, @INDENTS, @SPEED
 
