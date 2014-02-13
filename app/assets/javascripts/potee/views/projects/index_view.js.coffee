@@ -24,10 +24,11 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
   scrollToProjectView: (project_view) =>
     return unless project_view?
-    # Почему 80?
+    y = project_view.y() - @$el.parent().height()/2 + project_view.$el.height()
+    console.log 'scroll_to', @scrollTop(),  y
     @$projects.animate
       easing: 'easeOutQuart'
-      scrollTop: project_view.$el.position().top-80
+      scrollTop: y
 
   addAll: =>
     @projects.each (project, i) => @addOne(project, false)

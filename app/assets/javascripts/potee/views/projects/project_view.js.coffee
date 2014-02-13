@@ -2,6 +2,7 @@ Potee.Views.Projects ||= {}
 
 class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   INACTIVE_OPACITY: 0.4
+  PADDING_TOP: 60
   template: "templates/projects/project"
   className: 'project'
 
@@ -30,6 +31,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   change_color: ->
     @render()
     @bounce()
+
+  top: ->
+    @$el.position().top
+
+  y: ->
+    @top() + @$projects.scrollTop() - @PADDING_TOP
 
   hover: ->
     PoteeApp.seb.fire 'project:hover', @model
