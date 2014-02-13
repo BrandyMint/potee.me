@@ -128,6 +128,13 @@
     #new Potee.Controllers.ProjectsVisibility
       #dashboard_view: window.dashboard_view
 
+    window.entire = new Potee.Controllers.EntireProject
+      $viewport     : window.viewport
+      projects_view : window.projects_view
+      dashboard     : window.dashboard
+      projects      : window.projects
+      scaller       : window.scaller
+
     window.nav = new Potee.Navigator
       dashboard: window.dashboard
 
@@ -140,6 +147,7 @@
       scaller:        scaller
       dashboard:      window.dashboard
       dashboard_view: window.dashboard_view
+      entire:         window.entire
 
   App.on "initialize:after", ->
     #Potee.history = new Potee.History

@@ -1,6 +1,6 @@
 class Potee.Routers.ProjectsRouter extends Backbone.Router
   initialize: (options) ->
-    { @dashboard, @dashboard_view, @scaller } = options
+    { @dashboard, @dashboard_view, @scaller, @entire } = options
 
   routes:
     ""              : "index"
@@ -18,14 +18,15 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   entire: (id) ->
     console.log "Displaying entire project with id = #{id}"
     @index()
+    #project_id = parseInt id
 
-    new Potee.Controllers.EntireProject
-      project_id    : parseInt(id)
-      $viewport     : window.viewport
-      projects_view : window.projects_view
-      dashboard     : window.dashboard
-      projects      : window.projects
-      scaller       : window.scaller
+    #@entire.
+    #PoteeApp.seb.fire 'project:current', undefined
+
+
+    #project = @projects.getByProjectId project_id
+    #if project?
+      #@entireProject project
 
   index: ->
     @dashboard_view.show()

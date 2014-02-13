@@ -48,6 +48,9 @@ class Potee.Models.Project extends Backbone.Model
     @started_at = moment(@get("started_at")).toDate()
     @finish_at  = moment(@get("finish_at")).toDate()
 
+  middleMoment: ->
+    moment(@started_at).add @duration()/2, 'days'
+
   duration: ->
     return moment(@finish_at).diff(moment(@started_at), "days") + 1
 

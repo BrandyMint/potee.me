@@ -22,11 +22,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     view
 
-  scrollToProject: (project) =>
-    return unless project?
+  scrollToProjectView: (project_view) =>
+    return unless project_view?
     # Почему 80?
-    $('#projects').scrollTop project.view.$el.postion.top-80
-
+    $('#projects').scrollTop project_view.$el.position.top-80
 
   addAll: =>
     @projects.each (project, i) => @addOne(project, false)

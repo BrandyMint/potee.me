@@ -23,6 +23,10 @@ class Potee.Collections.ProjectsCollection extends Backbone.Collection
         i++
       return 0
 
+  getByProjectId: (project_id) ->
+    # TODO cache
+    @findWhere project_id: project_id
+
 
   # TODO cache
   firstDate: ->

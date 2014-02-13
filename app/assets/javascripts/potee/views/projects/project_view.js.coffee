@@ -39,6 +39,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     PoteeApp.seb.fire 'project:hover', null
 
   click: ->
+    PoteeApp.vent.trigger 'project:click', @model
     PoteeApp.seb.fire 'project:current', @model
 
   mousedown: (e) ->

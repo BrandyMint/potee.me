@@ -4,6 +4,8 @@ class Potee.Navigator extends Marionette.Controller
 
     @history = Backbone.history
     @listenTo @dashboard, 'change:pixels_per_day', @updateUrl
+    PoteeApp.seb.on 'project:current', @updateUrl
+    PoteeApp.seb.on 'dashboard:mode',  @updateUrl
 
   updateUrl: =>
     @history.navigate @fragment()

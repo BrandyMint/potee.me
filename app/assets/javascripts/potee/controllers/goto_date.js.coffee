@@ -15,28 +15,31 @@ class Potee.Controllers.GotoDate
   # Перейти на указанную дату (отцентировать).
   # @param [Date] date
   # - undefined - today
-  moveToDate: (date = undefined, animate = true) =>
+  moveToDate: (date = undefined, options = {animate: true, duration: 500, done: undefined }) =>
     x = @timeline().middleOffsetOf date || moment()
 
     if @$viewport.scrollLeft() == x
       @dashboard.setCurrentDate date
+      options.done?()
       return
 
     window.hs.activateIntentionalScrolling()
 
-    if animate
+    if options.animate
       # TODO Посылать скроллинг в cпециальную очередь?
       @$viewport.stop().animate { scrollLeft: x }, 
-        duration: 500,
+        duration: options.duration,
         easing: 'easeInOutExpo',
         always: =>
           @_scrollingDone date
+          options.done?()
 
         #      setTimeout (=>@programmedScrolling = false), 1200 # оказалось, что это надёжнее callback'a выше
         #setTimeout (=>@resetTodayLink()), 1000
     else
       @$viewport.scrollLeft x
       @_scrollingDone date
+      options.done?()
 
   _scrollingDone: (date)=>
     @dashboard.setCurrentDate date

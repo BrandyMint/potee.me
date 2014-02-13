@@ -4,38 +4,32 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
   SPEED: 1000
 
   initialize: (options) ->
-    { project_id, @scaller, @$viewport, @dashboard, @projects } = options
+    { @scaller, @$viewport, @dashboard, @projects, @projects_view } = options
 
     @listenTo @dashboard, 'change:pixels_per_day', @_clear
     PoteeApp.seb.on 'project:current', @_clear
+    PoteeApp.vent.on 'project:click', @_clickProject
 
-    project = @_getProjectByProjectId project_id
-    if project?
-      PoteeApp.seb.fire 'dashboard:mode', 'entire'
-      PoteeApp.seb.fire 'project:current', project
-      @showEntireProject project, @INDENTS, @SPEED
+  entireProject: (project) ->
+    PoteeApp.seb.fire 'dashboard:mode', 'entire'
+    PoteeApp.seb.fire 'project:current', project
+    @_scrollToProjectStart project.view
 
-  showEntireProject: (project, indents = 100, speed = 1000) =>
-    @_scrollToProjectStart project.view, indents, speed
+  _clickProject: (project) =>
+    if project == PoteeApp.seb.get('project:current')
+      @entireProject project unless PoteeApp.seb.get('dashboard:mode') is 'entire'
 
   _clear: ->
     PoteeApp.seb.fire 'dashboard:mode', null
 
-  _scrollToProjectStart: (projectView, indents, speed) ->
-    # Первоначальное значение margin-left проекта, до изменения масштаба
-    startProjectBar     = projectView.leftMargin() - indents
+  _scrollToProjectStart: (projectView, indents = @INDENTS, speed = @SPEED) ->
     projectDuration     = projectView.model.duration()
-    initialProjectWidth = projectView.width()
     finalProjectWidth   = @$viewport.width() - indents * 2
 
-    unless startProjectBar == @$viewport.scrollLeft()
-      @scaller.setScale finalProjectWidth / projectDuration
-      # Обновлённое значение отступа Проекта, после изменения масштаба
-      startProjectBar = projectView.leftMargin() - indents
+    date = projectView.model.middleMoment()
+    scale = Math.round(finalProjectWidth / projectDuration)
 
-      @$viewport.animate 
-        scrollLeft: startProjectBar, speed
+    PoteeApp.commands.execute 'gotoDate', date, done: => @scaller.setScale scale
 
-  _getProjectByProjectId: (project_id) ->
-    @projects.find (project) -> 
-      return project.get('project_id') == project_id
+    # Если не влезает, при этом нужно отключать hover-ы
+    # @projects_view.scrollToProjectView projectView
