@@ -7,12 +7,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   events:
     "click .title.sticky" : "sticky_title_click"
-    'click'        : 'click'
+    "click"               : "click"
     #"dblclick .progress .bar" : "add_event"
-    "dblclick" : "add_event"
-    "mousedown": 'mousedown'
-    'hover' : 'hover'
-    'mouseleave'  : 'blur'
+    "dblclick"            : "add_event"
+    "mousedown"           : "mousedown"
+    "hover"               : "hover"
+    "mouseleave"          : "blur"
 
   modelEvents:  ->
     'destroy': @close
