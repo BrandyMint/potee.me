@@ -91,10 +91,6 @@
       viewport_el: window.viewport
       projects_view: window.projects_view
 
-    new Potee.Controllers.TodayLink
-      dashboard     : window.dashboard
-      timeline_view : window.timeline_view
-
     new Potee.Controllers.TopPanel
       projects_view: window.projects_view
       dashboard:     window.dashboard
@@ -105,7 +101,11 @@
       $viewport    : window.viewport
       projects_view: window.projects_view
       timeline_view: window.timeline_view
-      dashboard_info: window.dashboard_info
+
+    new Potee.Controllers.TodayLink
+      dashboard      : window.dashboard
+      dashboard_view : window.dashboard_view
+      timeline_view  : window.timeline_view
 
     window.hs = new Potee.Observers.HorizontalScroll
       $viewport: window.viewport
@@ -148,6 +148,7 @@
       dashboard:      window.dashboard
       dashboard_view: window.dashboard_view
       entire:         window.entire
+      projects:       window.projects
 
   App.on "initialize:after", ->
     #Potee.history = new Potee.History

@@ -1,13 +1,13 @@
 class Potee.Routers.ProjectsRouter extends Backbone.Router
   initialize: (options) ->
-    { @dashboard, @dashboard_view, @scaller, @entire } = options
+    { @dashboard, @projects, @dashboard_view, @scaller, @entire } = options
 
   routes:
     ""              : "index"
     "index"         : "index"
     ".*"            : "index"
     "home"          : "home"
-    "entire/:id"    : "entire"
+    "entire/:project_id" : "entire"
 
   home: ->
     console.log 'home'
@@ -15,18 +15,20 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     @index()
     PoteeApp.commands.execute 'gotoToday'
 
-  entire: (id) ->
-    console.log "Displaying entire project with id = #{id}"
-    @index()
-    #project_id = parseInt id
+  entire: (project_id) ->
+    console.log "Displaying entire project with id = #{project_id}"
+    project = @projects.getByProjectId parseInt(project_id)
 
-    #@entire.
-    #PoteeApp.seb.fire 'project:current', undefined
+    if project?
+      unless @dashboard_view._shown
+        # Ставим заранее дату, чтобы dashboard не дергался
+        @dashboard.setCurrentDate project.middleMoment()
+        @dashboard_view.show()
 
-
-    #project = @projects.getByProjectId project_id
-    #if project?
-      #@entireProject project
+      @entire.entireProject project
+    else
+      @index()
+      window.alert "No such project #{project_id}"
 
   index: ->
     @dashboard_view.show()

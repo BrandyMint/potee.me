@@ -11,6 +11,7 @@ class Potee.Navigator extends Marionette.Controller
     @history.navigate @fragment()
 
   fragment: ->
+    console.log 'fragment', PoteeApp.seb.get('dashboard:mode')
     if PoteeApp.seb.get('dashboard:mode') is 'entire'
       'entire/'+PoteeApp.seb.get('project:current').get('project_id')
     else
