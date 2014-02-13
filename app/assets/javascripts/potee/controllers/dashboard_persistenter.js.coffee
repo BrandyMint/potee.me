@@ -32,7 +32,7 @@ class Potee.Controllers.DashboardPersistenter
                     # Возможно от этого можно избавитья есл округлять current_date до минуты на сервере
                     # и на клиенте
 
-  savePositions: () ->
+  savePositions: ->
     neworder = []
     window.projects_view.$el.find('.project').each () ->
       neworder.push $(@).attr("id")

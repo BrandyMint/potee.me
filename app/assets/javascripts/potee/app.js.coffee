@@ -70,9 +70,6 @@
       projects: window.projects
       timeline_view: window.timeline_view
 
-    window.ts = new Potee.Controllers.TitleSticker
-      projects_view: window.projects_view
-
     new Potee.Controllers.DashboardPersistenter
       projects: window.projects
       projects_view: window.projects_view

@@ -7,7 +7,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   className: 'project'
 
   events:
-    "click .title.sticky" : "sticky_title_click"
     "click"               : "click"
     "dblclick"            : "add_event"
     "mousedown"           : "mousedown"
@@ -169,23 +168,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     eventElement.effect('bounce', {times: 3}, 150)
     @resetResizeMinWidth()
 
-  sticky_title_click: (e) ->
-    PoteeApp.seb.fire 'project:current', @model
-    e.stopPropagation()
-    #if @titleView.sticky_pos == undefined
-      #@edit()
-    @gotoProjectEdge()
-
   edit: () ->
     @setTitleView 'edit'
-
-  # TODO вынести в controller
-  gotoProjectEdge:() ->
-    switch @titleView.sticky_pos
-      when 'left'
-        PoteeApp.commands.execute 'gotoDate', @model.finish_at
-      when 'right' 
-        PoteeApp.commands.execute 'gotoDate', @model.started_at
 
   resetModel: (new_model) ->
     @undelegateEvents()
@@ -199,10 +183,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @$el.effect 'bounce', {times: 2}, 200
 
   remove: () ->
-    @$el.slideUp 'fast', =>
-      # Пересчет позиций нужно делать именно после пропадания проекта из DOM-а
-      Backbone.pEvent.trigger 'savePositions'
-      Backbone.pEvent.trigger 'resetStickyTitles'
+    # Пересчет позиций нужно делать именно после пропадания проекта из DOM-а
+    @$el.slideUp 'fast', -> Backbone.pEvent.trigger 'savePositions'
 
     @stopListening()
 
@@ -360,24 +342,3 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       @$el.animate { opacity: 1 },
         easing: 'easeOutQuint'
         duration: 300
-
-  stickTitle: (position = 'left') ->
-    @.titleView.sticky_pos = position
-    top_value = @$el.offset().top + 49 #отступ для каждого title
-    title_dom = @.titleView.$el
-    title_dom.addClass('sticky')
-    title_dom.css
-      top: top_value + 'px'
-
-    switch position
-      when 'left'  then title_dom.css('left','0px')
-      when 'right' then title_dom.css('right','0px')
-
-  unstickTitle: ->
-    @.titleView.sticky_pos = undefined
-    title_dom = @.titleView.$el
-    title_dom.removeClass('sticky')
-    title_dom.css
-      top:  ''
-      left: ''
-      right:''

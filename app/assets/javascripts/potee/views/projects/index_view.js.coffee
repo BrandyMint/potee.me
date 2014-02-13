@@ -18,17 +18,21 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       model : project
 
     @listenTo view, 'before:close', =>
-      @$el.sortable("refresh")
+      @$el.sortable "refresh"
 
     view
 
-  scrollToProjectView: (project_view) =>
-    return unless project_view?
-    y = project_view.y() - @$el.parent().height()/2 + project_view.$el.height()
-    console.log 'scroll_to', @scrollTop(),  y
-    @$projects.animate
-      easing: 'easeOutQuart'
-      scrollTop: y
+  # По высоте проект вообще виден?
+  isProjectViewedVertically: (project) ->
+    # Используем координаты проекта вместо title
+    # потому что иначе при пеерключении из week в day
+    # левые titles сразу не показываются
+    # project_top_point = project.view.titleView.$el.offset().top
+    #
+    project_top_point = project.view.$el.offset().top
+    project_bot_point = project_top_point+project.view.titleView.$el.height() - 45
+
+    project_top_point > @top() and project_bot_point < @bottom()
 
   addAll: =>
     @projects.each (project, i) => @addOne(project, false)
@@ -77,12 +81,20 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       containment: "parent",
       distance: 20,
       opacity: 0.5,
-      update: (event, ui) =>
+      update: (event, ui, b) =>
         Backbone.pEvent.trigger 'savePositions'
+        @resetTitles()
+      sort: =>
+        @resetTitles()
+      change: =>
+        @resetTitles()
 
     @_bindes()
 
     @
+
+  resetTitles: ->
+    @projects.each (project) -> project.view.titleView.reset()
 
   _bindes: ->
     # Корректируем sticky titles при вертикальном скроллинге
@@ -105,12 +117,25 @@ class Potee.Views.Projects.IndexView extends Backbone.View
       @$projects.scrollTop 0 if scrollTop > 0
       callback()
 
+  top: ->
+    @$el.offset().top
+
+  bottom: ->
+    @$el.height() + @top()
 
   scrollTop: (arg = undefined) ->
     if arg?
       @$el.parent().scrollTop arg
     else
       @$el.parent().scrollTop()
+
+  scrollToProjectView: (project_view) =>
+    return unless project_view?
+    y = project_view.y() - @$el.parent().height()/2 + project_view.$el.height()
+    console.log 'scroll_to', @scrollTop(),  y
+    @$projects.animate
+      easing: 'easeOutQuart'
+      scrollTop: y
 
   scrollToLastScrollTop: ->
     @$el.parent().scrollTop @dashboard.get('scroll_top')
