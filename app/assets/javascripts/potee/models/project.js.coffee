@@ -35,7 +35,7 @@ class Potee.Models.Project extends Backbone.Model
     title: 'Your project name'
 
   nextColor: ->
-    @set 'color_index', ( @get('color_index') + 1 ) % 7
+    @set 'color_index', ( @get('color_index') + 1 ) % @MAX_COLOR_INDEX
     @save()
 
   toJSON: ->
