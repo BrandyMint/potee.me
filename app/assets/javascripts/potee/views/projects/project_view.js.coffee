@@ -10,8 +10,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     "click"               : "click"
     "dblclick"            : "add_event"
     "mousedown"           : "mousedown"
-    "hover"               : "hover"
-    "mouseleave"          : "blur"
+    # Отключил, ибо раздражает
+    #"hover"               : "hover"
+    #"mouseleave"          : "blur"
 
   modelEvents:  ->
     'destroy': @close

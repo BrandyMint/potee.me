@@ -8,7 +8,8 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
 
     @listenTo @dashboard, 'change:pixels_per_day', @_clear
     PoteeApp.seb.on 'project:current', @_clear
-    PoteeApp.vent.on 'project:click', @_clickProject
+    # Отключил ибо раздражает
+    #PoteeApp.vent.on 'project:click', @_clickProject
 
     @_deaf = false
 
