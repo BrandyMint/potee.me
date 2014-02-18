@@ -37,9 +37,10 @@ class Potee.Controllers.NewProject
     return false
 
   _newProject: =>
-    @projects_view.scrollTopAndCallback @_buildProject
+    @projects_view.scrollTopAndCallback =>
+      @_buildProject window.dashboard.getCurrentMoment()
 
-  _buildProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) =>
+  _buildProject: (startFrom = window.dashboard.getCurrentMoment(), position = 0) ->
       project = new Potee.Models.Project {}, {}, startFrom
       projects_count = window.projects.length
 
