@@ -70,15 +70,6 @@ class Potee.Views.TimelineView extends Backbone.View
   #
   #
 
-  isProjectFullyOnDashboard: (project) ->
-    @isDateOnDashboard(project.started_at) and @isDateOnDashboard(project.finish_at)
-
-  isDateOnDashboard: (date) ->
-    left = @$viewport.scrollLeft() 
-    right = left + @$viewport.width()
-    offset =  @offsetInPixels date
-    left < offset < right
-
   todayIsPassed: ->
     left = @$viewport.scrollLeft()
     # right = left + @view.viewportWidth()

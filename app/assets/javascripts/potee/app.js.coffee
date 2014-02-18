@@ -99,10 +99,15 @@
       projects_view: window.projects_view
       timeline_view: window.timeline_view
 
+    window.vc = new Potee.Controllers.Viewport
+      $viewport     : window.viewport
+      timeline_view : window.timeline_view
+
     new Potee.Controllers.TodayLink
       dashboard      : window.dashboard
       dashboard_view : window.dashboard_view
       timeline_view  : window.timeline_view
+      vc             : window.vc
 
     window.hs = new Potee.Observers.HorizontalScroll
       $viewport: window.viewport
@@ -121,11 +126,11 @@
     new Potee.Controllers.ProjectSelector
       projects: window.projects
 
-    new Potee.Controllers.ProjectCentrizer
-      dashboard      : window.dashboard
-      projects_view  : window.projects_view
-      timeline_view  : window.timeline_view
-      $viewport      : window.viewport
+    #new Potee.Controllers.ProjectCentrizer
+      #dashboard      : window.dashboard
+      #projects_view  : window.projects_view
+      #timeline_view  : window.timeline_view
+      #$viewport      : window.viewport
 
     # Отключил. Только мешается
     #new Potee.Controllers.ProjectsVisibility

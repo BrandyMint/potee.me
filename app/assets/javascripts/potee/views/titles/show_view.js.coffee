@@ -55,7 +55,7 @@ class Potee.Views.Titles.ShowView extends Marionette.ItemView
       right:''
 
   isViewable: ->
-    !window.timeline_view.isDateOnDashboard(@model.started_at) and
+    !window.vc.isDateOnViewport(@model.started_at) and
       window.projects_view.isProjectViewedVertically(@model)
 
   reset: =>
