@@ -45,6 +45,7 @@ class Potee.Views.Titles.ShowView extends Marionette.ItemView
       when 'right' then title_dom.css('right','0px')
 
   unstickTitle: ->
+    return if @sticky_pos == undefined
     @sticky_pos = undefined
     title_dom = @$el
     title_dom.removeClass 'sticky'
@@ -65,5 +66,4 @@ class Potee.Views.Titles.ShowView extends Marionette.ItemView
       else
         @stickTitle 'right'
     else
-      return if @sticky_pos == undefined
       @unstickTitle()

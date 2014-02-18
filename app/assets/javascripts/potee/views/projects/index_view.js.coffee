@@ -32,7 +32,7 @@ class Potee.Views.Projects.IndexView extends Backbone.View
     project_top_point = project.view.$el.offset().top
     project_bot_point = project_top_point+project.view.titleView.$el.height() - 45
 
-    project_top_point > @top() and project_bot_point < @bottom()
+    project_top_point >= @top() and project_bot_point <= @bottom()
 
   addAll: =>
     @projects.each (project, i) => @addOne(project, false)
