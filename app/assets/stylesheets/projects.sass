@@ -20,6 +20,12 @@
   position: relative
   height: 78px
   padding: 1px 0
+  &.inactive
+    +opacity(0.4)
+    .title.sticky
+      +opacity(1)
+      color: #888
+
 .title
   // Если поставить float:left то появляются артефакты
   // в месячном режиме
@@ -66,3 +72,4 @@ input#title
   margin: 0
   height: auto
   // # color: inherit
+
