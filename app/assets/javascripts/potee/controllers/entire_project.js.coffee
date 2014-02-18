@@ -8,20 +8,20 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
 
     @listenTo @dashboard, 'change:pixels_per_day', @_clear
     PoteeApp.seb.on 'project:current', @_clear
-    # Отключил ибо раздражает
     #PoteeApp.vent.on 'project:click', @_clickProject
+    PoteeApp.vent.on 'project:entire', @entireProject
 
     @_deaf = false
 
-  entireProject: (project, options) ->
+  entireProject: (project, options) =>
     # Сначала устнавливаем проект, потом entire
     PoteeApp.seb.fire 'project:current', project
     PoteeApp.seb.fire 'dashboard:mode', 'entire'
     @_scrollToProjectStart project.view, options
 
-  _clickProject: (project) =>
-    if project == PoteeApp.seb.get('project:current') && !PoteeApp.seb.get('dashboard:mode')
-      @entireProject project
+  #_clickProject: (project) =>
+    #if project == PoteeApp.seb.get('project:current') && !PoteeApp.seb.get('dashboard:mode')
+      #@entireProject project
 
   _clear: ->
     return if @_deaf

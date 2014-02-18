@@ -44,9 +44,16 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   blur: ->
     PoteeApp.seb.fire 'project:hover', null
 
+  isCurrent: ->
+    @model == PoteeApp.seb.get('project:current')
+
   click: ->
-    PoteeApp.vent.trigger 'project:click', @model
+    if @isCurrent() && !PoteeApp.seb.get('dashboard:mode')
+      PoteeApp.vent.trigger 'project:entire', @model
+
     PoteeApp.seb.fire 'project:current', @model
+
+    # PoteeApp.vent.trigger 'project:click', @model
 
   mousedown: (e) ->
     # Отключаем drug стола когда мы ресайзим проект
