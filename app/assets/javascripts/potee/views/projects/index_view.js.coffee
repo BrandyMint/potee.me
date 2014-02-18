@@ -91,6 +91,10 @@ class Potee.Views.Projects.IndexView extends Backbone.View
 
     @_bindes()
 
+    # Нужно сбросить titles. Потому что они рендерились когда
+    # проекты еще не были в DOM-е и не могли рассчитать свои координаты
+    @resetTitles()
+
     @
 
   resetTitles: ->
