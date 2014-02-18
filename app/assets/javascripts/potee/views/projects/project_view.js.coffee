@@ -49,7 +49,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     PoteeApp.seb.fire 'project:current', @model
 
   mousedown: (e) ->
-    if e.target == @$(".ui-resizable-e")[0]
+    # Отключаем drug стола когда мы ресайзим проект
+    if e.target == @$(".ui-resizable-e")[0] || e.target == @$(".ui-resizable-w")[0]
       e.stopPropagation()
 
   correctOpacity: (options = {}) ->
@@ -276,13 +277,17 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @$el.resizable
       grid: window.dashboard.get('pixels_per_day'),
       minWidth: @_getResizeMinWidth()
-      handles: 'e'
-      start: =>
-        _.defer =>
-          PoteeApp.seb.fire 'project:current', @model
+      handles: 'w,e'
+      #start: =>
+        #_.defer =>
+          #PoteeApp.seb.fire 'project:current', @model
 
       stop: (event, ui) =>
-        @changeDuration ui.size.width
+        unless ui.size.width==ui.originalSize.width
+          @changeDuration ui.size.width
+
+        unless ui.position.left==ui.originalPosition.left
+          @changeStart ui.position.left
 
     @correctOpacity()
 
@@ -307,6 +312,9 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       return diff * window.dashboard.get('pixels_per_day')
     else
       return window.dashboard.get 'pixels_per_day'
+
+  changeStart: (left) ->
+    @model.set 'started_at', window.timeline_view.momentAt left
 
   changeDuration: (width) ->
     duration = Math.round(width / window.dashboard.get('pixels_per_day'))

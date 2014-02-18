@@ -12,6 +12,7 @@ class Potee.Models.Project extends Backbone.Model
     @setStartEndDates()
 
     @on 'remove', @remove_events
+    @on 'change', @setStartEndDates
 
     @initProjectEventsCollection()
 
@@ -44,7 +45,7 @@ class Potee.Models.Project extends Backbone.Model
 
     return res
 
-  setStartEndDates: ->
+  setStartEndDates: =>
     @started_at = moment(@get("started_at")).toDate()
     @finish_at  = moment(@get("finish_at")).toDate()
 
