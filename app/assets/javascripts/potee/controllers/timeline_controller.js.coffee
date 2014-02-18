@@ -70,12 +70,6 @@ class Potee.Views.TimelineView extends Backbone.View
   #
   #
 
-  todayIsPassed: ->
-    left = @$viewport.scrollLeft()
-    # right = left + @view.viewportWidth()
-    offset =  @offsetInPixels @today
-    offset < left
-
   # Возвращает дату для указанной позиции в пикселе
   #
   # @param [Integer] x X-координата
@@ -93,9 +87,6 @@ class Potee.Views.TimelineView extends Backbone.View
       add("days", days).
       hours(hours).
       minutes(minutes)
-
-  momentOfTheMiddle: ->
-    @momentAt @$viewport.scrollLeft() + (@$viewport.width() / 2)
 
   # Координаты дня для сердины экрана
   middleOffsetOf: (day) ->

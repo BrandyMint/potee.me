@@ -7,7 +7,7 @@ class Potee.Models.Project extends Backbone.Model
   initialize: (attributes, options, startFrom = moment()) ->
     # TODO Передавать номер дня на котором кликнули создание проекта
     # от него и начинать
-    @initNew startFrom.startOf("day") if @isNew()
+    @initNew startFrom?.startOf("day") || moment() if @isNew()
 
     @setStartEndDates()
 

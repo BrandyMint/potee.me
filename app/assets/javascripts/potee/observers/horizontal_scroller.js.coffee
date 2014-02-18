@@ -1,7 +1,8 @@
 class Potee.Observers.HorizontalScroll
   constructor: (options) ->
-    { @$viewport, @dashboard, @dashboard_view } = options
-    @timeline = window.timeline_view
+    { @vc, @dashboard, @dashboard_view } = options
+
+    @$viewport = @vc.$el
 
     @_unbindes = 0
     @bindScrollingCallback()
@@ -49,4 +50,4 @@ class Potee.Observers.HorizontalScroll
     #
     @dashboard_view.$el.stop() # Прекращаем все анимации
 
-    @dashboard.setCurrentDate @timeline.momentOfTheMiddle()
+    @dashboard.setCurrentDate @vc.momentOfTheMiddle()

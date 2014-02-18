@@ -1,6 +1,6 @@
 class Potee.Views.DashboardView extends Backbone.View
   initialize: (options)->
-    { @viewport, @projects_view, @timeline_view, @dashboard_info } = options
+    { @projects_view, @timeline_view, @dashboard_info } = options
 
     @model.view = @
 
@@ -36,6 +36,11 @@ class Potee.Views.DashboardView extends Backbone.View
       @render()
 
     @_shown = true
+
+    @checkCurrentProject()
+
+  checkCurrentProject: ->
+
 
   _bindes: ->
     $('#dashboard').bind "pinch", (e, obj) => @model.pinch obj.scale

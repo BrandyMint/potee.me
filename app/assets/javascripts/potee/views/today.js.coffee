@@ -10,7 +10,7 @@ class Potee.Views.TodayView extends Backbone.View
     PoteeApp.commands.execute 'gotoToday'
 
   render: ->
-    if window.timeline_view.todayIsPassed()
+    if window.vc.todayIsPassed()
       title = '&larr; move to today'
     else
       title = 'move to today &rarr;'

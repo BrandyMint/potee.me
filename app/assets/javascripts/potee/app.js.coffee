@@ -93,11 +93,10 @@
       dashboard:     window.dashboard
 
     window.dashboard_view = new Potee.Views.DashboardView
-      el: $('#dashboard')
-      model:         window.dashboard
-      $viewport    : window.viewport
-      projects_view: window.projects_view
-      timeline_view: window.timeline_view
+      el            : $('#dashboard')
+      model         : window.dashboard
+      projects_view : window.projects_view
+      timeline_view : window.timeline_view
 
     window.vc = new Potee.Controllers.Viewport
       $viewport     : window.viewport
@@ -110,9 +109,9 @@
       vc             : window.vc
 
     window.hs = new Potee.Observers.HorizontalScroll
-      $viewport: window.viewport
-      dashboard: window.dashboard
-      dashboard_view: window.dashboard_view
+      dashboard      : window.dashboard
+      dashboard_view : window.dashboard_view
+      vc             : window.vc
 
     new Potee.Mediators.Keystrokes
       dashboard_view: window.dashboard_view
