@@ -5,7 +5,7 @@ class Potee.Controllers.ProjectSelector extends Marionette.Controller
   initialize: (options) ->
     { @projects } = options
 
-    @listenTo PoteeApp.vent, 'escape',           @unselectProjectCallback
+    @listenTo PoteeApp.vent, 'escape',         @unselectProjectCallback
 
     @listenTo PoteeApp.seb, 'project:current', @changeCurrentProjectCallback
 

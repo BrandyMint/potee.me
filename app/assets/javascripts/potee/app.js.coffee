@@ -121,6 +121,12 @@
     new Potee.Controllers.ProjectSelector
       projects: window.projects
 
+    new Potee.Controllers.ProjectCentrizer
+      dashboard      : window.dashboard
+      projects_view  : window.projects_view
+      timeline_view  : window.timeline_view
+      $viewport      : window.viewport
+
     # Отключил. Только мешается
     #new Potee.Controllers.ProjectsVisibility
       #dashboard_view: window.dashboard_view

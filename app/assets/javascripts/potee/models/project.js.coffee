@@ -45,6 +45,9 @@ class Potee.Models.Project extends Backbone.Model
 
     return res
 
+  isMomentIn: (m) ->
+    @started_at <= m and m<= @finish_at
+
   setStartEndDates: =>
     @started_at = moment(@get("started_at")).toDate()
     @finish_at  = moment(@get("finish_at")).toDate()
