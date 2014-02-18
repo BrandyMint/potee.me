@@ -12,7 +12,8 @@ class Potee.Navigator extends Marionette.Controller
 
   fragment: ->
     console.log 'fragment', PoteeApp.seb.get('dashboard:mode')
+    f = ''
     if PoteeApp.seb.get('dashboard:mode') is 'entire'
-      'entire/'+PoteeApp.seb.get('project:current').get('project_id')
+      f = 'entire/'+PoteeApp.seb.get('project:current').get('project_id')
     else
-      '/scale/'+@dashboard.get('pixels_per_day')
+      f = 'scale/'+@dashboard.get('pixels_per_day')

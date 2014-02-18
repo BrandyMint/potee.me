@@ -5,9 +5,11 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   routes:
     ""              : "index"
     "index"         : "index"
-    ".*"            : "index"
     "home"          : "home"
     "entire/:project_id" : "entire"
+    "today"         : "today"
+    "scale/:pixels" : "scale"
+    ".*"            : "index"
 
   home: ->
     console.log 'home'
@@ -29,6 +31,15 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     else
       @index()
       window.alert "No such project #{project_id}"
+
+  today: ->
+    @index()
+    PoteeApp.commands.execute 'gotoToday'
+
+  scale: (pixels) ->
+    console.log 'SCALE'
+    @scaller.setScale parseInt pixels
+    @index()
 
   index: ->
     @dashboard_view.show()
