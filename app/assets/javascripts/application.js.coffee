@@ -1,5 +1,5 @@
 #= require hamlcoffee
-#= require jquery
+#= require jquery/jquery.min
 #= require jquery_ujs
 #= require jquery.ui/ui/jquery.ui.core
 #= require jquery.ui/ui/jquery.ui.widget
