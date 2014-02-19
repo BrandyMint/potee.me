@@ -38,9 +38,8 @@ group :assets do
   gem 'execjs'
 end
 
-gem 'rails-backbone'
 gem 'bootstrap-sass'
-
+gem 'rails-backbone'
 gem 'activeadmin'
 gem 'mini_magick'
 gem 'carrierwave'

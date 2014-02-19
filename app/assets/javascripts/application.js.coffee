@@ -1,6 +1,4 @@
-#= require hamlcoffee
 #= require jquery/dist/jquery
-#= require jquery_ujs
 #= require jquery.ui/ui/jquery.ui.core
 #= require jquery.ui/ui/jquery.ui.widget
 #= require jquery.ui/ui/jquery.ui.mouse
@@ -9,6 +7,7 @@
 #= require jquery.ui/ui/jquery.ui.resizable
 #= require jquery.ui/ui/jquery.ui.draggable
 #= require jquery.ui/ui/jquery.ui.sortable
+#= require hamlcoffee
 #= require zeroclipboard/ZeroClipboard.js
 #= require async/lib/async
 #= require mousetrap/mousetrap
@@ -24,8 +23,6 @@
 #= require bootstrap
 #= require potee/app
 #= require jGestures/jgestures
-#= require_tree .
-
 #$ ->
   #$('[rel=tooltip]').tooltip()
   #
