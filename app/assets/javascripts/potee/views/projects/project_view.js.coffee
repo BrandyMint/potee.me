@@ -189,7 +189,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     Backbone.pEvent.trigger 'savePositions'
 
   bounce: ->
-    @$el.effect 'bounce', {times: 2}, 200
+    @$el.finish().effect 'bounce', {times: 2}, 200
 
   remove: () ->
     # Пересчет позиций нужно делать именно после пропадания проекта из DOM-а
