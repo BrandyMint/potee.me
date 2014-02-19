@@ -251,6 +251,29 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @setLeftMargin()
     @resetEventsPositions()
     @setWidth()
+    @setResizing()
+
+  setResizing: ->
+    @$el.resizable
+      grid: window.dashboard.get('pixels_per_day'),
+      minWidth: @_getResizeMinWidth()
+      handles: 'w,e'
+      #start: =>
+        #_.defer =>
+          #PoteeApp.seb.fire 'project:current', @model
+
+      stop: (event, ui) =>
+        unless ui.size.width==ui.originalSize.width
+          # ui.size.width нельзя исползовать, потому что оно without snap
+          @changeDuration ui.element.width()
+
+        unless ui.position.left==ui.originalPosition.left
+          # ui.position.left нельзя использовать, потому что оно without snap
+          @changeStart @leftMargin() + ui.element.position().left
+
+        @model.save()
+
+
 
   resetEventsPositions: =>
     async.each @model.projectEvents, (event) ->
@@ -280,21 +303,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     @setLeftMargin()
     @setWidth()
-
-    @$el.resizable
-      grid: window.dashboard.get('pixels_per_day'),
-      minWidth: @_getResizeMinWidth()
-      handles: 'w,e'
-      #start: =>
-        #_.defer =>
-          #PoteeApp.seb.fire 'project:current', @model
-
-      stop: (event, ui) =>
-        unless ui.size.width==ui.originalSize.width
-          @changeDuration ui.size.width
-
-        unless ui.position.left==ui.originalPosition.left
-          @changeStart ui.position.left
+    @setResizing()
 
     @correctOpacity()
 
@@ -321,11 +330,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       return window.dashboard.get 'pixels_per_day'
 
   changeStart: (left) ->
-    @model.set 'started_at', window.timeline_view.momentAt left
+    @model.set 'started_at', window.timeline_view.momentAt( left ).format("YYYY-MM-DD")
 
   changeDuration: (width) ->
-    duration = Math.round(width / window.dashboard.get('pixels_per_day'))
-    @model.setDuration duration
+    days = Math.round(width / window.dashboard.get('pixels_per_day'))
+    finishAt = moment(@model.started_at).clone().add("days", days - 1)
+    @model.set "finish_at", finishAt.format("YYYY-MM-DD")
 
     totalWidth = @width() + @leftMargin()
     if totalWidth > @dashboard_view.width()

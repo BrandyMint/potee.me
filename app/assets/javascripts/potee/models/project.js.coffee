@@ -13,6 +13,7 @@ class Potee.Models.Project extends Backbone.Model
 
     @on 'remove', @remove_events
     @on 'change', @setStartEndDates
+    @on 'sync',   @setStartEndDates
 
     @initProjectEventsCollection()
 
@@ -57,14 +58,3 @@ class Potee.Models.Project extends Backbone.Model
 
   duration: ->
     return moment(@finish_at).diff(moment(@started_at), "days") + 1
-
-  # duration - количество дней
-  setDuration: (duration) ->
-    finishAt = moment(@started_at).clone().add("days", duration - 1)
-
-    @set("finish_at", finishAt.format("YYYY-MM-DD"))
-    @save()
-    @setStartEndDates()
-
-    return
-
