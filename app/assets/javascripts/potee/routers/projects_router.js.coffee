@@ -37,8 +37,9 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
     PoteeApp.commands.execute 'gotoToday'
 
   scale: (pixels) ->
-    console.log 'SCALE'
-    @scaller.setScale parseInt pixels
+    # Делаем silent: true иначе при первое рендере страницы
+    # с изменением масштаба проекты не отображаются (хотя в доме есть)
+    @scaller.setScale pixels, silent: true
     @index()
 
   index: ->

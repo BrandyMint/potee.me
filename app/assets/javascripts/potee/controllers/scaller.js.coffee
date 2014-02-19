@@ -26,8 +26,8 @@ class Potee.Controllers.Scaller extends Marionette.Controller
   getScale: =>
     @dashboard.get 'pixels_per_day'
 
-  setScale: (pixels) =>
-    @dashboard.set 'pixels_per_day', @_normalizePixelsPerDay(parseInt(pixels))
+  setScale: (pixels, options={}) =>
+    @dashboard.set 'pixels_per_day', @_normalizePixelsPerDay(parseInt(pixels)), options
 
   #
   # PixelsPerDay
