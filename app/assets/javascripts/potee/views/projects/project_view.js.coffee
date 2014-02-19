@@ -48,8 +48,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @model == PoteeApp.seb.get('project:current')
 
   click: ->
-    if @isCurrent() && !PoteeApp.seb.get('dashboard:mode')
-      PoteeApp.vent.trigger 'project:entire', @model
+    # Отключил из-за глюков:
+    # 1 при клике на sticken title небыло перехода
+    # 2 при повторном клике на редактируемом эвенте происходило это событие
+    # 3 при ресайзе иногда срабатывает это событие
+    #if @isCurrent() && !PoteeApp.seb.get('dashboard:mode')
+      #PoteeApp.vent.trigger 'project:entire', @model
 
     PoteeApp.seb.fire 'project:current', @model
 
