@@ -118,6 +118,10 @@ input#title
       background-color: $event-color
     .event-title
       color: $text-color
+  // Скрываем евенты чтобы при левом ресайзе они не пеермещались
+  &.resizing
+    .event
+      display: none
 
   .project-bar
     cursor: pointer
