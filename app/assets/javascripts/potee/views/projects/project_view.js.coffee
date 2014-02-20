@@ -210,6 +210,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   # Project's line left margin (when does it start)
   setLeftMargin: =>
     @$el.css 'margin-left', @leftMargin()
+    @$el.css 'left', 0
     #@$el.offset left: @leftMargin()
 
   #leftOffsetInDays: ->
@@ -256,6 +257,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @setLeftMargin()
     @resetEventsPositions()
     @setWidth()
+
+    # Сбрасываем ибо pisels_per_day изменились
     @setResizing()
 
   isResizing: ->
@@ -266,13 +269,13 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       grid: window.dashboard.get('pixels_per_day'),
       minWidth: @_getResizeMinWidth()
       handles: 'w,e'
-      start: =>
+      start: (event, ui)=>
+        # event.toElement.hasClass 'ui-resizable-w'
         @$el.addClass 'resizing'
         #_.defer =>
           #PoteeApp.seb.fire 'project:current', @model
 
       stop: (event, ui) =>
-        @$el.removeClass 'resizing'
         unless ui.size.width==ui.originalSize.width
           # ui.size.width нельзя исползовать, потому что оно without snap
           @changeDuration ui.element.width()
@@ -280,10 +283,14 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
         unless ui.position.left==ui.originalPosition.left
           # ui.position.left нельзя использовать, потому что оно without snap
           @changeStart @leftMargin() + ui.element.position().left
+          #_.defer => @resetEvents()
 
         @model.save()
 
+        # Удаляем ресайзинг вконце, чтобы евенты появились уже на нужных местах
+        @$el.removeClass 'resizing'
 
+    @resize_widget = @$el.resizable('widget')
 
   resetEventsPositions: =>
     async.each @model.projectEvents, (event) ->
@@ -341,6 +348,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   changeStart: (left) ->
     @model.set 'started_at', window.timeline_view.momentAt( left ).format("YYYY-MM-DD")
+    @setLeftMargin()
 
   changeDuration: (width) ->
     days = Math.round(width / window.dashboard.get('pixels_per_day'))
@@ -350,6 +358,10 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     totalWidth = @width() + @leftMargin()
     if totalWidth > @dashboard_view.width()
       Backbone.pEvent.trigger 'dashboard:stretch'
+
+  resetEvents: ->
+    @model.projectEvents.each (e) ->
+      e.view.render()
 
   renderEvent: (event, x = undefined) ->
     event_view = new Potee.Views.Events.EventView
