@@ -47,18 +47,18 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   isCurrent: ->
     @model == PoteeApp.seb.get('project:current')
 
-  click: ->
+  click: (e) ->
     return if @isResizing()
-    # Отключил из-за глюков:
-    # 1 при клике на sticken title небыло перехода
-    # 2 при повторном клике на редактируемом эвенте происходило это событие
-    # 3 при ресайзе иногда срабатывает это событие
-    #if @isCurrent() && !PoteeApp.seb.get('dashboard:mode')
-      #PoteeApp.vent.trigger 'project:entire', @model
 
     PoteeApp.seb.fire 'project:current', @model
 
-    # PoteeApp.vent.trigger 'project:click', @model
+    # Без шифта не получается, потому что:
+    # 1 при клике на sticken title небыло перехода
+    # 2 при повторном клике на редактируемом эвенте происходило это событие
+    # 3 при ресайзе иногда срабатывает это событие
+    if e.shiftKey
+      PoteeApp.vent.trigger 'project:entire', @model
+
 
   mousedown: (e) ->
     # Отключаем drug стола когда мы ресайзим проект
