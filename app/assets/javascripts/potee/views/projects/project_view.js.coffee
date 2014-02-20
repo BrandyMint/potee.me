@@ -48,6 +48,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @model == PoteeApp.seb.get('project:current')
 
   click: ->
+    return if @isResizing()
     # Отключил из-за глюков:
     # 1 при клике на sticken title небыло перехода
     # 2 при повторном клике на редактируемом эвенте происходило это событие
@@ -257,16 +258,21 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
     @setWidth()
     @setResizing()
 
+  isResizing: ->
+    @$el.hasClass 'resizing'
+
   setResizing: ->
     @$el.resizable
       grid: window.dashboard.get('pixels_per_day'),
       minWidth: @_getResizeMinWidth()
       handles: 'w,e'
-      #start: =>
+      start: =>
+        @$el.addClass 'resizing'
         #_.defer =>
           #PoteeApp.seb.fire 'project:current', @model
 
       stop: (event, ui) =>
+        @$el.removeClass 'resizing'
         unless ui.size.width==ui.originalSize.width
           # ui.size.width нельзя исползовать, потому что оно without snap
           @changeDuration ui.element.width()

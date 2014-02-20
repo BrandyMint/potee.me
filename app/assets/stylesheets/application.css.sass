@@ -6,8 +6,6 @@ $monoFontFamily:        "proxima-nova", Monaco, Menlo, Consolas, "Courier New", 
 
 @import bootstrap_overrided
 @import variables
-@import colors
-@import ui
 @import welcome
 @import events
 @import timeline
@@ -84,6 +82,18 @@ a.connected
     &:hover
       +opacity(1)
       color: #999
+
+.hidden
+  display: none
+
+.clear
+  clear: both
+
+.ellipsis
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  -o-text-overflow: ellipsis
 
 // text pages
 .text-white

@@ -1,4 +1,7 @@
 // Projects
+$inactive-color: #666
+$inactive-title-color: #999
+
 
 #projects
   position: absolute
@@ -20,11 +23,23 @@
   position: relative
   height: 78px
   padding: 1px 0
-  &.inactive
-    +opacity(0.4)
-    .title.sticky
-      +opacity(1)
-      color: #888
+
+#color-picker
+  display: inline-block
+  float: left
+  height: auto
+
+#color-picker .project-bar
+  margin: 1.5px 3px 3px 0
+  padding: 0
+  width: 21px
+  height: 21px
+
+.timeline-item-today
+  background: rgba(255,255,255,0.1)
+
+.project-name
+  +transition(color 0.4s ease)
 
 .title
   // Если поставить float:left то появляются артефакты
@@ -73,3 +88,98 @@ input#title
   height: auto
   // # color: inherit
 
+@mixin project-color($color)
+  $text-color: darken($color, 10)
+  $event-color: darken($color, 20)
+  &.inactive
+    +opacity(0.4)
+    .project-bar
+      background-color: $inactive-color
+    .event-bar
+      background-color: darken($inactive-color, 10)
+    .event-title
+      +opacity(1)
+      color: $inactive-title-color
+    .project-title
+      .title
+        +opacity(1)
+        color: black
+        &.sticky
+          color: $inactive-title-color
+
+  &:hover
+    +opacity( 1 )
+    .project-title
+      .title.sticky
+        color: $color
+    .project-bar
+      background-color: $color
+      +box-shadow(0 0 10px 0 rgba(13,144,209,0.7))
+    .event-bar
+      background-color: $event-color
+    .event-title
+      color: $text-color
+
+  .project-bar
+    cursor: pointer
+    background-color: $color
+    overflow: visible
+    height: $barHeight
+    width: 100%
+    margin:
+      top: $eventsHeight
+      bottom: 5px
+    +box-shadow(none)
+    +border-radius($barHeight/2)
+
+
+  .project-title
+    width: auto
+    max-width: 250px
+
+    // Чтобы кнопка 'ok' не выползала на следующую строку
+    // при редактировании в месячном режиме: #154
+    // Временно отключил
+    // width: 250px
+    margin-left: 4px
+    .title
+      color: darken($color, 40)
+    input
+      color: $color
+
+  .event-bar
+    background-color: $event-color
+
+  .event-title
+    color: $text-color
+
+  .event-form
+    input
+      color: $text-color
+
+
+// Не понял как вытащить цвет
+//@for $i from 0 through 9
+  //.project-color-#{$i}
+    //+project-color($color0)
+
+.project-color-0
+  +project-color($color0)
+.project-color-1
+  +project-color($color1)
+.project-color-2
+  +project-color($color2)
+.project-color-3
+  +project-color($color3)
+.project-color-4
+  +project-color($color4)
+.project-color-5
+  +project-color($color5)
+.project-color-6
+  +project-color($color6)
+.project-color-7
+  +project-color($color7)
+.project-color-8
+  +project-color($color8)
+.project-color-9
+  +project-color($color9)
