@@ -15,6 +15,8 @@ class Potee.Views.TopPanel.ProjectDetailView extends Marionette.ItemView
     shareLink    : '#share-link'
 
   bindings:
+    '#started_at': 'started_at'
+    '#finish_at': 'finish_at'
     "#title":
       observe: "title"
       updateModel: false

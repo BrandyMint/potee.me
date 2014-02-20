@@ -10,9 +10,14 @@
     </span>
   </form>
 </span>
+<ul class="nav pull-left">
+  <li><span id='started_at'/></li>
+  <li>&nbsp;</li>
+  <li><span id='finish_at'/></li>
+</ul>
 
 <ul class="nav pull-right">
-  <li> <a href="#entire/<%= project_id %>">Entire</a> </li>
+  <li><a href="#entire/<%= project_id %>">Entire</a> </li>
   <li><a href="<%= share_link %>" class="icon" id="share-link" title='Copy share link to the clipboard'
     data-clipboard-text='<%= share_link %>'><i class="icon-share"></i></a></li>
   <li class="divider-vertical"/>
