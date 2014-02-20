@@ -1,6 +1,6 @@
 class Potee.Controllers.EntireProject extends Marionette.Controller
 
-  INDENTS: 50
+  INDENTS: 200
   SPEED: 1000
 
   initialize: (options) ->
@@ -30,7 +30,7 @@ class Potee.Controllers.EntireProject extends Marionette.Controller
 
   _scrollToProjectStart: (projectView, options={done: undefined}) ->
     projectDuration     = projectView.model.duration()
-    finalProjectWidth   = @$viewport.width() - @INDENTS * 2
+    finalProjectWidth   = @$viewport.width() - Math.max(@INDENTS, @dashboard.get('pixels_per_day')*2)
 
     date = projectView.model.middleMoment()
     scale = Math.round(finalProjectWidth / projectDuration)
