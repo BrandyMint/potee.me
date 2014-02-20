@@ -2,7 +2,6 @@
 $inactive-color: #666
 $inactive-title-color: #999
 
-
 #projects
   position: absolute
   bottom: 40px
@@ -19,11 +18,6 @@ $inactive-title-color: #999
 #projects-bottom-pad
   padding-top: 120px // Чтобы снизу проектов было пустое место
 
-.project
-  position: relative
-  height: 78px
-  padding: 1px 0
-
 #color-picker
   display: inline-block
   float: left
@@ -37,6 +31,11 @@ $inactive-title-color: #999
 
 .timeline-item-today
   background: rgba(255,255,255,0.1)
+
+.project
+  position: relative
+  height: 78px
+  padding: 1px 0
 
 .project-name
   +transition(color 0.4s ease)
@@ -107,7 +106,7 @@ input#title
         &.sticky
           color: $inactive-title-color
 
-  &:hover
+  &:hover, &.resizing
     +opacity( 1 )
     .project-title
       .title.sticky
