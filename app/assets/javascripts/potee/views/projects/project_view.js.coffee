@@ -209,9 +209,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
   # Project's line left margin (when does it start)
   setLeftMargin: =>
-    @$el.css 'margin-left', @leftMargin()
-    @$el.css 'left', 0
-    #@$el.offset left: @leftMargin()
+    #@$el.css 'margin-left', @leftMargin()
+    @$el.css 'left', @leftMargin()
 
   #leftOffsetInDays: ->
     #moment(@model.started_at).diff window.timeline_view.startDate(), "days"
@@ -282,7 +281,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
         unless ui.position.left==ui.originalPosition.left
           # ui.position.left нельзя использовать, потому что оно without snap
-          @changeStart @leftMargin() + ui.element.position().left
+          @changeStart ui.element.position().left
           #_.defer => @resetEvents()
 
         @model.save()
@@ -347,8 +346,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       return window.dashboard.get 'pixels_per_day'
 
   changeStart: (left) ->
-    @model.set 'started_at', window.timeline_view.momentAt( left ).format("YYYY-MM-DD")
-    @setLeftMargin()
+    date = window.timeline_view.momentAt( left )
+    if date.toDate().getTime()>= @model.finish_at.getTime()
+      console.log moment(date).toDate(), 'more then', moment(@model.finish_at).toDate()
+    else
+      @model.set 'started_at', date.format 'YYYY-MM-DD'
+      @setLeftMargin()
 
   changeDuration: (width) ->
     days = Math.round(width / window.dashboard.get('pixels_per_day'))
