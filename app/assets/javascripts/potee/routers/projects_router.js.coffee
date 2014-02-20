@@ -39,7 +39,7 @@ class Potee.Routers.ProjectsRouter extends Backbone.Router
   scale: (pixels) ->
     # Делаем silent: true иначе при первое рендере страницы
     # с изменением масштаба проекты не отображаются (хотя в доме есть)
-    @scaller.setScale pixels, silent: true
+    @scaller.setScale pixels, silent: !@dashboard_view._shown
     @index()
 
   index: ->
