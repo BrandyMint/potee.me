@@ -15,6 +15,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     { @project, @project_view, @x } = options
     @mode = "show"
     @model.resetDate()
+    @listenTo @project, 'change:started_at', @rerender
     @model.view = @
 
   modelEvents:
@@ -120,10 +121,13 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @render()
     @$el.css 'z-index', DEFAULT_Z_INDEX
 
+  projectStartedAt: ->
+    moment(@project.get('started_at'))
+
   calcOffset: ->
     d           = window.dashboard
     columnWidth = d.get 'pixels_per_day'
-    diff        = moment(@model.date).diff(moment(@model.project_started_at), "days")
+    diff        = moment(@model.date).diff(@projectStartedAt(), "days")
     daysOffset  = diff * columnWidth
 
     time        = moment @model.time
@@ -137,6 +141,8 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
       @$el.addClass 'passed'
     else
       @$el.removeClass 'passed'
+
+    @setPosition()
 
   saveDateTime: (offset) ->
     @model.setDateTime window.timeline_view.momentAt offset

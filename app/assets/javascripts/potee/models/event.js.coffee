@@ -8,7 +8,6 @@ class Potee.Models.Event extends Backbone.Model
     @date = moment(@get("date")).toDate()
     @time = moment(@get("time")).toDate()
     @project = @collection.project
-    @project_started_at = @collection.project.started_at
     @setPassed()
 
   resetDate: ->
