@@ -53,10 +53,10 @@ class Potee.Views.TimelineView extends Backbone.View
     @currentView.columnWidth()
 
   startDate: ->
-    @currentView.startDate()
+    @currentView.startDate
 
   finishDate: ->
-    @currentView.finishDate()
+    @currentView.finishDate
 
   #getDateOfDay: (day) ->
     #@currentView.getDateOfDay day

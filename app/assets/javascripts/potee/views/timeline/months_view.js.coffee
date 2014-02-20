@@ -6,17 +6,11 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   className: 'months'
   columnRate: 30
 
-  startDate: ->
-    @_startDate().subtract 'months', @halfColumns()
-
-  _startDate: ->
-    moment(@projects.firstDate()).clone().startOf("month")
-
-  finishDate: ->
-    @_finishDate().add "months",  @halfColumns()
-
-  _finishDate: ->
-    moment(@projects.lastDate()).clone().endOf("month")
+  _setDates: ->
+    @_startDate  = moment(@projects.firstDate()).clone().startOf("month")
+    @_finishDate = moment(@projects.lastDate()).clone().endOf("month")
+    @startDate   = moment(@_startDate).subtract 'months', @halfColumns()
+    @finishDate  = moment(@_finishDate).add "months",  @halfColumns()
 
   columns_count: ->
     @months().length
@@ -25,9 +19,7 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
   months: () ->
     months = []
 
-    #months.push @month(@startDate(), @startDate().endOf('month'))
-
-    range = moment().range @startDate(), @finishDate()
+    range = moment().range @startDate, @finishDate
     # @finishDate().add("months", 1).startOf("month"),
     #                       @startDate().subtract("months", 1).endOf("month")
 
@@ -38,10 +30,10 @@ class Potee.Views.Timelines.MonthsView extends Potee.Views.Timelines.BaseView
       # Алгорит range.by работает таким образом, что последнее переданное
       # значение может быть больше конца интервала, поэтому приходится это
       # проверять.
-      if end < @finishDate()
+      if end < @finishDate
         months.push @month(start, end)
 
-    months.push @month(@finishDate().startOf('month'), @finishDate().add("days", 1))
+    months.push @month(@finishDate.startOf('month'), moment(@finishDate).add("days", 1))
 
     return months
 

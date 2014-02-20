@@ -6,8 +6,12 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
   initialize: (options) ->
     @projects = window.projects
 
+    # Даты начала и конца нужно устновить заранее так как они могут
+    # скакать при ресайзе начала самого раннего проекта
+    @_setDates()
+
   _extraColumns: ->
-    offset = @offsetInPixels @_finishDate()
+    offset = @offsetInPixels @_finishDate
     extra_columns_pixels = window.viewport.width() - offset
 
     minimal = @columnWidth() * 1.5
@@ -24,7 +28,7 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
   #getDateOfDay: (day) ->
      #moment(@projects.firstDate()).clone().add('days', day - @spanDays) #.toDate()
   totalWidth: ->
-    days_width = (@finishDate().diff( @startDate(), 'days' ) + 1) * window.dashboard.get('pixels_per_day')
+    days_width = (moment(@finishDate).diff( @startDate, 'days' ) + 1) * window.dashboard.get('pixels_per_day')
     width = @columnWidth() * @columns_count()
 
     console.log "!!! Ширина в днях #{days_width} не равна ширине в пикселях #{width}" unless days_width == width
@@ -44,11 +48,11 @@ class Potee.Views.Timelines.BaseView extends Marionette.ItemView
 
   # Для месяцев придется переопределить
   offsetInPixels: (day) ->
-    minutes = moment(day).diff @startDate(), 'minutes'
+    minutes = moment(day).diff @startDate, 'minutes'
     (window.dashboard.get('pixels_per_day') * minutes) / (24*60)
 
   dateRange: ->
-    moment().range @startDate(), @finishDate()
+    moment().range @startDate, @finishDate
 
   columnWidth: ->
     window.dashboard.get('pixels_per_day') * @columnRate

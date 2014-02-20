@@ -167,7 +167,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
         containment: "parent",
         distance: '3',
         stop: (jsEvent, ui) =>
-          @saveDateTime ui.position.left + @project_view.leftMargin()
+          @saveDateTime ui.position.left + @project_view.left()
 
           # Таким способом мы избавляемся от клика, который автоматически
           # приходит после отпускания мышки при драггинге
