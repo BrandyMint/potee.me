@@ -278,20 +278,19 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
         # расайзим влево?
         if event.originalEvent.originalEvent.target.classList.contains('ui-resizable-w')
           @resize_widget.options.minWidth = @_getWResizeMinWidth()
+          @_resiging_direction = 'w'
         else if event.originalEvent.originalEvent.target.classList.contains('ui-resizable-e')
           @resize_widget.options.minWidth = @_getEResizeMinWidth()
+          @_resiging_direction = 'e'
         else
           console.log "!!!! Странный ресайт", event.originalEvent.originalEvent
 
       resize: (event, ui)=>
-        #if false && ui.position.left > @_maximalStartPosition
-          #@setWidth()
-          ## @$el.width ui.originalSize.width
-          #@$el.css 'left', @_maximalStartPosition
-          #ui.position.left = @_maximalStartPosition
-          ## @setLeftMargin()
-        @changeStart ui.element.position().left
-        @resetEvents()
+        if @_resiging_direction == 'w'
+          @changeStart ui.element.position().left
+          @resetEvents()
+        else if @_resiging_direction == 'e'
+          @changeDuration ui.element.width()
 
       stop: (event, ui) =>
         unless ui.position.left==ui.originalPosition.left
@@ -306,6 +305,7 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
           # ui.size.width нельзя исползовать, потому что оно without snap
           @changeDuration ui.element.width()
 
+        @_resiging_direction = null
         @model.save()
 
     @resize_widget = @$el.data 'ui-resizable'
