@@ -1,5 +1,3 @@
-Potee.Views.Timelines ||= {}
-
 class Potee.Views.Timelines.DaysView extends Potee.Views.Timelines.BaseView
   template: "templates/timelines/days"
 

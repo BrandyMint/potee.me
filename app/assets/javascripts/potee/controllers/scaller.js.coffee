@@ -5,9 +5,9 @@ class Potee.Controllers.Scaller extends Marionette.Controller
   DEFAULT_WEEK_PIXELS_PER_DAY:  150
 
   START_MONTH_PIXELS_PER_DAY:   30  # start month if less
-  DEFAULT_MONTH_PIXELS_PER_DAY: 20
+  DEFAULT_MONTH_PIXELS_PER_DAY: 30
 
-  START_YEAR_PIXELS_PER_DAY:    15
+  START_YEAR_PIXELS_PER_DAY:    29
   DEFAULT_YEAR_PIXELS_PER_DAY:  10
 
   initialize: (options) ->

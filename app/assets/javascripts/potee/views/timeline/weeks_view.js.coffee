@@ -1,6 +1,6 @@
-Potee.Views.Timelines ||= {}
+Potee.Views.Timelines.WeeksView = Potee.Views.Timelines.DaysView
 
-class Potee.Views.Timelines.WeeksView extends Potee.Views.Timelines.BaseView
+class Potee.Views.Timelines.FakeWeeksView extends Potee.Views.Timelines.BaseView
   template: "templates/timelines/weeks"
 
   className: 'weeks'
