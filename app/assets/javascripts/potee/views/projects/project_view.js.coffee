@@ -311,13 +311,12 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   _respectSize: (data, event) =>
     @saved_cb.call @resize_widget, data, event
     # @resize_widget._vBoundaries.minWidth = 500
+    # TODO
     if data.left > @_maximalStartPosition
-      debugger
       data.left = @_maximalStartPosition
       @resize_widget.position.left = data.left
 
     data
-
 
   resetEventsPositions: =>
     async.each @model.projectEvents, (event) ->
