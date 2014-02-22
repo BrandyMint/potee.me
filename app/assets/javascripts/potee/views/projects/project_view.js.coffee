@@ -180,7 +180,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
     eventElement = @renderEvent event, x
     eventElement.effect('bounce', {times: 3}, 150)
-    @resetResizeMinWidth()
+    # Отключил, потомучто ирина устанавливается в момент старта
+    #@resetResizeMinWidth()
 
   edit: () ->
     @setTitleView 'edit'
@@ -270,8 +271,18 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   setResizing: ->
     @$el.resizable
       grid: window.dashboard.get('pixels_per_day'),
-      minWidth: @_getResizeMinWidth()
+      #minWidth: @_getEResizeMinWidth()
       handles: 'w,e'
+      start: (event, ui)=>
+
+        # расайзим влево?
+        if event.originalEvent.originalEvent.target.classList.contains('ui-resizable-w')
+          @resize_widget.options.minWidth = @_getWResizeMinWidth()
+        else if event.originalEvent.originalEvent.target.classList.contains('ui-resizable-e')
+          @resize_widget.options.minWidth = @_getEResizeMinWidth()
+        else
+          console.log "!!!! Странный ресайт", event.originalEvent.originalEvent
+
       resize: (event, ui)=>
         #if false && ui.position.left > @_maximalStartPosition
           #@setWidth()
@@ -281,10 +292,6 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
           ## @setLeftMargin()
         @changeStart ui.element.position().left
         @resetEvents()
-
-      start: (event, ui)=>
-        @_maximalStartPosition = @_getMaximalStart()
-        #@$el.addClass 'resizing'
 
       stop: (event, ui) =>
         unless ui.position.left==ui.originalPosition.left
@@ -301,22 +308,19 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
 
         @model.save()
 
-        # Удаляем ресайзинг вконце, чтобы евенты появились уже на нужных местах
-        @$el.removeClass 'resizing'
-
     @resize_widget = @$el.data 'ui-resizable'
     @saved_cb ||= @resize_widget._respectSize
     # @resize_widget._respectSize = @_respectSize
 
-  _respectSize: (data, event) =>
-    @saved_cb.call @resize_widget, data, event
-    # @resize_widget._vBoundaries.minWidth = 500
-    # TODO
-    if data.left > @_maximalStartPosition
-      data.left = @_maximalStartPosition
-      @resize_widget.position.left = data.left
+  #_respectSize: (data, event) =>
+    #@saved_cb.call @resize_widget, data, event
+    ## @resize_widget._vBoundaries.minWidth = 500
+    ## TODO
+    #if data.left > @_maximalStartPosition
+      #data.left = @_maximalStartPosition
+      #@resize_widget.position.left = data.left
 
-    data
+    #data
 
   resetEventsPositions: =>
     async.each @model.projectEvents, (event) ->
@@ -360,8 +364,8 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
   isNew: ->
     @model.isNew()
 
-  resetResizeMinWidth: ->
-    @$el.resizable "option", "minWidth", @_getResizeMinWidth()
+  #resetResizeMinWidth: ->
+    #@$el.resizable "option", "minWidth", @_getEResizeMinWidth()
 
   _getMaximalStart: ->
     if @model.projectEvents.length > 0
@@ -370,7 +374,16 @@ class Potee.Views.Projects.ProjectView extends Marionette.ItemView
       date = moment(@model.finish_at).subtract 'days', 1
     window.timeline_view.offsetInPixels date
 
-  _getResizeMinWidth: ->
+  _getWResizeMinWidth: ->
+    if @model.projectEvents.length > 0
+      date = ( @model.projectEvents.min (num) -> num.date).date
+      date = moment(date).clone().subtract "days", 1
+      diff = moment(@model.finish_at).diff date, 'days'
+      return diff * window.dashboard.get('pixels_per_day')
+    else
+      return window.dashboard.get 'pixels_per_day'
+
+  _getEResizeMinWidth: ->
     if @model.projectEvents.length > 0
       date = ( @model.projectEvents.max (num) -> num.date).date
       date = moment(date).clone().add("days", 1)

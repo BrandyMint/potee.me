@@ -80,7 +80,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @model.save(null,
       success : (model) =>
         @model = model
-        @model.project.view.resetResizeMinWidth()
+        #@model.project.view.resetResizeMinWidth()
         @setShowMode()
     )
 
@@ -99,7 +99,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     e.preventDefault()
     e.stopPropagation()
     @model.collection.remove @model
-    @model.project.view.resetResizeMinWidth()
+    #@model.project.view.resetResizeMinWidth()
 
     @$el.fadeOut 'fast', =>
       # Нет смысла от сюда сбрасывать форму, потому что она сама сбросилась на закрытии
@@ -149,7 +149,7 @@ class Potee.Views.Events.EventView extends Marionette.ItemView
     @model.save()
 
     # TODO вынести на change:date_time в project_view
-    @project_view.resetResizeMinWidth()
+    #@project_view.resetResizeMinWidth()
 
   setPosition: (x = undefined) ->
     @$el.css 'left', x || @calcOffset()
