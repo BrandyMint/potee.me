@@ -9,7 +9,7 @@ set :application, "potee.me"
 
 #Репозиторий
 set :scm, :git
-set :repository,  "git@github.com:BrandyMint/Potee.git"
+set :repository,  "git@github.com:BrandyMint/potee.me.git"
 set :deploy_via, :remote_cache
 set :scm_verbose, true
 #Используем локальные ключи для приватных репозиториев на github
