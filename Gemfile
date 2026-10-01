@@ -48,7 +48,7 @@ group :development do
   # Deploy with Capistrano
   gem 'capistrano'
   gem 'capistrano_colors'
-  gem 'capistrano-recipes0', '>= 1.1.0', :git => 'git://github.com/BrandyMint/capistrano-recipes0.git'
+  gem 'capistrano-recipes0', '>= 1.1.0', :git => 'https://github.com/BrandyMint/capistrano-recipes0.git'
   gem 'guard'
   gem 'guard-rspec'
   gem 'rb-fsevent', :require => false

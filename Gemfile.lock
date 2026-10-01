@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/BrandyMint/capistrano-recipes0.git
+  remote: https://github.com/BrandyMint/capistrano-recipes0.git
   revision: fea3e8e3f4f02cf2b4ab190bef09632c66581229
   specs:
     capistrano-recipes0 (1.1.3)

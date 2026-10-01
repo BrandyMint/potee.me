@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:9.6
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: potee
+      POSTGRES_PASSWORD: potee
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    platform: linux/amd64
+    environment:
+      DB_HOST: db
+      DB_USER: potee
+      DB_PASSWORD: potee
+    volumes:
+      - .:/app
+      - bundle:/bundle
+    ports:
+      - "3007:3007"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+  bundle:

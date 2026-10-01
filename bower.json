@@ -4,8 +4,8 @@
   "dependencies": {
     "jquery": "~2.1.0",
     "jquery-outside-events": "latest",
-    "momentjs": "latest",
-    "jGestures": "git://github.com/BrandyMint/jGestures",
+    "momentjs": "~2.5.1",
+    "jGestures": "https://github.com/BrandyMint/jGestures.git",
     "moment-range": "~1.0.0",
     "underscore": "~1.5.2",
     "backbone": "~1.1.0",
