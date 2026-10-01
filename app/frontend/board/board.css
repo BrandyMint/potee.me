@@ -545,13 +545,69 @@ button {
   color: var(--danger);
 }
 
-.title-form input {
-  width: 220px;
-}
-
 .event-form input {
   width: 200px;
   font-size: 15px;
+}
+
+/* New project draft: typed right on the bar, marked by a breathing dashed outline. */
+
+.project.draft .project-bar {
+  outline: 1.5px dashed color-mix(in srgb, var(--c) 70%, white);
+  outline-offset: 3px;
+  animation: draft-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes draft-breathe {
+  50% { outline-color: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project.draft .project-bar { animation: none; }
+}
+
+.project.draft .project-title {
+  position: static;
+  width: 100%;
+  padding: 0;
+}
+
+.draft-title {
+  width: 100%;
+  margin: 0;
+}
+
+.draft-title input {
+  width: 100%;
+  height: var(--bar-height);
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: color-mix(in srgb, var(--c) 40%, black);
+  caret-color: color-mix(in srgb, var(--c) 25%, black);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.draft-title input::placeholder {
+  color: color-mix(in srgb, var(--c) 65%, black);
+}
+
+.draft-hint {
+  position: absolute;
+  top: calc(var(--bar-top) + var(--bar-height) + 6px);
+  padding-left: 10px;
+  color: #888;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.draft-hint kbd {
+  color: #bbb;
+  font: inherit;
 }
 
 /* Events */

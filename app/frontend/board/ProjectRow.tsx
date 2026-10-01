@@ -110,6 +110,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
   if (inactive) classes.push("inactive");
   if (resize) classes.push("resizing");
   if (reorderY !== null) classes.push("reordering");
+  if (draft) classes.push("draft");
 
   return (
     <div
@@ -131,6 +132,11 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
         </div>
         <div className="resize-handle finish" onPointerDown={onEdgePointerDown("finish")} />
       </div>
+      {draft && (
+        <div className="draft-hint" style={{ left }}>
+          <kbd>Enter</kbd> — {t().draftSave} · <kbd>Esc</kbd> — {t().draftCancel}
+        </div>
+      )}
       {card.events.map((event) => (
         <EventMarker key={event.id} projectId={card.id} event={event} minX={minX} maxX={maxX} closest={event.id === closest} />
       ))}
@@ -161,18 +167,16 @@ function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onC
     if (event.key === "Escape") onCancel();
   };
   return (
-    <form className="inline-form title-form" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
+    <form className="draft-title" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
       <input
         aria-label={t().projectTitle}
         placeholder={t().projectPlaceholder}
         value={title}
         autoFocus
+        enterKeyHint="done"
         onChange={(event) => setTitle(event.target.value)}
         onKeyDown={onKeyDown}
       />
-      <button type="button" className="inline-button" onMouseDown={(e) => e.preventDefault()} onClick={() => onSave(title)}>
-        {t().save}
-      </button>
     </form>
   );
 }
