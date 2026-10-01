@@ -5,6 +5,7 @@ doc_function: canonical
 purpose: "Фиксирует устойчивый пользовательский сценарий Potee: изменение порядка проектов."
 derived_from:
   - ../product/context.md
+  - ../prd/PRD-001-potee.md
 status: draft
 audience: humans_and_agents
 must_not_define:
@@ -55,7 +56,7 @@ must_not_define:
 
 | Upstream / Downstream | References |
 | --- | --- |
-| PRD | `none` |
+| PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
