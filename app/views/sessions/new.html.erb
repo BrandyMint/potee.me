@@ -1,0 +1,12 @@
+<% content_for :title, "Log in — Potee" %>
+<h1>Log in</h1>
+<p class="lead">Projects you made before logging in will be added to your account.</p>
+<%= form_with url: login_path do |form| %>
+  <%= form.label :email do %>Email<%= form.email_field :email, value: @email, required: true, autofocus: true, autocomplete: "username" %><% end %>
+  <%= form.label :password do %>Password<%= form.password_field :password, required: true, autocomplete: "current-password" %><% end %>
+  <%= form.button "Log in" %>
+<% end %>
+<div class="links">
+  <%= link_to "Sign up", signup_path %>
+  <%= link_to "Forgot password?", new_password_path %>
+</div>

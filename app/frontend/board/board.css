@@ -114,10 +114,29 @@ button {
   font-size: 15px;
 }
 
-.signup-hint {
-  margin-left: auto;
-  color: #f57969;
+.account {
+  margin: 0 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   font-size: 13px;
+}
+
+.account a {
+  color: #999;
+  text-decoration: none;
+}
+
+.account a:hover {
+  color: #fff;
+}
+
+.account .signup-hint {
+  color: #f57969;
+}
+
+.account-email {
+  color: #aaa;
 }
 
 .project-panel {
@@ -487,4 +506,33 @@ button {
   color: #fff;
   cursor: pointer;
   font-size: 18px;
+}
+
+/* Server flash messages (after sign-up, password change) */
+
+.board-flash {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  z-index: 100;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.board-flash .flash {
+  padding: 10px 16px;
+  border-radius: 6px;
+  background: #1f3a46;
+  color: #bfe6f5;
+  font-size: 14px;
+  animation: flash-out 0.5s ease-in 4s forwards;
+}
+
+.board-flash .flash.alert {
+  background: #4a2322;
+  color: #f8b4ad;
+}
+
+@keyframes flash-out {
+  to { opacity: 0; visibility: hidden; }
 }

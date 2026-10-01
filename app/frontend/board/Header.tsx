@@ -48,14 +48,12 @@ export function Header({ onNewProject }: { onNewProject: () => void }) {
         {selected && isSaved(selected.id) ? (
           <ProjectPanel key={selected.id} card={selected} />
         ) : (
-          <>
-            <button type="button" className="new-project" onClick={onNewProject}>
-              + New project
-            </button>
-            {user.anonymous && <span className="signup-hint">Sign up to save your projects</span>}
-          </>
+          <button type="button" className="new-project" onClick={onNewProject}>
+            + New project
+          </button>
         )}
       </div>
+      <Account email={user.email} anonymous={user.anonymous} />
     </header>
   );
 }
@@ -124,5 +122,27 @@ function ProjectPanel({ card }: { card: Card }) {
         ×
       </button>
     </div>
+  );
+}
+
+function Account({ email, anonymous }: { email: string | null; anonymous: boolean }) {
+  if (anonymous) {
+    return (
+      <nav className="account">
+        <a className="signup-hint" href="/signup">
+          Sign up to save your projects
+        </a>
+        <a href="/login">Log in</a>
+      </nav>
+    );
+  }
+  const token = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? "";
+  return (
+    <form className="account" method="post" action="/logout">
+      <input type="hidden" name="_method" value="delete" />
+      <input type="hidden" name="authenticity_token" value={token} />
+      <span className="account-email">{email}</span>
+      <button type="submit">Log out</button>
+    </form>
   );
 }

@@ -14,16 +14,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "authentications", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "provider", null: false
-    t.string "uid", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["provider", "uid"], name: "index_authentications_on_provider_and_uid", unique: true
-    t.index ["user_id"], name: "index_authentications_on_user_id"
-  end
-
   create_table "dashboards", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "pixels_per_day", default: 150, null: false
@@ -64,22 +54,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_000001) do
     t.string "title", limit: 255, null: false
     t.date "started_on", null: false
     t.date "finished_on", null: false
+    t.boolean "demo", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_projects_on_owner_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
     t.string "email"
-    t.string "avatar_url"
+    t.string "password_digest"
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email"
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  add_foreign_key "authentications", "users"
   add_foreign_key "dashboards", "users"
   add_foreign_key "events", "projects"
   add_foreign_key "project_connections", "projects"

@@ -8,6 +8,12 @@ class Project < ApplicationRecord
   validates :title, :started_on, :finished_on, presence: true
   validate :finish_not_before_start
 
+  # Sample projects stop being samples once the user touches them; untouched
+  # ones are dropped when an anonymous board is merged into an account.
+  def edited!
+    update_column(:demo, false) if demo?
+  end
+
   private
 
   def finish_not_before_start

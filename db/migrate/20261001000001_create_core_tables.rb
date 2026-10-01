@@ -1,21 +1,13 @@
 class CreateCoreTables < ActiveRecord::Migration[8.1]
   def change
+    # A user without an email is anonymous: the board works before sign-up.
     create_table :users do |t|
-      t.string :name
       t.string :email
-      t.string :avatar_url
+      t.string :password_digest
       t.datetime :last_seen_at
       t.timestamps
     end
-    add_index :users, :email
-
-    create_table :authentications do |t|
-      t.references :user, null: false, foreign_key: true
-      t.string :provider, null: false
-      t.string :uid, null: false
-      t.timestamps
-    end
-    add_index :authentications, %i[provider uid], unique: true
+    add_index :users, :email, unique: true
 
     create_table :dashboards do |t|
       t.references :user, null: false, foreign_key: true, index: { unique: true }
@@ -30,6 +22,8 @@ class CreateCoreTables < ActiveRecord::Migration[8.1]
       t.string :title, null: false, limit: 255
       t.date :started_on, null: false
       t.date :finished_on, null: false
+      # Sample projects of a new board; cleared once the user changes them.
+      t.boolean :demo, null: false, default: false
       t.timestamps
     end
 

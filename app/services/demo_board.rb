@@ -23,7 +23,8 @@ class DemoBoard
       project = @user.owned_projects.create!(
         title: spec[:title],
         started_on: @today + spec[:start],
-        finished_on: @today + spec[:finish]
+        finished_on: @today + spec[:finish],
+        demo: true
       )
       project.project_connections.create!(user: @user, position: index, color_index: index + 1)
       spec[:events].each do |title, day|

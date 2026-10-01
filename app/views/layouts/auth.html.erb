@@ -1,0 +1,14 @@
+<% content_for :body_class, "auth-page" %>
+<% content_for :head do %>
+  <%= vite_stylesheet_tag "pages.css" %>
+<% end %>
+<% content_for :page do %>
+  <main class="auth">
+    <%= link_to root_path, class: "auth-logo" do %>
+      <%= image_tag "logo.png", alt: "Potee" %>
+    <% end %>
+    <%= render "shared/flash" %>
+    <%= yield %>
+  </main>
+<% end %>
+<%= render template: "layouts/application" %>

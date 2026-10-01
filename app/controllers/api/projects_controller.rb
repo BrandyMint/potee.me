@@ -21,6 +21,7 @@ module Api
     def update
       attributes = params.expect(project: PROJECT_FIELDS + CONNECTION_FIELDS)
       ProjectConnection.transaction do
+        connection.project.edited!
         connection.project.update!(attributes.slice(*PROJECT_FIELDS)) if attributes.slice(*PROJECT_FIELDS).present?
         connection.update!(attributes.slice(*CONNECTION_FIELDS)) if attributes.slice(*CONNECTION_FIELDS).present?
       end

@@ -5,6 +5,13 @@ Rails.application.routes.draw do
   get "projects" => "boards#show", as: :board
   get "share/:share_key" => "shares#show", as: :share
 
+  get "signup" => "registrations#new"
+  post "signup" => "registrations#create"
+  get "login" => "sessions#new"
+  post "login" => "sessions#create"
+  delete "logout" => "sessions#destroy"
+  resources :passwords, param: :token, only: %i[new create edit update]
+
   namespace :api, defaults: { format: :json } do
     resource :board, only: :show
     resource :dashboard, only: :update
@@ -13,5 +20,13 @@ Rails.application.routes.draw do
       resources :events, only: :create
     end
     resources :events, only: %i[update destroy]
+  end
+
+  namespace :admin do
+    resources :users
+    resources :projects
+    resources :events
+    resources :project_connections
+    root to: "users#index"
   end
 end

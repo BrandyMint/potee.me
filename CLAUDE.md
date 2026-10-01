@@ -26,7 +26,10 @@ E2E tests share the dev database; each test gets a fresh browser context, which 
 
 ### Backend
 
-- **No sign-up required.** `CurrentUser` (controller concern) creates an anonymous `User` on the first visit to the board or the API, fills it with `DemoBoard` sample projects and keeps the id in the session. The landing page (`/`) does not create users.
+- **No sign-up required.** `CurrentUser` (controller concern) creates an anonymous `User` (no email) on the first visit to the board or the API, fills it with `DemoBoard` sample projects and keeps the id in the session cookie (1 year). The landing page and auth pages only read `session_user` and never create users.
+- **Accounts are email + password** (`has_secure_password`, Rails reset tokens; no OAuth yet). Sign-up (`RegistrationsController`) turns the current anonymous user into the account, so the board is kept. Log-in from an anonymous board runs `BoardMerge`: the visitor's projects move into the account, except untouched samples (`projects.demo`, cleared by `Project#edited!` on any API change or when someone joins by link), then the anonymous user is deleted. Password reset letters go through `PasswordsMailer` (dev: written to `tmp/mails`; production: SMTP from `SMTP_*` env, not sent without `SMTP_ADDRESS`).
+- `rake potee:cleanup_anonymous [DAYS=30]` deletes anonymous users not seen for that long.
+- **Admin**: Administrate at `/admin` (`app/dashboards`, `app/controllers/admin`). Access only for logged-in users whose email is in `ADMIN_EMAILS` (comma separated); everyone else gets 404.
 - **Project vs. ProjectConnection** is the key concept. `Project` holds shared data (title, `started_on`/`finished_on`, owner, events). `ProjectConnection` is one user's row on their board: `position`, `color_index` (10 colours) and `share_key`. The API addresses board rows by **connection id**, not project id — `ProjectConnection#as_card_json` is the row shape the frontend receives.
 - Sharing: `/share/:share_key` adds the project to the visitor's board (idempotent) and redirects to `/projects?focus=<connection id>`. Deleting the owner's row deletes the project; other users only lose their row.
 - `Dashboard` stores per-user view state: `pixels_per_day` (zoom, 4–200), `current_date` (moment in the middle of the screen), `scroll_top`.

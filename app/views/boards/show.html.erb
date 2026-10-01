@@ -4,5 +4,6 @@
   <%= vite_typescript_tag "board.tsx" %>
 <% end %>
 
+<div class="board-flash"><%= render "shared/flash" %></div>
 <div id="board-root"></div>
 <script type="application/json" id="board-data"><%= raw json_escape(@board.to_json) %></script>

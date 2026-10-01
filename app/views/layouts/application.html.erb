@@ -12,6 +12,6 @@
   </head>
 
   <body class="<%= content_for(:body_class) %>">
-    <%= yield %>
+    <%= content_for?(:page) ? yield(:page) : yield %>
   </body>
 </html>

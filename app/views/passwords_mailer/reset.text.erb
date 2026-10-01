@@ -1,0 +1,6 @@
+Someone asked to reset the password of your Potee account (<%= @user.email %>).
+
+Set a new password here (the link works for 15 minutes):
+<%= edit_password_url(@user.password_reset_token) %>
+
+If it wasn't you, just ignore this letter.

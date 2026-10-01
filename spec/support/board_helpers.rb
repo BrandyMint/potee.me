@@ -12,4 +12,5 @@ end
 
 RSpec.configure do |config|
   config.include BoardHelpers, type: :request
+  config.include ActiveJob::TestHelper, type: :request
 end

@@ -1,0 +1,158 @@
+:root {
+  color-scheme: dark;
+}
+
+body.welcome-page,
+body.auth-page {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #1d1d1d url("../images/black-Linen.png");
+  color: #aaa;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.welcome {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 16px;
+}
+
+.welcome h1 {
+  margin: 0 0 8px;
+  color: #f57969;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.welcome p {
+  margin: 0 0 24px;
+  font-size: 20px;
+}
+
+.welcome-start {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 20px;
+  background: #5abce4;
+  color: #10242c;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.welcome-start:hover {
+  background: #71c3e2;
+}
+
+@media (max-width: 640px) {
+  .welcome {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.welcome-login {
+  margin-left: 16px;
+  color: #999;
+}
+
+.welcome-login:hover {
+  color: #fff;
+}
+
+/* Sign up, log in, password reset */
+
+.auth {
+  width: min(360px, 100% - 32px);
+}
+
+.auth-logo {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.auth-logo img {
+  height: 36px;
+}
+
+.auth h1 {
+  margin: 0 0 8px;
+  color: #ddd;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.auth .lead {
+  margin: 0 0 24px;
+  font-size: 14px;
+}
+
+.auth form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.auth input {
+  padding: 10px 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #111;
+  color: #eee;
+  font-size: 16px;
+}
+
+.auth input:focus {
+  border-color: #5abce4;
+  outline: none;
+}
+
+.auth button {
+  margin-top: 8px;
+  padding: 10px;
+  border: 0;
+  border-radius: 20px;
+  background: #5abce4;
+  color: #10242c;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.auth button:hover {
+  background: #71c3e2;
+}
+
+.auth .links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.auth a {
+  color: #5abce4;
+}
+
+.flash {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.flash.alert {
+  background: #4a2322;
+  color: #f8b4ad;
+}
+
+.flash.notice {
+  background: #1f3a46;
+  color: #bfe6f5;
+}

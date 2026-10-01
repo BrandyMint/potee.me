@@ -34,5 +34,5 @@ export interface DashboardState {
 export interface BoardData {
   projects: Card[];
   dashboard: DashboardState;
-  user: { name: string; anonymous: boolean };
+  user: { email: string | null; anonymous: boolean };
 }
