@@ -1,42 +1,36 @@
 Potee
 =====
 
-Simple visual project management.
+Simple visual project management. New way of planning: now you know what is the
+next step in your projects.
 
-![travis build state](https://api.travis-ci.org/BrandyMint/Potee.png)
+https://potee.pismenny.ru
 
-New way of planning.
-Now you know what is the next step in your projects.
+Projects are bars on a zoomable timeline, events are milestones on them. No
+sign-up needed: the first visit creates a board with a few sample projects.
+Shortcuts are listed in [Keystrokes.md](Keystrokes.md).
 
-http://potee.me/ or http://potee.ru/
+Development
+-----------
 
-"Follow us" facebook-page http://www.facebook.com/Potee.Me
+Ruby 3.4, Node 24, Docker (for PostgreSQL) and `port-selector`.
 
-![original post](http://f.cl.ly/items/323N272z1T0k230W441K/100.png)
+```sh
+bundle install && npm install
+bin/dev
+```
 
-Exec
-
-1. create config/database.yml
-2. add config/settings/development.yml
-3. bundle
-4. bower install
-5. rails s
+Tests: `bundle exec rspec`, `npm test`, `npm run typecheck`, and with `bin/dev`
+running `BASE_URL="http://127.0.0.1:$(port-selector --name web)" npm run e2e`.
 
 Background
-==========
+----------
 
-Original post - http://blog.genue.ru/post/14561230063
-
-Rumble site of the project - http://potee.r12.railsrumble.com/
-
-Links
-=====
-
-* [errbit](http://errbit.brandymint.ru/apps/507bc454687d9c7dde000106)
+Started at Rails Rumble 2012 (original post: http://blog.genue.ru/post/14561230063),
+rewritten in 2026 on Rails 8 and React. The history of the original version is
+in [Changes.md](Changes.md).
 
 License
-========
+-------
 
 [Attribution-Share Alike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0/)
-
-![Creative Commons](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)

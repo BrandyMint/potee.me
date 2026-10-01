@@ -1,8 +1,0 @@
-%li.auth.auth-twitter
-  - if current_user.authentications.where(:provider=>:twitter).exists?
-    = link_to 'javascript: void()', :class => :connected do
-      %i.icon-twitter-bird
-  - else
-    = link_to '/auth/twitter?force_login=true' do
-      %i.icon-twitter-bird
-

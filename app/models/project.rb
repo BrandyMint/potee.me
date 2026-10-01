@@ -1,31 +1,18 @@
-# -*- coding: utf-8 -*-
-class Project < ActiveRecord::Base
-  # attr_accessible :title, :started_at, :finish_at, :color_index
-  # FIX
-  attr_protected :secret
-
-  # default_scope order :started_at
-
-  belongs_to :owner, class_name: 'User'
-  has_many :events, dependent: :destroy
+class Project < ApplicationRecord
+  belongs_to :owner, class_name: "User"
+  has_many :events, -> { order(:at) }, dependent: :destroy, inverse_of: :project
   has_many :project_connections, dependent: :destroy
 
-  before_validation do
-    self.started_at ||= Date.today()
-    self.finish_at ||= self.started_at + 1.months
-    self.title = self.title[0..254] unless self.title.blank?
+  normalizes :title, with: ->(title) { title.to_s.strip.first(255) }
+
+  validates :title, :started_on, :finished_on, presence: true
+  validate :finish_not_before_start
+
+  private
+
+  def finish_not_before_start
+    return if started_on.blank? || finished_on.blank?
+
+    errors.add(:finished_on, "must not be before the start") if finished_on < started_on
   end
-
-  validates :title, presence: true
-  validates :started_at, presence: true
-  validates :owner_id, presence: true
-
-  def self.find_by_share_key key
-    ProjectConnection.where(share_key: key).first!.project
-  end
-
-  def as_json *args
-    serializable_hash ProjectPresentation
-  end
-
 end

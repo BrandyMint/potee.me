@@ -1,20 +1,14 @@
-# -*- coding: utf-8 -*-
-class Event < ActiveRecord::Base
-  # FIX
-  attr_protected :secret
-  # attr_accessible :title, :date, :time, :project_id
-  #
-  default_scope order('date').order('time')
+# A milestone inside a project, placed at a moment on the timeline.
+class Event < ApplicationRecord
+  belongs_to :project, touch: true
 
-  belongs_to :project
+  normalizes :title, with: ->(title) { title.to_s.strip.first(255) }
 
-  before_validation do
-    self.title ||= 'Some event'
-    self.title = self.title[0..254]
+  attribute :title, default: "Some event"
+
+  validates :title, :at, presence: true
+
+  def as_card_json
+    { id:, title:, at: at.iso8601 }
   end
-
-  validates :date, presence: true
-  validates :time, presence: true
-  validates :project, presence: true
-
 end

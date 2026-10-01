@@ -1,57 +1,86 @@
-# Rails 3.2 needs Ruby 2.0, which only builds against OpenSSL 1.0,
-# so Ruby is compiled on Debian jessie (amd64).
-FROM --platform=linux/amd64 debian/eol:jessie AS ruby
+# syntax=docker/dockerfile:1
+# check=error=true
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      build-essential autoconf bison git curl ca-certificates \
-      libssl-dev libreadline-dev zlib1g-dev libyaml-dev libffi-dev \
-      libxml2-dev libxslt1-dev libpq-dev postgresql-client \
-      imagemagick nodejs \
-    && ln -sf /usr/bin/nodejs /usr/local/bin/node \
-    && rm -rf /var/lib/apt/lists/*
+# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
+# docker build -t potee .
+# docker run -d -p 80:3000 -e RAILS_MASTER_KEY=<value from config/master.key> --name potee potee
 
-# jessie's CA bundle is too old for rubygems.org / github.com
-ADD https://curl.se/ca/cacert.pem /etc/ssl/certs/cacert-modern.pem
-ENV SSL_CERT_FILE=/etc/ssl/certs/cacert-modern.pem \
-    GIT_SSL_CAINFO=/etc/ssl/certs/cacert-modern.pem \
-    CURL_CA_BUNDLE=/etc/ssl/certs/cacert-modern.pem
+# For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
-ARG RUBY_VERSION=2.0.0-p648
-ADD https://cache.ruby-lang.org/pub/ruby/2.0/ruby-${RUBY_VERSION}.tar.gz /tmp/ruby.tar.gz
-RUN cd /tmp && tar xzf ruby.tar.gz && cd ruby-${RUBY_VERSION} \
-    && ./configure --prefix=/usr/local --disable-install-doc --enable-shared \
-    && make -j"$(nproc)" && make install \
-    && cd / && rm -rf /tmp/ruby*
+# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
+ARG RUBY_VERSION=3.4.10
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
-RUN gem install bundler -v 1.17.3 --no-rdoc --no-ri
-ENV BUNDLE_PATH=/bundle LANG=C.UTF-8
-WORKDIR /app
+# Rails app lives here
+WORKDIR /rails
 
-# Development: code and gems are mounted from the host (docker-compose.yml).
-FROM ruby AS dev
-ENV BUNDLE_WITHOUT=production:daemons
-EXPOSE 3007
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3007"]
+# Install base packages
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 postgresql-client && \
+    ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Frontend libraries (Bower)
-FROM node:18-bookworm-slim AS bower
-RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
-    && rm -rf /var/lib/apt/lists/* && npm install -g bower
-WORKDIR /app
-COPY bower.json .bowerrc ./
-RUN bower install --allow-root --config.interactive=false
+# Set production environment variables and enable jemalloc for reduced memory usage and latency.
+ENV RAILS_ENV="production" \
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development:test" \
+    LD_PRELOAD="/usr/local/lib/libjemalloc.so"
 
-# Production image
-FROM ruby AS production
-ENV RAILS_ENV=production RACK_ENV=production \
-    BUNDLE_WITHOUT=development:test:daemons:production \
-    RAILS_SERVE_STATIC_FILES=1 RAILS_LOG_TO_STDOUT=1 PORT=3000
+# Throw-away build stage to reduce size of final image
+FROM base AS build
+
+# Install packages needed to build gems
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install application gems
+# Node is only needed to build the Vite frontend
+COPY --from=docker.io/library/node:24-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=docker.io/library/node:24-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs 4 --retry 3
+
+RUN bundle install && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
+    bundle exec bootsnap precompile -j 1 --gemfile
+
+# Copy application code
 COPY . .
-COPY --from=bower /app/vendor/assets/components vendor/assets/components
-RUN cp config/database.yml.example config/database.yml \
-    && bundle exec rake assets:precompile
+
+# Precompile bootsnap code for faster boot times.
+# -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
+RUN bundle exec bootsnap precompile -j 1 app/ lib/
+
+# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN rm -rf node_modules
+
+
+
+
+# Final stage for app image
+FROM base
+
+# Run and own only the runtime files as a non-root user for security
+RUN groupadd --system --gid 1000 rails && \
+    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
+USER 1000:1000
+
+# Copy built artifacts: gems, application
+COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --chown=rails:rails --from=build /rails /rails
+
+# Entrypoint prepares the database.
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+
+# Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-ENTRYPOINT ["/app/script/docker-entrypoint"]
-CMD ["bundle", "exec", "unicorn", "-c", "config/unicorn.docker.rb", "config.ru"]
+CMD ["./bin/rails", "server"]

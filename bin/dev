@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Local development: Postgres in Docker, Vite and Rails natively.
+# Ports are stable per checkout (port-selector), so worktrees don't collide.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+export DB_PORT="${DB_PORT:-$(port-selector --name db)}"
+export PORT="${PORT:-$(port-selector --name web)}"
+export VITE_RUBY_PORT="${VITE_RUBY_PORT:-$(port-selector --name vite)}"
+
+docker compose up -d --wait db
+bin/rails db:prepare
+
+bin/vite dev &
+vite_pid=$!
+trap 'kill "$vite_pid" 2>/dev/null || true' EXIT
+
+echo "Potee: http://127.0.0.1:$PORT"
+bin/rails server -b 127.0.0.1 -p "$PORT"

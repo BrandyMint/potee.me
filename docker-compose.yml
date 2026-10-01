@@ -1,30 +1,15 @@
+# Local PostgreSQL only; the app itself runs natively (Ruby 3.4, Node).
+# DB_PORT is allocated per checkout: DB_PORT="$(port-selector --name db)".
 services:
   db:
-    # Same major version as the shared production server. Ruby 2.0's libpq
-    # cannot do SCRAM auth, so trust auth is used (as on the office server).
     image: postgres:17
     environment:
       POSTGRES_USER: potee
       POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  web:
-    # Built on the machine's buildx builder (BUILDX_BUILDER, see ~/dotfiles) and pulled here:
-    #   docker buildx build --platform linux/amd64 --target dev --push -t registry.brandymint.ru/dapi/potee:dev .
-    image: registry.brandymint.ru/dapi/potee:dev
-    platform: linux/amd64
-    environment:
-      DB_HOST: db
-      DB_USER: potee
-    volumes:
-      - .:/app
-      - bundle:/bundle
-    ports:
-      - "3007:3007"
-    depends_on:
-      - db
-
 volumes:
   pgdata:
-  bundle:

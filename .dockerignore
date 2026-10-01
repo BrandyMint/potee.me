@@ -1,23 +1,23 @@
-# Whitelist: only what the image needs reaches the build context.
+# Whitelist: the build context may go to a remote builder (BUILDX_BUILDER),
+# so only what the image needs is sent.
 **
-!.bowerrc
 !.ruby-version
-!.semver
 !Gemfile
 !Gemfile.lock
 !Rakefile
-!bower.json
 !config.ru
+!package.json
+!package-lock.json
+!tsconfig.json
+!vite.config.ts
 !app/**
+!bin/**
 !config/**
 !db/**
 !lib/**
 !public/**
-!script/**
 !vendor/**
-vendor/assets/components
-config/database.yml
-config/settings/*.yml
-config/settings/*.local.yml
-public/assets
-public/uploads
+public/vite*
+app/frontend/**/*.test.ts
+config/master.key
+config/credentials/*.key

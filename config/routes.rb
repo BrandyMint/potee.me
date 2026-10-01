@@ -1,34 +1,17 @@
-Potee::Application.routes.draw do
+Rails.application.routes.draw do
+  get "up" => "rails/health#show", as: :rails_health_check
 
-  ActiveAdmin.routes(self)
+  root "welcome#show"
+  get "projects" => "boards#show", as: :board
+  get "share/:share_key" => "shares#show", as: :share
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
-
-  h = { :host => Settings.application.host }
-  h[:port] = 30009 if Rails.env.test?
-  self.default_url_options h
-
-  match "/404", :to => "errors#not_found"
-
-  match '/auth/:provider/callback', to: 'sessions#create'
-  match '/auth/failure', to: redirect('/')
-
-  match 'logout', to: 'sessions#destroy', as: 'logout'
-
-  root to: 'welcome#index'
-
-  resources :projects
-  resources :project_connections
-  resources :events
-
-  match 'dashboard/read', to: 'dashboards#read'
-  match 'dashboard/update', to: 'dashboards#update'
-
-  resources :pages, :only => [] do
-    collection do
-      get :about
-      get :team
-      get :how_it_works
+  namespace :api, defaults: { format: :json } do
+    resource :board, only: :show
+    resource :dashboard, only: :update
+    resources :projects, only: %i[create update destroy] do
+      patch :reorder, on: :collection
+      resources :events, only: :create
     end
+    resources :events, only: %i[update destroy]
   end
 end

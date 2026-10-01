@@ -1,7 +1,0 @@
-%li.auth.auth-facebook
-  - if current_user.authentications.where(:provider=>:facebook).exists?
-    = link_to 'javascript: void()', :class => :connected do
-      %i.icon-facebook-rect
-  - else
-    = link_to '/auth/facebook' do
-      %i.icon-facebook-rect

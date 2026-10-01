@@ -1,0 +1,8 @@
+<% content_for :body_class, "board-page" %>
+<% content_for :head do %>
+  <%= vite_react_refresh_tag %>
+  <%= vite_typescript_tag "board.tsx" %>
+<% end %>
+
+<div id="board-root"></div>
+<script type="application/json" id="board-data"><%= raw json_escape(@board.to_json) %></script>

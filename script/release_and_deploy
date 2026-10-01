@@ -1,2 +1,0 @@
-#!/usr/bin/env sh
-./script/release; git push; bundle exec cap production deploy

@@ -1,0 +1,22 @@
+# Connection comes from DATABASE_URL when set (production), otherwise from
+# DB_HOST/DB_PORT/DB_USER/DB_PASSWORD (local Postgres in docker-compose.yml).
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV.fetch("DB_USER", "potee") %>
+  password: <%= ENV["DB_PASSWORD"] %>
+
+development:
+  <<: *default
+  database: potee_development
+
+test:
+  <<: *default
+  database: potee_test
+
+production:
+  <<: *default
+  database: potee_production

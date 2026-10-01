@@ -1,113 +1,42 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'rails', '~> 3.2.13'
+# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem "rails", "~> 8.1.3", ">= 8.1.3.1"
+# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem "propshaft"
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.1"
+# Use the Puma web server [https://github.com/puma/puma]
+gem "puma", ">= 5.0"
 
-gem 'airbrake'
+# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
+# gem "bcrypt", "~> 3.1.7"
 
-gem 'inherited_resources'
-gem 'semver2'
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem "tzinfo-data", platforms: %i[ windows jruby ]
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", require: false
 
-gem 'pg'
-
-gem 'unicorn'
-
-gem "haml", ">= 3.0.0"
-gem "haml-rails"
-gem "omniauth"
-gem "omniauth-facebook"
-gem "omniauth-twitter"
-gem "omniauth-google-oauth2"
-gem "rails_config"
-
-group :daemons do
-  gem 'foreverb'
-end
-
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
-
-  gem 'uglifier', '>= 1.0.3'
-  gem 'compass-rails'
-  gem 'haml_coffee_assets'
-  gem 'execjs'
-end
-
-gem 'bootstrap-sass'
-gem 'rails-backbone'
-gem 'activeadmin'
-gem 'mini_magick'
-gem 'carrierwave'
-
-group :development do
-  # Deploy with Capistrano
-  gem 'capistrano'
-  gem 'capistrano_colors'
-  gem 'capistrano-recipes0', '>= 1.1.0', :git => 'https://github.com/BrandyMint/capistrano-recipes0.git'
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'rb-fsevent', :require => false
-  gem 'rb-inotify', :require => false
-  gem 'holepicker', :require => false
-end
+# React + TypeScript frontend built by Vite
+gem "vite_rails"
 
 group :development, :test do
-  gem 'pry-rails'
-  gem 'pry-theme'
+  gem "rspec-rails"
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
-  gem 'pry-pretty-numeric'
-  gem 'pry-syntax-hacks'
-  gem 'pry-highlight'
-  gem 'pry-git'
-  gem 'pry-developer_tools'
+  # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
+  gem "bundler-audit", require: false
 
-  gem 'pry-remote'
-  gem 'pry-nav'
-  gem 'pry-doc'
-  gem 'pry-docmore'
+  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
+  gem "brakeman", require: false
 
-
-  gem 'rspec-rails'
-  gem 'headless'
-
-  gem 'jasmine'
-  gem "jasminerice"
-  gem 'guard-jasmine'
-  gem 'jasmine-jquery-rails'
-  gem 'sinon-rails'
+  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+  gem "rubocop-rails-omakase", require: false
 end
 
-group :test do
-  gem 'capybara'
-  gem 'poltergeist'
-  #gem 'capybara-webkit'
-  gem 'rr'
-  gem 'database_cleaner'
-  gem 'factory_girl_rails'
-  gem 'launchy'
+group :development do
+  # Use console on exceptions pages [https://github.com/rails/web-console]
+  gem "web-console"
 end
-
-group :production do
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', :platforms => :ruby
-end
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-# To use debugger
-# gem 'debugger'

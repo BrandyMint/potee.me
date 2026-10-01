@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-
-learn_potee:
-  title: Learn Potee
-  started_at: <%= DateTime.now %>
-
-space_travel:
-  title: Space travel
-  started_at: <%= DateTime.now %>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "Potee, visual time management" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="New way of planning. Now you know what is the next step in your projects.">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= favicon_link_tag "favicon.ico" %>
+    <%= vite_client_tag %>
+    <%= yield :head %>
+  </head>
+
+  <body class="<%= content_for(:body_class) %>">
+    <%= yield %>
+  </body>
+</html>
