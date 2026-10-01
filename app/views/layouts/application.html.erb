@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
   <head>
-    <title><%= content_for(:title) || "Potee, visual time management" %></title>
+    <title><%= content_for(:title) || t("app.title") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="New way of planning. Now you know what is the next step in your projects.">
+    <meta name="description" content="<%= t("app.description") %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= favicon_link_tag "favicon.ico" %>

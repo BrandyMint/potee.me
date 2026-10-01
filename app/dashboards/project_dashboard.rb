@@ -10,7 +10,7 @@ class ProjectDashboard < Administrate::BaseDashboard
     demo: Field::Boolean,
     events: Field::HasMany,
     project_connections: Field::HasMany,
-    created_at: Field::DateTime
+    created_at: Field::DateTime.with_options(format: "%d.%m.%Y %H:%M", timezone: "Europe/Moscow")
   }.freeze
 
   COLLECTION_ATTRIBUTES = %i[id title owner started_on finished_on demo].freeze

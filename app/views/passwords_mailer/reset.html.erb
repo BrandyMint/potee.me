@@ -1,3 +1,3 @@
-<p>Someone asked to reset the password of your Potee account (<%= @user.email %>).</p>
-<p><%= link_to "Set a new password", edit_password_url(@user.password_reset_token) %> — the link works for 15 minutes.</p>
-<p>If it wasn't you, just ignore this letter.</p>
+<p><%= t(".intro", email: @user.email) %></p>
+<p><%= link_to t(".action"), edit_password_url(@user.password_reset_token) %>. <%= t(".expires") %></p>
+<p><%= t(".ignore") %></p>

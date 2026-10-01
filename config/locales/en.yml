@@ -1,31 +1,62 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  app:
+    title: "Potee, visual time management"
+    description: "New way of planning. Now you know what is the next step in your projects."
+  welcome:
+    headline: "New way of planning."
+    lead: "Now you know what is the next step in your projects."
+    get_started: "Get started"
+    log_in: "Log in"
+  auth:
+    email: "Email"
+    signup:
+      title: "Sign up — Potee"
+      heading: "Save your board"
+      lead: "Your projects stay with you on any device."
+      password: "Password (8+ characters)"
+      submit: "Sign up"
+      have_account: "Already registered? Log in"
+    login:
+      title: "Log in — Potee"
+      heading: "Log in"
+      lead: "Projects you made before logging in will be added to your account."
+      password: "Password"
+      submit: "Log in"
+      signup: "Sign up"
+      forgot: "Forgot password?"
+    forgot:
+      title: "Reset password — Potee"
+      heading: "Reset password"
+      lead: "We will email you a link to set a new password."
+      submit: "Send the link"
+      back: "Back to log in"
+    reset:
+      title: "New password — Potee"
+      heading: "New password"
+      for: "For %{email}"
+      password: "New password (8+ characters)"
+      submit: "Save password"
+  flash:
+    too_many_attempts: "Too many attempts. Try again later."
+    email_taken: "This email is already registered. Log in instead."
+    welcome: "Welcome! Your board is saved to %{email}."
+    wrong_credentials: "Wrong email or password."
+    reset_sent: "If this email is registered, a reset link is on its way."
+    password_changed: "Your password has been changed."
+    enter_password: "Enter a new password."
+    reset_invalid: "The reset link is invalid or has expired."
+  passwords_mailer:
+    reset:
+      subject: "Reset your Potee password"
+      intro: "Someone asked to reset the password of your Potee account (%{email})."
+      action: "Set a new password"
+      expires: "The link works for 15 minutes."
+      ignore: "If it wasn't you, just ignore this letter."
+  demo_board:
+    projects:
+      - title: "Learn Scala"
+        events: ["Buy a book", "Read some interesting posts", "Go to the conference"]
+      - title: "Make my wife happy"
+        events: ["Buy a present", "Go shopping together"]
+      - title: "Start my own business"
+        events: ["Think about the idea"]

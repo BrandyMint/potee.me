@@ -1,12 +1,12 @@
-<% content_for :title, "Log in — Potee" %>
-<h1>Log in</h1>
-<p class="lead">Projects you made before logging in will be added to your account.</p>
+<% content_for :title, t("auth.login.title") %>
+<h1><%= t("auth.login.heading") %></h1>
+<p class="lead"><%= t("auth.login.lead") %></p>
 <%= form_with url: login_path do |form| %>
-  <%= form.label :email do %>Email<%= form.email_field :email, value: @email, required: true, autofocus: true, autocomplete: "username" %><% end %>
-  <%= form.label :password do %>Password<%= form.password_field :password, required: true, autocomplete: "current-password" %><% end %>
-  <%= form.button "Log in" %>
+  <%= form.label :email do %><%= t("auth.email") %><%= form.email_field :email, value: @email, required: true, autofocus: true, autocomplete: "username" %><% end %>
+  <%= form.label :password do %><%= t("auth.login.password") %><%= form.password_field :password, required: true, autocomplete: "current-password" %><% end %>
+  <%= form.button t("auth.login.submit") %>
 <% end %>
 <div class="links">
-  <%= link_to "Sign up", signup_path %>
-  <%= link_to "Forgot password?", new_password_path %>
+  <%= link_to t("auth.login.signup"), signup_path %>
+  <%= link_to t("auth.login.forgot"), new_password_path %>
 </div>

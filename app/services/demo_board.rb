@@ -1,33 +1,36 @@
-# Fills a new user's board with sample projects so the first visit is not empty.
+# Fills a new user's board with sample projects so the first visit is not
+# empty. Texts come from the `demo_board` locale key, dates are relative to today.
 class DemoBoard
-  PROJECTS = [
-    { title: "Learn Scala", start: 0, finish: 10,
-      events: [ [ "Buy a book", 2 ], [ "Read some interesting posts", 4 ], [ "Go to the conference", 7 ] ] },
-    { title: "Make my wife happy", start: -2, finish: 11,
-      events: [ [ "Buy a present", 0 ], [ "Go shopping together", 10 ] ] },
-    { title: "Start my own business", start: -3, finish: 12,
-      events: [ [ "Think about the idea", 5 ] ] }
+  SCHEDULE = [
+    { start: 0, finish: 10, events: [ 2, 4, 7 ] },
+    { start: -2, finish: 11, events: [ 0, 10 ] },
+    { start: -3, finish: 12, events: [ 5 ] }
   ].freeze
 
-  def self.fill(user, today: Date.current)
-    new(user, today).fill
+  def self.fill(user, today: Date.current, locale: I18n.locale)
+    new(user, today, locale).fill
   end
 
-  def initialize(user, today)
+  def self.titles(locale = I18n.locale)
+    I18n.t("demo_board.projects", locale:).map { _1[:title] }
+  end
+
+  def initialize(user, today, locale)
     @user = user
     @today = today
+    @texts = I18n.t("demo_board.projects", locale:)
   end
 
   def fill
-    PROJECTS.each_with_index do |spec, index|
+    SCHEDULE.zip(@texts).each_with_index do |(schedule, texts), index|
       project = @user.owned_projects.create!(
-        title: spec[:title],
-        started_on: @today + spec[:start],
-        finished_on: @today + spec[:finish],
+        title: texts[:title],
+        started_on: @today + schedule[:start],
+        finished_on: @today + schedule[:finish],
         demo: true
       )
       project.project_connections.create!(user: @user, position: index, color_index: index + 1)
-      spec[:events].each do |title, day|
+      schedule[:events].zip(texts[:events]).each do |day, title|
         project.events.create!(title:, at: (@today + day).in_time_zone.change(hour: 12))
       end
     end

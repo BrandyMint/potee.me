@@ -3,6 +3,7 @@ import { memo, useState, type KeyboardEvent, type MouseEvent, type PointerEvent 
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
+import { t } from "./i18n";
 import { isSaved } from "./store";
 import { closestEventId, dateAt, eventBounds, formatDay, parseDay, xOf } from "./timeline";
 import type { Card } from "./types";
@@ -123,7 +124,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
           {draft ? (
             <DraftTitle onSave={(title) => void commitDraft(title)} onCancel={cancelDraft} />
           ) : (
-            <span className="project-title-text" onPointerDown={onTitlePointerDown} title="Drag up or down to reorder">
+            <span className="project-title-text" onPointerDown={onTitlePointerDown} title={t().reorderHint}>
               {card.title}
             </span>
           )}
@@ -160,17 +161,17 @@ function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onC
     if (event.key === "Escape") onCancel();
   };
   return (
-    <form className="title-form" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
+    <form className="inline-form title-form" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
       <input
-        aria-label="Project title"
-        placeholder="Your project name"
+        aria-label={t().projectTitle}
+        placeholder={t().projectPlaceholder}
         value={title}
         autoFocus
         onChange={(event) => setTitle(event.target.value)}
         onKeyDown={onKeyDown}
       />
-      <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => onSave(title)}>
-        OK
+      <button type="button" className="inline-button" onMouseDown={(e) => e.preventDefault()} onClick={() => onSave(title)}>
+        {t().save}
       </button>
     </form>
   );

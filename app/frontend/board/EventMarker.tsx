@@ -2,6 +2,7 @@ import { parseISO } from "date-fns";
 import { useState, type KeyboardEvent } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
+import { t } from "./i18n";
 import { isSaved } from "./store";
 import { dateAt, xOf } from "./timeline";
 import type { BoardEvent } from "./types";
@@ -63,7 +64,7 @@ export function EventMarker({ projectId, event, minX, maxX, closest }: Props) {
             if (title !== event.title) void updateEvent(projectId, event.id, { title });
           }}
           onCancel={() => editEvent(null)}
-          onRemove={() => void deleteEvent(projectId, event.id)}
+          onRemove={() => deleteEvent(projectId, event.id)}
         />
       ) : (
         <div className="event-title" onPointerDown={onPointerDown}>
@@ -82,9 +83,9 @@ function EventForm(props: { title: string; onSave: (title: string) => void; onCa
     if (event.key === "Escape") props.onCancel();
   };
   return (
-    <form className="event-form" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
+    <form className="inline-form event-form" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
       <input
-        aria-label="Event title"
+        aria-label={t().eventTitle}
         value={title}
         autoFocus
         onFocus={(event) => event.currentTarget.select()}
@@ -92,8 +93,8 @@ function EventForm(props: { title: string; onSave: (title: string) => void; onCa
         onKeyDown={onKeyDown}
         onBlur={() => props.onSave(title.trim() || props.title)}
       />
-      <button type="button" className="danger" onMouseDown={(e) => e.preventDefault()} onClick={props.onRemove}>
-        remove
+      <button type="button" className="inline-button danger" onMouseDown={(e) => e.preventDefault()} onClick={props.onRemove}>
+        {t().delete}
       </button>
     </form>
   );

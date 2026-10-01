@@ -1,11 +1,11 @@
-<% content_for :title, "Sign up — Potee" %>
-<h1>Save your board</h1>
-<p class="lead">Your projects stay with you on any device.</p>
+<% content_for :title, t("auth.signup.title") %>
+<h1><%= t("auth.signup.heading") %></h1>
+<p class="lead"><%= t("auth.signup.lead") %></p>
 <%= form_with url: signup_path do |form| %>
-  <%= form.label :email do %>Email<%= form.email_field :email, value: @email, required: true, autofocus: true, autocomplete: "username" %><% end %>
-  <%= form.label :password do %>Password (8+ characters)<%= form.password_field :password, required: true, minlength: 8, maxlength: 72, autocomplete: "new-password" %><% end %>
-  <%= form.button "Sign up" %>
+  <%= form.label :email do %><%= t("auth.email") %><%= form.email_field :email, value: @email, required: true, autofocus: true, autocomplete: "username" %><% end %>
+  <%= form.label :password do %><%= t("auth.signup.password") %><%= form.password_field :password, required: true, minlength: 8, maxlength: 72, autocomplete: "new-password" %><% end %>
+  <%= form.button t("auth.signup.submit") %>
 <% end %>
 <div class="links">
-  <%= link_to "Already registered? Log in", login_path %>
+  <%= link_to t("auth.signup.have_account"), login_path %>
 </div>

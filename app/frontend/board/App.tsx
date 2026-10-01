@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { StoreContext, useBoard, useBoardStore, ViewContext, type BoardView } from "./context";
 import { isFormControl, startDrag } from "./drag";
 import { Header } from "./Header";
+import { dateLocale, t } from "./i18n";
 import { ProjectRow } from "./ProjectRow";
 import { createBoardStore } from "./store";
 import {
@@ -24,8 +25,6 @@ import type { BoardData } from "./types";
 
 /** Row heights per zoom level; they must match board.css. */
 const ROW_HEIGHT = { days: 78, compact: 64, weeks: 50, months: 45 } as const;
-/** Empty space above the first row (below the sticky header). */
-const ROWS_TOP = 60;
 
 export function App({ initial }: { initial: BoardData }) {
   const [store] = useState(() => createBoardStore(initial));
@@ -42,10 +41,11 @@ function Board() {
   const pixelsPerDay = useBoard((state) => state.pixelsPerDay);
   const selectedId = useBoard((state) => state.selectedId);
   const draftId = useBoard((state) => state.draftId);
-  const error = useBoard((state) => state.error);
-  const dismissError = useBoard((state) => state.dismissError);
+  const toast = useBoard((state) => state.toast);
+  const dismissToast = useBoard((state) => state.dismissToast);
 
   const viewportRef = useRef<HTMLDivElement>(null);
+  const rowsRef = useRef<HTMLDivElement>(null);
   const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
   const [scrollLeft, setScrollLeft] = useState(0);
   const today = useMemo(() => startOfDay(new Date()), []);
@@ -54,7 +54,7 @@ function Board() {
     () => buildTimeline({ projects, today, pixelsPerDay, viewportWidth }),
     [projects, today, pixelsPerDay, viewportWidth],
   );
-  const columns = useMemo(() => timelineColumns(timeline, today), [timeline, today]);
+  const columns = useMemo(() => timelineColumns(timeline, today, dateLocale()), [timeline, today]);
   const width = timelineWidth(timeline);
   const mode = scaleMode(pixelsPerDay);
   const compact = mode === "days" && pixelsPerDay <= SCALE.COMPACT_DAYS_AT;
@@ -187,7 +187,7 @@ function Board() {
 
   // Save the view state when the page is left before the debounce fires.
   useEffect(() => {
-    const flush = () => store.getState().saveDashboardNow();
+    const flush = () => store.getState().flush();
     window.addEventListener("pagehide", flush);
     return () => window.removeEventListener("pagehide", flush);
   }, [store]);
@@ -203,9 +203,10 @@ function Board() {
   }, [showProject]);
 
   // Drag on empty space (or a project bar) pans the board in both directions.
+  // Touch screens scroll natively instead.
   const onPointerDown = (pointer: PointerEvent) => {
     const viewport = viewportRef.current;
-    if (!viewport || isFormControl(pointer.target)) return;
+    if (!viewport || pointer.pointerType === "touch" || isFormControl(pointer.target)) return;
     const origin = { left: viewport.scrollLeft, top: viewport.scrollTop };
     startDrag(pointer, {
       onMove: (dx, dy) => {
@@ -221,8 +222,9 @@ function Board() {
   const onDoubleClick = (event: MouseEvent) => {
     const viewport = viewportRef.current;
     if (!viewport || isFormControl(event.target) || (event.target as HTMLElement).closest(".project-bar, .event")) return;
-    const y = event.clientY - viewport.getBoundingClientRect().top + viewport.scrollTop - ROWS_TOP - headerHeight(viewport);
-    const index = Math.max(0, Math.round(y / rowHeight));
+    // Rows are centred vertically, so measure from the first row.
+    const firstRow = rowsRef.current?.querySelector<HTMLElement>(".project");
+    const index = firstRow ? Math.max(0, Math.round((event.clientY - firstRow.getBoundingClientRect().top) / rowHeight)) : 0;
     store.getState().startDraft(startOfDay(dateAt(timeline, timelineX(event.clientX))), index);
   };
 
@@ -250,7 +252,7 @@ function Board() {
         >
           <div className="canvas" style={{ width }}>
             <TimelineGrid columns={columns} mode={mode} width={width} />
-            <div className="rows" style={{ paddingTop: ROWS_TOP }}>
+            <div className="rows" ref={rowsRef}>
               {projects.map((card, index) => (
                 <ProjectRow
                   key={card.id}
@@ -265,10 +267,24 @@ function Board() {
             </div>
           </div>
         </div>
-        {error && (
-          <div className="toast" role="alert">
-            {error}
-            <button type="button" onClick={dismissError} aria-label="Dismiss">
+        {projects.length === 0 && (
+          <div className="empty-state">
+            <h2>{t().emptyTitle}</h2>
+            <p>{t().emptyText}</p>
+            <button type="button" onClick={newProject}>
+              + {t().newProject}
+            </button>
+          </div>
+        )}
+        {toast && (
+          <div key={toast.id} className={`toast toast-${toast.kind}`} role={toast.kind === "error" ? "alert" : "status"}>
+            <span>{toast.message}</span>
+            {toast.undo && (
+              <button type="button" className="toast-undo" onClick={toast.undo}>
+                {t().undo}
+              </button>
+            )}
+            <button type="button" className="toast-close" onClick={dismissToast} aria-label={t().dismiss}>
               ×
             </button>
           </div>
@@ -276,8 +292,4 @@ function Board() {
       </div>
     </ViewContext.Provider>
   );
-}
-
-function headerHeight(viewport: HTMLElement): number {
-  return viewport.querySelector<HTMLElement>(".timeline-header")?.offsetHeight ?? 0;
 }

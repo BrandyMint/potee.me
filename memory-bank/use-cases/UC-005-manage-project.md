@@ -42,7 +42,8 @@ must_not_define:
 
 ## Alternate Flows / Exceptions
 
-- `ALT-01` «Delete» → подтверждение → проект удаляется (у владельца — для всех; у получателя ссылки — только с его доски).
+- `ALT-01` «Удалить» — проект сразу исчезает с доски, 5 секунд можно нажать «Отменить»; потом удаление сохраняется (у владельца — для всех, у получателя ссылки — только с его доски).
+- `ALT-02` На узком экране панель проекта открывается внизу экрана.
 - `EX-01` Ошибка сохранения — сообщение и откат к данным сервера.
 
 ## Postconditions
@@ -68,4 +69,6 @@ must_not_define:
 | UC element | Downstream examples / checks |
 | --- | --- |
 | Main flow | `e2e/board.spec.ts` › selecting a project opens its panel; › Entire fits…; › deletes a project |
+| `ALT-01` | `e2e/board.spec.ts` › a deleted project can be restored with Undo |
+| `ALT-02` | `e2e/board.spec.ts` › on a phone › …the panel opens at the bottom |
 | `BR-01`, `BR-02` | `spec/requests/api/projects_spec.rb`, `spec/requests/shares_spec.rb` |

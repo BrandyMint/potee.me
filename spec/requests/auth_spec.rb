@@ -19,13 +19,13 @@ RSpec.describe "Email sign-up and log-in", type: :request do
       expect(anonymous.reload).to have_attributes(email: "dan@example.com", anonymous?: false)
       get api_board_path
       expect(json["user"]).to eq("email" => "dan@example.com", "anonymous" => false)
-      expect(json["projects"].size).to eq(DemoBoard::PROJECTS.size)
+      expect(json["projects"].size).to eq(DemoBoard::SCHEDULE.size)
     end
 
     it "creates an account with a demo board when there is no session yet" do
       expect { sign_up("new@example.com") }.to change(User, :count).by(1)
 
-      expect(User.find_by!(email: "new@example.com").project_connections.count).to eq(DemoBoard::PROJECTS.size)
+      expect(User.find_by!(email: "new@example.com").project_connections.count).to eq(DemoBoard::SCHEDULE.size)
     end
 
     it "rejects a registered email and a short password" do
@@ -34,7 +34,7 @@ RSpec.describe "Email sign-up and log-in", type: :request do
 
       sign_up("TAKEN@example.com")
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("already registered")
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("flash.email_taken")))
 
       sign_up("short@example.com", "123")
       expect(response).to have_http_status(:unprocessable_content)
@@ -58,8 +58,8 @@ RSpec.describe "Email sign-up and log-in", type: :request do
       expect(response).to redirect_to(board_path)
       expect(User.exists?(anonymous.id)).to be(false)
       titles = account.reload.board_connections.map(&:title)
-      expect(titles.first(DemoBoard::PROJECTS.size)).to eq(DemoBoard::PROJECTS.map { _1[:title] })
-      expect(titles.drop(DemoBoard::PROJECTS.size)).to contain_exactly("Made before login", "Edited sample")
+      expect(titles.first(DemoBoard::SCHEDULE.size)).to eq(DemoBoard.titles)
+      expect(titles.drop(DemoBoard::SCHEDULE.size)).to contain_exactly("Made before login", "Edited sample")
       expect(Project.where(title: "Made before login").sole.owner).to eq(account)
     end
 
@@ -67,7 +67,7 @@ RSpec.describe "Email sign-up and log-in", type: :request do
       log_in("dan@example.com", "wrong-password")
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("Wrong email or password")
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("flash.wrong_credentials")))
     end
 
     it "logs out into a new anonymous board" do

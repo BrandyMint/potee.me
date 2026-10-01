@@ -1,16 +1,27 @@
 // Board state. Changes are applied locally first and then sent to the API; if
 // a request fails the board is reloaded from the server to get back in sync.
+// Deletions wait UNDO_DELAY before reaching the server so they can be undone.
 import { addDays, parseISO } from "date-fns";
 import { create } from "zustand";
 import { api, type EventAttributes, type ProjectAttributes } from "./api";
+import { t } from "./i18n";
 import { clampScale, formatDay, nextColorIndex } from "./timeline";
 import type { BoardData, BoardEvent, Card } from "./types";
 
 const DASHBOARD_SAVE_DELAY = 1000;
+const UNDO_DELAY = 5000;
+const ERROR_TOAST_DELAY = 6000;
 let temporaryId = 0;
 /** Ids of rows and events not saved yet are negative. */
 const nextTemporaryId = () => --temporaryId;
 export const isSaved = (id: number) => id > 0;
+
+export interface Toast {
+  id: number;
+  kind: "error" | "info";
+  message: string;
+  undo?: () => void;
+}
 
 export interface BoardState {
   projects: Card[];
@@ -22,7 +33,7 @@ export interface BoardState {
   /** A new project row waiting for its title. */
   draftId: number | null;
   editingEventId: number | null;
-  error: string | null;
+  toast: Toast | null;
   user: BoardData["user"];
 
   setScale: (pixelsPerDay: number, currentDate?: Date) => void;
@@ -32,32 +43,69 @@ export interface BoardState {
   commitDraft: (title: string) => Promise<void>;
   cancelDraft: () => void;
   updateProject: (id: number, attributes: ProjectAttributes) => Promise<void>;
-  deleteProject: (id: number) => Promise<void>;
+  deleteProject: (id: number) => void;
   moveProject: (id: number, toIndex: number) => Promise<void>;
   addEvent: (projectId: number, at: Date) => Promise<void>;
   updateEvent: (projectId: number, eventId: number, attributes: EventAttributes) => Promise<void>;
-  deleteEvent: (projectId: number, eventId: number) => Promise<void>;
+  deleteEvent: (projectId: number, eventId: number) => void;
   editEvent: (eventId: number | null) => void;
-  dismissError: () => void;
-  saveDashboardNow: () => void;
+  dismissToast: () => void;
+  /** Sends everything still waiting (view state, pending deletions) right away. */
+  flush: () => void;
 }
 
 export function createBoardStore(initial: BoardData) {
   let dashboardTimer: ReturnType<typeof setTimeout> | undefined;
+  let toastTimer: ReturnType<typeof setTimeout> | undefined;
+  let toastId = 0;
+  /** Deletions waiting for their undo window to pass. */
+  const pendingDeletions = new Map<string, { timer: ReturnType<typeof setTimeout>; send: (keepalive: boolean) => void }>();
 
   return create<BoardState>()((set, get) => {
     const replaceProject = (id: number, update: (card: Card) => Card) =>
       set((state) => ({ projects: state.projects.map((card) => (card.id === id ? update(card) : card)) }));
 
+    const showToast = (toast: Omit<Toast, "id">, delay: number) => {
+      clearTimeout(toastTimer);
+      const id = ++toastId;
+      set({ toast: { ...toast, id } });
+      toastTimer = setTimeout(() => {
+        if (get().toast?.id === id) set({ toast: null });
+      }, delay);
+    };
+
     const fail = async (error: unknown) => {
       console.error(error);
-      set({ error: "Could not save the change. The board was reloaded from the server." });
+      showToast({ kind: "error", message: t().saveFailed }, ERROR_TOAST_DELAY);
       try {
         const board = await api.board();
         set({ projects: board.projects, draftId: null, editingEventId: null });
       } catch (reloadError) {
         console.error(reloadError);
       }
+    };
+
+    /** Removes something locally now and on the server after the undo window. */
+    const deleteWithUndo = (key: string, message: string, request: ((keepalive: boolean) => Promise<void>) | null, restore: () => void) => {
+      const send = (keepalive: boolean) => {
+        pendingDeletions.delete(key);
+        request?.(keepalive).catch((error: unknown) => void fail(error));
+      };
+      pendingDeletions.set(key, { timer: setTimeout(() => send(false), UNDO_DELAY), send });
+      showToast(
+        {
+          kind: "info",
+          message,
+          undo: () => {
+            const pending = pendingDeletions.get(key);
+            if (pending) clearTimeout(pending.timer);
+            pendingDeletions.delete(key);
+            restore();
+            set({ toast: null });
+          },
+        },
+        UNDO_DELAY,
+      );
     };
 
     const dashboardPayload = () => {
@@ -84,7 +132,7 @@ export function createBoardStore(initial: BoardData) {
       selectedId: null,
       draftId: null,
       editingEventId: null,
-      error: null,
+      toast: null,
       user: initial.user,
 
       setScale: (pixelsPerDay, currentDate) => {
@@ -97,11 +145,16 @@ export function createBoardStore(initial: BoardData) {
         scheduleDashboardSave();
       },
 
-      saveDashboardNow: () => {
-        if (dashboardTimer === undefined) return;
-        clearTimeout(dashboardTimer);
-        dashboardTimer = undefined;
-        api.updateDashboard(dashboardPayload(), { keepalive: true }).catch(() => undefined);
+      flush: () => {
+        if (dashboardTimer !== undefined) {
+          clearTimeout(dashboardTimer);
+          dashboardTimer = undefined;
+          api.updateDashboard(dashboardPayload(), { keepalive: true }).catch(() => undefined);
+        }
+        for (const pending of [...pendingDeletions.values()]) {
+          clearTimeout(pending.timer);
+          pending.send(true);
+        }
       },
 
       select: (id) => set({ selectedId: id }),
@@ -123,14 +176,14 @@ export function createBoardStore(initial: BoardData) {
         set((state) => {
           const projects = [...state.projects];
           projects.splice(Math.max(0, Math.min(index, projects.length)), 0, draft);
-          return { projects, draftId: draft.id, selectedId: draft.id, editingEventId: null };
+          return { projects, draftId: draft.id, selectedId: null, editingEventId: null };
         });
       },
 
       commitDraft: async (title) => {
         const draft = get().projects.find((card) => card.id === get().draftId);
         if (!draft) return;
-        const finalTitle = title.trim() || "Your project name";
+        const finalTitle = title.trim() || t().defaultProjectTitle;
         replaceProject(draft.id, (card) => ({ ...card, title: finalTitle }));
         set({ draftId: null });
         try {
@@ -142,7 +195,6 @@ export function createBoardStore(initial: BoardData) {
             position: get().projects.findIndex((card) => card.id === draft.id),
           });
           replaceProject(draft.id, () => saved);
-          if (get().selectedId === draft.id) set({ selectedId: saved.id });
           await persistOrder();
         } catch (error) {
           await fail(error);
@@ -152,11 +204,7 @@ export function createBoardStore(initial: BoardData) {
       cancelDraft: () => {
         const { draftId } = get();
         if (draftId === null) return;
-        set((state) => ({
-          projects: state.projects.filter((card) => card.id !== draftId),
-          draftId: null,
-          selectedId: state.selectedId === draftId ? null : state.selectedId,
-        }));
+        set((state) => ({ projects: state.projects.filter((card) => card.id !== draftId), draftId: null }));
       },
 
       updateProject: async (id, attributes) => {
@@ -170,18 +218,27 @@ export function createBoardStore(initial: BoardData) {
         }
       },
 
-      deleteProject: async (id) => {
+      deleteProject: (id) => {
+        const index = get().projects.findIndex((card) => card.id === id);
+        const card = get().projects[index];
+        if (!card) return;
         set((state) => ({
-          projects: state.projects.filter((card) => card.id !== id),
+          projects: state.projects.filter((project) => project.id !== id),
           selectedId: state.selectedId === id ? null : state.selectedId,
           draftId: state.draftId === id ? null : state.draftId,
         }));
         if (!isSaved(id)) return;
-        try {
-          await api.deleteProject(id);
-        } catch (error) {
-          await fail(error);
-        }
+        deleteWithUndo(
+          `project-${id}`,
+          t().projectDeleted(card.title),
+          (keepalive) => api.deleteProject(id, { keepalive }),
+          () =>
+            set((state) => {
+              const projects = [...state.projects];
+              projects.splice(Math.min(index, projects.length), 0, card);
+              return { projects };
+            }),
+        );
       },
 
       moveProject: async (id, toIndex) => {
@@ -200,10 +257,10 @@ export function createBoardStore(initial: BoardData) {
       },
 
       addEvent: async (projectId, at) => {
-        const temporary: BoardEvent = { id: nextTemporaryId(), title: "Some event", at: at.toISOString() };
+        const temporary: BoardEvent = { id: nextTemporaryId(), title: t().defaultEventTitle, at: at.toISOString() };
         replaceProject(projectId, (card) => ({ ...card, events: [...card.events, temporary] }));
         try {
-          const saved = await api.createEvent(projectId, { at: temporary.at });
+          const saved = await api.createEvent(projectId, { title: temporary.title, at: temporary.at });
           replaceProject(projectId, (card) => ({
             ...card,
             events: card.events.map((event) => (event.id === temporary.id ? saved : event)),
@@ -226,20 +283,26 @@ export function createBoardStore(initial: BoardData) {
         }
       },
 
-      deleteEvent: async (projectId, eventId) => {
-        replaceProject(projectId, (card) => ({ ...card, events: card.events.filter((event) => event.id !== eventId) }));
+      deleteEvent: (projectId, eventId) => {
+        const event = get().projects.find((card) => card.id === projectId)?.events.find((item) => item.id === eventId);
+        if (!event) return;
+        replaceProject(projectId, (card) => ({ ...card, events: card.events.filter((item) => item.id !== eventId) }));
         set((state) => ({ editingEventId: state.editingEventId === eventId ? null : state.editingEventId }));
         if (!isSaved(eventId)) return;
-        try {
-          await api.deleteEvent(eventId);
-        } catch (error) {
-          await fail(error);
-        }
+        deleteWithUndo(
+          `event-${eventId}`,
+          t().eventDeleted(event.title),
+          (keepalive) => api.deleteEvent(eventId, { keepalive }),
+          () => replaceProject(projectId, (card) => ({ ...card, events: [...card.events, event] })),
+        );
       },
 
       editEvent: (eventId) => set({ editingEventId: eventId }),
 
-      dismissError: () => set({ error: null }),
+      dismissToast: () => {
+        clearTimeout(toastTimer);
+        set({ toast: null });
+      },
     };
   });
 }

@@ -49,10 +49,12 @@ export const api = {
     request<DashboardState>("PATCH", "/api/dashboard", { dashboard }, options),
   createProject: (project: ProjectAttributes) => request<Card>("POST", "/api/projects", { project }),
   updateProject: (id: number, project: ProjectAttributes) => request<Card>("PATCH", `/api/projects/${id}`, { project }),
-  deleteProject: (id: number) => request<void>("DELETE", `/api/projects/${id}`),
+  deleteProject: (id: number, options?: { keepalive?: boolean }) =>
+    request<void>("DELETE", `/api/projects/${id}`, undefined, options),
   reorderProjects: (ids: number[]) => request<void>("PATCH", "/api/projects/reorder", { ids }),
   createEvent: (projectId: number, event: EventAttributes) =>
     request<BoardEvent>("POST", `/api/projects/${projectId}/events`, { event }),
   updateEvent: (id: number, event: EventAttributes) => request<BoardEvent>("PATCH", `/api/events/${id}`, { event }),
-  deleteEvent: (id: number) => request<void>("DELETE", `/api/events/${id}`),
+  deleteEvent: (id: number, options?: { keepalive?: boolean }) =>
+    request<void>("DELETE", `/api/events/${id}`, undefined, options),
 };

@@ -8,7 +8,7 @@ class ProjectConnectionDashboard < Administrate::BaseDashboard
     position: Field::Number,
     color_index: Field::Number,
     share_key: Field::String,
-    created_at: Field::DateTime
+    created_at: Field::DateTime.with_options(format: "%d.%m.%Y %H:%M", timezone: "Europe/Moscow")
   }.freeze
 
   COLLECTION_ATTRIBUTES = %i[id user project position color_index].freeze

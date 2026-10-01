@@ -42,3 +42,5 @@ group :development do
 end
 
 gem "administrate", "~> 1.0"
+
+gem "rails-i18n", "~> 8.1"

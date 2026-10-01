@@ -116,8 +116,18 @@ describe("timelineColumns", () => {
     const timeline: Timeline = { origin: day(2026, 9, 28), days: 14, pixelsPerDay: 20, mode: "weeks" };
     const columns = timelineColumns(timeline, today);
     expect(columns).toHaveLength(2);
-    expect(columns[0]).toMatchObject({ title: "September - October", subtitle: "28 - 4", width: 140, current: true });
+    expect(columns[0]).toMatchObject({ title: "September – October", subtitle: "28 – 4", width: 140, current: true });
     expect(columns[1]).toMatchObject({ title: "October", x: 140, current: false });
+  });
+
+  it("names months and weekdays in the board language", async () => {
+    const { ru } = await import("date-fns/locale");
+    const timeline: Timeline = { origin: day(2026, 9, 30), days: 2, pixelsPerDay: 100, mode: "days" };
+    const columns = timelineColumns(timeline, today, ru);
+    expect(columns.map((column) => [column.subtitle, column.marker])).toEqual([
+      ["ср", "Сентябрь"],
+      ["чт", "Октябрь"],
+    ]);
   });
 
   it("builds month columns as wide as their days", () => {

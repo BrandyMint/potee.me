@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
 
   layout "auth"
 
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to login_path, alert: "Too many attempts. Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to login_path, alert: I18n.t("flash.too_many_attempts") }
 
   def new
     redirect_to board_path unless session_user.nil? || session_user.anonymous?
@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
     @email = params[:email].to_s
     user = User.authenticate_by(email: @email.strip.downcase, password: params[:password].to_s)
     unless user
-      flash.now[:alert] = "Wrong email or password."
+      flash.now[:alert] = t("flash.wrong_credentials")
       return render :new, status: :unprocessable_content
     end
 

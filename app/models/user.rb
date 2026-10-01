@@ -28,6 +28,7 @@ class User < ApplicationRecord
   def to_s
     email.presence || "Incognito"
   end
+  alias_method :label, :to_s
 
   # Projects in the order the user arranged them, with everything the board needs.
   def board_connections

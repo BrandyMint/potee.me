@@ -4,7 +4,7 @@ class RegistrationsController < ApplicationController
 
   layout "auth"
 
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to signup_path, alert: "Too many attempts. Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to signup_path, alert: I18n.t("flash.too_many_attempts") }
 
   def new
     redirect_to board_path unless session_user.nil? || session_user.anonymous?
@@ -13,7 +13,7 @@ class RegistrationsController < ApplicationController
   def create
     @email = params[:email].to_s
     if User.registered.exists?(email: @email.strip.downcase)
-      flash.now[:alert] = "This email is already registered. Log in instead."
+      flash.now[:alert] = t("flash.email_taken")
       return render :new, status: :unprocessable_content
     end
 
@@ -23,7 +23,7 @@ class RegistrationsController < ApplicationController
     if user.save(context: :registration)
       DemoBoard.fill(user) if new_board
       sign_in(user)
-      redirect_to board_path, notice: "Welcome! Your board is saved to #{user.email}."
+      redirect_to board_path, notice: t("flash.welcome", email: user.email)
     else
       flash.now[:alert] = user.errors.full_messages.to_sentence
       render :new, status: :unprocessable_content

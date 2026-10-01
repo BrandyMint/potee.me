@@ -14,6 +14,8 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { enUS } from "date-fns/locale";
+import type { Locale as DateLocale } from "date-fns";
 import type { BoardEvent, Card } from "./types";
 
 export const SCALE = {
@@ -164,7 +166,13 @@ export interface Column {
   weekEnd?: boolean;
 }
 
-export function timelineColumns(timeline: Timeline, today: Date): Column[] {
+/** Standalone month name, capitalised ("October", "Октябрь"). */
+function monthName(date: Date, locale: DateLocale): string {
+  const name = format(date, "LLLL", { locale });
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+export function timelineColumns(timeline: Timeline, today: Date, locale: DateLocale = enUS): Column[] {
   const { origin, days, pixelsPerDay, mode } = timeline;
   const columns: Column[] = [];
 
@@ -176,8 +184,8 @@ export function timelineColumns(timeline: Timeline, today: Date): Column[] {
         x: i * pixelsPerDay,
         width: pixelsPerDay,
         title: format(date, "d"),
-        subtitle: format(date, "EEE"),
-        marker: date.getDate() === 1 || i === 0 ? format(date, "MMMM") : undefined,
+        subtitle: format(date, locale.code?.startsWith("ru") ? "EEEEEE" : "EEE", { locale }),
+        marker: date.getDate() === 1 || i === 0 ? monthName(date, locale) : undefined,
         current: isSameDay(date, today),
         weekEnd: date.getDay() === 0,
       });
@@ -189,14 +197,14 @@ export function timelineColumns(timeline: Timeline, today: Date): Column[] {
     for (let i = 0; i * 7 < days; i++) {
       const start = addDays(origin, i * 7);
       const finish = addDays(start, 6);
-      const startMonth = format(start, "MMMM");
-      const finishMonth = format(finish, "MMMM");
+      const startMonth = monthName(start, locale);
+      const finishMonth = monthName(finish, locale);
       columns.push({
         key: formatDay(start),
         x: i * 7 * pixelsPerDay,
         width: 7 * pixelsPerDay,
-        title: startMonth === finishMonth ? startMonth : `${startMonth} - ${finishMonth}`,
-        subtitle: `${format(start, "d")} - ${format(finish, "d")}`,
+        title: startMonth === finishMonth ? startMonth : `${startMonth} – ${finishMonth}`,
+        subtitle: `${format(start, "d")} – ${format(finish, "d")}`,
         current: today >= start && today < addDays(start, 7),
       });
     }
@@ -211,7 +219,7 @@ export function timelineColumns(timeline: Timeline, today: Date): Column[] {
       key: formatDay(month),
       x: offset * pixelsPerDay,
       width: length * pixelsPerDay,
-      title: format(month, "MMMM"),
+      title: monthName(month, locale),
       subtitle: format(month, "yyyy"),
       current: month.getFullYear() === today.getFullYear() && month.getMonth() === today.getMonth(),
     });

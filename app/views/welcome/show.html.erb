@@ -8,9 +8,9 @@
     <%= image_tag "logo_potee.png", alt: "Potee", width: 170, height: 242 %>
   <% end %>
   <div class="welcome-text">
-    <h1>New way of planning.</h1>
-    <p>Now you know what is the next step in your projects.</p>
-    <%= link_to "Get started", board_path, class: "welcome-start" %>
-    <%= link_to "Log in", login_path, class: "welcome-login" %>
+    <h1><%= t("welcome.headline") %></h1>
+    <p><%= t("welcome.lead") %></p>
+    <%= link_to t("welcome.get_started"), board_path, class: "welcome-start" %>
+    <%= link_to t("welcome.log_in"), login_path, class: "welcome-login" %>
   </div>
 </main>

@@ -35,4 +35,5 @@ export interface BoardData {
   projects: Card[];
   dashboard: DashboardState;
   user: { email: string | null; anonymous: boolean };
+  locale: "ru" | "en";
 }

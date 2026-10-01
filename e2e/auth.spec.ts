@@ -4,7 +4,7 @@ const uniqueEmail = () => `e2e-${Date.now()}-${Math.floor(Math.random() * 1e6)}@
 
 test("signing up keeps the board, logging back in restores it", async ({ page, browser }) => {
   await page.goto("/projects");
-  await page.getByRole("button", { name: "+ New project" }).click();
+  await page.getByRole("button", { name: "New project", exact: true }).click();
   await page.getByLabel("Project title").fill("Before sign up");
   await page.getByLabel("Project title").press("Enter");
   await expect(page.getByTestId("project-Before sign up")).toBeVisible();
@@ -27,7 +27,7 @@ test("signing up keeps the board, logging back in restores it", async ({ page, b
   const other = await browser.newContext();
   const otherPage = await other.newPage();
   await otherPage.goto("/projects");
-  await otherPage.getByRole("button", { name: "+ New project" }).click();
+  await otherPage.getByRole("button", { name: "New project", exact: true }).click();
   await otherPage.getByLabel("Project title").fill("From another device");
   await otherPage.getByLabel("Project title").press("Enter");
   await expect(otherPage.getByTestId("project-From another device")).toBeVisible();

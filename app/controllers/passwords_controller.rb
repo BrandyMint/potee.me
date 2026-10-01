@@ -5,7 +5,7 @@ class PasswordsController < ApplicationController
 
   layout "auth"
 
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_password_path, alert: "Too many attempts. Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_password_path, alert: I18n.t("flash.too_many_attempts") }
 
   before_action :find_user_by_token, only: %i[edit update]
 
@@ -13,9 +13,9 @@ class PasswordsController < ApplicationController
 
   def create
     if (user = User.registered.find_by(email: params[:email].to_s.strip.downcase))
-      PasswordsMailer.reset(user).deliver_later
+      PasswordsMailer.with(locale: I18n.locale.to_s).reset(user).deliver_later
     end
-    redirect_to login_path, notice: "If this email is registered, a reset link is on its way."
+    redirect_to login_path, notice: t("flash.reset_sent")
   end
 
   def edit; end
@@ -23,9 +23,9 @@ class PasswordsController < ApplicationController
   def update
     if params[:password].present? && @user.update(password: params[:password])
       sign_in(@user)
-      redirect_to board_path, notice: "Your password has been changed."
+      redirect_to board_path, notice: t("flash.password_changed")
     else
-      flash.now[:alert] = @user.errors.full_messages.to_sentence.presence || "Enter a new password."
+      flash.now[:alert] = @user.errors.full_messages.to_sentence.presence || t("flash.enter_password")
       render :edit, status: :unprocessable_content
     end
   end
@@ -35,6 +35,6 @@ class PasswordsController < ApplicationController
   def find_user_by_token
     @user = User.find_by_password_reset_token!(params[:token])
   rescue ActiveSupport::MessageVerifier::InvalidSignature
-    redirect_to new_password_path, alert: "The reset link is invalid or has expired."
+    redirect_to new_password_path, alert: t("flash.reset_invalid")
   end
 end

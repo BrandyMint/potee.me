@@ -33,15 +33,18 @@ E2E tests share the dev database; each test gets a fresh browser context, which 
 - **Project vs. ProjectConnection** is the key concept. `Project` holds shared data (title, `started_on`/`finished_on`, owner, events). `ProjectConnection` is one user's row on their board: `position`, `color_index` (10 colours) and `share_key`. The API addresses board rows by **connection id**, not project id — `ProjectConnection#as_card_json` is the row shape the frontend receives.
 - Sharing: `/share/:share_key` adds the project to the visitor's board (idempotent) and redirects to `/projects?focus=<connection id>`. Deleting the owner's row deletes the project; other users only lose their row.
 - `Dashboard` stores per-user view state: `pixels_per_day` (zoom, 4–200), `current_date` (moment in the middle of the screen), `scroll_top`.
+- **Language**: Russian by default, English when `Accept-Language` prefers it (`ApplicationController#preferred_locale`). Server texts live in `config/locales/{ru,en}.yml` (incl. demo board texts), the board UI in `app/frontend/board/i18n.ts`; date names use date-fns locales. Playwright runs with `en-US`, so e2e selectors are English; the `in Russian` block covers `ru`.
 - `BoardsController#show` renders the initial board JSON into the page (`#board-data`), so the board starts without an API round trip. API: `app/controllers/api/*` under `/api`, JSON only, errors as `{errors}` (422) / 404 for foreign records.
 
 ### Frontend (`app/frontend/board/`)
 
 - `timeline.ts` — all geometry as pure functions: zoom modes (`days` > 30 px/day ≥ `weeks` > 15 ≥ `months`), date ↔ x conversion by calendar days (DST-safe), the visible range (`buildTimeline`: projects + today + a screen of padding, aligned to columns) and header columns. Keep DOM out of it; it is what the Vitest suite covers.
-- `store.ts` — Zustand store. Every change is applied optimistically, then sent to the API; on failure the board is reloaded from `/api/board` and an error toast is shown. Unsaved rows/events have negative ids (`isSaved`). Dashboard view state is saved debounced (1 s) and flushed on `pagehide`.
+- `store.ts` — Zustand store. Every change is applied optimistically, then sent to the API; on failure the board is reloaded from `/api/board` and an error toast is shown (auto-hides). Deleting a project or event removes it at once and sends the DELETE only after a 5 s undo window (toast with Undo). Unsaved rows/events have negative ids (`isSaved`). Dashboard state (debounced 1 s) and pending deletions are flushed on `pagehide`.
 - `App.tsx` — the board: one scroll container (`.viewport`) for both axes with a sticky date header. It keeps `currentDate` in the middle of the screen whenever zoom, timeline origin or width change (layout effect), pans on drag, zooms on ctrl/⌘+wheel around the pointer, creates a project on double click, and owns keyboard shortcuts. `ProjectRow` (bar, sticky title, edge resize, reorder by dragging the title, off-screen edge labels), `EventMarker` (drag in time, inline edit), `Header` (zoom buttons, today link, selected-project panel).
 - Pointer interactions go through `drag.ts#startDrag`, which also swallows the click that follows a drag.
-- Row heights per zoom live both in `board.css` and `ROW_HEIGHT` in `App.tsx`; change them together.
+- Row heights per zoom live both in `board.css` and `ROW_HEIGHT` in `App.tsx`; change them together. Rows are centred vertically (flex) — double-click row index is measured from the first row.
+- Narrow screens (≤760 px): short labels (`.label-short`), project panel becomes a bottom sheet; touch scrolls natively (custom panning is mouse-only).
+- Use cases and UX review live in `memory-bank/` (`use-cases/UC-*.md`, `reviews/`).
 
 ### Deployment
 

@@ -41,7 +41,7 @@ test("shows the demo board in days zoom", async ({ page }) => {
 });
 
 test("creates a project from the header button", async ({ page }) => {
-  await page.getByRole("button", { name: "+ New project" }).click();
+  await page.getByRole("button", { name: "New project", exact: true }).click();
   await page.getByLabel("Project title").fill("Write tests");
   const created = apiCall(page, "POST", "/api/projects");
   await page.getByLabel("Project title").press("Enter");
@@ -147,7 +147,6 @@ test("dragging a title reorders the projects", async ({ page }) => {
 
 test("deletes a project", async ({ page }) => {
   await row(page, "Make my wife happy").locator(".project-title-text").click();
-  page.once("dialog", (dialog) => void dialog.accept());
   const deleted = apiCall(page, "DELETE", /^\/api\/projects\/\d+$/);
   await page.getByRole("button", { name: "Delete" }).click();
   expect((await deleted).status()).toBe(204);
@@ -187,4 +186,68 @@ test("a share link adds the project to another visitor's board", async ({ page, 
   await expect(visitorPage.locator(".project")).toHaveCount(4);
   await expect(visitorPage.getByLabel("Selected project title")).toHaveValue("Learn Scala");
   await visitor.close();
+});
+
+test("a deleted project can be restored with Undo", async ({ page }) => {
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await page.getByRole("button", { name: "Delete" }).click();
+  await expect(row(page, "Learn Scala")).toHaveCount(0);
+  await page.getByRole("button", { name: "Undo" }).click();
+  expect(await rowTitles(page)).toEqual(["Learn Scala", "Make my wife happy", "Start my own business"]);
+
+  await page.waitForTimeout(5500);
+  await page.reload();
+  expect(await rowTitles(page)).toEqual(["Learn Scala", "Make my wife happy", "Start my own business"]);
+});
+
+test("an empty board explains how to start", async ({ page }) => {
+  for (const title of ["Learn Scala", "Make my wife happy", "Start my own business"]) {
+    await row(page, title).locator(".project-title-text").click();
+    await page.getByRole("button", { name: "Delete" }).click();
+  }
+  await expect(page.getByRole("heading", { name: "Your board is empty" })).toBeVisible();
+  await page.locator(".empty-state").getByRole("button", { name: "New project" }).click();
+  await expect(page.getByLabel("Project title")).toBeFocused();
+  await expect(page.locator(".empty-state")).toHaveCount(0);
+});
+
+test("the help popover lists gestures and shortcuts", async ({ page }) => {
+  await page.getByRole("button", { name: "Help" }).click();
+  await expect(page.getByRole("dialog", { name: "How to use Potee" })).toContainText("Double-click a project");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("rows are centred vertically when they fit", async ({ page }) => {
+  const viewport = (await page.getByTestId("viewport").boundingBox())!;
+  const first = (await row(page, "Learn Scala").boundingBox())!;
+  const last = (await row(page, "Start my own business").boundingBox())!;
+  const middle = (first.y + last.y + last.height) / 2;
+  expect(Math.abs(middle - (viewport.y + 56 + (viewport.height - 56) / 2))).toBeLessThan(40);
+});
+
+test.describe("in Russian", () => {
+  test.use({ locale: "ru-RU" });
+
+  test("the board, dates and samples are in Russian", async ({ page }) => {
+    await expect(page.getByRole("button", { name: "Дни" })).toHaveClass(/active/);
+    await expect(page.getByTestId("project-Запуск сайта")).toBeVisible();
+    await expect(page.locator(".header-cell.current .header-subtitle")).toHaveText(/^(пн|вт|ср|чт|пт|сб|вс)$/);
+  });
+});
+
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test("the header fits without overlaps and the panel opens at the bottom", async ({ page }) => {
+    const header = (await page.locator(".board-header").boundingBox())!;
+    const children = await page.locator(".board-header > *:visible").all();
+    const boxes = (await Promise.all(children.map((child) => child.boundingBox()))).filter((box) => box && box.width > 0);
+    for (const box of boxes) expect(box!.x + box!.width).toBeLessThanOrEqual(header.x + header.width + 1);
+    for (let i = 1; i < boxes.length; i++) expect(boxes[i]!.x).toBeGreaterThanOrEqual(boxes[i - 1]!.x + boxes[i - 1]!.width - 1);
+
+    await row(page, "Learn Scala").locator(".project-title-text").click();
+    const panel = (await page.locator(".project-panel").boundingBox())!;
+    expect(panel.y + panel.height).toBeGreaterThan(800);
+  });
 });

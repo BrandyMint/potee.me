@@ -3,11 +3,16 @@
 :root {
   color-scheme: dark;
   --text: #777;
+  --text-strong: #ccc;
   --line: #333;
+  --surface: #161616;
+  --accent: #5abce4;
+  --danger: #f57969;
   --header-height: 56px;
   --timeline-header-height: 56px;
   --bar-top: 24px;
   --bar-height: 20px;
+  --radius: 4px;
 }
 
 html,
@@ -26,12 +31,17 @@ body.board-page {
 }
 
 .board {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
 
 button {
   font: inherit;
+}
+
+.label-short {
+  display: none;
 }
 
 /* Project colours (the original Potee palette) */
@@ -61,13 +71,15 @@ button {
 
 .board-header button {
   border: 0;
+  border-radius: var(--radius);
   background: none;
   color: #999;
   cursor: pointer;
   padding: 4px 8px;
 }
 
-.board-header button:hover {
+.board-header button:hover,
+.board-header button:focus-visible {
   color: #fff;
 }
 
@@ -77,19 +89,19 @@ button {
 }
 
 .brand img {
-  height: 30px;
+  height: 36px;
 }
 
 .scale-buttons {
   display: flex;
   border: 1px solid #444;
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
 .scale-buttons button {
+  border-radius: 0 !important;
   font-size: 12px;
-  border-radius: 0;
 }
 
 .scale-buttons button.active {
@@ -98,24 +110,35 @@ button {
 }
 
 .board-header .today-link {
-  color: #5abce4;
-}
-
-.header-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-width: 0;
+  color: var(--accent);
 }
 
 .board-header .new-project {
-  color: #ccc;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--text-strong);
   font-size: 15px;
 }
 
+.header-spacer {
+  flex: 1;
+}
+
+.help {
+  position: relative;
+}
+
+.board-header .help-button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid #444;
+  border-radius: 50%;
+}
+
 .account {
-  margin: 0 0 0 auto;
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -132,7 +155,7 @@ button {
 }
 
 .account .signup-hint {
-  color: #f57969;
+  color: var(--danger);
 }
 
 .account-email {
@@ -140,6 +163,7 @@ button {
 }
 
 .project-panel {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -149,19 +173,19 @@ button {
 .color-swatch {
   width: 22px;
   height: 22px;
+  flex: none;
   border-radius: 50% !important;
   background: var(--c) !important;
-  flex: none;
 }
 
 .panel-title {
   width: 280px;
-  max-width: 40vw;
+  max-width: 30vw;
   padding: 4px 6px;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: var(--radius);
   background: transparent;
-  color: #ccc;
+  color: var(--text-strong);
   font-size: 14px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -175,11 +199,82 @@ button {
 }
 
 .board-header .danger {
-  color: #f57969;
+  color: var(--danger);
 }
 
 .board-header .close {
   font-size: 20px;
+  line-height: 1;
+}
+
+/* Popovers (help, share link) */
+
+.popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  z-index: 60;
+  padding: 14px 16px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+  color: #bbb;
+  white-space: normal;
+}
+
+.help-popover {
+  right: 0;
+  width: 380px;
+}
+
+.help-popover h2 {
+  margin: 0 0 10px;
+  color: #ddd;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.help-popover dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.help-popover dl div {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 12px;
+}
+
+.help-popover dt {
+  color: #eee;
+}
+
+.help-popover dd {
+  margin: 0;
+}
+
+.share-popover {
+  left: 0;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.share-popover label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.share-popover input {
+  width: 320px;
+  padding: 6px 8px;
+  border: 1px solid #444;
+  border-radius: var(--radius);
+  background: #000;
+  color: #eee;
 }
 
 /* Viewport and timeline */
@@ -199,6 +294,8 @@ button {
 .canvas {
   position: relative;
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .grid {
@@ -227,6 +324,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 20;
+  flex: none;
   height: var(--timeline-header-height);
   background: rgb(29 29 29 / 0.85);
 }
@@ -270,15 +368,20 @@ button {
   color: #999;
 }
 
-/* Projects */
+/* Projects: the block of rows sits in the middle of the screen when it fits. */
 
 .rows {
   position: relative;
-  padding-bottom: 120px;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 0 60px;
 }
 
 .project {
   position: relative;
+  flex: none;
   height: 78px;
   transition: opacity 0.2s;
 }
@@ -322,52 +425,40 @@ button {
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: grab;
+  touch-action: none;
 }
 
-.title-form {
-  display: flex;
-  gap: 4px;
-  margin: 0;
-}
-
-.title-form input {
-  width: 220px;
-  height: 18px;
-  padding: 0 6px;
-  border: 0;
-  border-radius: 3px;
-  background: #000;
-  color: var(--c);
-  font-size: 12px;
-}
-
-.title-form button,
-.event-form button {
-  border: 0;
-  border-radius: 3px;
-  padding: 0 6px;
-  background: #000;
-  color: #ccc;
-  cursor: pointer;
-  font-size: 11px;
-}
-
-.event-form button.danger {
-  background: #b94a48;
-  color: #fff;
-}
-
+/* Edge grips appear on hover so resizing is discoverable. */
 .resize-handle {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 8px;
   z-index: 2;
+  width: 10px;
   cursor: ew-resize;
+  touch-action: none;
 }
 
 .resize-handle.start { left: -2px; }
 .resize-handle.finish { right: -2px; }
+
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 4px;
+  width: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--c) 45%, black);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.project-bar:hover .resize-handle::after,
+.project.resizing .resize-handle::after {
+  opacity: 1;
+}
 
 .project.reordering {
   z-index: 10;
@@ -406,6 +497,63 @@ button {
   transform: translateX(-100%);
 }
 
+/* Inline forms on the board (new project title, event title): one look. */
+
+.inline-form {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin: 0;
+}
+
+.inline-form input {
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--c) 70%, black);
+  border-radius: var(--radius);
+  background: #000;
+  color: var(--c);
+  font-size: 12px;
+  outline: none;
+}
+
+.inline-form input:focus {
+  border-color: var(--c);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 30%, transparent);
+}
+
+.inline-form input::placeholder {
+  color: color-mix(in srgb, var(--c) 50%, black);
+}
+
+.inline-button {
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius);
+  background: #000;
+  color: var(--text-strong);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.inline-button:hover {
+  color: #fff;
+}
+
+.inline-button.danger {
+  color: var(--danger);
+}
+
+.title-form input {
+  width: 220px;
+}
+
+.event-form input {
+  width: 200px;
+  font-size: 15px;
+}
+
 /* Events */
 
 .event {
@@ -435,6 +583,7 @@ button {
   border-radius: 2px;
   background: color-mix(in srgb, var(--c) 75%, black);
   cursor: col-resize;
+  touch-action: none;
 }
 
 .event-title {
@@ -452,20 +601,6 @@ button {
   position: absolute;
   top: -4px;
   left: -3px;
-  display: flex;
-  gap: 4px;
-  margin: 0;
-}
-
-.event-form input {
-  width: 200px;
-  height: 20px;
-  padding: 0 6px;
-  border: 0;
-  border-radius: 3px;
-  background: #000;
-  color: color-mix(in srgb, var(--c) 88%, black);
-  font-size: 15px;
 }
 
 .scale-weeks .event-bar,
@@ -483,7 +618,46 @@ button {
   visibility: visible;
 }
 
-/* Errors */
+/* Empty board */
+
+.empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 25;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  max-width: calc(100% - 32px);
+  text-align: center;
+  transform: translate(-50%, -30%);
+  pointer-events: none;
+}
+
+.empty-state h2 {
+  margin: 0;
+  color: #ccc;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.empty-state p {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.empty-state button {
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--accent);
+  color: #10242c;
+  cursor: pointer;
+  font-size: 15px;
+  pointer-events: auto;
+}
+
+/* Toasts: errors and undo after deletion */
 
 .toast {
   position: fixed;
@@ -493,11 +667,21 @@ button {
   display: flex;
   gap: 12px;
   align-items: center;
+  max-width: calc(100% - 32px);
+  box-sizing: border-box;
   padding: 10px 16px;
   border-radius: 6px;
-  background: #b94a48;
   color: #fff;
   transform: translateX(-50%);
+}
+
+.toast-error {
+  background: #b94a48;
+}
+
+.toast-info {
+  background: #2b2b2b;
+  border: 1px solid #444;
 }
 
 .toast button {
@@ -505,6 +689,14 @@ button {
   background: none;
   color: #fff;
   cursor: pointer;
+}
+
+.toast-undo {
+  color: var(--accent) !important;
+  font-weight: 600;
+}
+
+.toast-close {
   font-size: 18px;
 }
 
@@ -535,4 +727,79 @@ button {
 
 @keyframes flash-out {
   to { opacity: 0; visibility: hidden; }
+}
+
+/* Narrow screens: compact header, project panel as a bottom sheet. */
+
+@media (max-width: 760px) {
+  .board-header {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .brand img {
+    height: 28px;
+  }
+
+  .label-long {
+    display: none;
+  }
+
+  .label-short {
+    display: inline;
+  }
+
+  .board-header .new-project {
+    font-size: 22px;
+    padding: 0 6px;
+  }
+
+  .account {
+    gap: 10px;
+  }
+
+  .account-email {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .project-panel {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    flex-wrap: wrap;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid #333;
+    background: var(--surface);
+  }
+
+  .panel-title {
+    flex: 1 1 calc(100% - 80px);
+    max-width: none;
+  }
+
+  .share-popover {
+    top: auto;
+    bottom: calc(100% + 8px);
+  }
+
+  .share-popover input {
+    width: calc(100vw - 100px);
+  }
+
+  .help-popover {
+    position: fixed;
+    top: calc(var(--header-height) + 8px);
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+
+  .help-popover dl div {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }

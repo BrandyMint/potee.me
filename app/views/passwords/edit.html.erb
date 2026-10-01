@@ -1,7 +1,7 @@
-<% content_for :title, "New password — Potee" %>
-<h1>New password</h1>
-<p class="lead">For <%= @user.email %></p>
+<% content_for :title, t("auth.reset.title") %>
+<h1><%= t("auth.reset.heading") %></h1>
+<p class="lead"><%= t("auth.reset.for", email: @user.email) %></p>
 <%= form_with url: password_path(params[:token]), method: :patch do |form| %>
-  <%= form.label :password do %>New password (8+ characters)<%= form.password_field :password, required: true, minlength: 8, maxlength: 72, autofocus: true, autocomplete: "new-password" %><% end %>
-  <%= form.button "Save password" %>
+  <%= form.label :password do %><%= t("auth.reset.password") %><%= form.password_field :password, required: true, minlength: 8, maxlength: 72, autofocus: true, autocomplete: "new-password" %><% end %>
+  <%= form.button t("auth.reset.submit") %>
 <% end %>

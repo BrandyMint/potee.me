@@ -5,8 +5,8 @@ class EventDashboard < Administrate::BaseDashboard
     id: Field::Number,
     title: Field::String,
     project: Field::BelongsTo,
-    at: Field::DateTime,
-    created_at: Field::DateTime
+    at: Field::DateTime.with_options(format: "%d.%m.%Y %H:%M", timezone: "Europe/Moscow"),
+    created_at: Field::DateTime.with_options(format: "%d.%m.%Y %H:%M", timezone: "Europe/Moscow")
   }.freeze
 
   COLLECTION_ATTRIBUTES = %i[id title project at].freeze

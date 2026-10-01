@@ -1,10 +1,10 @@
-<% content_for :title, "Reset password — Potee" %>
-<h1>Reset password</h1>
-<p class="lead">We will email you a link to set a new password.</p>
+<% content_for :title, t("auth.forgot.title") %>
+<h1><%= t("auth.forgot.heading") %></h1>
+<p class="lead"><%= t("auth.forgot.lead") %></p>
 <%= form_with url: passwords_path do |form| %>
-  <%= form.label :email do %>Email<%= form.email_field :email, required: true, autofocus: true, autocomplete: "username" %><% end %>
-  <%= form.button "Send the link" %>
+  <%= form.label :email do %><%= t("auth.email") %><%= form.email_field :email, required: true, autofocus: true, autocomplete: "username" %><% end %>
+  <%= form.button t("auth.forgot.submit") %>
 <% end %>
 <div class="links">
-  <%= link_to "Back to log in", login_path %>
+  <%= link_to t("auth.forgot.back"), login_path %>
 </div>
