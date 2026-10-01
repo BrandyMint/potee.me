@@ -251,3 +251,19 @@ test.describe("on a phone", () => {
     expect(panel.y + panel.height).toBeGreaterThan(800);
   });
 });
+
+test("the logo fits every project on one screen", async ({ page }) => {
+  await page.getByRole("button", { name: "weeks" }).click();
+  await page.getByRole("button", { name: "Show all projects" }).click();
+  await expect(async () => {
+    const viewport = (await page.getByTestId("viewport").boundingBox())!;
+    for (const title of ["Learn Scala", "Make my wife happy", "Start my own business"]) {
+      const box = (await bar(page, title).boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(viewport.x);
+      expect(box.x + box.width).toBeLessThanOrEqual(viewport.x + viewport.width);
+      expect(box.y + box.height).toBeLessThanOrEqual(viewport.y + viewport.height);
+    }
+  }).toPass();
+  // The largest zoom that fits: days mode for a two-week board.
+  await expect(page.getByRole("button", { name: "days" })).toHaveClass(/active/);
+});

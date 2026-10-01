@@ -5,6 +5,8 @@ import {
   closestEventId,
   dateAt,
   dayOffset,
+  fitAll,
+  rowHeight,
   eventBounds,
   fitScale,
   nextColorIndex,
@@ -164,5 +166,29 @@ describe("helpers", () => {
       ],
     });
     expect(bounds).toEqual({ first: day(2026, 10, 2), last: day(2026, 10, 5) });
+  });
+});
+
+describe("fitAll", () => {
+  const projects = [
+    { started_on: "2026-10-01", finished_on: "2026-10-10" },
+    { started_on: "2026-10-05", finished_on: "2026-10-20" },
+  ];
+
+  it("picks the largest zoom that fits the whole range and centres it", () => {
+    const fit = fitAll({ projects, viewportWidth: 1100, rowsHeight: 600 })!;
+    expect(fit.pixelsPerDay).toBe(50); // 20 days into 1000 px
+    expect(fit.middle).toEqual(day(2026, 10, 11));
+    expect(rowHeight(fit.pixelsPerDay)).toBe(64);
+  });
+
+  it("zooms out further when the rows do not fit the height", () => {
+    const many = Array.from({ length: 10 }, () => projects[0]!);
+    const fit = fitAll({ projects: many, viewportWidth: 2000, rowsHeight: 520 })!;
+    expect(fit.pixelsPerDay).toBe(30); // weeks rows (50 px) fit 10 × 50 = 500
+  });
+
+  it("does nothing for an empty board", () => {
+    expect(fitAll({ projects: [], viewportWidth: 1000, rowsHeight: 500 })).toBeNull();
   });
 });

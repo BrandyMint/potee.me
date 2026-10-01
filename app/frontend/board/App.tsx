@@ -10,8 +10,10 @@ import {
   buildTimeline,
   clampScale,
   dateAt,
+  fitAll,
   fitScale,
   projectMiddle,
+  rowHeight as rowHeightFor,
   SCALE,
   scaleMode,
   stepScale,
@@ -23,8 +25,8 @@ import {
 import { TimelineGrid } from "./TimelineGrid";
 import type { BoardData } from "./types";
 
-/** Row heights per zoom level; they must match board.css. */
-const ROW_HEIGHT = { days: 78, compact: 64, weeks: 50, months: 45 } as const;
+/** Vertical space the rows block does not get: date header and row paddings (board.css). */
+const ROWS_CHROME = 56 + 40 + 60;
 
 export function App({ initial }: { initial: BoardData }) {
   const [store] = useState(() => createBoardStore(initial));
@@ -58,7 +60,7 @@ function Board() {
   const width = timelineWidth(timeline);
   const mode = scaleMode(pixelsPerDay);
   const compact = mode === "days" && pixelsPerDay <= SCALE.COMPACT_DAYS_AT;
-  const rowHeight = mode === "days" ? (compact ? ROW_HEIGHT.compact : ROW_HEIGHT.days) : ROW_HEIGHT[mode];
+  const rowHeight = rowHeightFor(pixelsPerDay);
 
   // Keep the remembered moment in the middle of the screen whenever the zoom,
   // the timeline origin or the viewport width changes.
@@ -122,6 +124,23 @@ function Board() {
     },
     [store],
   );
+
+  // The logo shows the whole board: the largest zoom at which every project
+  // fits the width and every row fits the height.
+  const showAll = useCallback(() => {
+    const state = store.getState();
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const fit = fitAll({
+      projects: state.projects,
+      viewportWidth: viewport.clientWidth,
+      rowsHeight: viewport.clientHeight - ROWS_CHROME,
+    });
+    state.select(null);
+    if (fit) state.setScale(fit.pixelsPerDay, fit.middle);
+    else state.setScale(SCALE.DAYS, new Date());
+    viewport.scrollTo({ top: 0, behavior: "smooth" });
+  }, [store]);
 
   const newProject = useCallback(() => {
     const viewport = viewportRef.current;
@@ -240,7 +259,7 @@ function Board() {
   return (
     <ViewContext.Provider value={view}>
       <div className={boardClasses.join(" ")}>
-        <Header onNewProject={newProject} />
+        <Header onNewProject={newProject} onShowAll={showAll} />
         <div
           className="viewport"
           ref={viewportRef}

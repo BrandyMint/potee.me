@@ -428,34 +428,35 @@ button {
   touch-action: none;
 }
 
-/* Edge grips appear on hover so resizing is discoverable. */
+/* Edge grips: a double line shown only when the pointer is at the edge
+   itself (or while resizing), so they are not mistaken for a text caret. */
 .resize-handle {
   position: absolute;
   top: 0;
   bottom: 0;
   z-index: 2;
-  width: 10px;
+  width: 12px;
   cursor: ew-resize;
   touch-action: none;
 }
 
-.resize-handle.start { left: -2px; }
-.resize-handle.finish { right: -2px; }
+.resize-handle.start { left: -3px; }
+.resize-handle.finish { right: -3px; }
 
 .resize-handle::after {
   content: "";
   position: absolute;
-  top: 5px;
-  bottom: 5px;
+  top: 6px;
+  bottom: 6px;
   left: 4px;
   width: 2px;
-  border-radius: 1px;
-  background: color-mix(in srgb, var(--c) 45%, black);
+  border-right: 1.5px solid color-mix(in srgb, var(--c) 40%, black);
+  border-left: 1.5px solid color-mix(in srgb, var(--c) 40%, black);
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.12s;
 }
 
-.project-bar:hover .resize-handle::after,
+.resize-handle:hover::after,
 .project.resizing .resize-handle::after {
   opacity: 1;
 }

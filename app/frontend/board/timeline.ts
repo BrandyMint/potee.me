@@ -261,3 +261,42 @@ export function eventBounds(card: Pick<Card, "events">): { first?: Date; last?: 
   }
   return { first, last };
 }
+
+/** Row height per zoom; must match the .project heights in board.css. */
+export const ROW_HEIGHT = { days: 78, compact: 64, weeks: 50, months: 45 } as const;
+
+export function rowHeight(pixelsPerDay: number): number {
+  const mode = scaleMode(pixelsPerDay);
+  if (mode === "days") return pixelsPerDay <= SCALE.COMPACT_DAYS_AT ? ROW_HEIGHT.compact : ROW_HEIGHT.days;
+  return ROW_HEIGHT[mode];
+}
+
+/**
+ * The largest zoom that shows every project at once: the whole date range
+ * fits the width and all rows fit the height (rows get shorter in coarser
+ * modes). Returns the zoom and the moment to put in the middle.
+ */
+export function fitAll(options: {
+  projects: Pick<Card, "started_on" | "finished_on">[];
+  viewportWidth: number;
+  /** Height available for rows (viewport minus date header and paddings). */
+  rowsHeight: number;
+  margin?: number;
+}): { pixelsPerDay: number; middle: Date } | null {
+  const { projects, viewportWidth, rowsHeight, margin = 50 } = options;
+  if (projects.length === 0) return null;
+  let first = parseDay(projects[0]!.started_on);
+  let last = parseDay(projects[0]!.finished_on);
+  for (const project of projects) {
+    const start = parseDay(project.started_on);
+    const finish = parseDay(project.finished_on);
+    if (start < first) first = start;
+    if (finish > last) last = finish;
+  }
+  const days = differenceInCalendarDays(last, first) + 1;
+  const widest = clampScale(Math.floor((viewportWidth - margin * 2) / days));
+  // Coarser modes have shorter rows: step down until every row fits.
+  const candidates = [widest, SCALE.COMPACT_DAYS_AT, SCALE.WEEKS_AT, SCALE.MONTHS_AT].map((value) => Math.min(widest, value));
+  const pixelsPerDay = candidates.find((value) => projects.length * rowHeight(value) <= rowsHeight) ?? candidates[candidates.length - 1]!;
+  return { pixelsPerDay, middle: addMinutes(first, (days * MINUTES_PER_DAY) / 2) };
+}

@@ -12,7 +12,7 @@ const SCALE_BUTTONS: { mode: ScaleMode; pixelsPerDay: number }[] = [
   { mode: "months", pixelsPerDay: SCALE.MONTHS },
 ];
 
-export function Header({ onNewProject }: { onNewProject: () => void }) {
+export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; onShowAll: () => void }) {
   const { timeline, today, viewportWidth, scrollLeft, goToDate } = useBoardView();
   const pixelsPerDay = useBoard((state) => state.pixelsPerDay);
   const setScale = useBoard((state) => state.setScale);
@@ -26,7 +26,7 @@ export function Header({ onNewProject }: { onNewProject: () => void }) {
 
   return (
     <header className="board-header">
-      <button type="button" className="brand" onClick={() => goToDate(new Date())} title={text.goToToday}>
+      <button type="button" className="brand" onClick={onShowAll} title={text.showAll} aria-label={text.showAll}>
         <img src={logoUrl} alt="Potee" />
       </button>
       <div className="scale-buttons" role="group" aria-label={text.zoomHint} title={text.zoomHint}>
