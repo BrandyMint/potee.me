@@ -10,9 +10,9 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   web:
-    build:
-      context: .
-      target: dev
+    # Built on the machine's buildx builder (BUILDX_BUILDER, see ~/dotfiles) and pulled here:
+    #   docker buildx build --platform linux/amd64 --target dev --push -t registry.brandymint.ru/dapi/potee:dev .
+    image: registry.brandymint.ru/dapi/potee:dev
     platform: linux/amd64
     environment:
       DB_HOST: db

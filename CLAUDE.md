@@ -10,16 +10,20 @@ Potee (potee.me / potee.ru) — visual project planner: projects are horizontal 
 
 ### Docker (the working way on Apple Silicon)
 
-Ruby 2.0 cannot be built natively on modern macOS, so development runs in Docker: `Dockerfile` compiles Ruby 2.0.0-p648 on Debian jessie (amd64), `docker-compose.yml` adds Postgres 9.6. The amd64 images need Rosetta emulation — under plain qemu `dpkg` in jessie segfaults. Use the dedicated colima profile:
+Ruby 2.0 cannot be built natively on modern macOS, so development runs in Docker: `Dockerfile` compiles Ruby 2.0.0-p648 on Debian jessie (amd64), `docker-compose.yml` adds Postgres 17 (same major as the shared production server).
+
+Images are never built locally. `docker buildx build` goes to the machine's builder chosen via `BUILDX_BUILDER` (`~/dotfiles`: `make docker-remote-builder` / `make docker-builder-status`; currently `office`, native amd64) and is published with `--push` — no `--load`, no `docker compose build`. Compose only pulls `registry.brandymint.ru/dapi/potee:dev`. Running the amd64 containers locally still needs emulation; under plain qemu old jessie binaries can segfault, so use a Rosetta-enabled colima profile:
 
 ```sh
 colima start potee --vm-type vz --vz-rosetta --cpu 4 --memory 4   # docker context: colima-potee
-cp config/database.yml.example config/database.yml                # reads DB_HOST/DB_USER/DB_PASSWORD from env
+cp config/database.yml.example config/database.yml                # reads DB_HOST/DB_PORT/DB_USER/DB_PASSWORD from env
 cp config/settings/development.yml.example config/settings/development.yml
 npx bower install                                                  # on the host, into vendor/assets/components
-env -u BUILDX_BUILDER docker compose build web                     # BUILDX_BUILDER in Danil's shell points to a remote builder
+# only when the dev stage of Dockerfile changes:
+docker buildx build --platform linux/amd64 --target dev --push -t registry.brandymint.ru/dapi/potee:dev .
+docker compose pull web
 docker compose run --rm web bundle install
-docker compose run --rm web sh -c 'rake db:create && rake db:schema:load && RAILS_ENV=test rake db:create db:schema:load'
+docker compose run --rm web sh -c 'rake db:create db:schema:load && RAILS_ENV=test rake db:create db:schema:load'
 docker compose up -d                                               # http://localhost:3007
 ```
 
@@ -44,6 +48,7 @@ Tests:
 - CI (`.travis.yml`) only runs `rake db:migrate` against `config/database_test.yml`.
 
 Deploy (current): https://potee.pismenny.ru runs in the `goga-office` cluster, configured in `~/code/brandymint/infra` (`STAGE=goga-infra APP=potee`, values in `values/goga-office/potee.yaml.gotmpl`, DB `potee_production` on the shared `postgres.goga.home.arpa`). Release = commit, then from this repo `docker buildx build --platform linux/amd64 --target production --push -t registry.brandymint.ru/dapi/potee:$(git rev-parse HEAD) .`, then in infra `direnv exec . make app-update STAGE=goga-infra APP=potee TAG=<sha>`. The init container runs `rake db:ensure` (schema load on an empty DB, otherwise migrate). The pod runs as uid 1000 with a read-only root filesystem; `script/docker-entrypoint` gives Ruby a private `TMPDIR`.
+
 
 Legacy release/deploy (Capistrano, pre-Kubernetes): `script/release` bumps the patch version in `.semver` (with git SHA as metadata), tags, commits and pushes; `script/release_and_deploy` also runs `bundle exec cap production deploy` (Capistrano 2 multistage, `config/deploy.rb`, stages `production`/`staging`; deploy runs `bower install` and symlinks shared configs). 
 ## Architecture

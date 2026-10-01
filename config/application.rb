@@ -9,6 +9,9 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+# Loaded here rather than as an initializer so rake db:* tasks get it too.
+require File.expand_path('../../lib/postgresql_client_min_messages', __FILE__)
+
 module Potee
   mattr_accessor :version
   class Application < Rails::Application
