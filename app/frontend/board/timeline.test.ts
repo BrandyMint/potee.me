@@ -6,6 +6,7 @@ import {
   dateAt,
   dayOffset,
   fitAll,
+  labelTiers,
   rowHeight,
   eventBounds,
   fitScale,
@@ -190,5 +191,36 @@ describe("fitAll", () => {
 
   it("does nothing for an empty board", () => {
     expect(fitAll({ projects: [], viewportWidth: 1000, rowsHeight: 500 })).toBeNull();
+  });
+});
+
+describe("labelTiers", () => {
+  const width = (title: string) => title.length * 10;
+
+  it("keeps labels on one tier when they do not overlap", () => {
+    const { tiers, count } = labelTiers(
+      [
+        { id: 1, x: 0, title: "aaaa" },
+        { id: 2, x: 60, title: "bbbb" },
+      ],
+      width,
+    );
+    expect(count).toBe(1);
+    expect([...tiers.values()]).toEqual([0, 0]);
+  });
+
+  it("lifts an overlapping label and reuses lower tiers when free again", () => {
+    const { tiers, count } = labelTiers(
+      [
+        { id: 3, x: 300, title: "cc" },
+        { id: 1, x: 0, title: "Some event" },
+        { id: 2, x: 30, title: "Some event" },
+      ],
+      width,
+    );
+    expect(count).toBe(2);
+    expect(tiers.get(1)).toBe(0);
+    expect(tiers.get(2)).toBe(1);
+    expect(tiers.get(3)).toBe(0);
   });
 });

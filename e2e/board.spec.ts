@@ -267,3 +267,25 @@ test("the logo fits every project on one screen", async ({ page }) => {
   // The largest zoom that fits: days mode for a two-week board.
   await expect(page.getByRole("button", { name: "days" })).toHaveClass(/active/);
 });
+
+test("labels of close events go to separate tiers instead of overlapping", async ({ page }) => {
+  const scala = row(page, "Learn Scala");
+  const heightBefore = (await scala.boundingBox())!.height;
+  const tick = (await scala.locator(".event", { hasText: "Buy a book" }).locator(".event-bar").boundingBox())!;
+  const created = apiCall(page, "POST", /^\/api\/projects\/\d+\/events$/);
+  await page.mouse.dblclick(tick.x + 25, tick.y + tick.height / 2);
+  await created;
+
+  const labels = scala.locator(".event-title");
+  await expect(labels).toHaveCount(4);
+  const boxes = (await Promise.all((await labels.all()).map((label) => label.boundingBox()))).map((box) => box!);
+  for (let i = 0; i < boxes.length; i++) {
+    for (let j = i + 1; j < boxes.length; j++) {
+      const [a, b] = [boxes[i]!, boxes[j]!];
+      const overlap = a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+      expect(overlap).toBe(false);
+    }
+  }
+  expect((await scala.boundingBox())!.height).toBeGreaterThan(heightBefore);
+  await expect(scala.locator(".event-connector")).toHaveCount(1);
+});

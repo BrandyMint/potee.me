@@ -4,7 +4,7 @@ import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, xOf } from "./timeline";
+import { dateAt, LABEL_TIER_HEIGHT, xOf } from "./timeline";
 import type { BoardEvent } from "./types";
 
 interface Props {
@@ -14,9 +14,11 @@ interface Props {
   minX: number;
   maxX: number;
   closest: boolean;
+  /** Label tier: 0 sits right above the bar, higher tiers stack upwards. */
+  tier: number;
 }
 
-export function EventMarker({ projectId, event, minX, maxX, closest }: Props) {
+export function EventMarker({ projectId, event, minX, maxX, closest, tier }: Props) {
   const { timeline, today } = useBoardView();
   const editing = useBoard((state) => state.editingEventId === event.id);
   const updateEvent = useBoard((state) => state.updateEvent);
@@ -55,7 +57,12 @@ export function EventMarker({ projectId, event, minX, maxX, closest }: Props) {
   if (dragX !== null) classes.push("dragging");
 
   return (
-    <div className={classes.join(" ")} style={{ left: x }} data-event-id={event.id}>
+    <div
+      className={classes.join(" ")}
+      style={{ left: x, "--tier-offset": `${tier * LABEL_TIER_HEIGHT}px` } as React.CSSProperties}
+      data-event-id={event.id}
+    >
+      {tier > 0 && <div className="event-connector" />}
       {editing ? (
         <EventForm
           title={event.title}

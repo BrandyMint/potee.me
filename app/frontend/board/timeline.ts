@@ -300,3 +300,27 @@ export function fitAll(options: {
   const pixelsPerDay = candidates.find((value) => projects.length * rowHeight(value) <= rowsHeight) ?? candidates[candidates.length - 1]!;
   return { pixelsPerDay, middle: addMinutes(first, (days * MINUTES_PER_DAY) / 2) };
 }
+
+/** Extra height a row gets for every label tier above the first. */
+export const LABEL_TIER_HEIGHT = 22;
+const LABEL_GAP = 8;
+
+/**
+ * Puts event labels on tiers so they don't overlap: each label goes to the
+ * lowest tier where it starts after the previous label on that tier ends.
+ * `width` measures a label in pixels.
+ */
+export function labelTiers(
+  events: { id: number; x: number; title: string }[],
+  width: (title: string) => number,
+): { tiers: Map<number, number>; count: number } {
+  const tiers = new Map<number, number>();
+  const tierEnds: number[] = [];
+  for (const event of [...events].sort((a, b) => a.x - b.x)) {
+    let tier = tierEnds.findIndex((end) => event.x >= end + LABEL_GAP);
+    if (tier === -1) tier = tierEnds.length;
+    tierEnds[tier] = event.x + width(event.title);
+    tiers.set(event.id, tier);
+  }
+  return { tiers, count: Math.max(1, tierEnds.length) };
+}

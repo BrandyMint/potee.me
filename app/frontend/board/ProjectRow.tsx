@@ -1,26 +1,34 @@
-import { addDays, differenceInCalendarDays } from "date-fns";
-import { memo, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
+import { addDays, differenceInCalendarDays, parseISO } from "date-fns";
+import { memo, useMemo, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { closestEventId, dateAt, eventBounds, formatDay, parseDay, xOf } from "./timeline";
+import {
+  closestEventId,
+  dateAt,
+  eventBounds,
+  formatDay,
+  LABEL_TIER_HEIGHT,
+  labelTiers,
+  parseDay,
+  SCALE,
+  xOf,
+} from "./timeline";
 import type { Card } from "./types";
 
 interface Props {
   card: Card;
   index: number;
-  rowHeight: number;
-  rowsCount: number;
   inactive: boolean;
   draft: boolean;
 }
 
 type Edge = "start" | "finish";
 
-export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, rowsCount, inactive, draft }: Props) {
-  const { timeline, viewportWidth, scrollLeft, timelineX, goToDate } = useBoardView();
+export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draft }: Props) {
+  const { timeline, viewportWidth, scrollLeft, timelineX, goToDate, rowIndexAt } = useBoardView();
   const select = useBoard((state) => state.select);
   const addEvent = useBoard((state) => state.addEvent);
   const updateProject = useBoard((state) => state.updateProject);
@@ -86,13 +94,13 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
       pointer,
       {
         onMove: (_dx, dy) => setReorderY(dy),
-        onEnd: (_dx, dy, moved) => {
+        onEnd: (_dx, _dy, moved, event) => {
           setReorderY(null);
           if (!moved) {
             select(card.id);
             return;
           }
-          const target = Math.max(0, Math.min(rowsCount - 1, index + Math.round(dy / rowHeight)));
+          const target = rowIndexAt(event.clientY, card.id);
           if (target !== index) void moveProject(card.id, target);
         },
       },
@@ -106,6 +114,21 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
   const visibleRight = scrollLeft + viewportWidth;
   const offScreen = right < visibleLeft ? "left" : left > visibleRight ? "right" : null;
 
+  // Labels that would overlap go up a tier; the row grows by one tier height
+  // for each. Titles are only drawn in the roomy days zoom.
+  const titlesShown = timeline.mode === "days" && ppd > SCALE.COMPACT_DAYS_AT;
+  const tiers = useMemo(
+    () =>
+      titlesShown
+        ? labelTiers(
+            card.events.map((event) => ({ id: event.id, x: xOf(timeline, parseISO(event.at)), title: event.title })),
+            measureLabel,
+          )
+        : { tiers: new Map<number, number>(), count: 1 },
+    [titlesShown, card.events, timeline],
+  );
+  const tiersExtra = (tiers.count - 1) * LABEL_TIER_HEIGHT;
+
   const classes = ["project", `project-color-${card.color_index}`];
   if (inactive) classes.push("inactive");
   if (resize) classes.push("resizing");
@@ -115,7 +138,12 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
   return (
     <div
       className={classes.join(" ")}
-      style={reorderY === null ? undefined : { transform: `translateY(${reorderY}px)` }}
+      style={
+        {
+          "--tiers-extra": `${tiersExtra}px`,
+          ...(reorderY === null ? {} : { transform: `translateY(${reorderY}px)` }),
+        } as React.CSSProperties
+      }
       data-project-id={card.id}
       data-testid={`project-${card.title}`}
     >
@@ -138,7 +166,15 @@ export const ProjectRow = memo(function ProjectRow({ card, index, rowHeight, row
         </div>
       )}
       {card.events.map((event) => (
-        <EventMarker key={event.id} projectId={card.id} event={event} minX={minX} maxX={maxX} closest={event.id === closest} />
+        <EventMarker
+          key={event.id}
+          projectId={card.id}
+          event={event}
+          minX={minX}
+          maxX={maxX}
+          closest={event.id === closest}
+          tier={tiers.tiers.get(event.id) ?? 0}
+        />
       ))}
       {offScreen && (
         <button
@@ -179,4 +215,13 @@ function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onC
       />
     </form>
   );
+}
+
+/** Width of an event label in pixels (same font as .event-title). */
+let measureContext: CanvasRenderingContext2D | null = null;
+function measureLabel(title: string): number {
+  measureContext ??= document.createElement("canvas").getContext("2d");
+  if (!measureContext) return title.length * 8;
+  measureContext.font = '16px "Helvetica Neue", Helvetica, Arial, sans-serif';
+  return measureContext.measureText(title).width;
 }

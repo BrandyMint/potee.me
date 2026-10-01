@@ -25,6 +25,8 @@ export interface BoardView {
   timelineX: (clientX: number) => number;
   goToDate: (date: Date) => void;
   showProject: (id: number) => void;
+  /** Row index a pointer at clientY points to (rows may differ in height). */
+  rowIndexAt: (clientY: number, excludeId?: number) => number;
 }
 
 export const ViewContext = createContext<BoardView | null>(null);

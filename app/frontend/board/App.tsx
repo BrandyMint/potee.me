@@ -13,7 +13,6 @@ import {
   fitAll,
   fitScale,
   projectMiddle,
-  rowHeight as rowHeightFor,
   SCALE,
   scaleMode,
   stepScale,
@@ -60,7 +59,6 @@ function Board() {
   const width = timelineWidth(timeline);
   const mode = scaleMode(pixelsPerDay);
   const compact = mode === "days" && pixelsPerDay <= SCALE.COMPACT_DAYS_AT;
-  const rowHeight = rowHeightFor(pixelsPerDay);
 
   // Keep the remembered moment in the middle of the screen whenever the zoom,
   // the timeline origin or the viewport width changes.
@@ -241,15 +239,26 @@ function Board() {
   const onDoubleClick = (event: MouseEvent) => {
     const viewport = viewportRef.current;
     if (!viewport || isFormControl(event.target) || (event.target as HTMLElement).closest(".project-bar, .event")) return;
-    // Rows are centred vertically, so measure from the first row.
-    const firstRow = rowsRef.current?.querySelector<HTMLElement>(".project");
-    const index = firstRow ? Math.max(0, Math.round((event.clientY - firstRow.getBoundingClientRect().top) / rowHeight)) : 0;
+    const index = rowIndexAt(event.clientY);
     store.getState().startDraft(startOfDay(dateAt(timeline, timelineX(event.clientX))), index);
   };
 
+  // Rows differ in height (label tiers), so positions come from the DOM:
+  // the index is the number of other rows whose middle is above the pointer.
+  const rowIndexAt = useCallback((clientY: number, excludeId?: number) => {
+    const rows = rowsRef.current?.querySelectorAll<HTMLElement>(".project") ?? [];
+    let index = 0;
+    for (const row of rows) {
+      if (excludeId !== undefined && row.dataset.projectId === String(excludeId)) continue;
+      const box = row.getBoundingClientRect();
+      if (box.top + box.height / 2 < clientY) index++;
+    }
+    return index;
+  }, []);
+
   const view: BoardView = useMemo(
-    () => ({ timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject }),
-    [timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject],
+    () => ({ timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt }),
+    [timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt],
   );
 
   const boardClasses = ["board", `scale-${mode}`];
@@ -277,8 +286,6 @@ function Board() {
                   key={card.id}
                   card={card}
                   index={index}
-                  rowHeight={rowHeight}
-                  rowsCount={projects.length}
                   inactive={selectedId !== null && selectedId !== card.id}
                   draft={card.id === draftId}
                 />

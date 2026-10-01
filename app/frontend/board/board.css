@@ -379,16 +379,18 @@ button {
   padding: 40px 0 60px;
 }
 
+/* --tiers-extra (set per row) makes room for stacked event labels. */
 .project {
+  --bar-top: calc(24px + var(--tiers-extra, 0px));
   position: relative;
   flex: none;
-  height: 78px;
+  height: calc(78px + var(--tiers-extra, 0px));
   transition: opacity 0.2s;
 }
 
-.scale-compact .project { height: 64px; }
-.scale-weeks .project { height: 50px; }
-.scale-months .project { height: 45px; }
+.scale-compact .project { height: calc(64px + var(--tiers-extra, 0px)); }
+.scale-weeks .project { height: calc(50px + var(--tiers-extra, 0px)); }
+.scale-months .project { height: calc(45px + var(--tiers-extra, 0px)); }
 
 .project-bar {
   position: absolute;
@@ -404,9 +406,13 @@ button {
   box-shadow: 0 0 10px 0 rgb(13 144 209 / 0.7);
 }
 
+/* The title has a backing in the bar colour so event ticks pass under it. */
 .project-title {
   position: sticky;
+  z-index: 4;
   left: 0;
+  border-radius: calc(var(--bar-height) / 2);
+  background: var(--c);
   display: inline-flex;
   align-items: center;
   height: var(--bar-height);
@@ -434,7 +440,7 @@ button {
   position: absolute;
   top: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 5; /* above the title backing */
   width: 12px;
   cursor: ew-resize;
   touch-action: none;
@@ -470,7 +476,8 @@ button {
   opacity: 0.4;
 }
 
-.project.inactive .project-bar { background: #666; }
+.project.inactive .project-bar,
+.project.inactive .project-title { background: #666; }
 .project.inactive .project-title-text { color: #000; }
 .project.inactive .event-bar { background: #555; }
 .project.inactive .event-title { color: #999; }
@@ -569,6 +576,7 @@ button {
 
 .project.draft .project-title {
   position: static;
+  background: none;
   width: 100%;
   padding: 0;
 }
@@ -613,10 +621,11 @@ button {
 
 /* Events */
 
+/* Events don't form their own layer, so every connector (z 2) stays under
+   every label and tick (z 3) of the row. */
 .event {
   position: absolute;
   top: 0;
-  z-index: 3;
   width: 0;
   height: 54px;
 }
@@ -627,8 +636,13 @@ button {
 
 .event.editing,
 .event.dragging {
-  z-index: 30;
   opacity: 1;
+}
+
+.event.editing .event-form,
+.event.dragging .event-bar,
+.event.dragging .event-title {
+  z-index: 30;
 }
 
 .event-bar {
@@ -638,6 +652,7 @@ button {
   width: 7px;
   height: 30px;
   border-radius: 2px;
+  z-index: 3;
   background: color-mix(in srgb, var(--c) 75%, black);
   cursor: col-resize;
   touch-action: none;
@@ -645,19 +660,42 @@ button {
 
 .event-title {
   position: absolute;
-  top: -2px;
+  top: calc(var(--bar-top) - 26px - var(--tier-offset, 0px));
   left: -3px;
+  z-index: 3;
   color: color-mix(in srgb, var(--c) 88%, black);
   cursor: text;
   font-size: 16px;
-  text-shadow: 0 -1px 0 rgb(0 0 0 / 0.25);
+  /* A halo in the background colour keeps connector lines off the glyphs. */
+  text-shadow: 0 0 2px #1d1d1d, 0 0 4px #1d1d1d;
   white-space: nowrap;
 }
 
 .event-form {
   position: absolute;
-  top: -4px;
+  top: calc(var(--bar-top) - 28px - var(--tier-offset, 0px));
   left: -3px;
+}
+
+/* Thin line from a lifted label down to its tick. */
+.event-connector {
+  position: absolute;
+  top: calc(var(--bar-top) - 6px - var(--tier-offset, 0px));
+  left: 0;
+  width: 1px;
+  height: calc(var(--tier-offset, 0px) + 2px);
+  z-index: 2;
+  background: color-mix(in srgb, var(--c) 60%, black);
+}
+
+/* The hovered event comes forward on a dark backing. */
+.event:hover .event-title {
+  z-index: 20;
+  margin-left: -3px;
+  padding: 0 6px 0 3px;
+  border-radius: 4px;
+  background: #111;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.5);
 }
 
 .scale-weeks .event-bar,
