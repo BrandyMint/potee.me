@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""Call the Potee MCP server from the command line.
+
+  potee-mcp tools                         list tools and their arguments
+  potee-mcp call <tool> ['<json args>']   call a tool, print its JSON result
+
+Token: $POTEE_TOKEN, otherwise the first line of `pass show potee.pismenny.ru/api-token`
+(override the entry with $POTEE_PASS_ENTRY). Server: $POTEE_MCP_URL,
+default https://potee.pismenny.ru/mcp. Exit code 1 when the tool reports an error.
+"""
+import json
+import os
+import subprocess
+import sys
+import urllib.error
+import urllib.request
+
+URL = os.environ.get("POTEE_MCP_URL", "https://potee.pismenny.ru/mcp")
+PASS_ENTRY = os.environ.get("POTEE_PASS_ENTRY", "potee.pismenny.ru/api-token")
+
+
+def token():
+    if os.environ.get("POTEE_TOKEN"):
+        return os.environ["POTEE_TOKEN"]
+    try:
+        output = subprocess.run(["pass", "show", PASS_ENTRY], check=True, capture_output=True, text=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        sys.exit(f"No token: set POTEE_TOKEN or store it in pass as {PASS_ENTRY}")
+    return output.splitlines()[0].strip()
+
+
+def rpc(method, params=None):
+    body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}}).encode()
+    request = urllib.request.Request(
+        URL,
+        data=body,
+        headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token()}"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            payload = json.load(response)
+    except urllib.error.HTTPError as error:
+        sys.exit(f"HTTP {error.code}: {error.read().decode(errors='replace')}")
+    if "error" in payload:
+        sys.exit(f"MCP error {payload['error'].get('code')}: {payload['error'].get('message')}")
+    return payload["result"]
+
+
+def main(argv):
+    if len(argv) >= 1 and argv[0] == "tools":
+        for tool in rpc("tools/list")["tools"]:
+            schema = tool["inputSchema"]
+            required = set(schema.get("required", []))
+            args = ", ".join(f"{name}{'' if name in required else '?'}" for name in schema.get("properties", {}))
+            print(f"{tool['name']}({args})\n    {tool['description']}")
+        return 0
+    if len(argv) in (2, 3) and argv[0] == "call":
+        arguments = json.loads(argv[2]) if len(argv) == 3 else {}
+        result = rpc("tools/call", {"name": argv[1], "arguments": arguments})
+        if result.get("isError"):
+            print(result["content"][0]["text"], file=sys.stderr)
+            return 1
+        print(json.dumps(result.get("structuredContent"), ensure_ascii=False, indent=2))
+        return 0
+    print(__doc__.strip(), file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

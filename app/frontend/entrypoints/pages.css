@@ -159,3 +159,43 @@ body.auth-page {
   background: #1f3a46;
   color: #bfe6f5;
 }
+
+.auth .auth-subheading {
+  margin: 28px 0 6px;
+  color: #ddd;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.auth .hint {
+  margin: 12px 0 6px;
+  font-size: 13px;
+}
+
+.auth .token,
+.auth .command {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+}
+
+.auth .command {
+  margin: 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #111;
+  color: #ccc;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.auth code {
+  color: #ccc;
+}
+
+.auth .button-form {
+  margin-top: 16px;
+}

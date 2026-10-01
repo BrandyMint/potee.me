@@ -36,6 +36,20 @@ en:
       for: "For %{email}"
       password: "New password (8+ characters)"
       submit: "Save password"
+  account:
+    title: "Account — Potee"
+    heading: "Account"
+    board: "To the board"
+    agents:
+      heading: "Access for AI agents"
+      lead: "Claude Code, Codex and other agents can read and change your board over MCP. They need a personal token."
+      token: "Token"
+      token_once: "Copy the token now: it is shown only once."
+      claude: "Connect Claude Code:"
+      has_token: "A token already exists. A new one disables the previous token."
+      endpoint: "MCP server address:"
+      create: "Create a token"
+      regenerate: "Create a new token"
   flash:
     too_many_attempts: "Too many attempts. Try again later."
     email_taken: "This email is already registered. Log in instead."

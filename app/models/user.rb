@@ -21,8 +21,32 @@ class User < ApplicationRecord
 
   after_create :create_dashboard!
 
+  API_TOKEN_PREFIX = "potee_"
+
+  def self.digest_api_token(token)
+    OpenSSL::Digest::SHA256.hexdigest(token.to_s)
+  end
+
+  def self.find_by_api_token(token)
+    return if token.blank? || !token.start_with?(API_TOKEN_PREFIX)
+
+    registered.find_by(api_token_digest: digest_api_token(token))
+  end
+
   def anonymous?
     email.blank?
+  end
+
+  # Issues a new agent token (the previous one stops working) and returns it;
+  # it is shown once and only its digest is kept.
+  def regenerate_api_token!
+    token = "#{API_TOKEN_PREFIX}#{SecureRandom.base58(40)}"
+    update!(api_token_digest: self.class.digest_api_token(token))
+    token
+  end
+
+  def api_token?
+    api_token_digest.present?
   end
 
   def to_s

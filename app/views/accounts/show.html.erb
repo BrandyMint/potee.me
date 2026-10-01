@@ -1,0 +1,18 @@
+<% content_for :title, t("account.title") %>
+<h1><%= t("account.heading") %></h1>
+<p class="lead"><%= session_user.email %> · <%= link_to t("account.board"), board_path %></p>
+
+<h2 class="auth-subheading"><%= t("account.agents.heading") %></h2>
+<p class="lead"><%= t("account.agents.lead") %></p>
+
+<% if @token %>
+  <div class="flash notice" role="status"><%= t("account.agents.token_once") %></div>
+  <label><%= t("account.agents.token") %><input class="token" readonly value="<%= @token %>" onfocus="this.select()" autofocus></label>
+  <p class="hint"><%= t("account.agents.claude") %></p>
+  <pre class="command">claude mcp add --transport http potee <%= mcp_url %> --header "Authorization: Bearer <%= @token %>"</pre>
+<% elsif session_user.api_token? %>
+  <p class="hint"><%= t("account.agents.has_token") %></p>
+<% end %>
+
+<p class="hint"><%= t("account.agents.endpoint") %> <code><%= mcp_url %></code></p>
+<%= button_to(session_user.api_token? ? t("account.agents.regenerate") : t("account.agents.create"), account_token_path, form: { class: "button-form" }) %>

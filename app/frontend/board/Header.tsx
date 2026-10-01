@@ -202,7 +202,9 @@ function Account({ email, anonymous }: { email: string | null; anonymous: boolea
     <form className="account" method="post" action="/logout">
       <input type="hidden" name="_method" value="delete" />
       <input type="hidden" name="authenticity_token" value={token} />
-      <span className="account-email">{email}</span>
+      <a className="account-email" href="/account">
+        {email}
+      </a>
       <button type="submit">{text.logOut}</button>
     </form>
   );
