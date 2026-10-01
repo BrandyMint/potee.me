@@ -35,15 +35,16 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Install application gems
 # Node is only needed to build the Vite frontend
 COPY --from=docker.io/library/node:24-slim /usr/local/bin/node /usr/local/bin/node
 COPY --from=docker.io/library/node:24-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
+# Install application gems
 COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
 
