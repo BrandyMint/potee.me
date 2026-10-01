@@ -1,8 +1,9 @@
-if defined? Airbrake
-   Airbrake.configure do |config|
-      config.api_key		 	= '4b713ec91c071546d237b529deda63d2'
-      config.host			= 'errbit.brandymint.ru'
-      config.port			= 80
-      config.secure			= config.port == 443
-   end
+# Errors are reported only when an Errbit/Airbrake key is provided.
+if defined?(Airbrake) && ENV['AIRBRAKE_API_KEY'].present?
+  Airbrake.configure do |config|
+    config.api_key = ENV['AIRBRAKE_API_KEY']
+    config.host    = ENV['AIRBRAKE_HOST'] || 'errbit.brandymint.ru'
+    config.port    = (ENV['AIRBRAKE_PORT'] || 443).to_i
+    config.secure  = config.port == 443
+  end
 end

@@ -1,20 +1,22 @@
 services:
   db:
-    image: postgres:9.6
-    platform: linux/amd64
+    # Same major version as the shared production server. Ruby 2.0's libpq
+    # cannot do SCRAM auth, so trust auth is used (as on the office server).
+    image: postgres:17
     environment:
       POSTGRES_USER: potee
-      POSTGRES_PASSWORD: potee
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - pgdata:/var/lib/postgresql/data
 
   web:
-    build: .
+    build:
+      context: .
+      target: dev
     platform: linux/amd64
     environment:
       DB_HOST: db
       DB_USER: potee
-      DB_PASSWORD: potee
     volumes:
       - .:/app
       - bundle:/bundle

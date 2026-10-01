@@ -9,7 +9,7 @@ Potee::Application.configure do
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  config.serve_static_assets = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -38,6 +38,7 @@ Potee::Application.configure do
 
   # Use a different logger for distributed setups
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+  config.logger = Logger.new(STDOUT) if ENV['RAILS_LOG_TO_STDOUT'].present?
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store

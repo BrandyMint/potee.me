@@ -62,6 +62,16 @@ module Potee
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+    # Precompile assets without booting the app (no database at image build time)
+    config.assets.initialize_on_precompile = false
+
+    # The default matcher precompiles every non-JS/CSS file on the asset paths,
+    # including Bower packages' source maps, which then break Uglifier.
+    config.assets.precompile = [
+      'application.js', 'application.css', 'active_admin.js', 'active_admin.css',
+      /\.(png|jpe?g|gif|ico|svg|eot|ttf|woff2?|swf)\z/
+    ]
+
     # catch 404 errors
     config.exceptions_app = self.routes
 

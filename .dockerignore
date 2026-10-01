@@ -1,0 +1,23 @@
+# Whitelist: only what the image needs reaches the build context.
+**
+!.bowerrc
+!.ruby-version
+!.semver
+!Gemfile
+!Gemfile.lock
+!Rakefile
+!bower.json
+!config.ru
+!app/**
+!config/**
+!db/**
+!lib/**
+!public/**
+!script/**
+!vendor/**
+vendor/assets/components
+config/database.yml
+config/settings/*.yml
+config/settings/*.local.yml
+public/assets
+public/uploads

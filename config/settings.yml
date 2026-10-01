@@ -1,6 +1,6 @@
-secret_key: '920c338823cb9d63fd53545f98645652bdcea0a518cef723ff135733ed07d34e03a24806e81ed2f54a33bdedb07c3fa64b38c5f19f4cf600c9137dcb52efeace'
+secret_key: <%= ENV['DEVISE_SECRET_KEY'] || '920c338823cb9d63fd53545f98645652bdcea0a518cef723ff135733ed07d34e03a24806e81ed2f54a33bdedb07c3fa64b38c5f19f4cf600c9137dcb52efeace' %>
 application:
-  host: 'potee.me'
+  host: <%= ENV['APP_HOST'] || 'potee.me' %>
   hosts:
     - potee.me
     - stage.potee.me
@@ -8,6 +8,9 @@ application:
     - stage.potee.ru
     - 3007.vkontraste.ru
     - localhost
+<% if ENV['APP_HOST'] %>
+    - <%= ENV['APP_HOST'] %>
+<% end %>
 facebook:
   key: 
   secret:
