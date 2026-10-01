@@ -43,8 +43,9 @@ Tests:
 - `bundle exec guard` watches both rspec and jasmine (`Guardfile`).
 - CI (`.travis.yml`) only runs `rake db:migrate` against `config/database_test.yml`.
 
-Release/deploy: `script/release` bumps the patch version in `.semver` (with git SHA as metadata), tags, commits and pushes; `script/release_and_deploy` also runs `bundle exec cap production deploy` (Capistrano 2 multistage, `config/deploy.rb`, stages `production`/`staging`; deploy runs `bower install` and symlinks shared configs). Per the global instructions, current deployment configuration belongs in `~/code/brandymint/infra` — check there before touching deploy.
+Deploy (current): https://potee.pismenny.ru runs in the `goga-office` cluster, configured in `~/code/brandymint/infra` (`STAGE=goga-infra APP=potee`, values in `values/goga-office/potee.yaml.gotmpl`, DB `potee_production` on the shared `postgres.goga.home.arpa`). Release = commit, then from this repo `docker buildx build --platform linux/amd64 --target production --push -t registry.brandymint.ru/dapi/potee:$(git rev-parse HEAD) .`, then in infra `direnv exec . make app-update STAGE=goga-infra APP=potee TAG=<sha>`. The init container runs `rake db:ensure` (schema load on an empty DB, otherwise migrate). The pod runs as uid 1000 with a read-only root filesystem; `script/docker-entrypoint` gives Ruby a private `TMPDIR`.
 
+Legacy release/deploy (Capistrano, pre-Kubernetes): `script/release` bumps the patch version in `.semver` (with git SHA as metadata), tags, commits and pushes; `script/release_and_deploy` also runs `bundle exec cap production deploy` (Capistrano 2 multistage, `config/deploy.rb`, stages `production`/`staging`; deploy runs `bower install` and symlinks shared configs). 
 ## Architecture
 
 ### Server (thin JSON backend)
