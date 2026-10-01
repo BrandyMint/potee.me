@@ -12,12 +12,16 @@ a bar at a date and time. The user sees the result at
 
 ## How to call it
 
-Run the bundled CLI (it talks to the Potee MCP server):
+Run the bundled CLI `scripts/potee-mcp` (Python 3, no dependencies). It lives
+next to this `SKILL.md`, so call it by the full path from this skill's
+directory, e.g. `~/.claude/skills/potee/scripts/potee-mcp` or
+`~/.codex/skills/potee/scripts/potee-mcp`:
 
 ```sh
-scripts/potee-mcp tools                                   # tools and arguments
-scripts/potee-mcp call list_projects
-scripts/potee-mcp call create_project '{"title": "...", "start_date": "2026-10-01", "end_date": "2026-10-28",
+POTEE=<skill dir>/scripts/potee-mcp
+$POTEE tools                                   # tools and arguments
+$POTEE call list_projects
+$POTEE call create_project '{"title": "...", "start_date": "2026-10-01", "end_date": "2026-10-28",
   "events": [{"title": "...", "date": "2026-10-14", "time": "19:00"}]}'
 ```
 
