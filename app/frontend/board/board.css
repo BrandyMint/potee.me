@@ -392,9 +392,13 @@ button {
 .scale-weeks .project { height: calc(50px + var(--tiers-extra, 0px)); }
 .scale-months .project { height: calc(45px + var(--tiers-extra, 0px)); }
 
+/* Flex, not inline layout: the title must not sit on a text baseline, or it
+   drops a few pixels below the bar depending on font metrics. */
 .project-bar {
   position: absolute;
   top: var(--bar-top);
+  display: flex;
+  align-items: center;
   height: var(--bar-height);
   border-radius: calc(var(--bar-height) / 2);
   background: var(--c);

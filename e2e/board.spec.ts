@@ -289,3 +289,20 @@ test("labels of close events go to separate tiers instead of overlapping", async
   expect((await scala.boundingBox())!.height).toBeGreaterThan(heightBefore);
   await expect(scala.locator(".event-connector")).toHaveCount(1);
 });
+
+test("project titles sit exactly on their bars and stick to the left edge", async ({ page }) => {
+  const title = row(page, "Start my own business").locator(".project-title");
+  const barBox = (await bar(page, "Start my own business").boundingBox())!;
+  const titleBox = (await title.boundingBox())!;
+  expect(Math.abs(titleBox.y - barBox.y)).toBeLessThan(0.5);
+  expect(Math.abs(titleBox.y + titleBox.height - (barBox.y + barBox.height))).toBeLessThan(0.5);
+
+  // Scroll so the project starts off screen: the title stays at the viewport's left edge.
+  const viewport = page.getByTestId("viewport");
+  await viewport.evaluate((element, shift) => element.scrollBy(shift, 0), barBox.x + 400);
+  await expect(async () => {
+    const box = (await title.boundingBox())!;
+    const viewportBox = (await viewport.boundingBox())!;
+    expect(Math.abs(box.x - viewportBox.x)).toBeLessThan(2);
+  }).toPass();
+});
