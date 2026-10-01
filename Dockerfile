@@ -53,4 +53,5 @@ COPY --from=bower /app/vendor/assets/components vendor/assets/components
 RUN cp config/database.yml.example config/database.yml \
     && bundle exec rake assets:precompile
 EXPOSE 3000
+ENTRYPOINT ["/app/script/docker-entrypoint"]
 CMD ["bundle", "exec", "unicorn", "-c", "config/unicorn.docker.rb", "config.ru"]
