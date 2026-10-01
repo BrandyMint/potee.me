@@ -4,7 +4,7 @@ import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, LABEL_TIER_HEIGHT, xOf } from "./timeline";
+import { dateAt, xOf } from "./timeline";
 import type { BoardEvent } from "./types";
 
 interface Props {
@@ -13,12 +13,14 @@ interface Props {
   /** Timeline x range the marker may be dragged within (the project's days). */
   minX: number;
   maxX: number;
-  closest: boolean;
   /** Label tier: 0 sits right above the bar, higher tiers stack upwards. */
   tier: number;
+  tierHeight: number;
+  /** No room for the label: it shows on hover only. */
+  labelHidden: boolean;
 }
 
-export function EventMarker({ projectId, event, minX, maxX, closest, tier }: Props) {
+export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, labelHidden }: Props) {
   const { timeline, today } = useBoardView();
   const editing = useBoard((state) => state.editingEventId === event.id);
   const updateEvent = useBoard((state) => state.updateEvent);
@@ -52,14 +54,14 @@ export function EventMarker({ projectId, event, minX, maxX, closest, tier }: Pro
 
   const classes = ["event"];
   if (passed) classes.push("passed");
-  if (closest) classes.push("closest");
+  if (labelHidden) classes.push("label-hidden");
   if (editing) classes.push("editing");
   if (dragX !== null) classes.push("dragging");
 
   return (
     <div
       className={classes.join(" ")}
-      style={{ left: x, "--tier-offset": `${tier * LABEL_TIER_HEIGHT}px` } as React.CSSProperties}
+      style={{ left: x, "--tier-offset": `${tier * tierHeight}px` } as React.CSSProperties}
       data-event-id={event.id}
     >
       {tier > 0 && <div className="event-connector" />}

@@ -664,7 +664,7 @@ button {
 
 .event-title {
   position: absolute;
-  top: calc(var(--bar-top) - 26px - var(--tier-offset, 0px));
+  top: calc(var(--bar-top) - var(--label-rise) - var(--tier-offset, 0px));
   left: -3px;
   z-index: 3;
   color: color-mix(in srgb, var(--c) 88%, black);
@@ -706,14 +706,29 @@ button {
 .scale-compact .event-bar { width: 4px; left: -2px; }
 .scale-months .event-bar { width: 2px; left: -1px; }
 
+/* Titles show at every zoom (smaller when zoomed out, see labelStyle in
+   timeline.ts); only labels with no free tier wait for hover. */
+.project {
+  --label-rise: 26px;
+}
+
+.scale-compact .project,
+.scale-weeks .project,
+.scale-months .project {
+  --label-rise: 21px;
+}
+
 .scale-compact .event-title,
 .scale-weeks .event-title,
 .scale-months .event-title {
+  font-size: 13px;
+}
+
+.event.label-hidden .event-title {
   visibility: hidden;
 }
 
-.event:hover .event-title,
-.scale-weeks .event.closest .event-title {
+.event.label-hidden:hover .event-title {
   visibility: visible;
 }
 

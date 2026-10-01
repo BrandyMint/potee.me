@@ -306,3 +306,10 @@ test("project titles sit exactly on their bars and stick to the left edge", asyn
     expect(Math.abs(box.x - viewportBox.x)).toBeLessThan(2);
   }).toPass();
 });
+
+test("event titles stay visible when zooming out", async ({ page }) => {
+  for (const zoom of ["weeks", "months"]) {
+    await page.getByRole("button", { name: zoom }).click();
+    await expect(row(page, "Learn Scala").locator(".event-title", { hasText: "Buy a book" })).toBeVisible();
+  }
+});

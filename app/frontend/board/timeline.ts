@@ -16,7 +16,7 @@ import {
 } from "date-fns";
 import { enUS } from "date-fns/locale";
 import type { Locale as DateLocale } from "date-fns";
-import type { BoardEvent, Card } from "./types";
+import type { Card } from "./types";
 
 export const SCALE = {
   MIN: 4,
@@ -229,20 +229,6 @@ export function timelineColumns(timeline: Timeline, today: Date, locale: DateLoc
   return columns;
 }
 
-/** The event nearest to now; in the weeks zoom only its title stays visible. */
-export function closestEventId(events: BoardEvent[], now: Date): number | undefined {
-  let best: BoardEvent | undefined;
-  let bestDistance = Infinity;
-  for (const event of events) {
-    const distance = Math.abs(parseISO(event.at).getTime() - now.getTime());
-    if (distance < bestDistance) {
-      best = event;
-      bestDistance = distance;
-    }
-  }
-  return best?.id;
-}
-
 /** First colour not used on the board yet, otherwise cycle. */
 export function nextColorIndex(cards: Pick<Card, "color_index">[]): number {
   const used = new Set(cards.map((card) => card.color_index));
@@ -301,26 +287,41 @@ export function fitAll(options: {
   return { pixelsPerDay, middle: addMinutes(first, (days * MINUTES_PER_DAY) / 2) };
 }
 
-/** Extra height a row gets for every label tier above the first. */
-export const LABEL_TIER_HEIGHT = 22;
+/**
+ * How event labels look at a zoom: roomy days use 16 px titles and up to three
+ * tiers, coarser zooms 13 px titles and up to two tiers (rows stay compact).
+ */
+export function labelStyle(pixelsPerDay: number): { fontSize: number; tierHeight: number; maxTiers: number } {
+  const roomy = scaleMode(pixelsPerDay) === "days" && pixelsPerDay > SCALE.COMPACT_DAYS_AT;
+  return roomy ? { fontSize: 16, tierHeight: 22, maxTiers: 3 } : { fontSize: 13, tierHeight: 18, maxTiers: 2 };
+}
+
 const LABEL_GAP = 8;
 
 /**
  * Puts event labels on tiers so they don't overlap: each label goes to the
  * lowest tier where it starts after the previous label on that tier ends.
+ * Labels that would need more than `maxTiers` are hidden (shown on hover).
  * `width` measures a label in pixels.
  */
 export function labelTiers(
   events: { id: number; x: number; title: string }[],
   width: (title: string) => number,
-): { tiers: Map<number, number>; count: number } {
+  maxTiers = Infinity,
+): { tiers: Map<number, number>; hidden: Set<number>; count: number } {
   const tiers = new Map<number, number>();
+  const hidden = new Set<number>();
   const tierEnds: number[] = [];
   for (const event of [...events].sort((a, b) => a.x - b.x)) {
     let tier = tierEnds.findIndex((end) => event.x >= end + LABEL_GAP);
     if (tier === -1) tier = tierEnds.length;
+    if (tier >= maxTiers) {
+      hidden.add(event.id);
+      tiers.set(event.id, 0);
+      continue;
+    }
     tierEnds[tier] = event.x + width(event.title);
     tiers.set(event.id, tier);
   }
-  return { tiers, count: Math.max(1, tierEnds.length) };
+  return { tiers, hidden, count: Math.max(1, tierEnds.length) };
 }

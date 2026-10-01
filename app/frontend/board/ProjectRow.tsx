@@ -5,17 +5,7 @@ import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import {
-  closestEventId,
-  dateAt,
-  eventBounds,
-  formatDay,
-  LABEL_TIER_HEIGHT,
-  labelTiers,
-  parseDay,
-  SCALE,
-  xOf,
-} from "./timeline";
+import { dateAt, eventBounds, formatDay, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
 import type { Card } from "./types";
 
 interface Props {
@@ -109,25 +99,23 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   };
 
   const [minX, maxX] = [left, right - 1];
-  const closest = closestEventId(card.events, new Date());
   const visibleLeft = scrollLeft;
   const visibleRight = scrollLeft + viewportWidth;
   const offScreen = right < visibleLeft ? "left" : left > visibleRight ? "right" : null;
 
-  // Labels that would overlap go up a tier; the row grows by one tier height
-  // for each. Titles are only drawn in the roomy days zoom.
-  const titlesShown = timeline.mode === "days" && ppd > SCALE.COMPACT_DAYS_AT;
+  // Labels that would overlap go up a tier and the row grows to fit; labels
+  // beyond the allowed tiers are hidden until hovered (see labelStyle).
+  const style = labelStyle(ppd);
   const tiers = useMemo(
     () =>
-      titlesShown
-        ? labelTiers(
-            card.events.map((event) => ({ id: event.id, x: xOf(timeline, parseISO(event.at)), title: event.title })),
-            measureLabel,
-          )
-        : { tiers: new Map<number, number>(), count: 1 },
-    [titlesShown, card.events, timeline],
+      labelTiers(
+        card.events.map((event) => ({ id: event.id, x: xOf(timeline, parseISO(event.at)), title: event.title })),
+        (title) => measureLabel(title, style.fontSize),
+        style.maxTiers,
+      ),
+    [card.events, timeline, style.fontSize, style.maxTiers],
   );
-  const tiersExtra = (tiers.count - 1) * LABEL_TIER_HEIGHT;
+  const tiersExtra = (tiers.count - 1) * style.tierHeight;
 
   const classes = ["project", `project-color-${card.color_index}`];
   if (inactive) classes.push("inactive");
@@ -172,8 +160,9 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
           event={event}
           minX={minX}
           maxX={maxX}
-          closest={event.id === closest}
           tier={tiers.tiers.get(event.id) ?? 0}
+          tierHeight={style.tierHeight}
+          labelHidden={tiers.hidden.has(event.id)}
         />
       ))}
       {offScreen && (
@@ -219,9 +208,9 @@ function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onC
 
 /** Width of an event label in pixels (same font as .event-title). */
 let measureContext: CanvasRenderingContext2D | null = null;
-function measureLabel(title: string): number {
+function measureLabel(title: string, fontSize: number): number {
   measureContext ??= document.createElement("canvas").getContext("2d");
-  if (!measureContext) return title.length * 8;
-  measureContext.font = '16px "Helvetica Neue", Helvetica, Arial, sans-serif';
+  if (!measureContext) return title.length * fontSize * 0.5;
+  measureContext.font = `${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
   return measureContext.measureText(title).width;
 }

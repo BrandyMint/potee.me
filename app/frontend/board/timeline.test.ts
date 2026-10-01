@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildTimeline,
   clampScale,
-  closestEventId,
   dateAt,
   dayOffset,
   fitAll,
+  labelStyle,
   labelTiers,
   rowHeight,
   eventBounds,
@@ -144,16 +144,6 @@ describe("timelineColumns", () => {
 });
 
 describe("helpers", () => {
-  it("finds the event closest to now", () => {
-    const events = [
-      { id: 1, title: "a", at: "2026-09-01T12:00:00Z" },
-      { id: 2, title: "b", at: "2026-10-03T12:00:00Z" },
-      { id: 3, title: "c", at: "2026-12-01T12:00:00Z" },
-    ];
-    expect(closestEventId(events, today)).toBe(2);
-    expect(closestEventId([], today)).toBeUndefined();
-  });
-
   it("picks the first free colour", () => {
     expect(nextColorIndex([])).toBe(0);
     expect(nextColorIndex([{ color_index: 0 }, { color_index: 2 }])).toBe(1);
@@ -222,5 +212,23 @@ describe("labelTiers", () => {
     expect(tiers.get(1)).toBe(0);
     expect(tiers.get(2)).toBe(1);
     expect(tiers.get(3)).toBe(0);
+  });
+});
+
+describe("label tiers limit", () => {
+  const width = (title: string) => title.length * 10;
+
+  it("hides labels that need more tiers than allowed", () => {
+    const events = [0, 5, 10].map((x, i) => ({ id: i + 1, x, title: "Some event" }));
+    const { tiers, hidden, count } = labelTiers(events, width, 2);
+    expect(count).toBe(2);
+    expect([tiers.get(1), tiers.get(2)]).toEqual([0, 1]);
+    expect([...hidden]).toEqual([3]);
+  });
+
+  it("uses smaller titles and fewer tiers when zoomed out", () => {
+    expect(labelStyle(150)).toEqual({ fontSize: 16, tierHeight: 22, maxTiers: 3 });
+    expect(labelStyle(50)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2 });
+    expect(labelStyle(10)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2 });
   });
 });
