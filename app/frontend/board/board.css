@@ -379,8 +379,12 @@ button {
   padding: 40px 0 60px;
 }
 
-/* --tiers-extra (set per row) makes room for stacked event labels. */
+/* --tiers-extra (set per row) makes room for stacked event labels.
+   --bar-fill: the bar colour with soft volume (light above, shade below);
+   the title backing uses the same fill so it blends into the bar. */
 .project {
+  --bar-volume: linear-gradient(to bottom, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0) 55%, rgb(0 0 0 / 0.14));
+  --bar-fill: var(--bar-volume), var(--c);
   --bar-top: calc(24px + var(--tiers-extra, 0px));
   position: relative;
   flex: none;
@@ -401,7 +405,8 @@ button {
   align-items: center;
   height: var(--bar-height);
   border-radius: calc(var(--bar-height) / 2);
-  background: var(--c);
+  background: var(--bar-fill);
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
 
@@ -416,7 +421,7 @@ button {
   z-index: 4;
   left: 0;
   border-radius: calc(var(--bar-height) / 2);
-  background: var(--c);
+  background: var(--bar-fill);
   display: inline-flex;
   align-items: center;
   height: var(--bar-height);
@@ -480,8 +485,7 @@ button {
   opacity: 0.4;
 }
 
-.project.inactive .project-bar,
-.project.inactive .project-title { background: #666; }
+.project.inactive { --bar-fill: var(--bar-volume), #666; }
 .project.inactive .project-title-text { color: #000; }
 .project.inactive .event-bar { background: #555; }
 .project.inactive .event-title { color: #999; }
