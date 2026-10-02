@@ -4,29 +4,22 @@
   potee-mcp tools                         list tools and their arguments
   potee-mcp call <tool> ['<json args>']   call a tool, print its JSON result
 
-Token: $POTEE_TOKEN, otherwise the first line of `pass show potee.pismenny.ru/api-token`
-(override the entry with $POTEE_PASS_ENTRY). Server: $POTEE_MCP_URL,
+Token: $POTEE_TOKEN (create it at https://potee.pismenny.ru/account). Server: $POTEE_MCP_URL,
 default https://potee.pismenny.ru/mcp. Exit code 1 when the tool reports an error.
 """
 import json
 import os
-import subprocess
 import sys
 import urllib.error
 import urllib.request
 
 URL = os.environ.get("POTEE_MCP_URL", "https://potee.pismenny.ru/mcp")
-PASS_ENTRY = os.environ.get("POTEE_PASS_ENTRY", "potee.pismenny.ru/api-token")
 
 
 def token():
-    if os.environ.get("POTEE_TOKEN"):
-        return os.environ["POTEE_TOKEN"]
-    try:
-        output = subprocess.run(["pass", "show", PASS_ENTRY], check=True, capture_output=True, text=True).stdout
-    except (OSError, subprocess.CalledProcessError):
-        sys.exit(f"No token: set POTEE_TOKEN or store it in pass as {PASS_ENTRY}")
-    return output.splitlines()[0].strip()
+    if not os.environ.get("POTEE_TOKEN"):
+        sys.exit("No token: set POTEE_TOKEN (create one at https://potee.pismenny.ru/account)")
+    return os.environ["POTEE_TOKEN"]
 
 
 def rpc(method, params=None):

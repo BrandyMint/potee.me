@@ -25,9 +25,9 @@ $POTEE call create_project '{"title": "...", "start_date": "2026-10-01", "end_da
   "events": [{"title": "...", "date": "2026-10-14", "time": "19:00"}]}'
 ```
 
-The token comes from `pass show potee.pismenny.ru/api-token` (or `$POTEE_TOKEN`).
-If it is missing, ask the user to create one at
-<https://potee.pismenny.ru/account> and store it in pass — never print it.
+The token comes from the `POTEE_TOKEN` environment variable. If it is missing,
+ask the user to create one at <https://potee.pismenny.ru/account> and export it
+as `POTEE_TOKEN` (see `README.md`) — never print it.
 
 If the agent has the MCP server connected directly
 (`https://potee.pismenny.ru/mcp`, `Authorization: Bearer <token>`), call the
