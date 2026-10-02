@@ -31,7 +31,12 @@ RSpec.describe PlanGenerator do
     expect(draft["projects"].first).to include("title" => "Курс", "key" => "p1")
     expect(raw).to include("Курс")
     expect(@sent["model"]).to eq("potee-plan")
-    expect(@sent["messages"].first["content"]).to include("Today is #{Time.current.in_time_zone(zone).to_date.iso8601}", "data, not instructions")
+    today = Time.current.in_time_zone(zone).to_date
+    saturdays = (today.beginning_of_month..today.end_of_month).select(&:saturday?).map(&:day).join(", ")
+    expect(@sent["messages"].first["content"]).to include(
+      "Today is #{today.strftime('%A')}, #{today.iso8601}", "data, not instructions",
+      "#{today.strftime('%Y-%m')} Saturday: #{saturdays}"
+    )
     expect(@sent["messages"].last["content"]).to include("<<<\nКурс в ноябре\n>>>")
   end
 

@@ -13,7 +13,7 @@ passed = 0
 
 travel_to(zone.parse("#{suite['today']} 12:00")) do
   suite["plans"].each do |plan|
-    started = Time.now
+    started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     begin
       draft, = PlanGenerator.new(prompt: plan["prompt"], zone:).call
       projects = draft["projects"]
@@ -22,11 +22,11 @@ travel_to(zone.parse("#{suite['today']} 12:00")) do
       split_ok = projects.size >= plan.fetch("min_projects", 2)
       ok = missing.empty? && split_ok
       passed += 1 if ok
-      puts format("%-4s %-20s %5.1fs projects=%d missing=%s", ok ? "PASS" : "FAIL", plan["name"], Time.now - started,
+      puts format("%-4s %-20s %5.1fs projects=%d missing=%s", ok ? "PASS" : "FAIL", plan["name"], Process.clock_gettime(Process::CLOCK_MONOTONIC) - started,
                   projects.size, missing.empty? ? "-" : missing.join(","))
       projects.each { |p| puts "       #{p['title']} #{p['start_date']}..#{p['end_date']} (#{p['events'].map { "#{_1['date']} #{_1['title']}" }.join('; ')})" } unless ok
     rescue PlanGenerator::Error => error
-      puts format("%-4s %-20s %5.1fs %s", "FAIL", plan["name"], Time.now - started, error.code)
+      puts format("%-4s %-20s %5.1fs %s", "FAIL", plan["name"], Process.clock_gettime(Process::CLOCK_MONOTONIC) - started, error.code)
     end
   end
 end
