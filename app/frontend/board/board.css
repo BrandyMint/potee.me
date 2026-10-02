@@ -425,8 +425,7 @@ button {
 }
 
 /* --tiers-extra (set per row) makes room for stacked event labels.
-   --bar-fill: the bar colour with soft volume (light above, shade below);
-   the title backing uses the same fill so it blends into the bar. */
+   --bar-fill: the bar colour with soft volume (light above, shade below). */
 .project {
   --bar-volume: linear-gradient(to bottom, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0) 55%, rgb(0 0 0 / 0.14));
   --bar-fill: var(--bar-volume), var(--c);
@@ -460,15 +459,13 @@ button {
   box-shadow: 0 0 10px 0 rgb(13 144 209 / 0.7);
 }
 
-/* The title has a backing in the bar colour. Event ticks share its z-index
-   and come later in the DOM, so they stay on top; they are translucent so the
-   title shows through. */
+/* The title sits on the bar itself, without a backing that would show its
+   rounded end. Event ticks share its z-index and come later in the DOM, so
+   they stay on top; they are translucent so the title shows through. */
 .project-title {
   position: sticky;
   z-index: 3;
   left: 0;
-  border-radius: calc(var(--bar-height) / 2);
-  background: var(--bar-fill);
   display: inline-flex;
   align-items: center;
   height: var(--bar-height);
