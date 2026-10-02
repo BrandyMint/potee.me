@@ -324,11 +324,13 @@ test("an event with a time shows it in the days zoom", async ({ page }) => {
   await page.getByLabel("Event title").press("Enter");
   const body = (await saved).request().postDataJSON() as { event: { timed: boolean; at: string } };
   expect(body.event.timed).toBe(true);
-  await expect(event.locator(".event-title")).toHaveText("19:30 Buy a book");
+  await expect(event.locator(".event-time")).toHaveText("19:30");
+  await expect(event.locator(".event-title")).toHaveText("19:30Buy a book");
 
   await page.reload();
   const reloaded = row(page, "Learn Scala").locator(".event", { hasText: "Buy a book" });
-  await expect(reloaded.locator(".event-title")).toHaveText("19:30 Buy a book");
+  await expect(reloaded.locator(".event-time")).toHaveText("19:30");
   await page.getByRole("button", { name: "weeks" }).click();
+  await expect(reloaded.locator(".event-time")).toHaveCount(0);
   await expect(reloaded.locator(".event-title")).toHaveText("Buy a book");
 });

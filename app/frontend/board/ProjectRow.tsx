@@ -5,7 +5,7 @@ import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, dayOffChecker, daysOffRuns, eventBounds, eventLabel, formatDay, labelStyle, labelTiers, parseDay, scaleMode, xOf } from "./timeline";
+import { dateAt, dayOffChecker, daysOffRuns, eventBounds, eventTime, formatDay, labelStyle, labelTiers, parseDay, scaleMode, xOf } from "./timeline";
 import type { Card } from "./types";
 
 interface Props {
@@ -105,20 +105,17 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
 
   // Labels that would overlap go up a tier and the row grows to fit; labels
   // beyond the allowed tiers are hidden until hovered (see labelStyle).
-  const style = labelStyle(ppd);
-  const tiers = useMemo(
+  const labels = useMemo(
     () =>
-      labelTiers(
+      layoutLabels(
         card.events.map((event) => {
           const at = parseISO(event.at);
-          return { id: event.id, x: xOf(timeline, at), title: eventLabel({ ...event, at }, ppd) };
+          return { id: event.id, x: xOf(timeline, at), title: event.title, time: eventTime({ ...event, at }, ppd) };
         }),
-        (title) => measureLabel(title, style.fontSize),
-        style.maxTiers,
+        ppd,
       ),
-    [card.events, timeline, ppd, style.fontSize, style.maxTiers],
+    [card.events, timeline, ppd],
   );
-  const tiersExtra = (tiers.count - 1) * style.tierHeight;
 
   const classes = ["project", `project-color-${card.color_index}`];
   if (inactive) classes.push("inactive");
@@ -131,7 +128,8 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
       className={classes.join(" ")}
       style={
         {
-          "--tiers-extra": `${tiersExtra}px`,
+          "--tiers-extra": `${labels.tiersExtra}px`,
+          "--time-line": `${labels.timeLine}px`,
           ...(reorderY === null ? {} : { transform: `translateY(${reorderY}px)` }),
         } as React.CSSProperties
       }
@@ -164,9 +162,9 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
           event={event}
           minX={minX}
           maxX={maxX}
-          tier={tiers.tiers.get(event.id) ?? 0}
-          tierHeight={style.tierHeight}
-          labelHidden={tiers.hidden.has(event.id)}
+          tier={labels.tiers.get(event.id) ?? 0}
+          tierHeight={labels.tierStep}
+          labelHidden={labels.hidden.has(event.id)}
         />
       ))}
       {offScreen && (
@@ -217,6 +215,23 @@ export function measureLabel(title: string, fontSize: number): number {
   if (!measureContext) return title.length * fontSize * 0.5;
   measureContext.font = `${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
   return measureContext.measureText(title).width;
+}
+
+/**
+ * Tiers of a row's event labels. When any label has a start time, every tier
+ * makes room for the time line above the titles (`timeLine`), so titles of a
+ * row stay on the same lines. `tiersExtra` is the height the row grows by.
+ */
+export function layoutLabels(events: { id: number; x: number; title: string; time: string | null }[], pixelsPerDay: number) {
+  const style = labelStyle(pixelsPerDay);
+  const timeLine = events.some((event) => event.time) ? style.timeHeight : 0;
+  const tierStep = style.tierHeight + timeLine;
+  const { tiers, hidden, count } = labelTiers(
+    events,
+    ({ title, time }) => Math.max(measureLabel(title, style.fontSize), time ? measureLabel(time, style.timeSize) : 0),
+    style.maxTiers,
+  );
+  return { tiers, hidden, tierStep, timeLine, tiersExtra: (count - 1) * tierStep + timeLine };
 }
 
 /** Weekends and holidays of the user's region, dimmed on a project bar (days and weeks zoom). */

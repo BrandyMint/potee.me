@@ -6,7 +6,7 @@ import {
   dayOffChecker,
   dayOffset,
   daysOffRuns,
-  eventLabel,
+  eventTime,
   fitAll,
   labelStyle,
   labelTiers,
@@ -188,7 +188,7 @@ describe("fitAll", () => {
 });
 
 describe("labelTiers", () => {
-  const width = (title: string) => title.length * 10;
+  const width = ({ title }: { title: string }) => title.length * 10;
 
   it("keeps labels on one tier when they do not overlap", () => {
     const { tiers, count } = labelTiers(
@@ -219,7 +219,7 @@ describe("labelTiers", () => {
 });
 
 describe("label tiers limit", () => {
-  const width = (title: string) => title.length * 10;
+  const width = ({ title }: { title: string }) => title.length * 10;
 
   it("hides labels that need more tiers than allowed", () => {
     const events = [0, 5, 10].map((x, i) => ({ id: i + 1, x, title: "Some event" }));
@@ -230,20 +230,20 @@ describe("label tiers limit", () => {
   });
 
   it("uses smaller titles and fewer tiers when zoomed out", () => {
-    expect(labelStyle(150)).toEqual({ fontSize: 16, tierHeight: 22, maxTiers: 3 });
-    expect(labelStyle(50)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2 });
-    expect(labelStyle(10)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2 });
+    expect(labelStyle(150)).toEqual({ fontSize: 16, tierHeight: 22, maxTiers: 3, timeSize: 12, timeHeight: 14 });
+    expect(labelStyle(50)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2, timeSize: 11, timeHeight: 12 });
+    expect(labelStyle(10)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2, timeSize: 11, timeHeight: 12 });
   });
 });
 
-describe("eventLabel", () => {
-  const event = { title: "Созвон 1", at: day(2026, 10, 14, 19, 0), timed: true };
+describe("eventTime", () => {
+  const event = { at: day(2026, 10, 14, 19, 0), timed: true };
 
   it("shows the start time of timed events in the days zoom only", () => {
-    expect(eventLabel(event, 150)).toBe("19:00 Созвон 1");
-    expect(eventLabel(event, 40)).toBe("19:00 Созвон 1");
-    expect(eventLabel(event, 20)).toBe("Созвон 1");
-    expect(eventLabel({ ...event, timed: false }, 150)).toBe("Созвон 1");
+    expect(eventTime(event, 150)).toBe("19:00");
+    expect(eventTime(event, 40)).toBe("19:00");
+    expect(eventTime(event, 20)).toBeNull();
+    expect(eventTime({ ...event, timed: false }, 150)).toBeNull();
   });
 });
 

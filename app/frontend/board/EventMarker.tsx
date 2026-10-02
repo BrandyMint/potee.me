@@ -4,7 +4,7 @@ import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, eventLabel, xOf } from "./timeline";
+import { dateAt, eventTime, xOf } from "./timeline";
 import type { BoardEvent } from "./types";
 
 interface Props {
@@ -53,6 +53,8 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
   };
 
   const classes = ["event"];
+  const time = eventTime({ ...event, at }, timeline.pixelsPerDay);
+  if (time) classes.push("timed");
   if (passed) classes.push("passed");
   if (labelHidden) classes.push("label-hidden");
   if (editing) classes.push("editing");
@@ -89,7 +91,8 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
         />
       ) : (
         <div className="event-title" onPointerDown={onPointerDown}>
-          {eventLabel({ ...event, at }, timeline.pixelsPerDay)}
+          {time && <span className="event-time">{time}</span>}
+          {event.title}
         </div>
       )}
       <div className="event-bar" onPointerDown={onPointerDown} onDoubleClick={(e) => e.stopPropagation()} />

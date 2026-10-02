@@ -712,6 +712,24 @@ button {
   white-space: nowrap;
 }
 
+/* A timed event shows its start time as a smaller line above the title;
+   --time-line (per row) is that line's height, so the title stays level with
+   the untimed titles of the row. */
+.event.timed .event-title {
+  top: calc(var(--bar-top) - var(--label-rise) - var(--time-line, 0px) - var(--tier-offset, 0px));
+}
+
+.event-time {
+  display: block;
+  height: var(--time-line);
+  font-size: 12px;
+  line-height: var(--time-line);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.scale-compact .event-time { font-size: 11px; }
+
 .event-form {
   position: absolute;
   top: calc(var(--bar-top) - 28px - var(--tier-offset, 0px));

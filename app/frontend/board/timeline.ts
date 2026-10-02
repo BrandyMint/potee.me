@@ -298,10 +298,20 @@ export function fitAll(options: {
 /**
  * How event labels look at a zoom: roomy days use 16 px titles and up to three
  * tiers, coarser zooms 13 px titles and up to two tiers (rows stay compact).
+ * The start time of a timed event is a smaller line above its title
+ * (`timeSize` px font, `timeHeight` px tall).
  */
-export function labelStyle(pixelsPerDay: number): { fontSize: number; tierHeight: number; maxTiers: number } {
+export function labelStyle(pixelsPerDay: number): {
+  fontSize: number;
+  tierHeight: number;
+  maxTiers: number;
+  timeSize: number;
+  timeHeight: number;
+} {
   const roomy = scaleMode(pixelsPerDay) === "days" && pixelsPerDay > SCALE.COMPACT_DAYS_AT;
-  return roomy ? { fontSize: 16, tierHeight: 22, maxTiers: 3 } : { fontSize: 13, tierHeight: 18, maxTiers: 2 };
+  return roomy
+    ? { fontSize: 16, tierHeight: 22, maxTiers: 3, timeSize: 12, timeHeight: 14 }
+    : { fontSize: 13, tierHeight: 18, maxTiers: 2, timeSize: 11, timeHeight: 12 };
 }
 
 const LABEL_GAP = 8;
@@ -312,9 +322,9 @@ const LABEL_GAP = 8;
  * Labels that would need more than `maxTiers` are hidden (shown on hover).
  * `width` measures a label in pixels.
  */
-export function labelTiers(
-  events: { id: number; x: number; title: string }[],
-  width: (title: string) => number,
+export function labelTiers<E extends { id: number; x: number }>(
+  events: E[],
+  width: (event: E) => number,
   maxTiers = Infinity,
 ): { tiers: Map<number, number>; hidden: Set<number>; count: number } {
   const tiers = new Map<number, number>();
@@ -328,18 +338,18 @@ export function labelTiers(
       tiers.set(event.id, 0);
       continue;
     }
-    tierEnds[tier] = event.x + width(event.title);
+    tierEnds[tier] = event.x + width(event);
     tiers.set(event.id, tier);
   }
   return { tiers, hidden, count: Math.max(1, tierEnds.length) };
 }
 
 /**
- * Text of an event label: timed events get their start time in front once a
- * day is wide enough to read it (days zoom).
+ * Start time shown above the title of a timed event once a day is wide enough
+ * to read it (days zoom); null otherwise.
  */
-export function eventLabel(event: { title: string; at: Date; timed: boolean }, pixelsPerDay: number): string {
-  return event.timed && scaleMode(pixelsPerDay) === "days" ? `${format(event.at, "HH:mm")} ${event.title}` : event.title;
+export function eventTime(event: { at: Date; timed: boolean }, pixelsPerDay: number): string | null {
+  return event.timed && scaleMode(pixelsPerDay) === "days" ? format(event.at, "HH:mm") : null;
 }
 
 /** Whether a day is off: a holiday, or a weekend day that was not made a working one. */

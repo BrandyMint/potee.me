@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { api, ApiError } from "./api";
 import { useBoard, useBoardView } from "./context";
 import { t } from "./i18n";
-import { DaysOff, measureLabel } from "./ProjectRow";
-import { eventLabel, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
+import { DaysOff, layoutLabels } from "./ProjectRow";
+import { eventTime, parseDay, xOf } from "./timeline";
 import type { PlanProject } from "./types";
 
 const MAX_LENGTH = 2000;
@@ -209,21 +209,15 @@ export function PreviewRow({ project, colorIndex, selected }: { project: PlanPro
   const start = parseDay(project.start_date);
   const left = xOf(timeline, start);
   const width = (differenceInCalendarDays(parseDay(project.end_date), start) + 1) * ppd;
-  const style = labelStyle(ppd);
   const events = project.events.map((event, index) => {
     const at = parseISO(`${event.date}T${event.time ?? "12:00"}`);
-    return { id: index, x: xOf(timeline, at), label: eventLabel({ title: event.title, at, timed: event.time !== null }, ppd) };
+    return { id: index, x: xOf(timeline, at), title: event.title, time: eventTime({ at, timed: event.time !== null }, ppd) };
   });
-  const tiers = labelTiers(
-    events.map(({ id, x, label }) => ({ id, x, title: label })),
-    (title) => measureLabel(title, style.fontSize),
-    style.maxTiers,
-  );
-  const tiersExtra = (tiers.count - 1) * style.tierHeight;
+  const labels = layoutLabels(events, ppd);
   return (
     <div
       className={`project preview project-color-${colorIndex}${selected ? "" : " excluded"}`}
-      style={{ "--tiers-extra": `${tiersExtra}px` } as React.CSSProperties}
+      style={{ "--tiers-extra": `${labels.tiersExtra}px`, "--time-line": `${labels.timeLine}px` } as React.CSSProperties}
       data-testid={`preview-${project.title}`}
     >
       <div className="project-bar" style={{ left, width }}>
@@ -232,16 +226,19 @@ export function PreviewRow({ project, colorIndex, selected }: { project: PlanPro
           <span className="project-title-text">{project.title}</span>
         </div>
       </div>
-      {events.map(({ id, x, label }) => {
-        const tier = tiers.tiers.get(id) ?? 0;
+      {events.map(({ id, x, title, time }) => {
+        const tier = labels.tiers.get(id) ?? 0;
         return (
           <div
             key={id}
-            className={`event preview-event${tiers.hidden.has(id) ? " label-hidden" : ""}`}
-            style={{ left: x, "--tier-offset": `${tier * style.tierHeight}px` } as React.CSSProperties}
+            className={`event preview-event${time ? " timed" : ""}${labels.hidden.has(id) ? " label-hidden" : ""}`}
+            style={{ left: x, "--tier-offset": `${tier * labels.tierStep}px` } as React.CSSProperties}
           >
             {tier > 0 && <div className="event-connector" />}
-            <div className="event-title">{label}</div>
+            <div className="event-title">
+              {time && <span className="event-time">{time}</span>}
+              {title}
+            </div>
             <div className="event-bar" />
           </div>
         );
