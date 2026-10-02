@@ -5,6 +5,8 @@ export interface BoardEvent {
   title: string;
   /** ISO 8601 timestamp */
   at: string;
+  /** Happens at a specific time (a call at 19:00), not just on a day. */
+  timed: boolean;
 }
 
 /** One row of the board: the current user's connection to a project. */
@@ -47,7 +49,8 @@ export interface PlanProject {
   end_date: string;
   /** Dates were stretched to cover the milestones. */
   adjusted: boolean;
-  events: { title: string; date: string; time: string }[];
+  /** time is HH:MM, or null when the milestone is just a day. */
+  events: { title: string; date: string; time: string | null }[];
 }
 
 export type PlanStatus = "pending" | "ready" | "failed" | "applied" | "discarded";

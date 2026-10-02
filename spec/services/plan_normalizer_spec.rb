@@ -5,13 +5,13 @@ RSpec.describe PlanNormalizer do
 
   def plan(*projects) = { "projects" => projects }
 
-  it "keeps a valid plan, numbers projects and fills default times" do
+  it "keeps a valid plan, numbers projects and leaves untimed milestones without a time" do
     result = normalize.(plan({ "title" => "Лендинг", "start_date" => "2026-10-02", "end_date" => "2026-10-20",
                                "events" => [ { "title" => "Готов", "date" => "2026-10-20", "time" => nil } ] }))
 
     expect(result["projects"]).to eq([
       { "title" => "Лендинг", "start_date" => "2026-10-02", "end_date" => "2026-10-20", "adjusted" => false,
-        "events" => [ { "title" => "Готов", "date" => "2026-10-20", "time" => "12:00" } ], "key" => "p1" }
+        "events" => [ { "title" => "Готов", "date" => "2026-10-20", "time" => nil } ], "key" => "p1" }
     ])
   end
 

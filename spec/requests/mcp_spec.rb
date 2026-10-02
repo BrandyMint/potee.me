@@ -47,9 +47,11 @@ RSpec.describe "MCP server", type: :request do
     expect(project).to include("title" => "Курс", "start_date" => "2026-10-01", "end_date" => "2026-10-28", "owner" => true)
     expect(project["events"].map { _1.slice("title", "date", "time") }).to eq([
       { "title" => "Созвон 1", "date" => "2026-10-14", "time" => "19:00" },
-      { "title" => "Дедлайн", "date" => "2026-10-28", "time" => "12:00" }
+      { "title" => "Дедлайн", "date" => "2026-10-28", "time" => nil }
     ])
-    expect(Event.find(project["events"].first["event_id"]).at).to eq(Time.utc(2026, 10, 14, 16, 0))
+    call_event, deadline = project["events"].map { Event.find(_1["event_id"]) }
+    expect(call_event).to have_attributes(at: Time.utc(2026, 10, 14, 16, 0), timed: true)
+    expect(deadline).to have_attributes(at: Time.utc(2026, 10, 28, 9, 0), timed: false)
 
     id = project["project_id"]
     updated = call_tool("update_project", { project_id: id, title: "Курс ТРА", end_date: "2026-11-10", color: 3 })["structuredContent"]

@@ -325,3 +325,11 @@ export function labelTiers(
   }
   return { tiers, hidden, count: Math.max(1, tierEnds.length) };
 }
+
+/**
+ * Text of an event label: timed events get their start time in front once a
+ * day is wide enough to read it (days zoom).
+ */
+export function eventLabel(event: { title: string; at: Date; timed: boolean }, pixelsPerDay: number): string {
+  return event.timed && scaleMode(pixelsPerDay) === "days" ? `${format(event.at, "HH:mm")} ${event.title}` : event.title;
+}

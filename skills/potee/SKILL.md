@@ -45,8 +45,10 @@ same tools natively instead of the CLI.
 | `update_event` | `event_id`, `title?`, `date?`, `time?`, `timezone?` |
 | `delete_event` | `event_id` |
 
-Dates are `YYYY-MM-DD`, times `HH:MM` (default `12:00`), timezone
-`Europe/Moscow` unless given. Milestones must lie within their project's
+Dates are `YYYY-MM-DD`, timezone `Europe/Moscow` unless given. Pass `time`
+(`HH:MM`) only when a milestone happens at a specific time (a call, a meeting):
+such milestones show their start time on the board; without `time` a milestone
+is just a day. Milestones must lie within their project's
 dates: extend the project first, or the call fails with an explanation.
 
 ## Working rules

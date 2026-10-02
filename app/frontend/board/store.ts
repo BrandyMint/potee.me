@@ -272,7 +272,7 @@ export function createBoardStore(initial: BoardData) {
       },
 
       addEvent: async (projectId, at) => {
-        const temporary: BoardEvent = { id: nextTemporaryId(), title: t().defaultEventTitle, at: at.toISOString() };
+        const temporary: BoardEvent = { id: nextTemporaryId(), title: t().defaultEventTitle, at: at.toISOString(), timed: false };
         replaceProject(projectId, (card) => ({ ...card, events: [...card.events, temporary] }));
         try {
           const saved = await api.createEvent(projectId, { title: temporary.title, at: temporary.at });

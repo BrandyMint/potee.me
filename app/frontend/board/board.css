@@ -562,6 +562,12 @@ button {
   font-size: 15px;
 }
 
+.event-form .event-time-input {
+  width: auto;
+  font-size: 13px;
+  color-scheme: dark;
+}
+
 /* New project draft: typed right on the bar, marked by a breathing dashed outline. */
 
 .project.draft .project-bar {
@@ -1116,9 +1122,7 @@ button {
   opacity: 0.25;
 }
 
-.preview-event .event-title {
-  font-size: 13px;
-}
+/* Preview labels follow the board's zoom-dependent label size. */
 
 @media (max-width: 760px) {
   .plan-panel {

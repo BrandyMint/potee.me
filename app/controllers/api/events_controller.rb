@@ -22,7 +22,7 @@ module Api
     private
 
     def event_params
-      params.expect(event: %i[title at])
+      params.expect(event: %i[title at timed])
     end
 
     def event

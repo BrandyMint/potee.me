@@ -48,8 +48,8 @@ module Api
     def add(writer, project)
       events = project["events"].map do |event|
         day = Date.iso8601(event["date"])
-        hours, minutes = event["time"].split(":").map(&:to_i)
-        { title: event["title"], at: @plan.zone.local(day.year, day.month, day.day, hours, minutes) }
+        hours, minutes = (event["time"] || "12:00").split(":").map(&:to_i)
+        { title: event["title"], at: @plan.zone.local(day.year, day.month, day.day, hours, minutes), timed: event["time"].present? }
       end
       writer.add_project(title: project["title"], started_on: Date.iso8601(project["start_date"]),
                          finished_on: Date.iso8601(project["end_date"]), events:)

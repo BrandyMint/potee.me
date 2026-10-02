@@ -10,7 +10,7 @@ module Mcp
     DEFAULT_EVENT_TIME = "12:00".freeze
 
     DATE = { type: "string", pattern: '^\d{4}-\d{2}-\d{2}$', description: "Calendar date YYYY-MM-DD" }.freeze
-    TIME = { type: "string", pattern: '^\d{2}:\d{2}$', description: "Wall-clock time HH:MM (default 12:00)" }.freeze
+    TIME = { type: "string", pattern: '^\d{2}:\d{2}$', description: "Wall-clock time HH:MM; give it only when the milestone happens at a specific time (a call, a meeting)" }.freeze
     TIMEZONE = { type: "string", description: "IANA timezone for dates and times, default Europe/Moscow" }.freeze
     COLOR = { type: "integer", minimum: 0, maximum: ProjectConnection::COLORS_COUNT - 1, description: "Colour 0–9" }.freeze
     EVENT_INPUT = {
@@ -150,7 +150,7 @@ module Mcp
         moment(@args[:date] ? date(@args[:date]) : local.to_date, @args[:time] || local.strftime("%H:%M"))
       end
       check_inside!(project, at) if at
-      event.update!({ title: @args[:title], at: }.compact)
+      event.update!({ title: @args[:title], at:, timed: (true if @args[:time].present?) }.compact)
       event_json(event)
     end
 
@@ -178,7 +178,7 @@ module Mcp
 
     def event_json(event)
       local = event.at.in_time_zone(@zone)
-      { event_id: event.id, title: event.title, date: local.to_date.iso8601, time: local.strftime("%H:%M") }
+      { event_id: event.id, title: event.title, date: local.to_date.iso8601, time: (local.strftime("%H:%M") if event.timed?) }
     end
 
     def create_event(project, attributes)
@@ -192,7 +192,7 @@ module Mcp
       unless day.between?(started_on, finished_on)
         raise Error, "#{day} is outside the project dates #{started_on}..#{finished_on}; extend the project with update_project first"
       end
-      { title: attributes[:title].presence || raise(Error, "Event title is required"), at: }
+      { title: attributes[:title].presence || raise(Error, "Event title is required"), at:, timed: attributes[:time].present? }
     end
 
     def check_inside!(project, at)

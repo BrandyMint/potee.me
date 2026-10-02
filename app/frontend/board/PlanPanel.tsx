@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { api, ApiError } from "./api";
 import { useBoard, useBoardView } from "./context";
 import { t } from "./i18n";
-import { parseDay, xOf } from "./timeline";
+import { measureLabel } from "./ProjectRow";
+import { eventLabel, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
 import type { PlanProject } from "./types";
 
 const MAX_LENGTH = 2000;
@@ -178,7 +179,7 @@ function Panel() {
                       {project.events.map((event, index) => (
                         <li key={index}>
                           {shortDate(event.date)}
-                          {event.time !== "12:00" && ` ${event.time}`} — {event.title}
+                          {event.time && ` ${event.time}`} — {event.title}
                         </li>
                       ))}
                     </ul>
@@ -204,21 +205,42 @@ function Panel() {
 /** A previewed project drawn on the board like a draft: dashed, not editable. */
 export function PreviewRow({ project, colorIndex, selected }: { project: PlanProject; colorIndex: number; selected: boolean }) {
   const { timeline } = useBoardView();
+  const ppd = timeline.pixelsPerDay;
   const start = parseDay(project.start_date);
   const left = xOf(timeline, start);
-  const width = (differenceInCalendarDays(parseDay(project.end_date), start) + 1) * timeline.pixelsPerDay;
+  const width = (differenceInCalendarDays(parseDay(project.end_date), start) + 1) * ppd;
+  const style = labelStyle(ppd);
+  const events = project.events.map((event, index) => {
+    const at = parseISO(`${event.date}T${event.time ?? "12:00"}`);
+    return { id: index, x: xOf(timeline, at), label: eventLabel({ title: event.title, at, timed: event.time !== null }, ppd) };
+  });
+  const tiers = labelTiers(
+    events.map(({ id, x, label }) => ({ id, x, title: label })),
+    (title) => measureLabel(title, style.fontSize),
+    style.maxTiers,
+  );
+  const tiersExtra = (tiers.count - 1) * style.tierHeight;
   return (
-    <div className={`project preview project-color-${colorIndex}${selected ? "" : " excluded"}`} data-testid={`preview-${project.title}`}>
+    <div
+      className={`project preview project-color-${colorIndex}${selected ? "" : " excluded"}`}
+      style={{ "--tiers-extra": `${tiersExtra}px` } as React.CSSProperties}
+      data-testid={`preview-${project.title}`}
+    >
       <div className="project-bar" style={{ left, width }}>
         <div className="project-title">
           <span className="project-title-text">{project.title}</span>
         </div>
       </div>
-      {project.events.map((event, index) => {
-        const x = xOf(timeline, parseISO(`${event.date}T${event.time}`));
+      {events.map(({ id, x, label }) => {
+        const tier = tiers.tiers.get(id) ?? 0;
         return (
-          <div key={index} className="event preview-event" style={{ left: x }}>
-            <div className="event-title">{event.title}</div>
+          <div
+            key={id}
+            className={`event preview-event${tiers.hidden.has(id) ? " label-hidden" : ""}`}
+            style={{ left: x, "--tier-offset": `${tier * style.tierHeight}px` } as React.CSSProperties}
+          >
+            {tier > 0 && <div className="event-connector" />}
+            <div className="event-title">{label}</div>
             <div className="event-bar" />
           </div>
         );

@@ -41,7 +41,7 @@ async function request<T>(method: string, path: string, body?: unknown, options:
 }
 
 export type ProjectAttributes = Partial<Pick<Card, "title" | "started_on" | "finished_on" | "color_index" | "position">>;
-export type EventAttributes = Partial<Pick<BoardEvent, "title" | "at">>;
+export type EventAttributes = Partial<Pick<BoardEvent, "title" | "at" | "timed">>;
 
 export const api = {
   board: () => request<BoardData>("GET", "/api/board"),

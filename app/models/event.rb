@@ -9,6 +9,6 @@ class Event < ApplicationRecord
   validates :title, :at, presence: true
 
   def as_card_json
-    { id:, title:, at: at.iso8601 }
+    { id:, title:, at: at.iso8601, timed: }
   end
 end

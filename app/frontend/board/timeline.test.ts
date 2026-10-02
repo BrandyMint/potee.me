@@ -4,6 +4,7 @@ import {
   clampScale,
   dateAt,
   dayOffset,
+  eventLabel,
   fitAll,
   labelStyle,
   labelTiers,
@@ -152,8 +153,8 @@ describe("helpers", () => {
   it("finds the days of the first and last events", () => {
     const bounds = eventBounds({
       events: [
-        { id: 1, title: "a", at: day(2026, 10, 5, 15).toISOString() },
-        { id: 2, title: "b", at: day(2026, 10, 2, 9).toISOString() },
+        { id: 1, title: "a", at: day(2026, 10, 5, 15).toISOString(), timed: true },
+        { id: 2, title: "b", at: day(2026, 10, 2, 9).toISOString(), timed: false },
       ],
     });
     expect(bounds).toEqual({ first: day(2026, 10, 2), last: day(2026, 10, 5) });
@@ -230,5 +231,16 @@ describe("label tiers limit", () => {
     expect(labelStyle(150)).toEqual({ fontSize: 16, tierHeight: 22, maxTiers: 3 });
     expect(labelStyle(50)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2 });
     expect(labelStyle(10)).toEqual({ fontSize: 13, tierHeight: 18, maxTiers: 2 });
+  });
+});
+
+describe("eventLabel", () => {
+  const event = { title: "Созвон 1", at: day(2026, 10, 14, 19, 0), timed: true };
+
+  it("shows the start time of timed events in the days zoom only", () => {
+    expect(eventLabel(event, 150)).toBe("19:00 Созвон 1");
+    expect(eventLabel(event, 40)).toBe("19:00 Созвон 1");
+    expect(eventLabel(event, 20)).toBe("Созвон 1");
+    expect(eventLabel({ ...event, timed: false }, 150)).toBe("Созвон 1");
   });
 });

@@ -5,7 +5,7 @@ class BoardWriter
     @user = user
   end
 
-  # events: [{ title:, at: Time }]
+  # events: [{ title:, at: Time, timed: Boolean }]
   def add_project(title:, started_on:, finished_on:, events: [], color_index: nil)
     ProjectConnection.transaction do
       project = @user.owned_projects.create!(title:, started_on:, finished_on:)
@@ -14,7 +14,7 @@ class BoardWriter
         color_index: color_index || @user.next_color_index,
         position: @user.project_connections.maximum(:position).to_i + 1
       )
-      events.each { |event| project.events.create!(title: event[:title], at: event[:at]) }
+      events.each { |event| project.events.create!(title: event[:title], at: event[:at], timed: event.fetch(:timed, false)) }
       connection
     end
   end

@@ -5,7 +5,7 @@ import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, eventBounds, formatDay, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
+import { dateAt, eventBounds, eventLabel, formatDay, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
 import type { Card } from "./types";
 
 interface Props {
@@ -109,11 +109,14 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   const tiers = useMemo(
     () =>
       labelTiers(
-        card.events.map((event) => ({ id: event.id, x: xOf(timeline, parseISO(event.at)), title: event.title })),
+        card.events.map((event) => {
+          const at = parseISO(event.at);
+          return { id: event.id, x: xOf(timeline, at), title: eventLabel({ ...event, at }, ppd) };
+        }),
         (title) => measureLabel(title, style.fontSize),
         style.maxTiers,
       ),
-    [card.events, timeline, style.fontSize, style.maxTiers],
+    [card.events, timeline, ppd, style.fontSize, style.maxTiers],
   );
   const tiersExtra = (tiers.count - 1) * style.tierHeight;
 
@@ -208,7 +211,7 @@ function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onC
 
 /** Width of an event label in pixels (same font as .event-title). */
 let measureContext: CanvasRenderingContext2D | null = null;
-function measureLabel(title: string, fontSize: number): number {
+export function measureLabel(title: string, fontSize: number): number {
   measureContext ??= document.createElement("canvas").getContext("2d");
   if (!measureContext) return title.length * fontSize * 0.5;
   measureContext.font = `${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;

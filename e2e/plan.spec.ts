@@ -35,7 +35,7 @@ test("a registered user turns text into projects after a preview", async ({ page
 
   await page.reload();
   await expect(page.getByTestId("project-Запуск")).toBeVisible();
-  await expect(page.getByTestId("project-Запуск").locator(".event-title")).toHaveText(["Старт", "Итоги"]);
+  await expect(page.getByTestId("project-Запуск").locator(".event-title")).toHaveText(["19:00 Старт", "Итоги"]);
 });
 
 test("rewriting discards the preview and leaves the board unchanged", async ({ page }) => {

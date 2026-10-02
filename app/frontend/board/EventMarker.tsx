@@ -1,10 +1,10 @@
-import { parseISO } from "date-fns";
-import { useState, type KeyboardEvent } from "react";
+import { format, parseISO, set as setTime } from "date-fns";
+import { useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, xOf } from "./timeline";
+import { dateAt, eventLabel, xOf } from "./timeline";
 import type { BoardEvent } from "./types";
 
 interface Props {
@@ -68,16 +68,28 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
       {editing ? (
         <EventForm
           title={event.title}
-          onSave={(title) => {
+          time={event.timed ? format(at, "HH:mm") : ""}
+          onSave={(title, time) => {
             editEvent(null);
-            if (title !== event.title) void updateEvent(projectId, event.id, { title });
+            const changes: { title?: string; at?: string; timed?: boolean } = {};
+            if (title !== event.title) changes.title = title;
+            if (time !== (event.timed ? format(at, "HH:mm") : "")) {
+              if (time) {
+                const [hours = 0, minutes = 0] = time.split(":").map(Number);
+                changes.at = setTime(at, { hours, minutes, seconds: 0, milliseconds: 0 }).toISOString();
+                changes.timed = true;
+              } else {
+                changes.timed = false;
+              }
+            }
+            if (Object.keys(changes).length > 0) void updateEvent(projectId, event.id, changes);
           }}
           onCancel={() => editEvent(null)}
           onRemove={() => deleteEvent(projectId, event.id)}
         />
       ) : (
         <div className="event-title" onPointerDown={onPointerDown}>
-          {event.title}
+          {eventLabel({ ...event, at }, timeline.pixelsPerDay)}
         </div>
       )}
       <div className="event-bar" onPointerDown={onPointerDown} onDoubleClick={(e) => e.stopPropagation()} />
@@ -85,14 +97,49 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
   );
 }
 
-function EventForm(props: { title: string; onSave: (title: string) => void; onCancel: () => void; onRemove: () => void }) {
+function EventForm(props: {
+  title: string;
+  /** HH:MM, or "" for an event without a time */
+  time: string;
+  onSave: (title: string, time: string) => void;
+  onCancel: () => void;
+  onRemove: () => void;
+}) {
   const [title, setTitle] = useState(props.title);
+  const [time, setTime] = useState(props.time);
+  const done = useRef(false);
+  const save = () => {
+    if (done.current) return;
+    done.current = true;
+    props.onSave(title.trim() || props.title, time);
+  };
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Enter") props.onSave(title.trim() || props.title);
-    if (event.key === "Escape") props.onCancel();
+    if (event.key === "Enter") save();
+    if (event.key === "Escape") {
+      done.current = true;
+      props.onCancel();
+    }
+  };
+  // Save when focus leaves the whole form, not when moving between its fields.
+  const onBlur = (event: FocusEvent<HTMLFormElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) save();
   };
   return (
-    <form className="inline-form event-form" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
+    <form
+      className="inline-form event-form"
+      onSubmit={(event) => event.preventDefault()}
+      onPointerDown={(e) => e.stopPropagation()}
+      onBlur={onBlur}
+    >
+      <input
+        className="event-time-input"
+        type="time"
+        aria-label={t().eventTime}
+        title={t().eventTimeHint}
+        value={time}
+        onChange={(event) => setTime(event.target.value)}
+        onKeyDown={onKeyDown}
+      />
       <input
         aria-label={t().eventTitle}
         value={title}
@@ -100,7 +147,6 @@ function EventForm(props: { title: string; onSave: (title: string) => void; onCa
         onFocus={(event) => event.currentTarget.select()}
         onChange={(event) => setTitle(event.target.value)}
         onKeyDown={onKeyDown}
-        onBlur={() => props.onSave(title.trim() || props.title)}
       />
       <button type="button" className="inline-button danger" onMouseDown={(e) => e.preventDefault()} onClick={props.onRemove}>
         {t().delete}

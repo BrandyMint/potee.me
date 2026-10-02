@@ -11,7 +11,10 @@ RSpec.describe "API events", type: :request do
     id = json["id"]
 
     patch api_event_path(id), params: { event: { title: "Moved", at: "2026-10-05T09:00:00Z" } }, as: :json
-    expect(json).to include("title" => "Moved", "at" => "2026-10-05T09:00:00Z")
+    expect(json).to include("title" => "Moved", "at" => "2026-10-05T09:00:00Z", "timed" => false)
+
+    patch api_event_path(id), params: { event: { at: "2026-10-05T16:00:00Z", timed: true } }, as: :json
+    expect(json).to include("at" => "2026-10-05T16:00:00Z", "timed" => true)
 
     expect { delete api_event_path(id), as: :json }.to change(Event, :count).by(-1)
   end

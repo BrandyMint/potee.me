@@ -5,7 +5,6 @@ class PlanNormalizer
   MAX_PROJECTS = 6
   MAX_EVENTS = 12
   HORIZON = 2.years
-  DEFAULT_TIME = "12:00".freeze
 
   def initialize(today:)
     @today = today
@@ -26,7 +25,7 @@ class PlanNormalizer
 
     start = date(raw["start_date"])
     finish = date(raw["end_date"])
-    events = Array(raw["events"]).first(MAX_EVENTS).filter_map { event(_1) }.sort_by { [ _1["date"], _1["time"] ] }
+    events = Array(raw["events"]).first(MAX_EVENTS).filter_map { event(_1) }.sort_by { [ _1["date"], _1["time"].to_s ] }
     start ||= events.first&.then { Date.iso8601(_1["date"]) }
     finish ||= events.last&.then { Date.iso8601(_1["date"]) }
     return unless start && finish
@@ -65,7 +64,7 @@ class PlanNormalizer
   end
 
   def time(value)
-    value.to_s.match?(/\A([01]\d|2[0-3]):[0-5]\d\z/) ? value.to_s : DEFAULT_TIME
+    value.to_s if value.to_s.match?(/\A([01]\d|2[0-3]):[0-5]\d\z/)
   end
 
   def title(value, fallback)
