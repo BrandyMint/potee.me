@@ -24,6 +24,14 @@ en:
         - ["Wedding", "Venue", "Invitations", "Party"]
         - ["Marathon", "10 km", "Half marathon", "Race day"]
         - ["Conference", "Talk proposal", "Slides", "Talk"]
+        - ["Summer camp", "Pick a camp", "Paperwork", "Arrival"]
+        - ["Book", "Outline", "Manuscript", "Editing"]
+        - ["Podcast", "Guests", "Recording", "Episode out"]
+        - ["Hire a designer", "Job post", "Interviews", "Offer"]
+        - ["Annual report", "Collect data", "Draft", "Submit"]
+        - ["Learn Spanish", "Course", "Mock test", "Exam"]
+        - ["Garden", "Seedlings", "Planting", "Harvest"]
+        - ["Mobile app", "Prototype", "Testing", "Store release"]
   auth:
     email: "Email"
     signup:
