@@ -22,6 +22,7 @@ import {
   xOf,
   SCALE,
   type Timeline,
+  viewCenter,
 } from "./timeline";
 
 const day = (y: number, m: number, d: number, h = 0, min = 0) => new Date(y, m - 1, d, h, min);
@@ -272,5 +273,35 @@ describe("days off", () => {
     const columns = timelineColumns(timeline, day(2026, 5, 6), undefined, isDayOff);
     expect(columns.find((column) => column.key === "2026-05-11")?.dayOff).toBe(true);
     expect(columns.find((column) => column.key === "2026-05-12")?.dayOff).toBe(false);
+  });
+});
+
+describe("viewCenter", () => {
+  // 1000 px at 10 px/day: the screen is 100 days, today (noon) in the middle.
+  const options = { today: day(2026, 10, 2), pixelsPerDay: 10, viewportWidth: 1000 };
+  const now = day(2026, 10, 2, 12);
+  const shareOfToday = (center: Date) => 0.5 - (center.getTime() - now.getTime()) / 86_400_000 / 100;
+
+  it("puts today at 30% when nothing is planned before it", () => {
+    const center = viewCenter(now, { ...options, projects: [{ started_on: "2026-10-10", finished_on: "2026-11-30" }] });
+    expect(shareOfToday(center)).toBeCloseTo(0.3);
+  });
+
+  it("keeps a project that started just before today on screen", () => {
+    const center = viewCenter(now, { ...options, projects: [{ started_on: "2026-10-01", finished_on: "2026-10-28" }] });
+    expect(shareOfToday(center)).toBeCloseTo(0.3);
+  });
+
+  it("drops only the empty part of the past", () => {
+    // The project starts 30 days before today: 20 empty days are left of it, 5 stay as a margin.
+    const center = viewCenter(now, { ...options, projects: [{ started_on: "2026-09-02", finished_on: "2026-10-20" }] });
+    expect(shareOfToday(center)).toBeCloseTo(0.35, 1);
+  });
+
+  it("keeps the view when the past on screen is planned or today is off screen", () => {
+    const busy = [{ started_on: "2026-08-01", finished_on: "2026-10-20" }];
+    expect(viewCenter(now, { ...options, projects: busy })).toBe(now);
+    const later = day(2027, 3, 1);
+    expect(viewCenter(later, { ...options, projects: [] })).toBe(later);
   });
 });

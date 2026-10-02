@@ -23,6 +23,7 @@ import {
   timelineWidth,
   toggleScale,
   xOf,
+  viewCenter,
 } from "./timeline";
 import { TimelineGrid } from "./TimelineGrid";
 import type { BoardData } from "./types";
@@ -75,11 +76,19 @@ function Board() {
   const compact = mode === "days" && pixelsPerDay <= SCALE.COMPACT_DAYS_AT;
 
   // Keep the remembered moment in the middle of the screen whenever the zoom,
-  // the timeline origin or the viewport width changes.
+  // the timeline origin or the viewport width changes. On opening, a view of
+  // today drops the empty past on its left (viewCenter).
   const originTime = timeline.origin.getTime();
+  const opening = useRef(true);
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
+    if (opening.current) {
+      opening.current = false;
+      const state = store.getState();
+      const center = viewCenter(state.currentDate, { projects: state.projects, today, pixelsPerDay, viewportWidth: viewport.clientWidth });
+      if (center !== state.currentDate) state.setView({ currentDate: center });
+    }
     const { currentDate } = store.getState();
     viewport.scrollLeft = xOf(timeline, currentDate) - viewport.clientWidth / 2;
     setScrollLeft(viewport.scrollLeft);
@@ -121,6 +130,13 @@ function Board() {
     },
     [timeline],
   );
+
+  const goToToday = useCallback(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const { projects: rows, pixelsPerDay: ppd } = store.getState();
+    goToDate(viewCenter(new Date(), { projects: rows, today, pixelsPerDay: ppd, viewportWidth: viewport.clientWidth }));
+  }, [store, today, goToDate]);
 
   const showProject = useCallback(
     (id: number) => {
@@ -200,7 +216,7 @@ function Board() {
           state.setScale(toggleScale(state.pixelsPerDay));
           break;
         case " ":
-          goToDate(new Date());
+          goToToday();
           break;
         case "Enter":
           newProject();
@@ -217,7 +233,7 @@ function Board() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [store, goToDate, newProject]);
+  }, [store, goToToday, newProject]);
 
   // Save the view state when the page is left before the debounce fires.
   useEffect(() => {
@@ -274,8 +290,8 @@ function Board() {
   }, []);
 
   const view: BoardView = useMemo(
-    () => ({ timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt, fitRanges }),
-    [timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt, fitRanges],
+    () => ({ timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, goToToday, showProject, rowIndexAt, fitRanges }),
+    [timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, goToToday, showProject, rowIndexAt, fitRanges],
   );
 
   const boardClasses = ["board", `scale-${mode}`];

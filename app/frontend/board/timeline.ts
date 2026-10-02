@@ -151,6 +151,40 @@ export function buildTimeline(options: {
   return { origin, days: differenceInCalendarDays(end, origin), pixelsPerDay, mode };
 }
 
+/** Leftmost share of the screen today may move to when the past is empty. */
+export const TODAY_MIN_SHARE = 0.3;
+/** Empty room kept before the first thing on screen when shifting (share of the screen). */
+const EMPTY_PAST_MARGIN = 0.05;
+
+/**
+ * The moment to keep in the middle of the screen when showing `around`. When
+ * today is on screen and the screen starts with empty past, the view moves
+ * right to drop that empty room, but no further than putting today at 30% of
+ * the width. Otherwise it is `around` itself.
+ */
+export function viewCenter(
+  around: Date,
+  options: { projects: Pick<Card, "started_on" | "finished_on">[]; today: Date; pixelsPerDay: number; viewportWidth: number },
+): Date {
+  const { projects, today, pixelsPerDay, viewportWidth } = options;
+  const screenDays = viewportWidth / pixelsPerDay;
+  const days = (from: Date, to: Date) => (to.getTime() - from.getTime()) / 86_400_000;
+  const todayAt = addMinutes(startOfDay(today), MINUTES_PER_DAY / 2);
+  if (Math.abs(days(around, todayAt)) > screenDays / 2) return around;
+
+  const left = addMinutes(around, -(screenDays / 2) * MINUTES_PER_DAY);
+  let first = todayAt;
+  for (const project of projects) {
+    const start = parseDay(project.started_on);
+    const end = addDays(parseDay(project.finished_on), 1);
+    if (end > left && start < first) first = start > left ? start : left;
+  }
+  const empty = days(left, first) - screenDays * EMPTY_PAST_MARGIN;
+  const room = days(left, todayAt) - screenDays * TODAY_MIN_SHARE;
+  const shift = Math.max(0, Math.min(empty, room));
+  return shift > 0 ? addMinutes(around, Math.round(shift * MINUTES_PER_DAY)) : around;
+}
+
 export interface Column {
   key: string;
   x: number;

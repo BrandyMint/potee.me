@@ -13,7 +13,7 @@ const SCALE_BUTTONS: { mode: ScaleMode; pixelsPerDay: number }[] = [
 ];
 
 export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; onShowAll: () => void }) {
-  const { timeline, today, viewportWidth, scrollLeft, goToDate } = useBoardView();
+  const { timeline, today, viewportWidth, scrollLeft, goToToday } = useBoardView();
   const pixelsPerDay = useBoard((state) => state.pixelsPerDay);
   const setScale = useBoard((state) => state.setScale);
   const user = useBoard((state) => state.user);
@@ -48,7 +48,7 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
         ))}
       </div>
       {todayDirection && (
-        <button type="button" className="today-link" onClick={() => goToDate(new Date())} title={text.goToToday}>
+        <button type="button" className="today-link" onClick={goToToday} title={text.goToToday}>
           {todayDirection === "left" ? text.moveToTodayLeft : text.moveToTodayRight}
         </button>
       )}

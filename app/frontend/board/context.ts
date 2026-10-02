@@ -24,6 +24,8 @@ export interface BoardView {
   /** Converts a pointer's clientX into the timeline x coordinate. */
   timelineX: (clientX: number) => number;
   goToDate: (date: Date) => void;
+  /** Scrolls to today, dropping empty past on its left (see viewCenter). */
+  goToToday: () => void;
   showProject: (id: number) => void;
   /** Row index a pointer at clientY points to (rows may differ in height). */
   rowIndexAt: (clientY: number, excludeId?: number) => number;
