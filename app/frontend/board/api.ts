@@ -1,4 +1,4 @@
-import type { BoardData, BoardEvent, Card, DashboardState } from "./types";
+import type { BoardData, BoardEvent, Card, DashboardState, PlanRequestState } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -57,4 +57,10 @@ export const api = {
   updateEvent: (id: number, event: EventAttributes) => request<BoardEvent>("PATCH", `/api/events/${id}`, { event }),
   deleteEvent: (id: number, options?: { keepalive?: boolean }) =>
     request<void>("DELETE", `/api/events/${id}`, undefined, options),
+  createPlan: (prompt: string, timezone: string) =>
+    request<PlanRequestState>("POST", "/api/plan_requests", { prompt, timezone }),
+  planStatus: (id: number) => request<PlanRequestState>("GET", `/api/plan_requests/${id}`),
+  applyPlan: (id: number, projectKeys: string[]) =>
+    request<{ projects: Card[] }>("POST", `/api/plan_requests/${id}/apply`, { project_keys: projectKeys }),
+  discardPlan: (id: number) => request<void>("POST", `/api/plan_requests/${id}/discard`),
 };

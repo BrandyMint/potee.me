@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :project_connections, dependent: :destroy
   has_many :projects, through: :project_connections
   has_one :dashboard, dependent: :destroy
+  has_many :plan_requests, dependent: :delete_all
 
   normalizes :email, with: ->(email) { email.strip.downcase.presence }
 

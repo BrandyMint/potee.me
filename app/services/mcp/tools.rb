@@ -100,19 +100,14 @@ module Mcp
     end
 
     def create_project
-      events = Array(@args[:events])
-      connection = ProjectConnection.transaction do
-        project = @user.owned_projects.create!(
-          title: required(:title), started_on: date(required(:start_date)), finished_on: date(required(:end_date))
-        )
-        connection = project.project_connections.create!(
-          user: @user,
-          color_index: @args.fetch(:color, @user.next_color_index),
-          position: @user.project_connections.maximum(:position).to_i + 1
-        )
-        events.each { |event| create_event(project, event.with_indifferent_access) }
-        connection
-      end
+      started_on = date(required(:start_date))
+      finished_on = date(required(:end_date))
+      raise Error, "end_date must not be before start_date" if finished_on < started_on
+
+      events = Array(@args[:events]).map { event_attributes(_1.with_indifferent_access, started_on, finished_on) }
+      connection = BoardWriter.new(@user).add_project(
+        title: required(:title), started_on:, finished_on:, events:, color_index: @args[:color]
+      )
       project_json(connection.reload)
     end
 
@@ -187,9 +182,17 @@ module Mcp
     end
 
     def create_event(project, attributes)
+      event = event_attributes(attributes, project.started_on, project.finished_on)
+      project.events.create!(event)
+    end
+
+    def event_attributes(attributes, started_on, finished_on)
       at = moment(date(attributes[:date] || raise(Error, "Event date is required")), attributes[:time] || DEFAULT_EVENT_TIME)
-      check_inside!(project, at)
-      project.events.create!(title: attributes[:title].presence || raise(Error, "Event title is required"), at:)
+      day = at.in_time_zone(@zone).to_date
+      unless day.between?(started_on, finished_on)
+        raise Error, "#{day} is outside the project dates #{started_on}..#{finished_on}; extend the project with update_project first"
+      end
+      { title: attributes[:title].presence || raise(Error, "Event title is required"), at: }
     end
 
     def check_inside!(project, at)

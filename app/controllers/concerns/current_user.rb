@@ -56,6 +56,7 @@ module CurrentUser
       projects: current_user.board_connections.map { |connection| card_json(connection) },
       dashboard: current_user.dashboard.as_board_json,
       user: { email: current_user.email, anonymous: current_user.anonymous? },
+      features: { plan_from_text: PlanRequest.enabled? },
       locale: I18n.locale
     }
   end

@@ -6,7 +6,7 @@ import { create } from "zustand";
 import { api, type EventAttributes, type ProjectAttributes } from "./api";
 import { t } from "./i18n";
 import { clampScale, formatDay, nextColorIndex } from "./timeline";
-import type { BoardData, BoardEvent, Card } from "./types";
+import type { BoardData, BoardEvent, Card, PlanProject } from "./types";
 
 const DASHBOARD_SAVE_DELAY = 1000;
 const UNDO_DELAY = 5000;
@@ -35,6 +35,10 @@ export interface BoardState {
   editingEventId: number | null;
   toast: Toast | null;
   user: BoardData["user"];
+  features: BoardData["features"];
+  /** "Plan from text" panel and its preview shown on the board (FT-001). */
+  planOpen: boolean;
+  planPreview: { projects: PlanProject[]; selected: string[] } | null;
 
   setScale: (pixelsPerDay: number, currentDate?: Date) => void;
   setView: (view: { currentDate?: Date; scrollTop?: number }) => void;
@@ -50,6 +54,10 @@ export interface BoardState {
   deleteEvent: (projectId: number, eventId: number) => void;
   editEvent: (eventId: number | null) => void;
   dismissToast: () => void;
+  setPlanOpen: (open: boolean) => void;
+  setPlanPreview: (preview: BoardState["planPreview"]) => void;
+  /** Appends projects created on the server (plan applied). */
+  appendProjects: (cards: Card[]) => void;
   /** Sends everything still waiting (view state, pending deletions) right away. */
   flush: () => void;
 }
@@ -134,6 +142,13 @@ export function createBoardStore(initial: BoardData) {
       editingEventId: null,
       toast: null,
       user: initial.user,
+      features: initial.features,
+      planOpen: false,
+      planPreview: null,
+
+      setPlanOpen: (open) => set(open ? { planOpen: true, selectedId: null } : { planOpen: false, planPreview: null }),
+      setPlanPreview: (planPreview) => set({ planPreview }),
+      appendProjects: (cards) => set((state) => ({ projects: [...state.projects, ...cards] })),
 
       setScale: (pixelsPerDay, currentDate) => {
         set({ pixelsPerDay: clampScale(pixelsPerDay), ...(currentDate ? { currentDate } : {}) });

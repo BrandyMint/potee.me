@@ -18,6 +18,27 @@ const en = {
   showAll: "Show all projects",
   newProject: "New project",
   newProjectHint: "New project (Enter)",
+  planFromText: "Plan from text",
+  planPlaceholder: "Describe the plan in your own words, e.g.: Launching a course by December 1. Landing page by October 20, three webinars on Wednesdays in November at 7 pm, a newsletter a week before the start.",
+  planProviderNote: "The text is processed by a third-party language model (via OpenRouter). Your board is not sent.",
+  planGenerate: "Make a plan",
+  planWorking: "Laying out the plan…",
+  planReview: "Check the plan: it is shown on the board with a dashed outline. Untick what you don't need.",
+  planAdjusted: "Dates stretched to cover the milestones",
+  planBack: "Rewrite",
+  planAdd: (count: number) => (count === 1 ? "Add 1 project" : `Add ${count} projects`),
+  planRetry: "Try again",
+  planSignUpOnly: "Plans from text are available after sign-up: your board will be saved too.",
+  planErrors: {
+    unparseable: "Could not lay out this plan. Try describing it with dates and steps.",
+    llm_unavailable: "The model is unavailable right now. Try again in a minute.",
+    llm_timeout: "The model took too long. Try again.",
+    interrupted: "The request was interrupted. Try again.",
+    daily_limit: "That's the daily limit of plans. Come back tomorrow.",
+    in_progress: "A plan is already being prepared. Wait for it to finish.",
+    apply_failed: "Could not add the plan to the board. Try again.",
+    unknown: "Something went wrong. Try again.",
+  },
   signUp: "Sign up to save your projects",
   signUpShort: "Sign up",
   logIn: "Log in",
@@ -81,6 +102,27 @@ const ruDictionary: Dictionary = {
   showAll: "Показать все проекты",
   newProject: "Новый проект",
   newProjectHint: "Новый проект (Enter)",
+  planFromText: "План из текста",
+  planPlaceholder: "Опишите план своими словами, например: Запускаю курс к 1 декабря. Лендинг до 20 октября, 3 вебинара по средам в ноябре в 19:00, рассылка за неделю до старта.",
+  planProviderNote: "Текст обрабатывает языковая модель стороннего провайдера (через OpenRouter). Ваша доска не передаётся.",
+  planGenerate: "Составить план",
+  planWorking: "Раскладываю план…",
+  planReview: "Проверьте план: он показан на доске пунктиром. Снимите галочки с лишнего.",
+  planAdjusted: "Сроки расширены, чтобы вместить вехи",
+  planBack: "Переписать",
+  planAdd: (count: number) => `Добавить ${count} ${plural(count, "проект", "проекта", "проектов")}`,
+  planRetry: "Попробовать снова",
+  planSignUpOnly: "План из текста доступен после регистрации — заодно сохранится ваша доска.",
+  planErrors: {
+    unparseable: "Не получилось разложить план. Опишите его с датами и шагами.",
+    llm_unavailable: "Модель сейчас недоступна. Попробуйте через минуту.",
+    llm_timeout: "Модель отвечала слишком долго. Попробуйте ещё раз.",
+    interrupted: "Запрос прервался. Попробуйте ещё раз.",
+    daily_limit: "На сегодня лимит планов исчерпан. Возвращайтесь завтра.",
+    in_progress: "План уже готовится. Дождитесь результата.",
+    apply_failed: "Не получилось добавить план на доску. Попробуйте ещё раз.",
+    unknown: "Что-то пошло не так. Попробуйте ещё раз.",
+  },
   signUp: "Зарегистрируйтесь, чтобы сохранить доску",
   signUpShort: "Регистрация",
   logIn: "Войти",
@@ -127,6 +169,14 @@ const ruDictionary: Dictionary = {
     ["Esc", "отменить / снять выделение"],
   ],
 };
+
+function plural(count: number, one: string, few: string, many: string): string {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+}
 
 const dictionaries: Record<Locale, Dictionary> = { en, ru: ruDictionary };
 const dateLocales: Record<Locale, DateLocale> = { en: enUS, ru };

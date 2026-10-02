@@ -29,7 +29,7 @@ RSpec.describe "Admin", type: :request do
     project = Project.first
 
     [ admin_users_path, admin_projects_path, admin_events_path, admin_project_connections_path,
-     admin_project_path(project), admin_user_path(project.owner), admin_users_path(search: "registered:") ].each do |path|
+     admin_project_path(project), admin_user_path(project.owner), admin_users_path(search: "registered:"), admin_plan_requests_path ].each do |path|
       get path
       expect(response).to have_http_status(:ok), "#{path} → #{response.status}"
     end

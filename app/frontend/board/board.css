@@ -760,6 +760,18 @@ button {
   font-size: 14px;
 }
 
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.empty-state button.secondary {
+  background: #333;
+  color: #ddd;
+}
+
 .empty-state button {
   padding: 8px 20px;
   border: 0;
@@ -915,5 +927,207 @@ button {
   .help-popover dl div {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+}
+
+/* Plan from text (FT-001): side panel and previewed projects */
+
+.board-header .plan-button {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--text-strong);
+  font-size: 15px;
+}
+
+.plan-panel {
+  position: fixed;
+  top: calc(var(--header-height) + 8px);
+  right: 12px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  width: min(380px, calc(100vw - 24px));
+  max-height: calc(100vh - var(--header-height) - 24px);
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.55);
+  color: #bbb;
+}
+
+.plan-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 0;
+}
+
+.plan-panel h2 {
+  margin: 0;
+  color: #ddd;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.plan-panel .close {
+  border: 0;
+  background: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.plan-body {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.plan-body p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.plan-body textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #0d0d0d;
+  color: #eee;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.plan-body textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.plan-note {
+  color: #888;
+  font-size: 12px;
+}
+
+.plan-primary,
+.plan-secondary {
+  justify-self: end;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.plan-primary {
+  background: var(--accent);
+  color: #10242c;
+}
+
+.plan-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.plan-secondary {
+  background: #333;
+  color: #ddd;
+}
+
+.plan-spinner::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: plan-spin 0.8s linear infinite;
+  vertical-align: -1px;
+}
+
+@keyframes plan-spin {
+  to { transform: rotate(360deg); }
+}
+
+.plan-error {
+  color: #f8b4ad;
+}
+
+.plan-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-list label {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  cursor: pointer;
+}
+
+.plan-project-title {
+  color: #eee;
+  font-weight: 500;
+}
+
+.plan-dates {
+  margin-left: auto;
+  color: #888;
+  white-space: nowrap;
+}
+
+.plan-list ul {
+  margin: 4px 0 0 24px;
+  padding: 0;
+  list-style: none;
+  color: #999;
+}
+
+.plan-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.project.preview {
+  pointer-events: none;
+}
+
+.project.preview .project-bar {
+  opacity: 0.75;
+  outline: 1.5px dashed color-mix(in srgb, var(--c) 70%, white);
+  outline-offset: 3px;
+}
+
+.project.preview.excluded {
+  opacity: 0.25;
+}
+
+.preview-event .event-title {
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .plan-panel {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    max-height: 70vh;
+    border-radius: 12px 12px 0 0;
   }
 }

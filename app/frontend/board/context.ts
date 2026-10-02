@@ -27,6 +27,8 @@ export interface BoardView {
   showProject: (id: number) => void;
   /** Row index a pointer at clientY points to (rows may differ in height). */
   rowIndexAt: (clientY: number, excludeId?: number) => number;
+  /** Zooms and scrolls so these date ranges fit the screen. */
+  fitRanges: (ranges: { started_on: string; finished_on: string }[]) => void;
 }
 
 export const ViewContext = createContext<BoardView | null>(null);

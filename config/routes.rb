@@ -26,6 +26,12 @@ Rails.application.routes.draw do
       resources :events, only: :create
     end
     resources :events, only: %i[update destroy]
+    resources :plan_requests, only: %i[create show] do
+      member do
+        post :apply
+        post :discard
+      end
+    end
   end
 
   namespace :admin do
@@ -33,6 +39,7 @@ Rails.application.routes.draw do
     resources :projects
     resources :events
     resources :project_connections
+    resources :plan_requests, only: %i[index show]
     root to: "users#index"
   end
 end

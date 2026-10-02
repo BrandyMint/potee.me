@@ -36,4 +36,25 @@ export interface BoardData {
   dashboard: DashboardState;
   user: { email: string | null; anonymous: boolean };
   locale: "ru" | "en";
+  features: { plan_from_text: boolean };
+}
+
+/** A project proposed by "plan from text" (FT-001), not yet on the board. */
+export interface PlanProject {
+  key: string;
+  title: string;
+  start_date: string;
+  end_date: string;
+  /** Dates were stretched to cover the milestones. */
+  adjusted: boolean;
+  events: { title: string; date: string; time: string }[];
+}
+
+export type PlanStatus = "pending" | "ready" | "failed" | "applied" | "discarded";
+
+export interface PlanRequestState {
+  id: number;
+  status: PlanStatus;
+  draft?: { projects: PlanProject[] };
+  error?: string;
 }

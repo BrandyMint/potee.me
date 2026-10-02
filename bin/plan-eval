@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# FT-001 EVAL-01: runs the reference plans (config/evals/plan_eval.yml) through
+# the real model and checks milestone dates and the split into streams.
+# Run where LiteLLM is reachable, e.g. inside the potee pod:
+#   kubectl -n potee exec deploy/potee -- bin/plan-eval
+require_relative "../config/environment"
+require "active_support/testing/time_helpers"
+include ActiveSupport::Testing::TimeHelpers
+
+suite = YAML.load_file(Rails.root.join("config/evals/plan_eval.yml"))
+zone = ActiveSupport::TimeZone["Europe/Moscow"]
+passed = 0
+
+travel_to(zone.parse("#{suite['today']} 12:00")) do
+  suite["plans"].each do |plan|
+    started = Time.now
+    begin
+      draft, = PlanGenerator.new(prompt: plan["prompt"], zone:).call
+      projects = draft["projects"]
+      dates = projects.flat_map { |p| p["events"].map { _1["date"] } }
+      missing = plan["expect"] - dates
+      split_ok = projects.size >= plan.fetch("min_projects", 2)
+      ok = missing.empty? && split_ok
+      passed += 1 if ok
+      puts format("%-4s %-20s %5.1fs projects=%d missing=%s", ok ? "PASS" : "FAIL", plan["name"], Time.now - started,
+                  projects.size, missing.empty? ? "-" : missing.join(","))
+      projects.each { |p| puts "       #{p['title']} #{p['start_date']}..#{p['end_date']} (#{p['events'].map { "#{_1['date']} #{_1['title']}" }.join('; ')})" } unless ok
+    rescue PlanGenerator::Error => error
+      puts format("%-4s %-20s %5.1fs %s", "FAIL", plan["name"], Time.now - started, error.code)
+    end
+  end
+end
+
+total = suite["plans"].size
+puts "#{passed}/#{total} passed (model #{PlanGenerator.model}); REQ-08 needs >= 9"
+exit(passed >= 9 ? 0 : 1)

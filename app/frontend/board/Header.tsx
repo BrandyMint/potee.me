@@ -18,6 +18,8 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
   const setScale = useBoard((state) => state.setScale);
   const user = useBoard((state) => state.user);
   const selected = useBoard((state) => state.projects.find((card) => card.id === state.selectedId));
+  const planEnabled = useBoard((state) => state.features.plan_from_text);
+  const setPlanOpen = useBoard((state) => state.setPlanOpen);
   const mode = scaleMode(pixelsPerDay);
   const text = t();
 
@@ -56,6 +58,12 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
         <button type="button" className="new-project" onClick={onNewProject} title={text.newProjectHint} aria-label={text.newProject}>
           <span aria-hidden>+</span>
           <span className="label-long">{text.newProject}</span>
+        </button>
+      )}
+      {planEnabled && !(selected && isSaved(selected.id)) && (
+        <button type="button" className="plan-button" onClick={() => setPlanOpen(true)} title={text.planFromText} aria-label={text.planFromText}>
+          <span aria-hidden>✨</span>
+          <span className="label-long">{text.planFromText}</span>
         </button>
       )}
       <div className="header-spacer" />

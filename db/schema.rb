@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -32,6 +32,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_000001) do
     t.datetime "updated_at", null: false
     t.index ["project_id", "at"], name: "index_events_on_project_id_and_at"
     t.index ["project_id"], name: "index_events_on_project_id"
+  end
+
+  create_table "plan_requests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "prompt", null: false
+    t.string "timezone", default: "Europe/Moscow", null: false
+    t.string "status", default: "pending", null: false
+    t.string "model"
+    t.jsonb "draft"
+    t.text "raw_response"
+    t.string "error"
+    t.datetime "completed_at"
+    t.datetime "applied_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_plan_requests_on_status"
+    t.index ["user_id", "created_at"], name: "index_plan_requests_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_plan_requests_on_user_id"
   end
 
   create_table "project_connections", force: :cascade do |t|
@@ -73,6 +91,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_000001) do
 
   add_foreign_key "dashboards", "users"
   add_foreign_key "events", "projects"
+  add_foreign_key "plan_requests", "users"
   add_foreign_key "project_connections", "projects"
   add_foreign_key "project_connections", "users"
   add_foreign_key "projects", "users", column: "owner_id"

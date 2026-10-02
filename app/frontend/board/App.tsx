@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { StoreContext, useBoard, useBoardStore, ViewContext, type BoardView } from "./context";
 import { isFormControl, startDrag } from "./drag";
 import { Header } from "./Header";
+import { PlanPanel, PreviewRow } from "./PlanPanel";
 import { dateLocale, t } from "./i18n";
 import { ProjectRow } from "./ProjectRow";
 import { createBoardStore } from "./store";
@@ -11,6 +12,7 @@ import {
   clampScale,
   dateAt,
   fitAll,
+  nextColorIndex,
   fitScale,
   projectMiddle,
   SCALE,
@@ -43,6 +45,9 @@ function Board() {
   const selectedId = useBoard((state) => state.selectedId);
   const draftId = useBoard((state) => state.draftId);
   const toast = useBoard((state) => state.toast);
+  const planPreview = useBoard((state) => state.planPreview);
+  const planEnabled = useBoard((state) => state.features.plan_from_text);
+  const setPlanOpen = useBoard((state) => state.setPlanOpen);
   const dismissToast = useBoard((state) => state.dismissToast);
 
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -52,8 +57,14 @@ function Board() {
   const today = useMemo(() => startOfDay(new Date()), []);
 
   const timeline = useMemo(
-    () => buildTimeline({ projects, today, pixelsPerDay, viewportWidth }),
-    [projects, today, pixelsPerDay, viewportWidth],
+    () =>
+      buildTimeline({
+        projects: planPreview ? [...projects, ...planPreview.projects.map(previewRange)] : projects,
+        today,
+        pixelsPerDay,
+        viewportWidth,
+      }),
+    [projects, planPreview, today, pixelsPerDay, viewportWidth],
   );
   const columns = useMemo(() => timelineColumns(timeline, today, dateLocale()), [timeline, today]);
   const width = timelineWidth(timeline);
@@ -125,20 +136,23 @@ function Board() {
 
   // The logo shows the whole board: the largest zoom at which every project
   // fits the width and every row fits the height.
+  const fitRanges = useCallback(
+    (ranges: { started_on: string; finished_on: string }[]) => {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+      const state = store.getState();
+      const fit = fitAll({ projects: ranges, viewportWidth: viewport.clientWidth, rowsHeight: viewport.clientHeight - ROWS_CHROME });
+      if (fit) state.setScale(fit.pixelsPerDay, fit.middle);
+      else state.setScale(SCALE.DAYS, new Date());
+      viewport.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [store],
+  );
+
   const showAll = useCallback(() => {
-    const state = store.getState();
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const fit = fitAll({
-      projects: state.projects,
-      viewportWidth: viewport.clientWidth,
-      rowsHeight: viewport.clientHeight - ROWS_CHROME,
-    });
-    state.select(null);
-    if (fit) state.setScale(fit.pixelsPerDay, fit.middle);
-    else state.setScale(SCALE.DAYS, new Date());
-    viewport.scrollTo({ top: 0, behavior: "smooth" });
-  }, [store]);
+    store.getState().select(null);
+    fitRanges(store.getState().projects);
+  }, [store, fitRanges]);
 
   const newProject = useCallback(() => {
     const viewport = viewportRef.current;
@@ -257,8 +271,8 @@ function Board() {
   }, []);
 
   const view: BoardView = useMemo(
-    () => ({ timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt }),
-    [timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt],
+    () => ({ timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt, fitRanges }),
+    [timeline, today, viewportWidth, scrollLeft, timelineX, goToDate, showProject, rowIndexAt, fitRanges],
   );
 
   const boardClasses = ["board", `scale-${mode}`];
@@ -290,18 +304,38 @@ function Board() {
                   draft={card.id === draftId}
                 />
               ))}
+              {planPreview &&
+                previewColors(projects, planPreview.projects.length).map((colorIndex, index) => {
+                  const project = planPreview.projects[index]!;
+                  return (
+                    <PreviewRow
+                      key={project.key}
+                      project={project}
+                      colorIndex={colorIndex}
+                      selected={planPreview.selected.includes(project.key)}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>
-        {projects.length === 0 && (
+        {projects.length === 0 && !planPreview && (
           <div className="empty-state">
             <h2>{t().emptyTitle}</h2>
             <p>{t().emptyText}</p>
-            <button type="button" onClick={newProject}>
-              + {t().newProject}
-            </button>
+            <div className="empty-actions">
+              <button type="button" onClick={newProject}>
+                + {t().newProject}
+              </button>
+              {planEnabled && (
+                <button type="button" className="secondary" onClick={() => setPlanOpen(true)}>
+                  ✨ {t().planFromText}
+                </button>
+              )}
+            </div>
           </div>
         )}
+        <PlanPanel />
         {toast && (
           <div key={toast.id} className={`toast toast-${toast.kind}`} role={toast.kind === "error" ? "alert" : "status"}>
             <span>{toast.message}</span>
@@ -318,4 +352,18 @@ function Board() {
       </div>
     </ViewContext.Provider>
   );
+}
+
+function previewRange(project: { start_date: string; end_date: string }) {
+  return { started_on: project.start_date, finished_on: project.end_date };
+}
+
+/** Colours the server will give the previewed projects, in order (same rule as User#next_color_index). */
+function previewColors(cards: { color_index: number }[], count: number): number[] {
+  const taken = [...cards];
+  return Array.from({ length: count }, () => {
+    const color = nextColorIndex(taken);
+    taken.push({ color_index: color });
+    return color;
+  });
 }
