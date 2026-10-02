@@ -460,10 +460,12 @@ button {
   box-shadow: 0 0 10px 0 rgb(13 144 209 / 0.7);
 }
 
-/* The title has a backing in the bar colour so event ticks pass under it. */
+/* The title has a backing in the bar colour. Event ticks share its z-index
+   and come later in the DOM, so they stay on top; they are translucent so the
+   title shows through. */
 .project-title {
   position: sticky;
-  z-index: 4;
+  z-index: 3;
   left: 0;
   border-radius: calc(var(--bar-height) / 2);
   background: var(--bar-fill);
@@ -532,7 +534,7 @@ button {
 
 .project.inactive { --bar-fill: var(--bar-volume), #666; }
 .project.inactive .project-title-text { color: #000; }
-.project.inactive .event-bar { background: #555; }
+.project.inactive .event-bar { background: rgb(85 85 85 / 0.6); }
 .project.inactive .event-title { color: #999; }
 
 .edge-label {
@@ -712,7 +714,7 @@ button {
   height: 30px;
   border-radius: 2px;
   z-index: 3;
-  background: color-mix(in srgb, var(--c) 75%, black);
+  background: color-mix(in srgb, color-mix(in srgb, var(--c) 75%, black) 60%, transparent);
   cursor: col-resize;
   touch-action: none;
 }
