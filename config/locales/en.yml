@@ -7,6 +7,23 @@ en:
     lead: "Now you know what is the next step in your projects."
     get_started: "Get started"
     log_in: "Log in"
+    timeline:
+      today: "Today"
+      next_step: "Next step"
+      in_days:
+        one: "in %{count} day"
+        other: "in %{count} days"
+      projects:
+        - ["Website launch", "Home page mockup", "Copy ready", "Go live"]
+        - ["Vacation", "Buy tickets", "Departure"]
+        - ["Kitchen renovation", "Pick tiles", "Measurements", "Installation"]
+        - ["Online course", "Record lessons", "Landing page", "Sales start"]
+        - ["Moving out", "Find a flat", "Boxes", "Housewarming"]
+        - ["Release 2.0", "Code freeze", "Beta", "Release"]
+        - ["Thesis", "Chapter 1", "Draft", "Defense"]
+        - ["Wedding", "Venue", "Invitations", "Party"]
+        - ["Marathon", "10 km", "Half marathon", "Race day"]
+        - ["Conference", "Talk proposal", "Slides", "Talk"]
   auth:
     email: "Email"
     signup:

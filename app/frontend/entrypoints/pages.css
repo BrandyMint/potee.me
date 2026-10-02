@@ -13,23 +13,216 @@ body.auth-page {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+/* Landing page. Behind the card runs an endless board (welcome.ts):
+   time flows to the left, the "today" line passes milestones. */
+
+.welcome-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 25%, rgb(0 0 0 / 0.25) 100%);
+}
+
+.welcome-track {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.welcome-month {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  padding: 14px 8px;
+  border-left: 1px solid rgb(255 255 255 / 0.05);
+  color: #555;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.welcome-bar {
+  position: absolute;
+  height: 22px;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0) 55%, rgb(0 0 0 / 0.14)), var(--c);
+  opacity: 0.38;
+  transition: opacity 0.6s;
+}
+
+.welcome-bar.active {
+  opacity: 0.9;
+}
+
+.welcome-bar span {
+  position: absolute;
+  top: -18px;
+  left: 8px;
+  color: #888;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.welcome-bar.active span {
+  color: #ddd;
+}
+
+.welcome-bar i {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 30px;
+  background: #fff;
+  opacity: 0.5;
+}
+
+.welcome-bar i.done {
+  opacity: 0.15;
+}
+
+.welcome-bar i.next {
+  opacity: 1;
+  box-shadow: 0 0 12px 2px rgb(255 255 255 / 0.6);
+  animation: welcome-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes welcome-pulse {
+  50% { box-shadow: 0 0 2px 0 rgb(255 255 255 / 0.2); }
+}
+
+.welcome-today {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 2px;
+  background: #f57969;
+  box-shadow: 0 0 16px #f57969;
+}
+
+.welcome-today b {
+  position: absolute;
+  top: 9px;
+  left: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #1d1d1d;
+  color: #f57969;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .welcome {
+  position: relative;
+  z-index: 2;
+  padding: 16px;
+}
+
+.welcome-card {
   display: flex;
   align-items: center;
   gap: 48px;
-  padding: 16px;
+  padding: 36px 44px;
+  border-radius: 16px;
+  background: rgb(24 24 24 / 0.78);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+}
+
+/* The logo is drawn as stripes so they can slide in one by one. */
+.welcome-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.welcome-logo strong {
+  margin-bottom: 6px;
+  color: #fff;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.welcome-logo i {
+  width: 156px;
+  height: 26px;
+  padding: 4px 14px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 13px;
+  font-style: normal;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateX(-120%);
+  animation: welcome-slide 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.welcome-logo i:nth-of-type(1) { background: #00b9e8; animation-delay: 0.1s; }
+.welcome-logo i:nth-of-type(2) { background: #ff7a6a; margin-left: -8px; animation-delay: 0.2s; }
+.welcome-logo i:nth-of-type(3) { background: #ffb06a; margin-left: 8px; animation-delay: 0.3s; }
+.welcome-logo i:nth-of-type(4) { background: #f5d98a; animation-delay: 0.4s; }
+.welcome-logo i:nth-of-type(5) { background: #bfd46c; margin-left: 4px; animation-delay: 0.5s; }
+
+@keyframes welcome-slide {
+  to { opacity: 1; transform: none; }
 }
 
 .welcome h1 {
   margin: 0 0 8px;
   color: #f57969;
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 400;
 }
 
 .welcome p {
-  margin: 0 0 24px;
+  max-width: 22em;
+  margin: 0 0 20px;
   font-size: 20px;
+}
+
+.welcome-next {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  margin: 0 0 24px;
+  padding: 10px 14px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #111;
+  font-size: 15px;
+  text-align: left;
+}
+
+.welcome-next[hidden] {
+  display: none;
+}
+
+.welcome-next-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c, #fff);
+  box-shadow: 0 0 10px var(--c, #fff);
+}
+
+.welcome-next em {
+  color: #eee;
+  font-style: normal;
+}
+
+.welcome-next small {
+  margin-left: auto;
+  color: #777;
+  white-space: nowrap;
 }
 
 .welcome-start {
@@ -46,13 +239,6 @@ body.auth-page {
   background: #71c3e2;
 }
 
-@media (max-width: 640px) {
-  .welcome {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
 .welcome-login {
   margin-left: 16px;
   color: #999;
@@ -60,6 +246,43 @@ body.auth-page {
 
 .welcome-login:hover {
   color: #fff;
+}
+
+@media (max-width: 760px) {
+  .welcome-card {
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .welcome-logo {
+    align-items: center;
+  }
+
+  .welcome-logo i {
+    margin-left: 0 !important;
+  }
+
+  .welcome h1 {
+    font-size: 28px;
+  }
+
+  .welcome p {
+    font-size: 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-logo i {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .welcome-bar i.next {
+    animation: none;
+  }
 }
 
 /* Sign up, log in, password reset */

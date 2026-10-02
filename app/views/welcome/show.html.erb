@@ -1,16 +1,25 @@
 <% content_for :body_class, "welcome-page" %>
 <% content_for :head do %>
   <%= vite_stylesheet_tag "pages.css" %>
+  <%= vite_typescript_tag "welcome.ts" %>
 <% end %>
 
+<div class="welcome-stage" aria-hidden="true"><div class="welcome-track"></div></div>
+<div class="welcome-today" aria-hidden="true" hidden><b></b></div>
+
 <main class="welcome">
-  <%= link_to board_path, class: "welcome-logo" do %>
-    <%= image_tag "logo_potee.png", alt: "Potee", width: 170, height: 242 %>
-  <% end %>
-  <div class="welcome-text">
-    <h1><%= t("welcome.headline") %></h1>
-    <p><%= t("welcome.lead") %></p>
-    <%= link_to t("welcome.get_started"), board_path, class: "welcome-start" %>
-    <%= link_to t("welcome.log_in"), login_path, class: "welcome-login" %>
+  <div class="welcome-card">
+    <%= link_to board_path, class: "welcome-logo", aria: { label: "Potee" } do %>
+      <strong>POTEE</strong>
+      <i>Simple</i><i>Timeline</i><i>Project</i><i>Management</i><i>System</i>
+    <% end %>
+    <div class="welcome-text">
+      <h1><%= t("welcome.headline") %></h1>
+      <p><%= t("welcome.lead") %></p>
+      <div class="welcome-next" hidden><span class="welcome-next-dot"></span><span class="welcome-next-text"></span><small></small></div>
+      <%= link_to t("welcome.get_started"), board_path, class: "welcome-start" %>
+      <%= link_to t("welcome.log_in"), login_path, class: "welcome-login" %>
+    </div>
   </div>
 </main>
+<script type="application/json" id="welcome-data"><%= raw json_escape(t("welcome.timeline").to_json) %></script>
