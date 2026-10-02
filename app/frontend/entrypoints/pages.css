@@ -226,3 +226,45 @@ body.auth-page {
 .auth .button-form {
   margin-top: 16px;
 }
+
+/* MCP connection guide at /mcp: a wider page with the tool reference. */
+.auth.guide {
+  width: min(720px, 100% - 32px);
+  padding-bottom: 48px;
+}
+
+.auth .tool {
+  margin: 18px 0;
+  padding-top: 14px;
+  border-top: 1px solid #333;
+}
+
+.auth .tool h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.auth .tool p,
+.auth .tool dd {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+
+.auth .tool dl {
+  margin: 8px 0 0;
+}
+
+.auth .tool dt {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.auth .tool dd {
+  margin-left: 16px;
+  color: #999;
+}
+
+.auth .tool .type {
+  color: #888;
+  font-size: 12px;
+}

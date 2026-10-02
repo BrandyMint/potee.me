@@ -15,7 +15,9 @@ Rails.application.routes.draw do
   post "account/token" => "accounts#create_token", as: :account_token
 
   # MCP server for AI agents (see McpController)
+  # A browser opening /mcp gets the connection guide; MCP clients get the API.
   post "mcp" => "mcp#handle"
+  get "mcp" => "mcp_guides#show", constraints: ->(request) { request.headers["Accept"].to_s.include?("text/html") }
   get "mcp" => "mcp#stream"
 
   namespace :api, defaults: { format: :json } do

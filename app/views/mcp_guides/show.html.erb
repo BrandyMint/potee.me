@@ -1,0 +1,43 @@
+<% content_for :title, t("mcp_guide.title") %>
+<% content_for :auth_class, "guide" %>
+<h1><%= t("mcp_guide.heading") %></h1>
+<p class="lead"><%= t("mcp_guide.lead") %></p>
+
+<h2 class="auth-subheading"><%= t("mcp_guide.token.heading") %></h2>
+<p class="hint">
+  <%= t("mcp_guide.token.text") %>
+  <% if session_user && !session_user.anonymous? %>
+    <%= link_to t("mcp_guide.token.account"), account_path %>
+  <% else %>
+    <%= link_to t("mcp_guide.token.signup"), signup_path %> · <%= link_to t("mcp_guide.token.login"), login_path %>
+  <% end %>
+</p>
+
+<h2 class="auth-subheading"><%= t("mcp_guide.connect.heading") %></h2>
+<p class="hint"><%= t("mcp_guide.connect.endpoint") %> <code><%= mcp_url %></code>, <%= t("mcp_guide.connect.header") %> <code>Authorization: Bearer &lt;token&gt;</code></p>
+<p class="hint">Claude Code:</p>
+<pre class="command">claude mcp add --transport http potee <%= mcp_url %> --header "Authorization: Bearer $POTEE_TOKEN"</pre>
+<p class="hint">Codex (<code>~/.codex/config.toml</code>):</p>
+<pre class="command">[mcp_servers.potee]
+url = "<%= mcp_url %>"
+bearer_token_env_var = "POTEE_TOKEN"</pre>
+<p class="hint"><%= t("mcp_guide.connect.skill") %> <%= link_to "skills/potee", "https://github.com/BrandyMint/potee.me/tree/develop/skills/potee" %></p>
+
+<h2 class="auth-subheading"><%= t("mcp_guide.tools.heading") %></h2>
+<p class="hint"><%= @instructions %></p>
+<% @tools.each do |tool| %>
+  <% schema = tool[:inputSchema] %>
+  <% required = Array(schema[:required]) %>
+  <section class="tool" id="<%= tool[:name] %>">
+    <h3><code><%= tool[:name] %></code></h3>
+    <p><%= tool[:description] %></p>
+    <% if schema[:properties].present? %>
+      <dl>
+        <% schema[:properties].each do |name, property| %>
+          <dt><code><%= name %></code> <span class="type"><%= property[:type] %><%= required.include?(name.to_s) ? "" : ", #{t("mcp_guide.tools.optional")}" %></span></dt>
+          <dd><%= property[:description] %></dd>
+        <% end %>
+      </dl>
+    <% end %>
+  </section>
+<% end %>

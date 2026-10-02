@@ -3,7 +3,7 @@
   <%= vite_stylesheet_tag "pages.css" %>
 <% end %>
 <% content_for :page do %>
-  <main class="auth">
+  <main class="auth <%= yield :auth_class %>">
     <%= link_to root_path, class: "auth-logo" do %>
       <%= image_tag "logo.png", alt: "Potee" %>
     <% end %>

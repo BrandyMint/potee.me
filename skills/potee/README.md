@@ -49,7 +49,9 @@ November, webinars on Wednesdays at 19:00».
 ## Alternative: connect the MCP server directly
 
 Agents with MCP support can use the server without the skill (the skill adds
-working rules, e.g. look at the board before creating duplicates). Endpoint:
+working rules, e.g. look at the board before creating duplicates). Opened in a
+browser, <https://potee.pismenny.ru/mcp> shows this guide and the current tool
+list. Endpoint:
 `https://potee.pismenny.ru/mcp`, Streamable HTTP, header
 `Authorization: Bearer <token>`.
 

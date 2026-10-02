@@ -36,6 +36,24 @@ en:
       for: "For %{email}"
       password: "New password (8+ characters)"
       submit: "Save password"
+  mcp_guide:
+    title: "MCP server — Potee"
+    heading: "Potee for AI agents"
+    lead: "Claude Code, Codex and other agents with MCP support can read and change your board: create projects and milestones, move, rename and delete them."
+    token:
+      heading: "1. Token"
+      text: "The agent needs a personal token. Create it in your account; it is shown only once."
+      account: "Create a token in your account"
+      signup: "Sign up"
+      login: "log in"
+    connect:
+      heading: "2. Connect"
+      endpoint: "Server address:"
+      header: "header"
+      skill: "There is also a ready-made agent skill with install instructions:"
+    tools:
+      heading: "Tools"
+      optional: "optional"
   account:
     title: "Account — Potee"
     heading: "Account"

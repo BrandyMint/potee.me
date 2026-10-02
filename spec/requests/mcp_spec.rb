@@ -96,6 +96,22 @@ RSpec.describe "MCP server", type: :request do
   end
 end
 
+RSpec.describe "MCP guide page", type: :request do
+  it "shows a browser how to connect and every tool the server lists" do
+    expect { get mcp_path, headers: { "Accept" => "text/html,application/xhtml+xml" } }.not_to change(User, :count)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("claude mcp add", mcp_url)
+    Mcp::Tools::DEFINITIONS.each { expect(response.body).to include(_1[:name], CGI.escapeHTML(_1[:description])) }
+  end
+
+  it "keeps GET for MCP clients without a stream" do
+    token = User.create!(email: "dan@example.com", password: "secret-password").regenerate_api_token!
+    get mcp_path, headers: { "Accept" => "text/event-stream", "Authorization" => "Bearer #{token}" }
+    expect(response).to have_http_status(:method_not_allowed)
+  end
+end
+
 RSpec.describe "Account page", type: :request do
   it "issues an agent token once and only to registered users" do
     get account_path
