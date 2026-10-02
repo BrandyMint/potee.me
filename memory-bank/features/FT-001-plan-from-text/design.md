@@ -13,26 +13,35 @@ audience: humans_and_agents
 
 ## Context
 
-Модель отвечает 20–30 секунд, а ответ нужно проверить и показать до записи на
-доску. Значит, нужен асинхронный жизненный цикл запроса, хранение черновика,
+Модель отвечает за 2–3 секунды, но при сбоях основной модели и fallback ответ
+может занять до минуты, а его нужно проверить и показать до записи на доску.
+Значит, нужен асинхронный жизненный цикл запроса, хранение черновика,
 строгая схема ответа и нормализация — те же правила, что у MCP-инструментов
 (`Mcp::Tools`), чтобы не завести два разных набора проверок.
 
 ## Model Selection
 
-Проба 2026-10-02 из пода `potee` через private LiteLLM, один и тот же промпт и
-план «курс к 1 декабря» (`SC-01`):
+Две пробы 2026-10-02 с одним промптом и планом «курс к 1 декабря» (`SC-01`):
+через private LiteLLM из пода `potee` и напрямую через OpenRouter (по два
+запуска). «Даты» — сколько из 5 ключевых вех поставлено верно.
 
-| Alias | Время | Результат | Доступ | Решение |
-| --- | --- | --- | --- | --- |
-| `deepseek-v4-pro` | 23,6 с | 3 полосы по потокам, все даты верные | платный DeepSeek API | **выбрана** (`SOL-01`) |
-| `claude-haiku-subscription` | 3,6 с | 1 полоса на всё, даты верные | личная подписка Claude Данила | отклонена: `CON-02` |
-| `neuraldeep-qwen3.8` | 57,9 с | 4 полосы, даты верные | платный NeuralDeep API | запасная, слишком медленная |
+| Модель | Маршрут | Время | Полосы | Даты | ~Цена плана | Решение |
+| --- | --- | --- | --- | --- | --- | --- |
+| Claude Haiku 4.5 | OpenRouter (платный API) | 3 с | 4 | 5/5, 5/5 | $0,0027 | **основная** (`SOL-01`) |
+| GPT-5.4 mini | OpenRouter (платный API) | 2,3 с | 3 | 5/5, 5/5 | $0,0011 | **резервная** (`SOL-01`) |
+| Gemini 3.5 Flash Lite | OpenRouter | 2 с | 3 | 5/5, 4/5 | $0,0013 | нестабильные даты |
+| Gemini 3.8 Flash | OpenRouter | 7 с / таймаут | 4 | 4/5 | $0,0049 | медленно, нестабильно |
+| DeepSeek v4 Flash / Pro | OpenRouter, DeepSeek API | 20–60 с | 3–4 | 5/5 | < $0,001 | слишком медленно |
+| Claude Haiku (подписка) | LiteLLM `claude-haiku-subscription` | 3,6 с | 1 | 5/5 | — | отклонена: `CON-02` |
+| Qwen 3.8 | LiteLLM `neuraldeep-qwen3.8` | 58 с | 4 | 5/5 | — | слишком медленно |
 
-- `SOL-01` Модель — алиас из `PLAN_MODEL`, по умолчанию `deepseek-v4-pro`;
-  `temperature: 0.2`. Смена модели — переменная в values infra и прогон `EVAL-01`.
-- `TRD-01` Скорость отдаём ради допустимого источника и лучшего разбиения;
-  компенсируем асинхронностью и индикатором прогресса.
+- `SOL-01` Приложение вызывает алиас LiteLLM `potee-plan` (переменная
+  `PLAN_MODEL`) → `openrouter/anthropic/claude-haiku-4.5`; при ошибке LiteLLM
+  сам переключается на `potee-plan-fallback` → `openrouter/openai/gpt-5.4-mini`
+  (`router_settings.fallbacks`). Алиасы добавлены в
+  `infra/charts/litellm/templates/configmap.yaml` 2026-10-02. `temperature: 0.2`.
+- `TRD-01` Цена (~$3 за тысячу планов) против скорости 3 с вместо 24–60 с:
+  при синхронном ощущении ответа асинхронность остаётся только страховкой.
 
 ## Solution
 
@@ -63,14 +72,15 @@ audience: humans_and_agents
 - `SOL-03` `PlanNormalizer` (чистый Ruby, unit-тесты): приводит ответ к схеме
   `CTR-03` по правилам `INV-01`–`INV-05`.
 - `SOL-04` `GeneratePlanJob` (Active Job, адаптер `:async` в процессе Puma):
-  `pending` → вызов → `ready`/`failed`. `ASM-02`: объёмы малые; при росте —
+  `pending` → вызов → `ready`/`failed`. Фронтенд опрашивает статус через
+  0,5 с, затем каждые 1,5 с. `ASM-02`: объёмы малые; при росте —
   Solid Queue без изменения контракта.
 - `SOL-05` `PlanApplier`: в транзакции создаёт выбранные проекты и вехи через
   ту же логику, что `Mcp::Tools#create_project` (общий метод, вынесенный в
   `BoardWriter`), в конец доски, цвета по `next_color_index`.
 - `SOL-06` Frontend: кнопка «✨ План из текста» в шапке и в пустом состоянии;
   модальное окно с полем, подсказкой о стороннем провайдере (`REQ-12`),
-  индикатором прогресса (опрос каждые 2 с); предпросмотр — полосы-черновики
+  индикатором прогресса; предпросмотр — полосы-черновики
   на ленте (стиль черновика из UC-003: пунктирная обводка) и список с
   галочками; «Добавить на доску» / «Отмена».
 
@@ -109,7 +119,7 @@ audience: humans_and_agents
 | `CTR-03` | `draft`: `{projects: [{key, title, start_date, end_date, adjusted, events: [{title, date, time}]}]}` | app → browser | Нормализованный план |
 | `CTR-04` | `POST /api/plan_requests/:id/apply` `{project_keys: [...]}` → `201 {projects: [Card]}` | browser → app | Добавить выбранное; повторный вызов → `409` (идемпотентность по статусу `applied`) |
 | `CTR-05` | `POST /api/plan_requests/:id/discard` → `204` | browser → app | Отмена |
-| `CTR-06` | `POST {LITELLM_URL}/v1/chat/completions` (`model`, `messages`, `temperature`, `response_format`) | app → LiteLLM | Генерация; таймаут чтения 90 с, без повторов (повтор — новым запросом пользователя) |
+| `CTR-06` | `POST {LITELLM_URL}/v1/chat/completions` (`model`, `messages`, `temperature`, `response_format`) | app → LiteLLM | Генерация; таймаут чтения 60 с, без повторов (повтор — новым запросом пользователя) |
 
 Ошибки `CTR-01`: `401/403` аноним (`NEG-01`), `422` длина (`NEG-07`),
 `429 {error: "daily_limit" | "in_progress"}` (`NEG-05`). Все `CTR-01..05`
@@ -120,7 +130,7 @@ audience: humans_and_agents
 | ID | Condition | Behaviour | Status / error |
 | --- | --- | --- | --- |
 | `FM-01` | LiteLLM недоступен / 5xx | Ошибка, предложить повторить | `failed` / `llm_unavailable` |
-| `FM-02` | Таймаут 90 с | То же | `failed` / `llm_timeout` |
+| `FM-02` | Таймаут 60 с | То же | `failed` / `llm_timeout` |
 | `FM-03` | Невалидный JSON / пустой план после нормализации | «Не получилось разобрать план, опишите иначе» | `failed` / `unparseable` |
 | `FM-04` | Процесс перезапущен во время генерации (выкладка) | Запросы `pending` старше 3 мин при опросе помечаются `failed` / `interrupted` | `failed` |
 | `FM-05` | Пользователь закрыл страницу | Черновик остаётся `ready`; при следующем открытии окна предлагается последний неприменённый план | — |
@@ -135,7 +145,7 @@ audience: humans_and_agents
 
 ## Rollout
 
-- `RB-03` Переменные: `PLAN_FROM_TEXT_ENABLED=1`, `PLAN_MODEL=deepseek-v4-pro`,
+- `RB-03` Переменные: `PLAN_FROM_TEXT_ENABLED=1`, `PLAN_MODEL=potee-plan`,
   `LITELLM_URL=http://litellm.litellm.svc.cluster.local:4000` в
   `values/goga-office/potee.yaml.gotmpl`. Ключ не нужен: private LiteLLM
   принимает запросы из кластера (проверено пробой). Потребителя `potee`
