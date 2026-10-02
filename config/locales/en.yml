@@ -66,6 +66,7 @@ en:
       claude: "Connect Claude Code:"
       has_token: "A token already exists. A new one disables the previous token."
       endpoint: "MCP server address:"
+      guide: "guide and tool list"
       create: "Create a token"
       regenerate: "Create a new token"
     settings:

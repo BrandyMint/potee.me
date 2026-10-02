@@ -26,5 +26,5 @@
   <p class="hint"><%= t("account.agents.has_token") %></p>
 <% end %>
 
-<p class="hint"><%= t("account.agents.endpoint") %> <code><%= mcp_url %></code></p>
+<p class="hint"><%= t("account.agents.endpoint") %> <%= link_to mcp_path do %><code><%= mcp_url %></code><% end %> · <%= link_to t("account.agents.guide"), mcp_path %></p>
 <%= button_to(session_user.api_token? ? t("account.agents.regenerate") : t("account.agents.create"), account_token_path, form: { class: "button-form" }) %>

@@ -127,5 +127,6 @@ RSpec.describe "Account page", type: :request do
 
     get account_path
     expect(response.body).not_to include(token)
+    expect(response.body).to include(%(href="#{mcp_path}"))
   end
 end
