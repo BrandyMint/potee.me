@@ -343,23 +343,6 @@ button {
   border-bottom-right-radius: inherit;
 }
 
-/* In the days zoom the borders of the dimmed days stick out of the bar a little. */
-.scale-days .project-bar .day-off::before,
-.scale-days .project-bar .day-off::after {
-  content: "";
-  position: absolute;
-  top: -4px;
-  bottom: -4px;
-  width: 2px;
-  border-radius: 1px;
-  background: color-mix(in srgb, var(--c) 60%, black);
-}
-
-.scale-days .project-bar .day-off::before { left: 0; }
-.scale-days .project-bar .day-off::after { right: 0; }
-.scale-days .project-bar .day-off.first::before,
-.scale-days .project-bar .day-off.last::after { display: none; }
-
 .grid-column.current {
   background: url("../images/lighten-Linen.gif");
   border-right-color: #444;
