@@ -100,7 +100,8 @@ body.auth-page {
   font-size: 13px;
 }
 
-.auth input {
+.auth input,
+.auth select {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -112,7 +113,33 @@ body.auth-page {
   font-size: 16px;
 }
 
-.auth input:focus {
+.auth select {
+  appearance: none;
+  background: #111 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 12px center;
+  padding-right: 32px;
+}
+
+.auth label.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.auth label.checkbox input {
+  width: auto;
+  accent-color: #5abce4;
+}
+
+.auth .settings-form {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.auth input:focus,
+.auth select:focus {
   border-color: #5abce4;
   outline: none;
 }

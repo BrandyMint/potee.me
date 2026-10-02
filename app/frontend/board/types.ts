@@ -39,6 +39,20 @@ export interface BoardData {
   user: { email: string | null; anonymous: boolean };
   locale: "ru" | "en";
   features: { plan_from_text: boolean };
+  calendar: WorkCalendar;
+}
+
+/** Days off of the user's region (see WorkCalendar on the server). */
+export interface WorkCalendar {
+  region: string | null;
+  /** Dim days off on project bars (account setting). */
+  dim: boolean;
+  /** Days of the week off, 0 = Sunday. */
+  weekend: number[];
+  /** YYYY-MM-DD: holidays on working days of the week. */
+  holidays: string[];
+  /** YYYY-MM-DD: working days on the weekend (moved days off). */
+  workdays: string[];
 }
 
 /** A project proposed by "plan from text" (FT-001), not yet on the board. */

@@ -15,6 +15,8 @@ class User < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true, allow_nil: true
   validates :password, presence: true, on: :registration
   validates :password, length: { in: 8..72 }, allow_nil: true
+  validates :locale, inclusion: { in: -> { I18n.available_locales.map(&:to_s) } }, allow_nil: true
+  validates :region, inclusion: { in: WorkCalendar::REGIONS }, allow_nil: true
 
   scope :anonymous, -> { where(email: nil) }
   scope :registered, -> { where.not(email: nil) }

@@ -36,6 +36,7 @@ export interface BoardState {
   toast: Toast | null;
   user: BoardData["user"];
   features: BoardData["features"];
+  calendar: BoardData["calendar"];
   /** "Plan from text" panel and its preview shown on the board (FT-001). */
   planOpen: boolean;
   planPreview: { projects: PlanProject[]; selected: string[] } | null;
@@ -143,6 +144,7 @@ export function createBoardStore(initial: BoardData) {
       toast: null,
       user: initial.user,
       features: initial.features,
+      calendar: initial.calendar,
       planOpen: false,
       planPreview: null,
 

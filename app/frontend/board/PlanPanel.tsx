@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, ApiError } from "./api";
 import { useBoard, useBoardView } from "./context";
 import { t } from "./i18n";
-import { measureLabel } from "./ProjectRow";
+import { DaysOff, measureLabel } from "./ProjectRow";
 import { eventLabel, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
 import type { PlanProject } from "./types";
 
@@ -227,6 +227,7 @@ export function PreviewRow({ project, colorIndex, selected }: { project: PlanPro
       data-testid={`preview-${project.title}`}
     >
       <div className="project-bar" style={{ left, width }}>
+        <DaysOff start={start} finish={parseDay(project.end_date)} pixelsPerDay={ppd} />
         <div className="project-title">
           <span className="project-title-text">{project.title}</span>
         </div>

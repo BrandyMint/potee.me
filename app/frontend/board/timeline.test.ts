@@ -3,7 +3,9 @@ import {
   buildTimeline,
   clampScale,
   dateAt,
+  dayOffChecker,
   dayOffset,
+  daysOffRuns,
   eventLabel,
   fitAll,
   labelStyle,
@@ -242,5 +244,33 @@ describe("eventLabel", () => {
     expect(eventLabel(event, 40)).toBe("19:00 Созвон 1");
     expect(eventLabel(event, 20)).toBe("Созвон 1");
     expect(eventLabel({ ...event, timed: false }, 150)).toBe("Созвон 1");
+  });
+});
+
+describe("days off", () => {
+  // Russia, May 2026: 1st (Fri) and 11th (Mon) are holidays; a made-up working Saturday on the 16th.
+  const isDayOff = dayOffChecker({ weekend: [0, 6], holidays: ["2026-05-01", "2026-05-11"], workdays: ["2026-05-16"] });
+
+  it("combines weekends, holidays and working weekend days", () => {
+    expect(isDayOff(day(2026, 5, 1))).toBe(true);
+    expect(isDayOff(day(2026, 5, 4))).toBe(false);
+    expect(isDayOff(day(2026, 5, 9))).toBe(true);
+    expect(isDayOff(day(2026, 5, 16))).toBe(false);
+    expect(isDayOff(day(2026, 5, 17))).toBe(true);
+  });
+
+  it("groups consecutive days off into runs from the start of a project", () => {
+    expect(daysOffRuns(day(2026, 4, 30), day(2026, 5, 17), isDayOff)).toEqual([
+      { offset: 1, days: 3 },
+      { offset: 9, days: 3 },
+      { offset: 17, days: 1 },
+    ]);
+  });
+
+  it("marks day off columns in the days zoom", () => {
+    const timeline = buildTimeline({ projects: [], today: day(2026, 5, 6), pixelsPerDay: 100, viewportWidth: 700 });
+    const columns = timelineColumns(timeline, day(2026, 5, 6), undefined, isDayOff);
+    expect(columns.find((column) => column.key === "2026-05-11")?.dayOff).toBe(true);
+    expect(columns.find((column) => column.key === "2026-05-12")?.dayOff).toBe(false);
   });
 });

@@ -107,6 +107,7 @@ GEM
     erubi (1.13.1)
     globalid (1.4.0)
       activesupport (>= 6.1)
+    holidays (11.7.0)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     io-console (0.9.4)
@@ -304,6 +305,8 @@ GEM
     tsort (0.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    tzinfo-data (1.2026.5)
+      tzinfo (>= 1.0.0)
     unicode-display_width (3.3.0)
       unicode-emoji (~> 4.3)
     unicode-emoji (4.3.0)
@@ -347,6 +350,7 @@ DEPENDENCIES
   brakeman
   bundler-audit
   debug
+  holidays (~> 11.7)
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)

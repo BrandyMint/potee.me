@@ -5,7 +5,7 @@ import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, eventBounds, eventLabel, formatDay, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
+import { dateAt, dayOffChecker, daysOffRuns, eventBounds, eventLabel, formatDay, labelStyle, labelTiers, parseDay, scaleMode, xOf } from "./timeline";
 import type { Card } from "./types";
 
 interface Props {
@@ -139,6 +139,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
       data-testid={`project-${card.title}`}
     >
       <div className="project-bar" style={{ left, width }} onClick={onBarClick} onDoubleClick={onBarDoubleClick}>
+        <DaysOff start={start} finish={finish} pixelsPerDay={ppd} />
         <div className="resize-handle start" onPointerDown={onEdgePointerDown("start")} />
         <div className="project-title">
           {draft ? (
@@ -216,4 +217,22 @@ export function measureLabel(title: string, fontSize: number): number {
   if (!measureContext) return title.length * fontSize * 0.5;
   measureContext.font = `${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
   return measureContext.measureText(title).width;
+}
+
+/** Weekends and holidays of the user's region, dimmed on a project bar (days and weeks zoom). */
+export function DaysOff({ start, finish, pixelsPerDay }: { start: Date; finish: Date; pixelsPerDay: number }) {
+  const calendar = useBoard((state) => state.calendar);
+  const isDayOff = useMemo(() => dayOffChecker(calendar), [calendar]);
+  const show = calendar.dim && scaleMode(pixelsPerDay) !== "months";
+  const [from, to] = [start.getTime(), finish.getTime()];
+  const runs = useMemo(() => (show ? daysOffRuns(new Date(from), new Date(to), isDayOff) : []), [show, from, to, isDayOff]);
+  const total = differenceInCalendarDays(finish, start) + 1;
+  return runs.map(({ offset, days }) => (
+    <div
+      key={offset}
+      className={`day-off${offset === 0 ? " first" : ""}${offset + days === total ? " last" : ""}`}
+      style={{ left: offset * pixelsPerDay, width: days * pixelsPerDay }}
+      aria-hidden
+    />
+  ));
 }

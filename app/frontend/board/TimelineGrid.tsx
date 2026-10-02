@@ -15,7 +15,7 @@ export const TimelineGrid = memo(function TimelineGrid({ columns, mode, width }:
         {columns.map((column) => (
           <div
             key={column.key}
-            className={`grid-column${column.current ? " current" : ""}${column.weekEnd ? " week-end" : ""}`}
+            className={`grid-column${column.current ? " current" : ""}${column.weekEnd ? " week-end" : ""}${column.dayOff ? " day-off" : ""}`}
             style={{ left: column.x, width: column.width }}
           />
         ))}
@@ -24,7 +24,7 @@ export const TimelineGrid = memo(function TimelineGrid({ columns, mode, width }:
         {columns.map((column) => (
           <div
             key={column.key}
-            className={`header-cell${column.current ? " current" : ""}`}
+            className={`header-cell${column.current ? " current" : ""}${column.dayOff ? " day-off" : ""}`}
             style={{ left: column.x, width: column.width }}
             data-date={column.key}
           >

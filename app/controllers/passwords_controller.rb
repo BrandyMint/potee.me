@@ -13,7 +13,7 @@ class PasswordsController < ApplicationController
 
   def create
     if (user = User.registered.find_by(email: params[:email].to_s.strip.downcase))
-      PasswordsMailer.with(locale: I18n.locale.to_s).reset(user).deliver_later
+      PasswordsMailer.with(locale: user.locale.presence || I18n.locale.to_s).reset(user).deliver_later
     end
     redirect_to login_path, notice: t("flash.reset_sent")
   end

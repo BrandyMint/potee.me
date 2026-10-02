@@ -12,8 +12,8 @@ gem "puma", ">= 5.0"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+# Bundled zoneinfo: the slim image may lack it, and the time zone → country lookup needs it
+gem "tzinfo-data"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -44,3 +44,5 @@ end
 gem "administrate", "~> 1.0"
 
 gem "rails-i18n", "~> 8.1"
+
+gem "holidays", "~> 11.7"

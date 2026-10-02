@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   post "login" => "sessions#create"
   delete "logout" => "sessions#destroy"
   resources :passwords, param: :token, only: %i[new create edit update]
-  resource :account, only: :show
+  resource :account, only: %i[show update]
   post "account/token" => "accounts#create_token", as: :account_token
 
   # MCP server for AI agents (see McpController)

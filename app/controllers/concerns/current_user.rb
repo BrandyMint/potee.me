@@ -57,8 +57,15 @@ module CurrentUser
       dashboard: current_user.dashboard.as_board_json,
       user: { email: current_user.email, anonymous: current_user.anonymous? },
       features: { plan_from_text: PlanRequest.enabled? },
+      calendar: calendar_json,
       locale: I18n.locale
     }
+  end
+
+  # Anonymous boards guess the region from the browser language on every visit.
+  def calendar_json
+    region = current_user.anonymous? ? WorkCalendar.detect(accept_language: request.headers["Accept-Language"]) : current_user.region
+    WorkCalendar.for(region).as_board_json.merge(dim: current_user.dim_days_off)
   end
 
   def card_json(connection)

@@ -6,9 +6,14 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # Russian by default; English when the browser prefers it over Russian.
+  # The account's language; otherwise Russian by default, English when the
+  # browser prefers it over Russian.
   def switch_locale(&)
-    I18n.with_locale(preferred_locale, &)
+    I18n.with_locale(account_locale || preferred_locale, &)
+  end
+
+  def account_locale
+    respond_to?(:session_user, true) && session_user&.locale.presence
   end
 
   def preferred_locale

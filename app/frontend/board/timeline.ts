@@ -16,7 +16,7 @@ import {
 } from "date-fns";
 import { enUS } from "date-fns/locale";
 import type { Locale as DateLocale } from "date-fns";
-import type { Card } from "./types";
+import type { Card, WorkCalendar } from "./types";
 
 export const SCALE = {
   MIN: 4,
@@ -164,6 +164,8 @@ export interface Column {
   current: boolean;
   /** Last day of the week gets a stronger border (days mode). */
   weekEnd?: boolean;
+  /** A weekend or a holiday (days mode). */
+  dayOff?: boolean;
 }
 
 /** Standalone month name, capitalised ("October", "Октябрь"). */
@@ -172,7 +174,12 @@ function monthName(date: Date, locale: DateLocale): string {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-export function timelineColumns(timeline: Timeline, today: Date, locale: DateLocale = enUS): Column[] {
+export function timelineColumns(
+  timeline: Timeline,
+  today: Date,
+  locale: DateLocale = enUS,
+  isDayOff: (date: Date) => boolean = () => false,
+): Column[] {
   const { origin, days, pixelsPerDay, mode } = timeline;
   const columns: Column[] = [];
 
@@ -188,6 +195,7 @@ export function timelineColumns(timeline: Timeline, today: Date, locale: DateLoc
         marker: date.getDate() === 1 || i === 0 ? monthName(date, locale) : undefined,
         current: isSameDay(date, today),
         weekEnd: date.getDay() === 0,
+        dayOff: isDayOff(date),
       });
     }
     return columns;
@@ -332,4 +340,29 @@ export function labelTiers(
  */
 export function eventLabel(event: { title: string; at: Date; timed: boolean }, pixelsPerDay: number): string {
   return event.timed && scaleMode(pixelsPerDay) === "days" ? `${format(event.at, "HH:mm")} ${event.title}` : event.title;
+}
+
+/** Whether a day is off: a holiday, or a weekend day that was not made a working one. */
+export function dayOffChecker(calendar: Pick<WorkCalendar, "weekend" | "holidays" | "workdays">): (date: Date) => boolean {
+  const holidays = new Set(calendar.holidays);
+  const workdays = new Set(calendar.workdays);
+  return (date) => {
+    const day = formatDay(date);
+    if (holidays.has(day)) return true;
+    if (workdays.has(day)) return false;
+    return calendar.weekend.includes(date.getDay());
+  };
+}
+
+/** Runs of consecutive days off from start to finish (inclusive), in days from start. */
+export function daysOffRuns(start: Date, finish: Date, isDayOff: (date: Date) => boolean): { offset: number; days: number }[] {
+  const runs: { offset: number; days: number }[] = [];
+  const total = differenceInCalendarDays(finish, start) + 1;
+  for (let i = 0; i < total; i++) {
+    if (!isDayOff(addDays(start, i))) continue;
+    const last = runs.at(-1);
+    if (last && last.offset + last.days === i) last.days += 1;
+    else runs.push({ offset: i, days: 1 });
+  }
+  return runs;
 }

@@ -11,6 +11,7 @@ import {
   buildTimeline,
   clampScale,
   dateAt,
+  dayOffChecker,
   fitAll,
   nextColorIndex,
   fitScale,
@@ -45,6 +46,7 @@ function Board() {
   const selectedId = useBoard((state) => state.selectedId);
   const draftId = useBoard((state) => state.draftId);
   const toast = useBoard((state) => state.toast);
+  const calendar = useBoard((state) => state.calendar);
   const planPreview = useBoard((state) => state.planPreview);
   const planEnabled = useBoard((state) => state.features.plan_from_text);
   const setPlanOpen = useBoard((state) => state.setPlanOpen);
@@ -66,7 +68,8 @@ function Board() {
       }),
     [projects, planPreview, today, pixelsPerDay, viewportWidth],
   );
-  const columns = useMemo(() => timelineColumns(timeline, today, dateLocale()), [timeline, today]);
+  const isDayOff = useMemo(() => (calendar.dim ? dayOffChecker(calendar) : undefined), [calendar]);
+  const columns = useMemo(() => timelineColumns(timeline, today, dateLocale(), isDayOff), [timeline, today, isDayOff]);
   const width = timelineWidth(timeline);
   const mode = scaleMode(pixelsPerDay);
   const compact = mode === "days" && pixelsPerDay <= SCALE.COMPACT_DAYS_AT;

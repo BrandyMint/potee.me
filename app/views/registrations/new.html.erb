@@ -4,6 +4,8 @@
 <%= form_with url: signup_path do |form| %>
   <%= form.label :email do %><%= t("auth.email") %><%= form.email_field :email, value: @email, required: true, autofocus: true, autocomplete: "username" %><% end %>
   <%= form.label :password do %><%= t("auth.signup.password") %><%= form.password_field :password, required: true, minlength: 8, maxlength: 72, autocomplete: "new-password" %><% end %>
+  <%= form.hidden_field :time_zone, id: "time_zone" %>
+  <script>document.getElementById("time_zone").value = Intl.DateTimeFormat().resolvedOptions().timeZone || ""</script>
   <%= form.button t("auth.signup.submit") %>
 <% end %>
 <div class="links">

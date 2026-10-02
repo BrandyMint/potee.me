@@ -315,6 +315,51 @@ button {
   border-right-color: #555;
 }
 
+/* Weekends and holidays (WorkCalendar), dimmed when the account asks for it. */
+.grid-column.day-off {
+  background: rgb(0 0 0 / 0.12);
+}
+
+.header-cell.day-off .header-title,
+.header-cell.day-off .header-subtitle {
+  opacity: 0.5;
+}
+
+.project-bar .day-off {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgb(0 0 0 / 0.2);
+  pointer-events: none;
+}
+
+.project-bar .day-off.first {
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+.project-bar .day-off.last {
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+/* In the days zoom the borders of the dimmed days stick out of the bar a little. */
+.scale-days .project-bar .day-off::before,
+.scale-days .project-bar .day-off::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--c) 60%, black);
+}
+
+.scale-days .project-bar .day-off::before { left: 0; }
+.scale-days .project-bar .day-off::after { right: 0; }
+.scale-days .project-bar .day-off.first::before,
+.scale-days .project-bar .day-off.last::after { display: none; }
+
 .grid-column.current {
   background: url("../images/lighten-Linen.gif");
   border-right-color: #444;

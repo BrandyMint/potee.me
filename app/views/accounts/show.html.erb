@@ -2,6 +2,18 @@
 <h1><%= t("account.heading") %></h1>
 <p class="lead"><%= session_user.email %> · <%= link_to t("account.board"), board_path %></p>
 
+<h2 class="auth-subheading"><%= t("account.settings.heading") %></h2>
+<%= form_with model: session_user, url: account_path, method: :patch, scope: :user, class: "settings-form" do |form| %>
+  <%= form.label :locale do %><%= t("account.settings.locale") %>
+    <%= form.select :locale, I18n.available_locales.map { [ t("locales.#{_1}"), _1.to_s ] }, selected: session_user.locale.presence || I18n.locale.to_s %>
+  <% end %>
+  <%= form.label :region do %><%= t("account.settings.region") %>
+    <%= form.select :region, WorkCalendar::REGIONS.map { [ t("regions.#{_1}"), _1 ] }.sort_by(&:first), include_blank: t("account.settings.no_region") %>
+  <% end %>
+  <%= form.label :dim_days_off, class: "checkbox" do %><%= form.check_box :dim_days_off %> <%= t("account.settings.dim_days_off") %><% end %>
+  <%= form.button t("account.settings.submit") %>
+<% end %>
+
 <h2 class="auth-subheading"><%= t("account.agents.heading") %></h2>
 <p class="lead"><%= t("account.agents.lead") %></p>
 
