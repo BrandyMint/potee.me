@@ -1,5 +1,11 @@
 <% content_for :title, t("mcp_guide.title") %>
 <% content_for :auth_class, "guide" %>
+<p class="back">
+  <% if session_user && !session_user.anonymous? %>
+    <%= link_to "← #{t("mcp_guide.back.account")}", account_path %> ·
+  <% end %>
+  <%= link_to t("mcp_guide.back.board"), board_path %>
+</p>
 <h1><%= t("mcp_guide.heading") %></h1>
 <p class="lead"><%= t("mcp_guide.lead") %></p>
 

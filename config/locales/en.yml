@@ -40,6 +40,9 @@ en:
     title: "MCP server — Potee"
     heading: "Potee for AI agents"
     lead: "Claude Code, Codex and other agents with MCP support can read and change your board: create projects and milestones, move, rename and delete them."
+    back:
+      account: "Account"
+      board: "To the board"
     token:
       heading: "1. Token"
       text: "The agent needs a personal token. Create it in your account; it is shown only once."
