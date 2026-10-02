@@ -24,6 +24,18 @@ RSpec.describe "Board", type: :request do
     expect { get root_path }.not_to change(User, :count)
     expect(response).to have_http_status(:ok)
   end
+
+  it "shows the landing page to an anonymous board" do
+    sign_in_anonymously
+    get root_path
+    expect(response).to have_http_status(:ok)
+  end
+
+  it "sends a logged-in user from the landing page to the board" do
+    post signup_path, params: { email: "dan@example.com", password: "secret-password" }
+    get root_path
+    expect(response).to redirect_to(board_path)
+  end
 end
 
 RSpec.describe "Language", type: :request do
