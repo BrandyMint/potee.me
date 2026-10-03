@@ -19,6 +19,7 @@
       <div class="welcome-next" hidden><span class="welcome-next-dot"></span><span class="welcome-next-text"></span><small></small></div>
       <%= link_to t("welcome.get_started"), board_path, class: "welcome-start", data: { metrika_goal: "start_board" } %>
       <%= link_to t("welcome.log_in"), login_path, class: "welcome-login" %>
+      <p class="welcome-privacy"><%= link_to t("welcome.privacy"), privacy_path %></p>
     </div>
   </div>
 </main>

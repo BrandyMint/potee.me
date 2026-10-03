@@ -265,6 +265,16 @@ body.auth-page {
   color: #fff;
 }
 
+.welcome-text .welcome-privacy {
+  margin: 18px 0 0;
+  font-size: 12px;
+}
+
+.welcome-text .welcome-privacy a {
+  color: #888;
+}
+
+
 @media (max-width: 760px) {
   .welcome-card {
     flex-direction: column;

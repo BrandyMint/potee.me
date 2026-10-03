@@ -1,0 +1,36 @@
+<% content_for :title, "Privacy — Potee" %>
+<% content_for :auth_class, "guide" %>
+<p class="back"><%= link_to "To the board", board_path %></p>
+<h1>What data Potee keeps</h1>
+<p class="lead">In short: what is stored, where it goes and how to ask for deletion.</p>
+
+<h2 class="auth-subheading">Board</h2>
+<p class="hint">Projects, milestones, their colours and order, the zoom and position of the board. A board
+  without an account is recognised by a session cookie that lives for a year. A project you share can be
+  seen and changed by anyone with the link.</p>
+
+<h2 class="auth-subheading">Account</h2>
+<p class="hint">Email, a password hash (the password itself is not stored), language, country for days off
+  and board settings. Password reset letters go to your email. The token for AI agents is kept only as a
+  SHA-256 hash, so it cannot be shown again.</p>
+
+<h2 class="auth-subheading">Where you came from</h2>
+<p class="hint">On the first visit Potee keeps the UTM tags of the link, the first page and the site you came
+  from, without query parameters, and later the time of your last visit. This shows which publications bring
+  people in.</p>
+
+<h2 class="auth-subheading">Yandex Metrika</h2>
+<p class="hint">Potee pages run a Yandex Metrika counter. It receives the page address without parameters
+  (except UTM tags), the referring site and clicks on a few buttons such as «Get started». Webvisor, click
+  map and form recording are off; password reset pages have no counter. Metrika sets its own cookies; you can
+  <%= link_to "opt out as Yandex describes", "https://yandex.com/support/metrica/general/opt-out.html" %>.</p>
+
+<h2 class="auth-subheading">Plan from text</h2>
+<p class="hint">If you use the plan from text, your text goes to a language model through a private gateway:
+  currently Anthropic Claude Haiku, with OpenAI GPT as a fallback, via OpenRouter. The request and the model
+  answer are stored in the Potee database with your account.</p>
+
+<h2 class="auth-subheading">Storage and deletion</h2>
+<p class="hint">Data stays in the Potee database while the board or account exists. Anonymous boards that
+  have not been opened for a long time may be deleted. To delete your account and data, write to
+  <%= mail_to "danil@pismenny.ru" %> from the account email.</p>
