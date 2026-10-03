@@ -892,119 +892,193 @@ button {
   }
 }
 
-/* Card of the selected project. On wide screens it takes the right side and
-   the board narrows; on phones it is a bottom sheet (see below). */
+/* Panel of the selected project, attached under its bar (positioned by
+   ProjectPanel.tsx every frame). "Details" expands it into title, dates and
+   milestones; on phones it is a bottom sheet (see below). */
 
-.board {
-  --inspector-width: 360px;
-}
-
-.board.has-inspector .viewport {
-  margin-right: var(--inspector-width);
-}
-
-.project-inspector {
+.project-panel {
   position: fixed;
-  top: var(--header-height);
-  right: 0;
-  bottom: 0;
+  top: 0;
+  left: 0;
   z-index: 55;
   display: flex;
   flex-direction: column;
-  width: var(--inspector-width);
-  border-left: 1px solid var(--line);
-  background: #181818;
-  box-shadow: -16px 0 40px rgb(0 0 0 / 0.35);
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - var(--header-height) - 24px);
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  background: #222;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.55);
   color: #bbb;
-  animation: inspector-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: panel-in 0.14s ease-out;
 }
 
-@keyframes inspector-in {
-  from { transform: translateX(24px); opacity: 0; }
+/* As wide as the toolbar; the details wrap to it. */
+.project-panel.expanded {
+  width: min-content;
+  min-width: 380px;
 }
 
-.project-inspector button {
+@keyframes panel-in {
+  from { opacity: 0; }
+}
+
+/* Arrow pointing at the bar. */
+.project-panel::before {
+  content: "";
+  position: absolute;
+  left: var(--arrow-x, 22px);
+  width: 10px;
+  height: 10px;
+  background: #222;
+  transform: rotate(45deg);
+}
+
+.project-panel[data-placement="below"]::before {
+  top: -6px;
+  border-top: 1px solid #3a3a3a;
+  border-left: 1px solid #3a3a3a;
+}
+
+.project-panel[data-placement="above"]::before {
+  bottom: -6px;
+  border-right: 1px solid #3a3a3a;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.project-panel button {
   cursor: pointer;
 }
 
-.inspector-head {
+.panel-toolbar {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 18px 16px 10px 20px;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  white-space: nowrap;
 }
 
-.inspector-colour {
-  width: 22px;
-  height: 22px;
-  flex: none;
-  margin-top: 7px;
-  padding: 0;
+.panel-toolbar button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 9px;
   border: 0;
+  border-radius: 6px;
+  background: none;
+  color: #ccc;
+  font: inherit;
+  font-size: 14px;
+}
+
+.panel-toolbar button:hover,
+.panel-toolbar button[aria-pressed="true"] {
+  background: #333;
+  color: #fff;
+}
+
+.panel-toolbar button.danger:hover {
+  color: var(--danger);
+}
+
+.panel-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.panel-colour {
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--c);
   box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.2);
 }
 
-.inspector-colour[aria-expanded="true"] {
-  box-shadow: 0 0 0 2px #181818, 0 0 0 4px var(--c);
+.panel-separator {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: #3a3a3a;
 }
 
-.inspector-title {
-  flex: 1;
-  min-width: 0;
-  min-height: 36px;
+.panel-palette {
+  display: grid;
+  grid-template-columns: repeat(10, 22px);
+  gap: 8px;
+  padding: 6px 12px 12px;
+}
+
+.panel-palette button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.panel-palette button.current {
+  box-shadow: 0 0 0 2px #222, 0 0 0 4px #fff;
+}
+
+.panel-share-url {
+  margin: 0 12px 12px;
+}
+
+.panel-body {
+  overflow-y: auto;
+  padding: 4px 16px 14px 22px;
+  border-top: 1px solid #333;
+}
+
+.panel-title {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 34px;
+  margin: 10px 0 4px;
   padding: 3px 6px;
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
   color: #eee;
   font: inherit;
-  font-size: 21px;
+  font-size: 19px;
   line-height: 1.3;
   resize: none;
   field-sizing: content;
 }
 
-.inspector-title:hover {
-  border-color: #333;
+.panel-title:hover {
+  border-color: #3a3a3a;
 }
 
-.inspector-title:focus {
+.panel-title:focus {
   border-color: var(--accent);
   background: #111;
   outline: none;
 }
 
-.inspector-close {
-  flex: none;
-  padding: 2px 8px;
-  border: 0;
-  background: none;
-  color: #888;
-  font-size: 24px;
-  line-height: 1;
+.panel-body section {
+  padding: 12px 0;
+  border-top: 1px solid #2e2e2e;
 }
 
-.inspector-close:hover {
-  color: #fff;
+.panel-body section:first-of-type {
+  border-top: 0;
 }
 
-.inspector-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 20px 16px;
-}
-
-.inspector-body section {
-  padding: 14px 0;
-  border-top: 1px solid #262626;
-}
-
-.inspector-body h3 {
+.panel-body h3 {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   color: #777;
   font-size: 11px;
   font-weight: 400;
@@ -1012,7 +1086,12 @@ button {
   text-transform: uppercase;
 }
 
-.inspector-link {
+.panel-body h3 span {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.panel-link {
   padding: 0;
   border: 0;
   background: none;
@@ -1022,38 +1101,19 @@ button {
   text-transform: none;
 }
 
-.inspector-palette {
-  display: grid;
-  grid-template-columns: repeat(5, 26px);
-  gap: 10px;
-  padding: 4px 0 14px;
-}
-
-.inspector-palette button {
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: var(--c);
-}
-
-.inspector-palette button.current {
-  box-shadow: 0 0 0 2px #181818, 0 0 0 4px #fff;
-}
-
-.inspector-dates {
+.panel-dates {
   display: flex;
   align-items: center;
   gap: 8px;
   color: #888;
 }
 
-.inspector-dates input,
-.inspector-share-url {
+.panel-dates input,
+.panel-share-url {
+  flex: 1;
   min-width: 0;
   padding: 6px 8px;
-  border: 1px solid #333;
+  border: 1px solid #3a3a3a;
   border-radius: 6px;
   background: #111;
   color: #ddd;
@@ -1061,28 +1121,26 @@ button {
   font-size: 14px;
 }
 
-.inspector-dates input:focus,
-.inspector-share-url:focus {
+.panel-dates input:focus,
+.panel-share-url:focus {
   border-color: var(--accent);
   outline: none;
 }
 
-.inspector-dates input {
-  flex: 1;
+.panel-muted {
+  margin: 10px 0 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
-.inspector-body h3 span {
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.inspector-milestones {
+.panel-milestones {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.inspector-milestones li {
+.panel-milestones li {
   position: relative;
   display: flex;
   gap: 6px;
@@ -1092,12 +1150,12 @@ button {
   border-radius: 6px;
 }
 
-.inspector-milestones li:hover,
-.inspector-milestones li:focus-within {
+.panel-milestones li:hover,
+.panel-milestones li:focus-within {
   background: #212121;
 }
 
-.inspector-milestones button {
+.panel-milestones button {
   padding: 2px 4px;
   border: 0;
   border-radius: 4px;
@@ -1142,7 +1200,7 @@ button {
   color: transparent;
 }
 
-.inspector-milestones li:hover .milestone-time.empty,
+.panel-milestones li:hover .milestone-time.empty,
 .milestone-time.empty:focus-visible {
   color: #666;
 }
@@ -1180,7 +1238,7 @@ button {
   stroke-linejoin: round;
 }
 
-.inspector-milestones li:hover .milestone-delete,
+.panel-milestones li:hover .milestone-delete,
 .milestone-delete:focus-visible {
   opacity: 1;
 }
@@ -1190,11 +1248,11 @@ button {
   color: var(--danger);
 }
 
-.inspector-milestones .past .milestone-title {
+.panel-milestones .past .milestone-title {
   color: #777;
 }
 
-.inspector-milestones .past .milestone-date {
+.panel-milestones .past .milestone-date {
   color: #666;
 }
 
@@ -1221,7 +1279,7 @@ button {
   fill: currentColor;
 }
 
-.inspector-milestones li:hover .milestone-handle {
+.panel-milestones li:hover .milestone-handle {
   opacity: 1;
 }
 
@@ -1229,23 +1287,23 @@ button {
   color: #ccc;
 }
 
-.inspector-milestones li {
+.panel-milestones li {
   transition: transform 0.15s ease;
 }
 
-.inspector-milestones li.dragging {
+.panel-milestones li.dragging {
   z-index: 2;
   background: #2a2a2a;
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
   transition: none;
 }
 
-.inspector-milestones.reordering,
-.inspector-milestones.reordering * {
+.panel-milestones.reordering,
+.panel-milestones.reordering * {
   cursor: grabbing;
 }
 
-.inspector-milestones.reordering li:hover:not(.dragging) {
+.panel-milestones.reordering li:hover:not(.dragging) {
   background: none;
 }
 
@@ -1257,92 +1315,29 @@ button {
   }
 }
 
-.inspector-copy {
-  width: 100%;
-}
-
-.inspector-share-url {
-  width: 100%;
-  margin-top: 8px;
-  box-sizing: border-box;
-  color: #999;
-  font-size: 13px;
-}
-
-.project-inspector .primary {
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 6px;
-  background: var(--accent);
-  color: #10242c;
-  font: inherit;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.inspector-muted {
-  margin: 10px 0 0;
-  color: #777;
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.inspector-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-  border-top: 1px solid #262626;
-}
-
-.inspector-foot button {
-  padding: 7px 12px;
-  border: 1px solid #3a3a3a;
-  border-radius: 6px;
-  background: #222;
-  color: #ddd;
-  font: inherit;
-  font-size: 14px;
-}
-
-.inspector-foot button:hover {
-  border-color: #555;
-  color: #fff;
-}
-
-.inspector-foot .danger {
-  border-color: transparent;
-  background: none;
-  color: var(--danger);
-}
-
-.inspector-foot .danger:hover {
-  border-color: #4a2a26;
-  color: var(--danger);
-}
-
 @media (max-width: 760px) {
-  .board.has-inspector .viewport {
-    margin-right: 0;
-  }
-
-  .project-inspector {
+  .project-panel,
+  .project-panel.expanded {
     top: auto;
-    left: 0;
+    right: 0;
+    bottom: 0;
     width: auto;
-    max-height: 60vh;
-    border-top: 1px solid #333;
-    border-left: 0;
+    max-width: none;
+    max-height: 70vh;
     border-radius: 12px 12px 0 0;
-    animation-name: inspector-up;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
-  @keyframes inspector-up {
-    from { transform: translateY(24px); opacity: 0; }
+  .project-panel::before {
+    display: none;
   }
 
-  .inspector-title {
-    font-size: 18px;
+  .panel-toolbar {
+    overflow-x: auto;
+  }
+
+  .panel-label {
+    display: none;
   }
 }
 

@@ -1,5 +1,15 @@
 import { format, set as setTime } from "date-fns";
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { dateLocale, t } from "./i18n";
@@ -7,26 +17,63 @@ import { isSaved } from "./store";
 import { COLORS_COUNT, formatDay, parseDay, projectDays } from "./timeline";
 import type { BoardEvent, Card } from "./types";
 
-/** Side card of the selected project: title, colour, dates, milestones, sharing. */
-export function ProjectInspector() {
-  const card = useBoard((state) => state.projects.find((project) => project.id === state.selectedId));
-  if (!card || !isSaved(card.id)) return null;
-  return <Inspector key={card.id} card={card} />;
+const EXPANDED_KEY = "potee.projectPanelExpanded";
+
+function readExpanded(): boolean {
+  try {
+    return localStorage.getItem(EXPANDED_KEY) === "1";
+  } catch {
+    return false;
+  }
 }
 
-function Inspector({ card }: { card: Card }) {
+function writeExpanded(expanded: boolean): void {
+  try {
+    localStorage.setItem(EXPANDED_KEY, expanded ? "1" : "0");
+  } catch {
+    // Private mode or blocked storage: the panel just starts collapsed next time.
+  }
+}
+
+/**
+ * Panel of the selected project, attached under its bar: colour, rename, Entire,
+ * Share, delete. "Details" expands it into title, dates and the milestone list.
+ * On narrow screens it is a bottom sheet.
+ */
+export function ProjectPanel() {
+  const card = useBoard((state) => state.projects.find((project) => project.id === state.selectedId));
+  if (!card || !isSaved(card.id)) return null;
+  return <Panel key={card.id} card={card} />;
+}
+
+function Panel({ card }: { card: Card }) {
   const { showProject, goToDate, today } = useBoardView();
   const updateProject = useBoard((state) => state.updateProject);
   const deleteProject = useBoard((state) => state.deleteProject);
   const addEvent = useBoard((state) => state.addEvent);
   const select = useBoard((state) => state.select);
   const [title, setTitle] = useState(card.title);
+  const [expanded, setExpandedState] = useState(readExpanded);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [share, setShare] = useState<"idle" | "copied" | "manual">("idle");
+  const [focusTitle, setFocusTitle] = useState(false);
+  const panel = useRef<HTMLDivElement>(null);
+  const titleInput = useRef<HTMLTextAreaElement>(null);
   const text = t();
 
+  usePanelPosition(panel, card.id);
   useEffect(() => setTitle(card.title), [card.title]);
+  useEffect(() => {
+    if (!focusTitle || !expanded) return;
+    titleInput.current?.focus();
+    titleInput.current?.select();
+    setFocusTitle(false);
+  }, [focusTitle, expanded]);
 
+  const setExpanded = (value: boolean) => {
+    setExpandedState(value);
+    writeExpanded(value);
+  };
   const saveTitle = () => {
     const value = title.trim();
     if (value && value !== card.title) void updateProject(card.id, { title: value });
@@ -66,102 +113,193 @@ function Inspector({ card }: { card: Card }) {
   };
 
   const events = [...card.events].sort((a, b) => a.at.localeCompare(b.at));
-  const days = projectDays(card);
+  const removeLabel = card.owner ? text.delete : text.removeFromBoard;
 
   return (
-    <aside className={`project-inspector project-color-${card.color_index}`} aria-label={text.projectCard}>
-      <div className="inspector-head">
-        <button
-          type="button"
-          className="inspector-colour"
-          aria-label={text.changeColour}
-          title={text.changeColour}
-          aria-expanded={paletteOpen}
-          onClick={() => setPaletteOpen(!paletteOpen)}
-        />
-        <textarea
-          className="inspector-title"
-          aria-label={text.selectedTitle}
-          rows={1}
-          value={title}
-          onChange={(event) => setTitle(event.target.value.replace(/\n/g, " "))}
-          onBlur={saveTitle}
-          onKeyDown={onTitleKeyDown}
-        />
-        <button type="button" className="inspector-close" aria-label={text.close} title={`${text.close} (Esc)`} onClick={() => select(null)}>
-          ×
-        </button>
+    <div
+      ref={panel}
+      className={`project-panel project-color-${card.color_index}${expanded ? " expanded" : ""}`}
+      role="region"
+      aria-label={text.projectPanel}
+    >
+      <div className="panel-toolbar" role="toolbar" aria-label={card.title}>
+        <ToolButton label={text.changeColour} pressed={paletteOpen} onClick={() => setPaletteOpen(!paletteOpen)}>
+          <span className="panel-colour" />
+        </ToolButton>
+        <ToolButton
+          label={text.rename}
+          onClick={() => {
+            setExpanded(true);
+            setFocusTitle(true);
+          }}
+        >
+          <Icon path="M4 20h4L19 9l-4-4L4 16z" />
+        </ToolButton>
+        <span className="panel-separator" />
+        <ToolButton label={text.entire} hint={text.entireHint} onClick={() => showProject(card.id)} text>
+          <Icon path="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+        </ToolButton>
+        <ToolButton label={share === "copied" ? `✓ ${text.linkCopied}` : text.share} hint={text.shareHint} onClick={() => void copyLink()} text>
+          <Icon path="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
+        </ToolButton>
+        <span className="panel-separator" />
+        <ToolButton label={removeLabel} className="danger" onClick={() => deleteProject(card.id)}>
+          <Icon path="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+        </ToolButton>
+        <ToolButton label={expanded ? text.collapse : text.details} pressed={expanded} onClick={() => setExpanded(!expanded)}>
+          <Icon path={expanded ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"} />
+        </ToolButton>
+        <ToolButton label={text.close} hint={`${text.close} (Esc)`} onClick={() => select(null)}>
+          <Icon path="M6 6l12 12M18 6L6 18" />
+        </ToolButton>
       </div>
-      <div className="inspector-body">
-        {paletteOpen && (
-          <div className="inspector-palette" role="group" aria-label={text.changeColour}>
-            {Array.from({ length: COLORS_COUNT }, (_, index) => (
-              <button
-                key={index}
-                type="button"
-                className={`project-color-${index}${index === card.color_index ? " current" : ""}`}
-                aria-label={text.colour(index + 1)}
-                aria-pressed={index === card.color_index}
-                onClick={() => void updateProject(card.id, { color_index: index })}
-              />
-            ))}
-          </div>
-        )}
 
-        <section>
-          <h3>
-            {text.dates}
-            <span>{text.daysCount(days)}</span>
-          </h3>
-          <div className="inspector-dates">
-            <input type="date" aria-label={text.startDate} value={card.started_on} max={card.finished_on} onChange={(event) => changeDate("started_on", event.target.value)} />
-            <span aria-hidden>→</span>
-            <input type="date" aria-label={text.finishDate} value={card.finished_on} min={card.started_on} onChange={(event) => changeDate("finished_on", event.target.value)} />
-          </div>
-        </section>
-
-        <section>
-          <h3>
-            {text.milestones}
-            <button type="button" className="inspector-link" onClick={addMilestone}>
-              + {text.addMilestone}
-            </button>
-          </h3>
-          {events.length === 0 ? (
-            <p className="inspector-muted">{text.noMilestones}</p>
-          ) : (
-            <MilestoneList projectId={card.id} events={events} today={today} />
-          )}
-        </section>
-
-        <section>
-          <h3>{text.sharing}</h3>
-          <button type="button" className="primary inspector-copy" onClick={() => void copyLink()} title={text.shareHint}>
-            {share === "copied" ? `✓ ${text.linkCopied}` : text.copyShareLink}
-          </button>
-          {share === "manual" && (
-            <input
-              className="inspector-share-url"
-              readOnly
-              autoFocus
-              aria-label={text.copyLink}
-              value={card.share_url}
-              onFocus={(event) => event.currentTarget.select()}
+      {paletteOpen && (
+        <div className="panel-palette" role="group" aria-label={text.changeColour}>
+          {Array.from({ length: COLORS_COUNT }, (_, index) => (
+            <button
+              key={index}
+              type="button"
+              className={`project-color-${index}${index === card.color_index ? " current" : ""}`}
+              aria-label={text.colour(index + 1)}
+              aria-pressed={index === card.color_index}
+              onClick={() => void updateProject(card.id, { color_index: index })}
             />
-          )}
-          <p className="inspector-muted">{card.owner ? text.shareNote : text.sharedWithYou}</p>
-        </section>
-      </div>
-      <div className="inspector-foot">
-        <button type="button" onClick={() => showProject(card.id)} title={text.entireHint}>
-          {text.entire}
-        </button>
-        <button type="button" className="danger" onClick={() => deleteProject(card.id)}>
-          {card.owner ? text.delete : text.removeFromBoard}
-        </button>
-      </div>
-    </aside>
+          ))}
+        </div>
+      )}
+
+      {share === "manual" && (
+        <input
+          className="panel-share-url"
+          readOnly
+          autoFocus
+          aria-label={text.copyLink}
+          value={card.share_url}
+          onFocus={(event) => event.currentTarget.select()}
+        />
+      )}
+
+      {expanded && (
+        <div className="panel-body">
+          <textarea
+            ref={titleInput}
+            className="panel-title"
+            aria-label={text.selectedTitle}
+            rows={1}
+            value={title}
+            onChange={(event) => setTitle(event.target.value.replace(/\n/g, " "))}
+            onBlur={saveTitle}
+            onKeyDown={onTitleKeyDown}
+          />
+
+          <section>
+            <h3>
+              {text.dates}
+              <span>{text.daysCount(projectDays(card))}</span>
+            </h3>
+            <div className="panel-dates">
+              <input type="date" aria-label={text.startDate} value={card.started_on} max={card.finished_on} onChange={(event) => changeDate("started_on", event.target.value)} />
+              <span aria-hidden>→</span>
+              <input type="date" aria-label={text.finishDate} value={card.finished_on} min={card.started_on} onChange={(event) => changeDate("finished_on", event.target.value)} />
+            </div>
+          </section>
+
+          <section>
+            <h3>
+              {text.milestones}
+              <button type="button" className="panel-link" onClick={addMilestone}>
+                + {text.addMilestone}
+              </button>
+            </h3>
+            {events.length === 0 ? (
+              <p className="panel-muted">{text.noMilestones}</p>
+            ) : (
+              <MilestoneList projectId={card.id} events={events} today={today} />
+            )}
+          </section>
+
+          <p className="panel-muted">{card.owner ? text.shareNote : text.sharedWithYou}</p>
+        </div>
+      )}
+    </div>
   );
+}
+
+function ToolButton(props: {
+  label: string;
+  hint?: string;
+  pressed?: boolean;
+  className?: string;
+  /** Show the label next to the icon, not only as a tooltip. */
+  text?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className={props.className}
+      aria-label={props.text ? undefined : props.label}
+      aria-pressed={props.pressed}
+      title={props.hint ?? props.label}
+      onClick={props.onClick}
+    >
+      {props.children}
+      {props.text && <span className="panel-label">{props.label}</span>}
+    </button>
+  );
+}
+
+function Icon({ path }: { path: string }) {
+  return (
+    <svg className="panel-icon" viewBox="0 0 24 24" aria-hidden>
+      <path d={path} />
+    </svg>
+  );
+}
+
+/**
+ * Keeps the panel under the visible part of the selected bar while the board
+ * scrolls, zooms or the bar is dragged; flips it above the bar when there is
+ * no room below. Positions are written straight to the element every frame.
+ */
+function usePanelPosition(ref: RefObject<HTMLDivElement | null>, projectId: number) {
+  useLayoutEffect(() => {
+    const narrow = window.matchMedia("(max-width: 760px)");
+    let frame = 0;
+    const place = () => {
+      frame = requestAnimationFrame(place);
+      const panel = ref.current;
+      const bar = document.querySelector(`[data-project-id="${projectId}"] .project-bar`);
+      const viewport = document.querySelector('[data-testid="viewport"]');
+      if (!panel || !bar || !viewport) return;
+      if (narrow.matches) {
+        panel.style.transform = "";
+        panel.style.visibility = "";
+        return;
+      }
+      const box = bar.getBoundingClientRect();
+      const view = viewport.getBoundingClientRect();
+      const margin = 12;
+      const gap = 10;
+      const width = panel.offsetWidth;
+      const height = panel.offsetHeight;
+      const x = Math.max(view.left + margin, Math.min(box.left, view.right - margin - width));
+      const below = box.bottom + gap;
+      const above = box.top - gap - height;
+      const flip = below + height > view.bottom - margin && above >= view.top + margin;
+      const y = Math.max(view.top + margin, Math.min(flip ? above : below, view.bottom - margin - height));
+      const onScreen = box.bottom > view.top && box.top < view.bottom && box.right > view.left && box.left < view.right;
+      const arrow = Math.max(14, Math.min(width - 24, Math.max(box.left, x) + 22 - x));
+      panel.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+      panel.style.visibility = onScreen ? "" : "hidden";
+      panel.style.setProperty("--arrow-x", `${Math.round(arrow)}px`);
+      panel.dataset.placement = flip ? "above" : "below";
+    };
+    place();
+    return () => cancelAnimationFrame(frame);
+  }, [ref, projectId]);
 }
 
 /**
@@ -218,7 +356,7 @@ function MilestoneList({ projectId, events, today }: { projectId: number; events
   };
 
   return (
-    <ul className={`inspector-milestones${drag ? " reordering" : ""}`} ref={list}>
+    <ul className={`panel-milestones${drag ? " reordering" : ""}`} ref={list}>
       {events.map((event, index) => (
         <MilestoneItem
           key={event.id}
