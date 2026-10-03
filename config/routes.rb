@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     resources :events
     resources :project_connections
     resources :plan_requests, only: %i[index show]
+    resources :sources, only: :index
     root to: "users#index"
   end
 end

@@ -1,0 +1,13 @@
+<%# Administrate's navigation plus report pages that have no model (see Admin::SourcesController). %>
+<% reports = { "sources" => "Источники" } %>
+<nav class="navigation">
+  <%= link_to(t("administrate.navigation.back_to_app"), root_url, class: "button button--alt button--nav") if defined?(root_url) %>
+
+  <% Administrate::Namespace.new(namespace).resources_with_index_route.each do |resource| %>
+    <% if reports.key?(resource.to_s) %>
+      <%= link_to reports[resource.to_s], resource_index_route(resource), class: "navigation__link navigation__link--#{nav_link_state(resource)}" %>
+    <% elsif accessible_action?(model_from_resource(resource), :index) %>
+      <%= link_to display_resource_name(resource), resource_index_route(resource), class: "navigation__link navigation__link--#{nav_link_state(resource)}" %>
+    <% end %>
+  <% end %>
+</nav>

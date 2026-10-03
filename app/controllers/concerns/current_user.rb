@@ -5,9 +5,11 @@ module CurrentUser
   extend ActiveSupport::Concern
 
   LAST_SEEN_PRECISION = 1.hour
+  SOURCE_PARAMS = %i[ref utm_source].freeze
 
   included do
     helper_method :current_user, :session_user
+    before_action :remember_traffic_source, if: -> { request.get? && request.format.html? }
   end
 
   private
@@ -39,10 +41,35 @@ module CurrentUser
 
   def create_anonymous_user
     user = User.transaction do
-      User.create!(last_seen_at: Time.current).tap { |new_user| DemoBoard.fill(new_user) }
+      User.create!(last_seen_at: Time.current, **traffic_source).tap { |new_user| DemoBoard.fill(new_user) }
     end
     session[:user_id] = user.id
     @session_user = user
+  end
+
+  # Where the visitor came from, decided by the first page of the session and
+  # given to the user created later: `?ref=club` (or `utm_source`), "share" for
+  # a share link, and the host of an outside referrer.
+  def remember_traffic_source
+    return if session.key?(:source) || session[:user_id]
+
+    session[:source] = SOURCE_PARAMS.filter_map { normalize_source(params[_1]) }.first || ("share" if controller_name == "shares")
+    session[:referrer] = outside_referrer
+  end
+
+  def traffic_source
+    { source: session[:source], referrer: session[:referrer] }
+  end
+
+  def normalize_source(value)
+    value.to_s.downcase.gsub(/[^a-z0-9_.-]/, "").first(50).presence
+  end
+
+  def outside_referrer
+    host = URI.parse(request.referer.to_s).host
+    host unless host.nil? || host == request.host
+  rescue URI::InvalidURIError
+    nil
   end
 
   def touch_last_seen(user)

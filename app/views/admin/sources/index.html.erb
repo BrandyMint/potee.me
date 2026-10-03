@@ -1,0 +1,36 @@
+<% content_for(:title) { "Источники" } %>
+<% metrics = { came: "Пришли", activated: "Начали планировать", returned: "Вернулись", registered: "Зарегистрировались", shared: "Поделились", planned: "План из текста", agent: "Агент" } %>
+<% percent = ->(row, key) { key == :came || row.came.zero? ? "" : " (#{(100.0 * row[key] / row.came).round}%)" } %>
+
+<header class="main-content__header">
+  <h1 class="main-content__page-title">Источники</h1>
+</header>
+
+<section class="main-content__body">
+  <p>
+    Новые доски с <%= l(@report.since.to_date) %> по источнику первого визита: <code>?ref=…</code> (или <code>utm_source</code>),
+    <code>share</code> — пришли по ссылке на проект, пусто — без метки. «Начали планировать» — есть свой или изменённый проект,
+    «Вернулись» — заходили позже, чем через сутки после первого визита. Анонимные доски удаляются через 30 дней без визитов.
+  </p>
+  <p>Период: <% [4, 8, 12, 26].each do |weeks| %><%= link_to "#{weeks} нед.", admin_sources_path(weeks:) %> <% end %></p>
+
+  <h2>По источникам</h2>
+  <table class="collection-data">
+    <thead><tr><th>Источник</th><% metrics.each_value do |name| %><th><%= name %></th><% end %></tr></thead>
+    <tbody>
+      <% @report.by_source.each do |row| %>
+        <tr><td><%= row.source || "—" %></td><% metrics.each_key do |key| %><td><%= row[key] %><%= percent.(row, key) %></td><% end %></tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h2>По неделям</h2>
+  <table class="collection-data">
+    <thead><tr><th>Неделя</th><th>Источник</th><% metrics.each_value do |name| %><th><%= name %></th><% end %></tr></thead>
+    <tbody>
+      <% @report.by_week.each do |row| %>
+        <tr><td><%= l(row.week) %></td><td><%= row.source || "—" %></td><% metrics.each_key do |key| %><td><%= row[key] %><%= percent.(row, key) %></td><% end %></tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

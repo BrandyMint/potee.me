@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_000004) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -89,8 +89,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_000004) do
     t.string "locale"
     t.string "region"
     t.boolean "dim_days_off", default: true, null: false
+    t.string "source"
+    t.string "referrer"
     t.index ["api_token_digest"], name: "index_users_on_api_token_digest", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["source"], name: "index_users_on_source"
   end
 
   add_foreign_key "dashboards", "users"

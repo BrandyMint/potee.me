@@ -17,7 +17,7 @@ class RegistrationsController < ApplicationController
       return render :new, status: :unprocessable_content
     end
 
-    user = session_user&.anonymous? ? session_user : User.new
+    user = session_user&.anonymous? ? session_user : User.new(traffic_source)
     user.assign_attributes(email: @email, password: params[:password], locale: I18n.locale.to_s,
                            region: WorkCalendar.detect(time_zone: params[:time_zone], accept_language: request.headers["Accept-Language"]))
     new_board = user.new_record?
