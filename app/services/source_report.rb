@@ -1,9 +1,11 @@
-# Weekly funnel of new boards by traffic source (users.source), for the admin
-# report. Activation, return, sign-up and joining follow MET-01, MET-02,
+# Weekly funnel of new boards by first-touch UTM tag (users.attribution, see
+# attribution/v1 in corp-sales), for the admin report. Activation, return, sign-up and joining follow MET-01, MET-02,
 # MET-03 and MET-05 of PRD-001; "shared" counts boards whose project someone
 # else added, "planned" and "agent" the plan from text and an MCP token.
 class SourceReport
   TIME_ZONE = "Europe/Moscow".freeze
+  # Report dimension → SQL for that first-touch UTM tag.
+  TAGS = %w[source medium campaign].index_with { "users.attribution->'utm'->>'#{_1}'" }.freeze
   WEEK = "date_trunc('week', users.created_at AT TIME ZONE 'UTC' AT TIME ZONE '#{TIME_ZONE}')::date".freeze
 
   # Each metric counts users matching the SQL condition.
@@ -21,32 +23,33 @@ class SourceReport
   }.freeze
   COUNTS = METRICS.values.map { "count(*) FILTER (WHERE #{_1})" }.freeze
 
-  Row = Struct.new(:week, :source, *METRICS.keys, keyword_init: true)
+  Row = Struct.new(:week, :tag, *METRICS.keys, keyword_init: true)
 
-  def initialize(weeks: 8)
+  def initialize(weeks: 8, by: "source")
     @since = weeks.weeks.ago.in_time_zone(TIME_ZONE).beginning_of_week
+    @by = TAGS.key?(by.to_s) ? by.to_s : TAGS.keys.first
   end
 
-  # One row per week and source, newest week first.
+  attr_reader :since, :by
+
+  # One row per week and tag value, newest week first.
   def by_week
-    rows(WEEK).sort_by { [ -_1.week.jd, _1.source.to_s ] }
+    rows(WEEK).sort_by { [ -_1.week.jd, _1.tag.to_s ] }
   end
 
-  # One row per source over the whole period, the biggest first.
-  def by_source
-    rows.sort_by { [ -_1.came, _1.source.to_s ] }
+  # One row per tag value over the whole period, the biggest first.
+  def totals
+    rows.sort_by { [ -_1.came, _1.tag.to_s ] }
   end
-
-  attr_reader :since
 
   private
 
   def rows(week = nil)
-    keys = [ week, "users.source" ].compact.map { Arel.sql(_1) }
+    keys = [ week, TAGS.fetch(@by) ].compact.map { Arel.sql(_1) }
     counts = COUNTS.map { Arel.sql(_1) }
     User.where(created_at: @since..).group(*keys).pluck(*keys, *counts).map do |values|
       week_start = values.shift if week
-      Row.new(week: week_start, source: values.shift, **METRICS.keys.zip(values).to_h)
+      Row.new(week: week_start, tag: values.shift, **METRICS.keys.zip(values).to_h)
     end
   end
 end

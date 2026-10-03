@@ -1,5 +1,6 @@
 <% content_for(:title) { "Источники" } %>
 <% metrics = { came: "Пришли", activated: "Начали планировать", returned: "Вернулись", registered: "Зарегистрировались", joined: "Получили проект", shared: "Поделились", planned: "План из текста", agent: "Агент" } %>
+<% dimensions = { "source" => "Источник (utm_source)", "medium" => "Тип размещения (utm_medium)", "campaign" => "Кампания (utm_campaign)" } %>
 <% percent = ->(row, key) { key == :came || row.came.zero? ? "" : " (#{(100.0 * row[key] / row.came).round}%)" } %>
 
 <header class="main-content__header">
@@ -8,29 +9,30 @@
 
 <section class="main-content__body">
   <p>
-    Новые доски с <%= l(@report.since.to_date) %> по источнику первого визита: <code>?ref=…</code> (или <code>utm_source</code>),
-    <code>share</code> — пришли по ссылке на проект, пусто — без метки. Метрики — по PRD-001: «Начали планировать» (MET-01) — есть свой новый или изменённый проект,
+    Новые доски с <%= l(@report.since.to_date) %> по UTM-меткам первого визита (стандарт <code>attribution/v1</code>,
+    <code>corp-sales/marketing/attribution.md</code>). Переход по ссылке на проект — <code>potee / share</code>, «—» — без метки. Метрики — по PRD-001: «Начали планировать» (MET-01) — есть свой новый или изменённый проект,
     «Вернулись» (MET-02) — заходили через 7 дней и позже после первого визита, «Получили проект» (MET-05) — на доске есть чужой проект;
     «Поделились» — их проект кто-то добавил к себе. Анонимные доски удаляются через 30 дней без визитов.
   </p>
-  <p>Период: <% [4, 8, 12, 26].each do |weeks| %><%= link_to "#{weeks} нед.", admin_sources_path(weeks:) %> <% end %></p>
+  <p>Период: <% [4, 8, 12, 26].each do |weeks| %><%= link_to "#{weeks} нед.", admin_sources_path(weeks:, by: @report.by) %> <% end %></p>
+  <p>Группировка: <% dimensions.each do |key, name| %><%= key == @report.by ? tag.strong(name) : link_to(name, admin_sources_path(by: key, weeks: params[:weeks])) %> <% end %></p>
 
-  <h2>По источникам</h2>
+  <h2>Итого за период</h2>
   <table class="collection-data">
-    <thead><tr><th>Источник</th><% metrics.each_value do |name| %><th><%= name %></th><% end %></tr></thead>
+    <thead><tr><th><%= dimensions[@report.by] %></th><% metrics.each_value do |name| %><th><%= name %></th><% end %></tr></thead>
     <tbody>
-      <% @report.by_source.each do |row| %>
-        <tr><td><%= row.source || "—" %></td><% metrics.each_key do |key| %><td><%= row[key] %><%= percent.(row, key) %></td><% end %></tr>
+      <% @report.totals.each do |row| %>
+        <tr><td><%= row.tag || "—" %></td><% metrics.each_key do |key| %><td><%= row[key] %><%= percent.(row, key) %></td><% end %></tr>
       <% end %>
     </tbody>
   </table>
 
   <h2>По неделям</h2>
   <table class="collection-data">
-    <thead><tr><th>Неделя</th><th>Источник</th><% metrics.each_value do |name| %><th><%= name %></th><% end %></tr></thead>
+    <thead><tr><th>Неделя</th><th><%= dimensions[@report.by] %></th><% metrics.each_value do |name| %><th><%= name %></th><% end %></tr></thead>
     <tbody>
       <% @report.by_week.each do |row| %>
-        <tr><td><%= l(row.week) %></td><td><%= row.source || "—" %></td><% metrics.each_key do |key| %><td><%= row[key] %><%= percent.(row, key) %></td><% end %></tr>
+        <tr><td><%= l(row.week) %></td><td><%= row.tag || "—" %></td><% metrics.each_key do |key| %><td><%= row[key] %><%= percent.(row, key) %></td><% end %></tr>
       <% end %>
     </tbody>
   </table>

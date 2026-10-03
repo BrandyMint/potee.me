@@ -5,11 +5,12 @@ module CurrentUser
   extend ActiveSupport::Concern
 
   LAST_SEEN_PRECISION = 1.hour
-  SOURCE_PARAMS = %i[ref utm_source].freeze
+  UTM_KEYS = %w[source medium campaign content term].freeze
+  UTM_VALUE = /\A[a-z0-9][a-z0-9_-]{0,49}\z/
 
   included do
     helper_method :current_user, :session_user
-    before_action :remember_traffic_source, if: -> { request.get? && request.format.html? }
+    before_action :remember_attribution, if: -> { request.get? && request.format.html? }
   end
 
   private
@@ -41,33 +42,33 @@ module CurrentUser
 
   def create_anonymous_user
     user = User.transaction do
-      User.create!(last_seen_at: Time.current, **traffic_source).tap { |new_user| DemoBoard.fill(new_user) }
+      User.create!(last_seen_at: Time.current, attribution: session[:attribution]).tap { |new_user| DemoBoard.fill(new_user) }
     end
     session[:user_id] = user.id
     @session_user = user
   end
 
-  # Where the visitor came from, decided by the first page of the session and
-  # given to the user created later: `?ref=club` (or `utm_source`), "share" for
-  # a share link, and the host of an outside referrer.
-  def remember_traffic_source
-    return if session.key?(:source) || session[:user_id]
+  # First touch by the fleet standard attribution/v1 (corp-sales/marketing):
+  # the first page of the session keeps its UTM tags, landing page and an
+  # outside referrer; the user created later (board or sign-up) gets them.
+  # A share link counts as utm_source=potee, utm_medium=share.
+  def remember_attribution
+    return if session.key?(:attribution) || session[:user_id]
 
-    session[:source] = SOURCE_PARAMS.filter_map { normalize_source(params[_1]) }.first || ("share" if controller_name == "shares")
-    session[:referrer] = outside_referrer
+    utm = UTM_KEYS.filter_map { |key| utm_value(params["utm_#{key}"])&.then { [ key, _1 ] } }.to_h
+    utm = { "source" => "potee", "medium" => "share" } if utm.empty? && controller_name == "shares"
+    session[:attribution] = { "landingPage" => request.path, "referrer" => outside_referrer, "utm" => utm.presence }.compact
   end
 
-  def traffic_source
-    { source: session[:source], referrer: session[:referrer] }
+  def utm_value(value)
+    value = value.to_s.strip.downcase
+    value if value.match?(UTM_VALUE)
   end
 
-  def normalize_source(value)
-    value.to_s.downcase.gsub(/[^a-z0-9_.-]/, "").first(50).presence
-  end
-
+  # Origin and path only: a query string may carry personal data.
   def outside_referrer
-    host = URI.parse(request.referer.to_s).host
-    host unless host.nil? || host == request.host
+    uri = URI.parse(request.referer.to_s)
+    "#{uri.scheme}://#{uri.host}#{uri.path}" if uri.host && uri.host != request.host
   rescue URI::InvalidURIError
     nil
   end

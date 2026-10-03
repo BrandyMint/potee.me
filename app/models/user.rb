@@ -52,6 +52,15 @@ class User < ApplicationRecord
     api_token_digest.present?
   end
 
+  # First-touch UTM tag ("source", "medium", "campaign", …), see attribution/v1.
+  def utm(key)
+    attribution&.dig("utm", key.to_s)
+  end
+
+  def attribution_summary
+    %w[source medium campaign content].filter_map { utm(_1) }.join(" / ").presence
+  end
+
   def to_s
     email.presence || "Incognito"
   end
