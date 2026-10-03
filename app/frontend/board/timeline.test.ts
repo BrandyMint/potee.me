@@ -144,6 +144,13 @@ describe("timelineColumns", () => {
       ["October", 310, true],
     ]);
   });
+
+  it("names only another year, once", () => {
+    const timeline: Timeline = { origin: day(2026, 11, 1), days: 120, pixelsPerDay: 10, mode: "months" };
+    expect(timelineColumns(timeline, today).map((column) => column.subtitle)).toEqual(["", "", "2027", ""]);
+    const past: Timeline = { origin: day(2025, 11, 1), days: 150, pixelsPerDay: 10, mode: "months" };
+    expect(timelineColumns(past, today).map((column) => column.subtitle)).toEqual(["2025", "", "", "", ""]);
+  });
 });
 
 describe("helpers", () => {

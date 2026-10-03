@@ -262,7 +262,10 @@ export function timelineColumns(
       x: offset * pixelsPerDay,
       width: length * pixelsPerDay,
       title: monthName(month, locale),
-      subtitle: format(month, "yyyy"),
+      // The current year goes without saying; another year is named once, on
+      // its January (or the first month of the timeline).
+      subtitle:
+        month.getFullYear() !== today.getFullYear() && (offset === 0 || month.getMonth() === 0) ? format(month, "yyyy") : "",
       current: month.getFullYear() === today.getFullYear() && month.getMonth() === today.getMonth(),
     });
     offset += length;
