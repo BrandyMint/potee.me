@@ -6,7 +6,7 @@
   <%= form.label :password do %><%= t("auth.signup.password") %><%= form.password_field :password, required: true, minlength: 8, maxlength: 72, autocomplete: "new-password" %><% end %>
   <%= form.hidden_field :time_zone, id: "time_zone" %>
   <script>document.getElementById("time_zone").value = Intl.DateTimeFormat().resolvedOptions().timeZone || ""</script>
-  <%= form.button t("auth.signup.submit") %>
+  <%= form.button t("auth.signup.submit"), data: { metrika_goal: "signup_submit" } %>
 <% end %>
 <div class="links">
   <%= link_to t("auth.signup.have_account"), login_path %>
