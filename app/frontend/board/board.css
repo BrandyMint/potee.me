@@ -162,51 +162,6 @@ button {
   color: #aaa;
 }
 
-.project-panel {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.color-swatch {
-  width: 22px;
-  height: 22px;
-  flex: none;
-  border-radius: 50% !important;
-  background: var(--c) !important;
-}
-
-.panel-title {
-  width: 280px;
-  max-width: 30vw;
-  padding: 4px 6px;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--text-strong);
-  font-size: 14px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.panel-title:hover,
-.panel-title:focus {
-  border-color: #444;
-  color: #fff;
-  outline: none;
-}
-
-.board-header .danger {
-  color: var(--danger);
-}
-
-.board-header .close {
-  font-size: 20px;
-  line-height: 1;
-}
-
 /* Popovers (help, share link) */
 
 .popover {
@@ -253,28 +208,6 @@ button {
 
 .help-popover dd {
   margin: 0;
-}
-
-.share-popover {
-  left: 0;
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-
-.share-popover label {
-  display: grid;
-  gap: 6px;
-  font-size: 12px;
-}
-
-.share-popover input {
-  width: 320px;
-  padding: 6px 8px;
-  border: 1px solid #444;
-  border-radius: var(--radius);
-  background: #000;
-  color: #eee;
 }
 
 /* Viewport and timeline */
@@ -910,7 +843,7 @@ button {
   to { opacity: 0; visibility: hidden; }
 }
 
-/* Narrow screens: compact header, project panel as a bottom sheet. */
+/* Narrow screens: compact header, project card as a bottom sheet. */
 
 @media (max-width: 760px) {
   .board-header {
@@ -945,32 +878,6 @@ button {
     text-overflow: ellipsis;
   }
 
-  .project-panel {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 50;
-    flex-wrap: wrap;
-    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-    border-top: 1px solid #333;
-    background: var(--surface);
-  }
-
-  .panel-title {
-    flex: 1 1 calc(100% - 80px);
-    max-width: none;
-  }
-
-  .share-popover {
-    top: auto;
-    bottom: calc(100% + 8px);
-  }
-
-  .share-popover input {
-    width: calc(100vw - 100px);
-  }
-
   .help-popover {
     position: fixed;
     top: calc(var(--header-height) + 8px);
@@ -982,6 +889,460 @@ button {
   .help-popover dl div {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+}
+
+/* Card of the selected project. On wide screens it takes the right side and
+   the board narrows; on phones it is a bottom sheet (see below). */
+
+.board {
+  --inspector-width: 360px;
+}
+
+.board.has-inspector .viewport {
+  margin-right: var(--inspector-width);
+}
+
+.project-inspector {
+  position: fixed;
+  top: var(--header-height);
+  right: 0;
+  bottom: 0;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  width: var(--inspector-width);
+  border-left: 1px solid var(--line);
+  background: #181818;
+  box-shadow: -16px 0 40px rgb(0 0 0 / 0.35);
+  color: #bbb;
+  animation: inspector-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes inspector-in {
+  from { transform: translateX(24px); opacity: 0; }
+}
+
+.project-inspector button {
+  cursor: pointer;
+}
+
+.inspector-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 18px 16px 10px 20px;
+}
+
+.inspector-colour {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  margin-top: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.2);
+}
+
+.inspector-colour[aria-expanded="true"] {
+  box-shadow: 0 0 0 2px #181818, 0 0 0 4px var(--c);
+}
+
+.inspector-title {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 3px 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #eee;
+  font: inherit;
+  font-size: 21px;
+  line-height: 1.3;
+  resize: none;
+  field-sizing: content;
+}
+
+.inspector-title:hover {
+  border-color: #333;
+}
+
+.inspector-title:focus {
+  border-color: var(--accent);
+  background: #111;
+  outline: none;
+}
+
+.inspector-close {
+  flex: none;
+  padding: 2px 8px;
+  border: 0;
+  background: none;
+  color: #888;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.inspector-close:hover {
+  color: #fff;
+}
+
+.inspector-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 16px;
+}
+
+.inspector-body section {
+  padding: 14px 0;
+  border-top: 1px solid #262626;
+}
+
+.inspector-body h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 10px;
+  color: #777;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.inspector-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.inspector-palette {
+  display: grid;
+  grid-template-columns: repeat(5, 26px);
+  gap: 10px;
+  padding: 4px 0 14px;
+}
+
+.inspector-palette button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.inspector-palette button.current {
+  box-shadow: 0 0 0 2px #181818, 0 0 0 4px #fff;
+}
+
+.inspector-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #888;
+}
+
+.inspector-dates input,
+.inspector-share-url {
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #111;
+  color: #ddd;
+  font: inherit;
+  font-size: 14px;
+}
+
+.inspector-dates input:focus,
+.inspector-share-url:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.inspector-dates input {
+  flex: 1;
+}
+
+.inspector-body h3 span {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.inspector-milestones {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inspector-milestones li {
+  position: relative;
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  margin: 0 -8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.inspector-milestones li:hover,
+.inspector-milestones li:focus-within {
+  background: #212121;
+}
+
+.inspector-milestones button {
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  font: inherit;
+  text-align: left;
+}
+
+.milestone-when {
+  position: relative;
+  display: flex;
+  flex: none;
+  width: 118px;
+  gap: 2px;
+}
+
+/* Native pickers sit under their buttons; the buttons open them. */
+.milestone-when input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.milestone-date,
+.milestone-time {
+  color: #999;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.milestone-date:hover,
+.milestone-time:hover {
+  background: #333;
+  color: #fff;
+}
+
+.milestone-time.empty {
+  color: transparent;
+}
+
+.inspector-milestones li:hover .milestone-time.empty,
+.milestone-time.empty:focus-visible {
+  color: #666;
+}
+
+.milestone-title {
+  flex: 1;
+  min-width: 0;
+  color: #ddd;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.milestone-title:hover {
+  color: #fff;
+}
+
+.milestone-delete {
+  display: grid;
+  place-items: center;
+  flex: none;
+  align-self: center;
+  width: 26px;
+  height: 26px;
+  color: #888;
+  opacity: 0;
+}
+
+.milestone-delete svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.inspector-milestones li:hover .milestone-delete,
+.milestone-delete:focus-visible {
+  opacity: 1;
+}
+
+.milestone-delete:hover {
+  background: #3a2422;
+  color: var(--danger);
+}
+
+.inspector-milestones .past .milestone-title {
+  color: #777;
+}
+
+.inspector-milestones .past .milestone-date {
+  color: #666;
+}
+
+/* Reordering: a grip shows on hover; the dragged row follows the pointer and
+   the others make room for it. */
+.milestone-handle {
+  position: absolute;
+  top: 50%;
+  left: -11px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 26px;
+  color: #888;
+  cursor: grab;
+  opacity: 0;
+  touch-action: none;
+  transform: translateY(-50%);
+}
+
+.milestone-handle svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.inspector-milestones li:hover .milestone-handle {
+  opacity: 1;
+}
+
+.milestone-handle:hover {
+  color: #ccc;
+}
+
+.inspector-milestones li {
+  transition: transform 0.15s ease;
+}
+
+.inspector-milestones li.dragging {
+  z-index: 2;
+  background: #2a2a2a;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+  transition: none;
+}
+
+.inspector-milestones.reordering,
+.inspector-milestones.reordering * {
+  cursor: grabbing;
+}
+
+.inspector-milestones.reordering li:hover:not(.dragging) {
+  background: none;
+}
+
+/* Touch screens have no hover: keep the delete button visible. */
+@media (hover: none) {
+  .milestone-delete,
+  .milestone-handle {
+    opacity: 0.6;
+  }
+}
+
+.inspector-copy {
+  width: 100%;
+}
+
+.inspector-share-url {
+  width: 100%;
+  margin-top: 8px;
+  box-sizing: border-box;
+  color: #999;
+  font-size: 13px;
+}
+
+.project-inspector .primary {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #10242c;
+  font: inherit;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.inspector-muted {
+  margin: 10px 0 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.inspector-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid #262626;
+}
+
+.inspector-foot button {
+  padding: 7px 12px;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  background: #222;
+  color: #ddd;
+  font: inherit;
+  font-size: 14px;
+}
+
+.inspector-foot button:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.inspector-foot .danger {
+  border-color: transparent;
+  background: none;
+  color: var(--danger);
+}
+
+.inspector-foot .danger:hover {
+  border-color: #4a2a26;
+  color: var(--danger);
+}
+
+@media (max-width: 760px) {
+  .board.has-inspector .viewport {
+    margin-right: 0;
+  }
+
+  .project-inspector {
+    top: auto;
+    left: 0;
+    width: auto;
+    max-height: 60vh;
+    border-top: 1px solid #333;
+    border-left: 0;
+    border-radius: 12px 12px 0 0;
+    animation-name: inspector-up;
+  }
+
+  @keyframes inspector-up {
+    from { transform: translateY(24px); opacity: 0; }
+  }
+
+  .inspector-title {
+    font-size: 18px;
   }
 }
 

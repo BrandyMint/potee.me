@@ -64,7 +64,7 @@ test("double click on empty space starts a project there, Escape cancels it", as
   await expect(page.locator(".project")).toHaveCount(3);
 });
 
-test("selecting a project opens its panel: rename and recolour", async ({ page }) => {
+test("selecting a project opens its card: rename and recolour", async ({ page }) => {
   await row(page, "Learn Scala").locator(".project-title-text").click();
   const title = page.getByLabel("Selected project title");
   await expect(title).toHaveValue("Learn Scala");
@@ -78,11 +78,95 @@ test("selecting a project opens its panel: rename and recolour", async ({ page }
 
   const recoloured = apiCall(page, "PATCH", /^\/api\/projects\/\d+$/);
   await page.getByRole("button", { name: "Change colour" }).click();
+  await page.getByRole("button", { name: "Colour 3" }).click();
   await recoloured;
   await expect(row(page, "Learn Rust")).toHaveClass(/project-color-2/);
 
   await page.reload();
   await expect(row(page, "Learn Rust")).toHaveClass(/project-color-2/);
+});
+
+test("the project card lists milestones, adds one and changes dates", async ({ page }) => {
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  const card = page.getByRole("complementary", { name: "Project card" });
+  await expect(card.getByRole("listitem")).toHaveCount(3);
+
+  const created = apiCall(page, "POST", /^\/api\/projects\/\d+\/events$/);
+  await card.getByRole("button", { name: "+ add" }).click();
+  expect((await created).status()).toBe(201);
+  await expect(card.getByRole("listitem")).toHaveCount(4);
+  await expect(row(page, "Learn Scala").locator(".event")).toHaveCount(4);
+
+  const finish = card.getByLabel("Finish date");
+  const next = await finish.inputValue().then((day) => {
+    const date = new Date(`${day}T00:00:00`);
+    date.setDate(date.getDate() + 7);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  });
+  const moved = apiCall(page, "PATCH", /^\/api\/projects\/\d+$/);
+  await finish.fill(next);
+  await moved;
+  await page.reload();
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await expect(page.getByRole("complementary", { name: "Project card" }).getByLabel("Finish date")).toHaveValue(next);
+});
+
+test("milestones in the project card move to another day and are deleted on hover", async ({ page }) => {
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  const card = page.getByRole("complementary", { name: "Project card" });
+  const first = card.getByRole("listitem").first();
+  const title = await first.locator(".milestone-title").innerText();
+
+  const day = await first.getByLabel("Milestone date").inputValue();
+  const date = new Date(`${day}T00:00:00`);
+  date.setDate(date.getDate() + 1);
+  const next = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const moved = apiCall(page, "PATCH", /^\/api\/events\/\d+$/);
+  await first.getByLabel("Milestone date").fill(next);
+  await moved;
+  await expect(card.getByRole("listitem").filter({ hasText: title }).getByLabel("Milestone date")).toHaveValue(next);
+
+  const item = card.getByRole("listitem").filter({ hasText: title });
+  await item.hover();
+  await item.getByRole("button", { name: `Delete “${title}”` }).click();
+  await expect(card.getByRole("listitem")).toHaveCount(2);
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(card.getByRole("listitem")).toHaveCount(3);
+});
+
+test("dragging a milestone in the project card changes the order of steps, dates stay", async ({ page }) => {
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  const card = page.getByRole("complementary", { name: "Project card" });
+  const items = card.getByRole("listitem");
+  const titles = () => items.locator(".milestone-title").allInnerTexts();
+  const dates = () => items.locator(".milestone-date").allInnerTexts();
+  const [before, days] = [await titles(), await dates()];
+
+  const last = items.last();
+  await last.hover();
+  const handle = (await last.locator(".milestone-handle").boundingBox())!;
+  const top = (await items.first().boundingBox())!;
+  const saved = apiCall(page, "PATCH", /^\/api\/events\/\d+$/);
+  await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handle.x + handle.width / 2, top.y + 4, { steps: 8 });
+  await page.mouse.up();
+  await saved;
+
+  await expect.poll(titles).toEqual([before[2], before[0], before[1]]);
+  expect(await dates()).toEqual(days);
+  await page.reload();
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await expect.poll(titles).toEqual([before[2], before[0], before[1]]);
+});
+
+test("the project card copies the share link", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await row(page, "Learn Scala").locator(".project-title-text").click();
+  const card = page.getByRole("complementary", { name: "Project card" });
+  await card.getByRole("button", { name: "Copy link" }).click();
+  await expect(card.getByRole("button", { name: "✓ Link copied" })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/\/share\/\w+$/);
 });
 
 test("double click on a project adds an event, which can be renamed", async ({ page }) => {
@@ -148,7 +232,7 @@ test("dragging a title reorders the projects", async ({ page }) => {
 test("deletes a project", async ({ page }) => {
   await row(page, "Make my wife happy").locator(".project-title-text").click();
   const deleted = apiCall(page, "DELETE", /^\/api\/projects\/\d+$/);
-  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
   expect((await deleted).status()).toBe(204);
   await page.reload();
   expect(await rowTitles(page)).toEqual(["Learn Scala", "Start my own business"]);
@@ -168,10 +252,11 @@ test("Entire fits the selected project into the screen", async ({ page }) => {
   await page.getByRole("button", { name: "Entire" }).click();
   await expect(page.getByRole("button", { name: "days" })).toHaveClass(/active/);
   await expect(async () => {
+    const viewport = (await page.getByTestId("viewport").boundingBox())!;
     const box = (await bar(page, "Start my own business").boundingBox())!;
-    expect(box.x).toBeGreaterThanOrEqual(0);
-    expect(box.x + box.width).toBeLessThanOrEqual(1400);
-    expect(box.width).toBeGreaterThan(1100);
+    expect(box.x).toBeGreaterThanOrEqual(viewport.x);
+    expect(box.x + box.width).toBeLessThanOrEqual(viewport.x + viewport.width);
+    expect(box.width).toBeGreaterThan(viewport.width * 0.75);
   }).toPass();
 });
 
@@ -190,7 +275,7 @@ test("a share link adds the project to another visitor's board", async ({ page, 
 
 test("a deleted project can be restored with Undo", async ({ page }) => {
   await row(page, "Learn Scala").locator(".project-title-text").click();
-  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(row(page, "Learn Scala")).toHaveCount(0);
   await page.getByRole("button", { name: "Undo" }).click();
   expect(await rowTitles(page)).toEqual(["Learn Scala", "Make my wife happy", "Start my own business"]);
@@ -203,7 +288,7 @@ test("a deleted project can be restored with Undo", async ({ page }) => {
 test("an empty board explains how to start", async ({ page }) => {
   for (const title of ["Learn Scala", "Make my wife happy", "Start my own business"]) {
     await row(page, title).locator(".project-title-text").click();
-    await page.getByRole("button", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "Delete", exact: true }).click();
   }
   await expect(page.getByRole("heading", { name: "Your board is empty" })).toBeVisible();
   await page.locator(".empty-state").getByRole("button", { name: "New project" }).click();
@@ -239,7 +324,7 @@ test.describe("in Russian", () => {
 test.describe("on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
-  test("the header fits without overlaps and the panel opens at the bottom", async ({ page }) => {
+  test("the header fits without overlaps and the project card opens at the bottom", async ({ page }) => {
     const header = (await page.locator(".board-header").boundingBox())!;
     const children = await page.locator(".board-header > *:visible").all();
     const boxes = (await Promise.all(children.map((child) => child.boundingBox()))).filter((box) => box && box.width > 0);
@@ -247,8 +332,8 @@ test.describe("on a phone", () => {
     for (let i = 1; i < boxes.length; i++) expect(boxes[i]!.x).toBeGreaterThanOrEqual(boxes[i - 1]!.x + boxes[i - 1]!.width - 1);
 
     await row(page, "Learn Scala").locator(".project-title-text").click();
-    const panel = (await page.locator(".project-panel").boundingBox())!;
-    expect(panel.y + panel.height).toBeGreaterThan(800);
+    const card = (await page.getByRole("complementary", { name: "Project card" }).boundingBox())!;
+    expect(card.y + card.height).toBeGreaterThan(800);
   });
 });
 

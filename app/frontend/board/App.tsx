@@ -4,9 +4,10 @@ import { StoreContext, useBoard, useBoardStore, ViewContext, type BoardView } fr
 import { isFormControl, startDrag } from "./drag";
 import { Header } from "./Header";
 import { PlanPanel, PreviewRow } from "./PlanPanel";
+import { ProjectInspector } from "./ProjectInspector";
 import { dateLocale, t } from "./i18n";
 import { ProjectRow } from "./ProjectRow";
-import { createBoardStore } from "./store";
+import { createBoardStore, isSaved } from "./store";
 import {
   buildTimeline,
   clampScale,
@@ -145,10 +146,13 @@ function Board() {
       const viewport = viewportRef.current;
       if (!card || !viewport) return;
       state.select(id);
-      state.setScale(fitScale(card, viewport.clientWidth), projectMiddle(card));
-      requestAnimationFrame(() =>
-        viewport.querySelector(`[data-project-id="${id}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }),
-      );
+      // Selecting opens the project card, which narrows the viewport: fit after that.
+      requestAnimationFrame(() => {
+        store.getState().setScale(fitScale(card, viewport.clientWidth), projectMiddle(card));
+        requestAnimationFrame(() =>
+          viewport.querySelector(`[data-project-id="${id}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }),
+        );
+      });
     },
     [store],
   );
@@ -297,6 +301,7 @@ function Board() {
   const boardClasses = ["board", `scale-${mode}`];
   if (compact) boardClasses.push("scale-compact");
   if (selectedId !== null) boardClasses.push("has-selection");
+  if (selectedId !== null && isSaved(selectedId) && projects.some((card) => card.id === selectedId)) boardClasses.push("has-inspector");
 
   return (
     <ViewContext.Provider value={view}>
@@ -354,6 +359,7 @@ function Board() {
             </div>
           </div>
         )}
+        <ProjectInspector />
         <PlanPanel />
         {toast && (
           <div key={toast.id} className={`toast toast-${toast.kind}`} role={toast.kind === "error" ? "alert" : "status"}>

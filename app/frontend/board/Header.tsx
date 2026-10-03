@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import logoUrl from "../images/logo.png";
 import { useBoard, useBoardView } from "./context";
 import { t } from "./i18n";
-import { isSaved } from "./store";
-import { COLORS_COUNT, SCALE, scaleMode, xOf, type ScaleMode } from "./timeline";
-import type { Card } from "./types";
+import { SCALE, scaleMode, xOf, type ScaleMode } from "./timeline";
 
 const SCALE_BUTTONS: { mode: ScaleMode; pixelsPerDay: number }[] = [
   { mode: "days", pixelsPerDay: SCALE.DAYS },
@@ -17,7 +15,6 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
   const pixelsPerDay = useBoard((state) => state.pixelsPerDay);
   const setScale = useBoard((state) => state.setScale);
   const user = useBoard((state) => state.user);
-  const selected = useBoard((state) => state.projects.find((card) => card.id === state.selectedId));
   const planEnabled = useBoard((state) => state.features.plan_from_text);
   const setPlanOpen = useBoard((state) => state.setPlanOpen);
   const mode = scaleMode(pixelsPerDay);
@@ -52,15 +49,11 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
           {todayDirection === "left" ? text.moveToTodayLeft : text.moveToTodayRight}
         </button>
       )}
-      {selected && isSaved(selected.id) ? (
-        <ProjectPanel key={selected.id} card={selected} />
-      ) : (
-        <button type="button" className="new-project" onClick={onNewProject} title={text.newProjectHint} aria-label={text.newProject}>
-          <span aria-hidden>+</span>
-          <span className="label-long">{text.newProject}</span>
-        </button>
-      )}
-      {planEnabled && !(selected && isSaved(selected.id)) && (
+      <button type="button" className="new-project" onClick={onNewProject} title={text.newProjectHint} aria-label={text.newProject}>
+        <span aria-hidden>+</span>
+        <span className="label-long">{text.newProject}</span>
+      </button>
+      {planEnabled && (
         <button type="button" className="plan-button" onClick={() => setPlanOpen(true)} title={text.planFromText} aria-label={text.planFromText}>
           <span aria-hidden>✨</span>
           <span className="label-long">{text.planFromText}</span>
@@ -70,83 +63,6 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
       <HelpButton />
       <Account email={user.email} anonymous={user.anonymous} />
     </header>
-  );
-}
-
-function ProjectPanel({ card }: { card: Card }) {
-  const { showProject } = useBoardView();
-  const updateProject = useBoard((state) => state.updateProject);
-  const deleteProject = useBoard((state) => state.deleteProject);
-  const select = useBoard((state) => state.select);
-  const [title, setTitle] = useState(card.title);
-  const [shareState, setShareState] = useState<"idle" | "copied" | "manual">("idle");
-  const text = t();
-
-  useEffect(() => setTitle(card.title), [card.title]);
-
-  const save = () => {
-    const value = title.trim();
-    if (value && value !== card.title) void updateProject(card.id, { title: value });
-    else setTitle(card.title);
-  };
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") event.currentTarget.blur();
-    if (event.key === "Escape") {
-      setTitle(card.title);
-      event.currentTarget.blur();
-    }
-  };
-  const share = async () => {
-    try {
-      await navigator.clipboard.writeText(card.share_url);
-      setShareState("copied");
-      setTimeout(() => setShareState("idle"), 2000);
-    } catch {
-      setShareState("manual");
-    }
-  };
-
-  return (
-    <div className="project-panel" role="region" aria-label={card.title}>
-      <button
-        type="button"
-        className={`color-swatch project-color-${card.color_index}`}
-        title={text.changeColour}
-        aria-label={text.changeColour}
-        onClick={() => void updateProject(card.id, { color_index: (card.color_index + 1) % COLORS_COUNT })}
-      />
-      <input
-        className="panel-title"
-        aria-label={text.selectedTitle}
-        value={title}
-        onChange={(event) => setTitle(event.target.value)}
-        onBlur={save}
-        onKeyDown={onKeyDown}
-      />
-      <button type="button" onClick={() => showProject(card.id)} title={text.entireHint}>
-        {text.entire}
-      </button>
-      <button type="button" onClick={() => void share()} title={text.shareHint}>
-        {shareState === "copied" ? text.linkCopied : text.share}
-      </button>
-      <button type="button" className="danger" onClick={() => deleteProject(card.id)}>
-        {text.delete}
-      </button>
-      <button type="button" className="close" aria-label={text.close} title={text.close} onClick={() => select(null)}>
-        ×
-      </button>
-      {shareState === "manual" && (
-        <div className="popover share-popover">
-          <label>
-            {text.copyLink}
-            <input readOnly value={card.share_url} autoFocus onFocus={(event) => event.currentTarget.select()} />
-          </label>
-          <button type="button" className="close" aria-label={text.close} onClick={() => setShareState("idle")}>
-            ×
-          </button>
-        </div>
-      )}
-    </div>
   );
 }
 
