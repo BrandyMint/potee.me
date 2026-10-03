@@ -28,6 +28,8 @@ export interface BoardState {
   pixelsPerDay: number;
   /** Moment in the middle of the screen. */
   currentDate: Date;
+  /** The view was never saved (a new visitor): the board opens with the whole plan. */
+  freshView: boolean;
   scrollTop: number;
   selectedId: number | null;
   /** A new project row waiting for its title. */
@@ -143,6 +145,7 @@ export function createBoardStore(initial: BoardData) {
       projects: initial.projects,
       pixelsPerDay: clampScale(initial.dashboard.pixels_per_day),
       currentDate: initial.dashboard.current_date ? parseISO(initial.dashboard.current_date) : new Date(),
+      freshView: !initial.dashboard.current_date,
       scrollTop: initial.dashboard.scroll_top,
       selectedId: null,
       draftId: null,

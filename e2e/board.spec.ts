@@ -47,9 +47,35 @@ async function center(selector: ReturnType<Page["locator"]>) {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2, box };
 }
 
-test.beforeEach(async ({ page }) => {
+// A new visitor opens on the whole plan; these tests start from a saved view
+// in the days zoom with today in the middle, like a returning visitor.
+test.beforeEach(async ({ page, locale }) => {
+  // Through the API, before the board first opens in the browser: otherwise
+  // the whole-plan view of a new visitor would be saved over it on reload.
+  const language = { "Accept-Language": locale ?? "en-US" };
+  const html = await (await page.request.get("/projects", { headers: language })).text();
+  const csrf = html.match(/name="csrf-token" content="([^"]+)"/)![1]!;
+  const saved = await page.request.patch("/api/dashboard", {
+    headers: { ...language, "X-CSRF-Token": csrf },
+    data: { dashboard: { pixels_per_day: 150, current_date: new Date().toISOString(), scroll_top: 0 } },
+  });
+  expect(saved.ok()).toBe(true);
   await page.goto("/projects");
   await expect(page.locator(".project")).toHaveCount(3);
+});
+
+test("a new visitor opens on the whole plan", async ({ browser }) => {
+  const visitor = await browser.newContext({ locale: "en-US" });
+  const page = await visitor.newPage();
+  await page.goto("/projects");
+  await expect(page.locator(".project")).toHaveCount(3);
+  const viewport = (await page.getByTestId("viewport").boundingBox())!;
+  for (const title of ["Learn Scala", "Make my wife happy", "Start my own business"]) {
+    const box = (await bar(page, title).boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(viewport.x);
+    expect(box.x + box.width).toBeLessThanOrEqual(viewport.x + viewport.width);
+  }
+  await visitor.close();
 });
 
 test("shows the demo board in days zoom", async ({ page }) => {
@@ -402,12 +428,10 @@ test("the help popover lists gestures and shortcuts", async ({ page }) => {
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
-test("rows are centred vertically when they fit", async ({ page }) => {
+test("rows start right under the date header", async ({ page }) => {
   const viewport = (await page.getByTestId("viewport").boundingBox())!;
   const first = (await row(page, "Learn Scala").boundingBox())!;
-  const last = (await row(page, "Start my own business").boundingBox())!;
-  const middle = (first.y + last.y + last.height) / 2;
-  expect(Math.abs(middle - (viewport.y + 56 + (viewport.height - 56) / 2))).toBeLessThan(40);
+  expect(first.y - (viewport.y + 56)).toBeLessThan(80);
 });
 
 test.describe("in Russian", () => {
@@ -503,17 +527,29 @@ test("an event with a time shows it in the days zoom", async ({ page }) => {
   await expect(event.locator(".event-title")).toHaveText("Buy a book");
 
   await event.locator(".event-title").click();
+  // No time field until asked for; English accounts read 12 hours by default.
+  await expect(page.getByLabel("Event time")).toHaveCount(0);
+  await page.getByRole("button", { name: "+ time" }).click();
   await page.getByLabel("Event time").fill("19:30");
   const saved = apiCall(page, "PATCH", /^\/api\/events\/\d+$/);
-  await page.getByLabel("Event title").press("Enter");
+  await page.getByLabel("Event time").press("Enter");
   const body = (await saved).request().postDataJSON() as { event: { timed: boolean; at: string } };
   expect(body.event.timed).toBe(true);
-  await expect(event.locator(".event-time")).toHaveText("19:30");
-  await expect(event.locator(".event-title")).toHaveText("19:30Buy a book");
+  await expect(event.locator(".event-time")).toHaveText("7:30 PM");
+  await expect(event.locator(".event-title")).toHaveText("7:30 PMBuy a book");
 
   await page.reload();
   const reloaded = row(page, "Learn Scala").locator(".event", { hasText: "Buy a book" });
-  await expect(reloaded.locator(".event-time")).toHaveText("19:30");
+  await expect(reloaded.locator(".event-time")).toHaveText("7:30 PM");
+
+  // The time chip of the edit form removes the time.
+  await reloaded.locator(".event-title").click();
+  await page.getByRole("button", { name: "Remove the time" }).click();
+  const cleared = apiCall(page, "PATCH", /^\/api\/events\/\d+$/);
+  await page.getByRole("button", { name: "Save" }).click();
+  expect(((await cleared).request().postDataJSON() as { event: { timed: boolean } }).event.timed).toBe(false);
+  await expect(reloaded.locator(".event-time")).toHaveCount(0);
+  await page.reload();
   await page.getByRole("button", { name: "weeks" }).click();
   await expect(reloaded.locator(".event-time")).toHaveCount(0);
   await expect(reloaded.locator(".event-title")).toHaveText("Buy a book");

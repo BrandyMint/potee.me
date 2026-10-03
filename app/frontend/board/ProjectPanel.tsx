@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
-import { dateLocale, t } from "./i18n";
+import { dateLocale, formatTime, t } from "./i18n";
 import { isSaved } from "./store";
 import { COLORS_COUNT, formatDay, parseDay, projectDays } from "./timeline";
 import type { BoardEvent, Card } from "./types";
@@ -365,7 +365,7 @@ function MilestoneItem({
   const at = new Date(event.at);
   const time = event.timed ? format(at, "HH:mm") : "";
   const shownAt = new Date(slot.at);
-  const shownTime = slot.timed ? format(shownAt, "HH:mm") : "";
+  const shownTime = slot.timed ? formatTime(shownAt) : "";
 
   const changeDay = (day: string) => {
     if (!day || day === formatDay(at)) return;

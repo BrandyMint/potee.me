@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -90,6 +90,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_000002) do
     t.string "region"
     t.boolean "dim_days_off", default: true, null: false
     t.jsonb "attribution"
+    t.string "time_format"
     t.index ["api_token_digest"], name: "index_users_on_api_token_digest", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
   end

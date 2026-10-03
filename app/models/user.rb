@@ -36,6 +36,14 @@ class User < ApplicationRecord
     registered.find_by(api_token_digest: digest_api_token(token))
   end
 
+  TIME_FORMATS = %w[24h 12h].freeze
+  validates :time_format, inclusion: { in: TIME_FORMATS }, allow_nil: true
+
+  # Explicit choice, otherwise 24 hours in Russian and 12 hours in English.
+  def effective_time_format(locale = I18n.locale)
+    time_format.presence || (locale.to_s == "en" ? "12h" : "24h")
+  end
+
   def anonymous?
     email.blank?
   end

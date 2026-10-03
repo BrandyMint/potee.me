@@ -3,7 +3,7 @@ import { memo, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, t
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
-import { t } from "./i18n";
+import { formatTime, t } from "./i18n";
 import { isSaved } from "./store";
 import { dateAt, eventBounds, eventTime, formatDay, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
 import type { Card } from "./types";
@@ -25,6 +25,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   const select = useBoard((state) => state.select);
   const renaming = useBoard((state) => state.renamingId === card.id);
   const selected = useBoard((state) => state.selectedId === card.id);
+  const editingEvent = useBoard((state) => state.editingEventId !== null && card.events.some((event) => event.id === state.editingEventId));
   const panelOpen = useBoard((state) => state.panelOpen);
   const openPanel = useBoard((state) => state.openPanel);
   const renameProject = useBoard((state) => state.renameProject);
@@ -135,7 +136,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
       layoutLabels(
         card.events.map((event) => {
           const at = parseISO(event.at);
-          return { id: event.id, x: xOf(timeline, at), title: event.title, time: eventTime({ ...event, at }, ppd) };
+          return { id: event.id, x: xOf(timeline, at), title: event.title, time: eventTime({ ...event, at }, ppd, formatTime) };
         }),
         ppd,
       ),
@@ -148,6 +149,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   if (reorderY !== null) classes.push("reordering");
   if (draft) classes.push("draft");
   if (renaming) classes.push("renaming");
+  if (editingEvent) classes.push("editing-event");
 
   return (
     <div

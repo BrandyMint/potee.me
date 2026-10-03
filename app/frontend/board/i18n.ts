@@ -1,5 +1,6 @@
 // Board UI strings. The language comes from the server (Accept-Language,
 // Russian by default) via the initial board payload.
+import { format } from "date-fns";
 import { enUS, ru, type Locale as DateLocale } from "date-fns/locale";
 
 export type Locale = "ru" | "en";
@@ -83,6 +84,9 @@ const en = {
   defaultEventTitle: "Some event",
   eventTitle: "Event title",
   eventTime: "Event time",
+  removeTime: "Remove the time",
+  save: "Save",
+  invalidTime: (example: string) => `Not a time — for example, ${example}`,
   eventTimeHint: "Start time; leave empty if the event is just a day",
   reorderHint: "Drag up or down to reorder, double-click to rename",
   saveFailed: "Could not save the change. The board was reloaded from the server.",
@@ -189,6 +193,9 @@ const ruDictionary: Dictionary = {
   defaultEventTitle: "Событие",
   eventTitle: "Название события",
   eventTime: "Время события",
+  removeTime: "Убрать время",
+  save: "Сохранить",
+  invalidTime: (example: string) => `Это не время — например, ${example}`,
   eventTimeHint: "Время начала; оставьте пустым, если важен только день",
   reorderHint: "Перетащите вверх или вниз, чтобы изменить порядок; двойной клик — переименовать",
   saveFailed: "Не удалось сохранить изменение. Доска перезагружена с сервера.",
@@ -241,4 +248,38 @@ export function t(): Dictionary {
 
 export function dateLocale(): DateLocale {
   return dateLocales[current];
+}
+
+// Clock: 24 hours ("19:00") or 12 hours ("7:00 PM"), set from the account.
+let hour12 = false;
+
+export function setTimeFormat(timeFormat: string | undefined): void {
+  hour12 = timeFormat === "12h";
+}
+
+export function formatTime(date: Date): string {
+  return format(date, hour12 ? "h:mm a" : "HH:mm");
+}
+
+/** Reads "19:00", "1900", "19.00", "7", "7:30 pm", "7pm"; null when it is not a time. */
+export function parseTime(input: string): { hours: number; minutes: number } | null {
+  const match = input.trim().toLowerCase().replace(/\s+/g, "").match(/^(\d{1,2})(?:[:.]?(\d{2}))?(am|pm|a|p)?$/);
+  if (!match) return null;
+  let hours = Number(match[1]);
+  const minutes = Number(match[2] ?? 0);
+  const suffix = match[3];
+  if (minutes > 59) return null;
+  if (suffix) {
+    if (hours < 1 || hours > 12) return null;
+    hours = (hours % 12) + (suffix.startsWith("p") ? 12 : 0);
+  } else if (hours > 23) return null;
+  return { hours, minutes };
+}
+
+export function timePlaceholder(): string {
+  return hour12 ? "h:mm PM" : current === "ru" ? "ЧЧ:ММ" : "HH:MM";
+}
+
+export function timeExample(): string {
+  return hour12 ? "7:30 PM" : "19:30";
 }

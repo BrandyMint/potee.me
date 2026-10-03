@@ -382,8 +382,12 @@ export function labelTiers<E extends { id: number; x: number }>(
  * Start time shown above the title of a timed event once a day is wide enough
  * to read it (days zoom); null otherwise.
  */
-export function eventTime(event: { at: Date; timed: boolean }, pixelsPerDay: number): string | null {
-  return event.timed && scaleMode(pixelsPerDay) === "days" ? format(event.at, "HH:mm") : null;
+export function eventTime(
+  event: { at: Date; timed: boolean },
+  pixelsPerDay: number,
+  formatClock: (date: Date) => string = (date) => format(date, "HH:mm"),
+): string | null {
+  return event.timed && scaleMode(pixelsPerDay) === "days" ? formatClock(event.at) : null;
 }
 
 /** Whether a day is off: a holiday, or a weekend day that was not made a working one. */

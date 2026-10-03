@@ -103,7 +103,11 @@ en:
       locale: "Language"
       region: "Country — for weekends and holidays"
       no_region: "Other — Saturdays and Sundays only"
-      dim_days_off: "Dim weekends and holidays on projects"
+      dim_days_off: "Fade weekends and holidays in the dates"
+      time_format: "Time format"
+      time_formats:
+        24h: "24-hour — 19:00"
+        12h: "12-hour — 7:00 PM"
       submit: "Save"
       saved: "Settings saved."
   locales:

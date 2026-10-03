@@ -38,6 +38,8 @@ export interface BoardData {
   dashboard: DashboardState;
   /** edited: the user owns a project of their own (new or changed sample). */
   user: { email: string | null; anonymous: boolean; edited: boolean };
+  /** "24h" or "12h", see the account settings. */
+  time_format: "24h" | "12h";
   locale: "ru" | "en";
   features: { plan_from_text: boolean };
   calendar: WorkCalendar;

@@ -87,7 +87,8 @@ module CurrentUser
               edited: current_user.owned_projects.where(demo: false).exists? },
       features: { plan_from_text: PlanRequest.enabled? },
       calendar: calendar_json,
-      locale: I18n.locale
+      locale: I18n.locale,
+      time_format: current_user.effective_time_format
     }
   end
 

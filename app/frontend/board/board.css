@@ -326,7 +326,6 @@ button {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   padding: 40px 0 60px;
 }
 
@@ -486,34 +485,130 @@ button {
   color: color-mix(in srgb, var(--c) 50%, black);
 }
 
-.inline-button {
-  height: 22px;
-  padding: 0 8px;
-  border: 0;
-  border-radius: var(--radius);
-  background: #000;
-  color: var(--text-strong);
-  cursor: pointer;
-  font-size: 11px;
+.event-form-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.inline-button:hover {
-  color: #fff;
+/* The time line sits above the title, where the label shows the time. */
+.event-form-time {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: flex;
 }
 
-.inline-button.danger {
-  color: var(--danger);
-}
-
-.event-form input {
+/* The field being typed in is marked like a new project: dashed outline. */
+.event-form .event-title-input {
   width: 200px;
+  height: 22px;
+  border: 0;
+  background: #000;
   font-size: 15px;
 }
 
+.event-form .event-title-input:focus {
+  outline: 1.5px dashed color-mix(in srgb, var(--c) 70%, white);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* The time field looks like the title: dark, no frame, dashed while typed. */
 .event-form .event-time-input {
-  width: auto;
+  width: 72px;
+  height: 22px;
+  border: 0;
+  background: #000;
   font-size: 13px;
-  color-scheme: dark;
+}
+
+.event-form .event-time-input:focus {
+  outline: 1.5px dashed color-mix(in srgb, var(--c) 70%, white);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.event-form .event-time-input.invalid {
+  outline: 1.5px solid var(--danger);
+  outline-offset: 2px;
+}
+
+/* Under the project bar (the form sits 28px plus the label tier above it). */
+.event-form-error {
+  position: absolute;
+  top: calc(28px + var(--tier-offset, 0px) + var(--bar-height) + 6px);
+  left: 0;
+  color: var(--danger);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.event-add-time,
+.event-time-chip button {
+  height: 22px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--radius);
+  background: #000;
+  color: color-mix(in srgb, var(--c) 75%, white);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.event-add-time {
+  color: #888;
+}
+
+.event-time-chip {
+  display: inline-flex;
+}
+
+.event-time-chip button:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.event-time-chip button:last-child {
+  padding: 0 6px 0 2px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: #777;
+}
+
+.event-add-time:hover,
+.event-time-chip button:hover {
+  color: #fff;
+}
+
+.inline-icon {
+  display: grid;
+  width: 24px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: #000;
+  color: #bbb;
+  cursor: pointer;
+  place-items: center;
+}
+
+.inline-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.inline-icon:hover {
+  color: #fff;
+}
+
+.inline-icon.danger:hover {
+  color: var(--danger);
 }
 
 /* New project draft: typed right on the bar, marked by a breathing dashed outline. */
@@ -580,6 +675,24 @@ button {
 
 /* Events */
 
+/* While a title is typed (milestone, rename, new project) the header fades,
+   all but the logo. */
+.board.editing .board-header > :not(.brand) {
+  opacity: 0.2;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+/* While a milestone is edited, the other milestones of its project fade out
+   of the way. */
+.project.editing-event .event:not(.editing) {
+  pointer-events: none;
+}
+
+.project.editing-event .event:not(.editing) > * {
+  opacity: 0.12;
+}
+
 /* While a title is typed in the bar, its milestones step aside. */
 .project.renaming .event {
   display: none;
@@ -594,12 +707,14 @@ button {
   height: 54px;
 }
 
-.event.passed {
+/* Opacity goes on the parts: an .event is zero wide, and Safari does not
+   fade a zero-sized element together with its overflowing children. */
+.event.passed > * {
   opacity: 0.5;
 }
 
-.event.editing,
-.event.dragging {
+.event.editing > *,
+.event.dragging > * {
   opacity: 1;
 }
 
@@ -670,9 +785,13 @@ button {
   background: color-mix(in srgb, var(--c) 60%, black);
 }
 
-/* The hovered event comes forward on a dark backing. */
+/* The hovered event comes forward over its neighbours; a label that was
+   hidden for lack of room gets a dark backing, since it overlaps others. */
 .event:hover .event-title {
   z-index: 20;
+}
+
+.event.label-hidden:hover .event-title {
   margin-left: -3px;
   padding: 0 6px 0 3px;
   border-radius: 4px;
@@ -1308,6 +1427,24 @@ button {
   font-size: 15px;
 }
 
+/* Writing a plan: a dialog in the middle of the blurred board. */
+.plan-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 69;
+  background: rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.plan-panel.centred {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  width: min(520px, calc(100vw - 24px));
+  transform: translate(-50%, -50%);
+}
+
 .plan-panel {
   position: fixed;
   top: calc(var(--header-height) + 8px);
@@ -1495,5 +1632,13 @@ button {
     width: auto;
     max-height: 70vh;
     border-radius: 12px 12px 0 0;
+  }
+
+  /* On a phone the dialog stays a bottom sheet over the blurred board. */
+  .plan-panel.centred {
+    top: auto;
+    left: 0;
+    width: auto;
+    transform: none;
   }
 }

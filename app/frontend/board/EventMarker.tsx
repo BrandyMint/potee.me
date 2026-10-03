@@ -1,8 +1,8 @@
-import { format, parseISO, set as setTime } from "date-fns";
-import { useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
+import { parseISO, set as setTime } from "date-fns";
+import { useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
-import { t } from "./i18n";
+import { formatTime, parseTime, t, timeExample, timePlaceholder } from "./i18n";
 import { isSaved } from "./store";
 import { dateAt, eventTime, xOf } from "./timeline";
 import type { BoardEvent } from "./types";
@@ -53,7 +53,7 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
   };
 
   const classes = ["event"];
-  const time = eventTime({ ...event, at }, timeline.pixelsPerDay);
+  const time = eventTime({ ...event, at }, timeline.pixelsPerDay, formatTime);
   if (time) classes.push("timed");
   if (passed) classes.push("passed");
   if (labelHidden) classes.push("label-hidden");
@@ -70,19 +70,17 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
       {editing ? (
         <EventForm
           title={event.title}
-          time={event.timed ? format(at, "HH:mm") : ""}
+          at={at}
+          time={event.timed ? formatTime(at) : ""}
           onSave={(title, time) => {
             editEvent(null);
             const changes: { title?: string; at?: string; timed?: boolean } = {};
             if (title !== event.title) changes.title = title;
-            if (time !== (event.timed ? format(at, "HH:mm") : "")) {
-              if (time) {
-                const [hours = 0, minutes = 0] = time.split(":").map(Number);
-                changes.at = setTime(at, { hours, minutes, seconds: 0, milliseconds: 0 }).toISOString();
-                changes.timed = true;
-              } else {
-                changes.timed = false;
-              }
+            if (time === null) {
+              if (event.timed) changes.timed = false;
+            } else if (!event.timed || time.hours !== at.getHours() || time.minutes !== at.getMinutes()) {
+              changes.at = setTime(at, { ...time, seconds: 0, milliseconds: 0 }).toISOString();
+              changes.timed = true;
             }
             if (Object.keys(changes).length > 0) void updateEvent(projectId, event.id, changes);
           }}
@@ -100,60 +98,158 @@ export function EventMarker({ projectId, event, minX, maxX, tier, tierHeight, la
   );
 }
 
+/**
+ * Editing a milestone in place, like a new project: the title with a dashed
+ * outline (Enter saves, Esc cancels); the time stays where the label shows it,
+ * above the title: "+ time" or a removable chip; save and delete as icons.
+ */
 function EventForm(props: {
   title: string;
-  /** HH:MM, or "" for an event without a time */
+  /** Where the milestone stands: "+ time" starts from this moment. */
+  at: Date;
+  /** Formatted start time, or "" for an event without a time. */
   time: string;
-  onSave: (title: string, time: string) => void;
+  onSave: (title: string, time: { hours: number; minutes: number } | null) => void;
   onCancel: () => void;
   onRemove: () => void;
 }) {
+  const text = t();
   const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
+  const [timeText, setTimeText] = useState(props.time);
+  const [timeOpen, setTimeOpen] = useState(false);
+  const [invalid, setInvalid] = useState(false);
   const done = useRef(false);
+  const titleInput = useRef<HTMLInputElement>(null);
+
   const save = () => {
     if (done.current) return;
+    const value = timeText.trim();
+    const time = value ? parseTime(value) : null;
+    if (value && !time) {
+      setInvalid(true);
+      setTimeOpen(true);
+      return;
+    }
     done.current = true;
     props.onSave(title.trim() || props.title, time);
   };
+  // "+ time" starts from the moment where the milestone stands, to 15 minutes.
+  const addTime = () => {
+    const minutes = Math.round((props.at.getHours() * 60 + props.at.getMinutes()) / 15) * 15;
+    const rounded = new Date(props.at);
+    rounded.setHours(0, Math.min(minutes, 23 * 60 + 45), 0, 0);
+    setTimeText(formatTime(rounded));
+    setTimeOpen(true);
+  };
+  const cancel = () => {
+    done.current = true;
+    props.onCancel();
+  };
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Enter") save();
-    if (event.key === "Escape") {
-      done.current = true;
-      props.onCancel();
+    if (event.key === "Enter") {
+      event.preventDefault();
+      save();
     }
+    if (event.key === "Escape") cancel();
   };
-  // Save when focus leaves the whole form, not when moving between its fields.
-  const onBlur = (event: FocusEvent<HTMLFormElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) save();
+  // Save when focus leaves the whole form, not when moving between its parts.
+  // Checked after the browser has moved the focus: Safari does not focus a
+  // clicked button, so relatedTarget alone would look like leaving the form.
+  const form = useRef<HTMLFormElement>(null);
+  const onBlur = () => {
+    requestAnimationFrame(() => {
+      if (!form.current?.contains(document.activeElement)) save();
+    });
   };
+  // Buttons of the form keep the focus where it is.
+  const keepFocus = (event: MouseEvent) => event.preventDefault();
+
   return (
     <form
+      ref={form}
       className="inline-form event-form"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={(event) => {
+        event.preventDefault();
+        save();
+      }}
       onPointerDown={(e) => e.stopPropagation()}
       onBlur={onBlur}
     >
-      <input
-        className="event-time-input"
-        type="time"
-        aria-label={t().eventTime}
-        title={t().eventTimeHint}
-        value={time}
-        onChange={(event) => setTime(event.target.value)}
-        onKeyDown={onKeyDown}
-      />
-      <input
-        aria-label={t().eventTitle}
-        value={title}
-        autoFocus
-        onFocus={(event) => event.currentTarget.select()}
-        onChange={(event) => setTitle(event.target.value)}
-        onKeyDown={onKeyDown}
-      />
-      <button type="button" className="inline-button danger" onMouseDown={(e) => e.preventDefault()} onClick={props.onRemove}>
-        {t().delete}
-      </button>
+      <div className="event-form-time">
+        {timeOpen ? (
+          <input
+            className={`event-time-input${invalid ? " invalid" : ""}`}
+            aria-label={text.eventTime}
+            aria-invalid={invalid}
+            title={invalid ? text.invalidTime(timeExample()) : text.eventTimeHint}
+            placeholder={timePlaceholder()}
+            value={timeText}
+            autoFocus
+            onFocus={(event) => event.currentTarget.select()}
+            onChange={(event) => {
+              setTimeText(event.target.value);
+              setInvalid(false);
+            }}
+            onKeyDown={onKeyDown}
+          />
+        ) : timeText ? (
+          <span className="event-time-chip">
+            <button type="button" title={text.eventTimeHint} onMouseDown={keepFocus} onClick={() => setTimeOpen(true)}>
+              {timeText}
+            </button>
+            <button
+              type="button"
+              aria-label={text.removeTime}
+              title={text.removeTime}
+              onMouseDown={keepFocus}
+              onClick={() => {
+                setTimeText("");
+                titleInput.current?.focus();
+              }}
+            >
+              ×
+            </button>
+          </span>
+        ) : (
+          <button type="button" className="event-add-time" title={text.eventTimeHint} onMouseDown={keepFocus} onClick={addTime}>
+            + {text.addTime}
+          </button>
+        )}
+      </div>
+      <div className="event-form-row">
+        <input
+          ref={titleInput}
+          className="event-title-input"
+          aria-label={text.eventTitle}
+          value={title}
+          autoFocus={!timeOpen}
+          onFocus={(event) => event.currentTarget.select()}
+          onChange={(event) => setTitle(event.target.value)}
+          onKeyDown={onKeyDown}
+        />
+        <button type="submit" className="inline-icon" aria-label={text.save} title={`${text.save} (Enter)`} onMouseDown={keepFocus}>
+          <svg viewBox="0 0 24 24" aria-hidden>
+            <path d="M5 12l5 5L19 7" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          className="inline-icon danger"
+          aria-label={text.delete}
+          title={text.delete}
+          onMouseDown={keepFocus}
+          onClick={props.onRemove}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden>
+            <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+          </svg>
+        </button>
+      </div>
+      {invalid && (
+        <div className="event-form-error" role="alert">
+          {text.invalidTime(timeExample())}
+        </div>
+      )}
     </form>
   );
 }

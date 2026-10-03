@@ -5,7 +5,7 @@ import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { api, ApiError } from "./api";
 import { useBoard, useBoardView } from "./context";
-import { t } from "./i18n";
+import { formatTime, t } from "./i18n";
 import { layoutLabels } from "./ProjectRow";
 import { eventTime, parseDay, xOf } from "./timeline";
 import type { PlanProject } from "./types";
@@ -108,8 +108,13 @@ function Panel() {
     setPhase({ kind: "input" });
   };
 
+  // Writing the plan: a dialog in the middle over the blurred board. The
+  // preview is drawn on the board, so then the panel moves aside, no blur.
+  const centred = phase.kind !== "preview";
   return (
-    <aside className="plan-panel" role="dialog" aria-label={text.planFromText}>
+    <>
+    {centred && <div className="plan-backdrop" onClick={close} aria-hidden />}
+    <aside className={`plan-panel${centred ? " centred" : ""}`} role="dialog" aria-modal={centred} aria-label={text.planFromText}>
       <header>
         <h2>✨ {text.planFromText}</h2>
         <button type="button" className="close" aria-label={text.close} onClick={close}>
@@ -199,6 +204,7 @@ function Panel() {
         )
       )}
     </aside>
+    </>
   );
 }
 
@@ -211,7 +217,7 @@ export function PreviewRow({ project, colorIndex, selected }: { project: PlanPro
   const width = (differenceInCalendarDays(parseDay(project.end_date), start) + 1) * ppd;
   const events = project.events.map((event, index) => {
     const at = parseISO(`${event.date}T${event.time ?? "12:00"}`);
-    return { id: index, x: xOf(timeline, at), title: event.title, time: eventTime({ at, timed: event.time !== null }, ppd) };
+    return { id: index, x: xOf(timeline, at), title: event.title, time: eventTime({ at, timed: event.time !== null }, ppd, formatTime) };
   });
   const labels = layoutLabels(events, ppd);
   return (

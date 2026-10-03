@@ -46,6 +46,7 @@ function Board() {
   const projects = useBoard((state) => state.projects);
   const pixelsPerDay = useBoard((state) => state.pixelsPerDay);
   const selectedId = useBoard((state) => state.selectedId);
+  const editing = useBoard((state) => state.editingEventId !== null || state.renamingId !== null || state.draftId !== null);
   const draftId = useBoard((state) => state.draftId);
   const toast = useBoard((state) => state.toast);
   const calendar = useBoard((state) => state.calendar);
@@ -58,7 +59,14 @@ function Board() {
   const rowsRef = useRef<HTMLDivElement>(null);
   const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const today = useMemo(() => startOfDay(new Date()), []);
+  // The "now" line moves by itself while the page stays open; today follows midnight.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const day = startOfDay(now).getTime();
+  const today = useMemo(() => new Date(day), [day]);
 
   const timeline = useMemo(
     () =>
@@ -168,6 +176,11 @@ function Board() {
     },
     [store],
   );
+
+  // A new visitor sees the whole plan at once, as after a click on the logo.
+  useEffect(() => {
+    if (store.getState().freshView) fitRanges(store.getState().projects);
+  }, [store, fitRanges]);
 
   const showAll = useCallback(() => {
     store.getState().select(null);
@@ -299,6 +312,7 @@ function Board() {
   const boardClasses = ["board", `scale-${mode}`];
   if (compact) boardClasses.push("scale-compact");
   if (selectedId !== null) boardClasses.push("has-selection");
+  if (editing) boardClasses.push("editing");
 
   return (
     <ViewContext.Provider value={view}>
@@ -314,7 +328,7 @@ function Board() {
           data-testid="viewport"
         >
           <div className="canvas" style={{ width }}>
-            <TimelineGrid columns={columns} mode={mode} width={width} todayX={xOf(timeline, new Date())} />
+            <TimelineGrid columns={columns} mode={mode} width={width} todayX={xOf(timeline, now)} />
             <div className="rows" ref={rowsRef}>
               {projects.map((card, index) => (
                 <ProjectRow

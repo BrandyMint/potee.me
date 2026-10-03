@@ -10,6 +10,9 @@
   <%= form.label :region do %><%= t("account.settings.region") %>
     <%= form.select :region, WorkCalendar::REGIONS.map { [ t("regions.#{_1}"), _1 ] }.sort_by(&:first), include_blank: t("account.settings.no_region") %>
   <% end %>
+  <%= form.label :time_format do %><%= t("account.settings.time_format") %>
+    <%= form.select :time_format, User::TIME_FORMATS.map { [ t("account.settings.time_formats.#{_1}"), _1 ] }, selected: session_user.effective_time_format %>
+  <% end %>
   <%= form.label :dim_days_off, class: "checkbox" do %><%= form.check_box :dim_days_off %> <%= t("account.settings.dim_days_off") %><% end %>
   <%= form.button t("account.settings.submit") %>
 <% end %>

@@ -42,6 +42,21 @@ RSpec.describe "Account settings: language, region and days off", type: :request
     expect(json["calendar"]).to include("region" => nil, "dim" => false, "holidays" => [])
   end
 
+  it "takes the clock from the account, otherwise from the language" do
+    get api_board_path, headers: { "Accept-Language" => "ru" }
+    expect(json["time_format"]).to eq("24h")
+    get api_board_path, headers: { "Accept-Language" => "en" }
+    expect(json["time_format"]).to eq("12h")
+
+    post signup_path, params: { email: "dan@example.com", password: "secret-password" }, headers: { "Accept-Language" => "en" }
+    patch account_path, params: { user: { time_format: "24h" } }
+    get api_board_path
+    expect(json["time_format"]).to eq("24h")
+
+    patch account_path, params: { user: { time_format: "13h" } }
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
   it "rejects an unknown region" do
     post signup_path, params: { email: "dan@example.com", password: "secret-password" }
 

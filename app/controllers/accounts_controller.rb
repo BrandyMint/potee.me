@@ -9,7 +9,7 @@ class AccountsController < ApplicationController
   def show; end
 
   def update
-    if session_user.update(params.expect(user: %i[locale region dim_days_off]).transform_values(&:presence))
+    if session_user.update(params.expect(user: %i[locale region dim_days_off time_format]).transform_values(&:presence))
       redirect_to account_path, notice: t("account.settings.saved", locale: session_user.locale)
     else
       flash.now[:alert] = session_user.errors.full_messages.to_sentence
