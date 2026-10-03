@@ -34,14 +34,17 @@ end
 
 RSpec.describe SourceReport do
   it "counts the funnel by source and week" do
-    club = User.create!(source: "club", last_seen_at: 3.days.from_now)
+    club = User.create!(source: "club", last_seen_at: 8.days.from_now)
     DemoBoard.fill(club)
     club.owned_projects.first.edited!
     User.create!(source: "club", email: "dan@example.com", password: "secret-password")
     User.create!(last_seen_at: Time.current)
+    friend = User.create!(source: "share")
+    friend.project_connections.create!(project: club.owned_projects.first)
 
     rows = described_class.new.by_source.index_by(&:source)
-    expect(rows["club"].to_h).to include(came: 2, activated: 1, returned: 1, registered: 1, shared: 0)
+    expect(rows["club"].to_h).to include(came: 2, activated: 1, returned: 1, registered: 1, joined: 0, shared: 1)
+    expect(rows["share"].to_h).to include(came: 1, activated: 0, joined: 1)
     expect(rows[nil].to_h).to include(came: 1, activated: 0)
     expect(described_class.new.by_week.map(&:week).uniq).to eq([ Time.current.in_time_zone("Europe/Moscow").to_date.beginning_of_week ])
   end
