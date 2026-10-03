@@ -11,6 +11,15 @@ RSpec.describe "Board", type: :request do
     expect(user.project_connections.count).to eq(DemoBoard::SCHEDULE.size)
   end
 
+  it "marks the board edited once the visitor has a project of their own" do
+    get api_board_path
+    expect(json["user"]).to include("anonymous" => true, "edited" => false)
+
+    post api_projects_path, params: { project: { title: "Mine", started_on: "2026-10-01", finished_on: "2026-10-07" } }, as: :json
+    get api_board_path
+    expect(json["user"]).to include("edited" => true)
+  end
+
   it "keeps the same user for the session" do
     get board_path
     expect { get api_board_path }.not_to change(User, :count)

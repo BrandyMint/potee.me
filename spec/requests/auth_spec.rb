@@ -18,7 +18,7 @@ RSpec.describe "Email sign-up and log-in", type: :request do
       expect(response).to redirect_to(board_path)
       expect(anonymous.reload).to have_attributes(email: "dan@example.com", anonymous?: false)
       get api_board_path
-      expect(json["user"]).to eq("email" => "dan@example.com", "anonymous" => false)
+      expect(json["user"]).to include("email" => "dan@example.com", "anonymous" => false)
       expect(json["projects"].size).to eq(DemoBoard::SCHEDULE.size)
     end
 

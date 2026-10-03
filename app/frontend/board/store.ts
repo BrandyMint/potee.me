@@ -33,6 +33,10 @@ export interface BoardState {
   /** A new project row waiting for its title. */
   draftId: number | null;
   editingEventId: number | null;
+  /** Project whose title is being edited right in its bar. */
+  renamingId: number | null;
+  /** The selected project's panel is open (a second click on the project). */
+  panelOpen: boolean;
   toast: Toast | null;
   user: BoardData["user"];
   features: BoardData["features"];
@@ -54,6 +58,8 @@ export interface BoardState {
   updateEvent: (projectId: number, eventId: number, attributes: EventAttributes) => Promise<void>;
   deleteEvent: (projectId: number, eventId: number) => void;
   editEvent: (eventId: number | null) => void;
+  renameProject: (id: number | null) => void;
+  openPanel: (open: boolean) => void;
   dismissToast: () => void;
   setPlanOpen: (open: boolean) => void;
   setPlanPreview: (preview: BoardState["planPreview"]) => void;
@@ -141,6 +147,8 @@ export function createBoardStore(initial: BoardData) {
       selectedId: null,
       draftId: null,
       editingEventId: null,
+      renamingId: null,
+      panelOpen: false,
       toast: null,
       user: initial.user,
       features: initial.features,
@@ -174,7 +182,9 @@ export function createBoardStore(initial: BoardData) {
         }
       },
 
-      select: (id) => set({ selectedId: id }),
+      select: (id) => set((state) => (state.selectedId === id ? {} : { selectedId: id, renamingId: null, panelOpen: false })),
+      renameProject: (id) => set({ renamingId: id }),
+      openPanel: (open) => set({ panelOpen: open }),
 
       startDraft: (start, index) => {
         if (get().draftId !== null) get().cancelDraft();

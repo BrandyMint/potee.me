@@ -36,7 +36,8 @@ export interface DashboardState {
 export interface BoardData {
   projects: Card[];
   dashboard: DashboardState;
-  user: { email: string | null; anonymous: boolean };
+  /** edited: the user owns a project of their own (new or changed sample). */
+  user: { email: string | null; anonymous: boolean; edited: boolean };
   locale: "ru" | "en";
   features: { plan_from_text: boolean };
   calendar: WorkCalendar;

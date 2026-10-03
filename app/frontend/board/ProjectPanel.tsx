@@ -1,11 +1,9 @@
 import { format, set as setTime } from "date-fns";
 import {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
-  type KeyboardEvent,
   type PointerEvent,
   type ReactNode,
   type RefObject,
@@ -42,7 +40,11 @@ function writeExpanded(expanded: boolean): void {
  */
 export function ProjectPanel() {
   const card = useBoard((state) => state.projects.find((project) => project.id === state.selectedId));
-  if (!card || !isSaved(card.id)) return null;
+  const renaming = useBoard((state) => state.renamingId !== null && state.renamingId === state.selectedId);
+  const open = useBoard((state) => state.panelOpen);
+  // The first click only selects the project; the second opens the panel.
+  // While the title is edited in the bar, the panel steps aside for its hint.
+  if (!card || !isSaved(card.id) || !open || renaming) return null;
   return <Panel key={card.id} card={card} />;
 }
 
@@ -51,43 +53,18 @@ function Panel({ card }: { card: Card }) {
   const updateProject = useBoard((state) => state.updateProject);
   const deleteProject = useBoard((state) => state.deleteProject);
   const addEvent = useBoard((state) => state.addEvent);
-  const select = useBoard((state) => state.select);
-  const [title, setTitle] = useState(card.title);
+  const openPanel = useBoard((state) => state.openPanel);
+  const renameProject = useBoard((state) => state.renameProject);
   const [expanded, setExpandedState] = useState(readExpanded);
-  const [paletteOpen, setPaletteOpen] = useState(false);
   const [share, setShare] = useState<"idle" | "copied" | "manual">("idle");
-  const [focusTitle, setFocusTitle] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
-  const titleInput = useRef<HTMLTextAreaElement>(null);
   const text = t();
 
   usePanelPosition(panel, card.id);
-  useEffect(() => setTitle(card.title), [card.title]);
-  useEffect(() => {
-    if (!focusTitle || !expanded) return;
-    titleInput.current?.focus();
-    titleInput.current?.select();
-    setFocusTitle(false);
-  }, [focusTitle, expanded]);
 
   const setExpanded = (value: boolean) => {
     setExpandedState(value);
     writeExpanded(value);
-  };
-  const saveTitle = () => {
-    const value = title.trim();
-    if (value && value !== card.title) void updateProject(card.id, { title: value });
-    else setTitle(card.title);
-  };
-  const onTitleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      event.currentTarget.blur();
-    }
-    if (event.key === "Escape") {
-      setTitle(card.title);
-      event.currentTarget.blur();
-    }
   };
   const changeDate = (field: "started_on" | "finished_on", value: string) => {
     if (!value) return;
@@ -123,24 +100,14 @@ function Panel({ card }: { card: Card }) {
       aria-label={text.projectPanel}
     >
       <div className="panel-toolbar" role="toolbar" aria-label={card.title}>
-        <ToolButton label={text.changeColour} pressed={paletteOpen} onClick={() => setPaletteOpen(!paletteOpen)}>
-          <span className="panel-colour" />
-        </ToolButton>
-        <ToolButton
-          label={text.rename}
-          onClick={() => {
-            setExpanded(true);
-            setFocusTitle(true);
-          }}
-        >
+        <ToolButton label={text.rename} onClick={() => renameProject(card.id)}>
           <Icon path="M4 20h4L19 9l-4-4L4 16z" />
-        </ToolButton>
-        <span className="panel-separator" />
-        <ToolButton label={text.entire} hint={text.entireHint} onClick={() => showProject(card.id)} text>
-          <Icon path="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
         </ToolButton>
         <ToolButton label={share === "copied" ? `✓ ${text.linkCopied}` : text.share} hint={text.shareHint} onClick={() => void copyLink()} text>
           <Icon path="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
+        </ToolButton>
+        <ToolButton label={text.entire} hint={text.entireHint} onClick={() => showProject(card.id)}>
+          <Icon path="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7M21 15v6h-6M21 21l-7-7M3 9V3h6M3 3l7 7" />
         </ToolButton>
         <span className="panel-separator" />
         <ToolButton label={removeLabel} className="danger" onClick={() => deleteProject(card.id)}>
@@ -149,25 +116,10 @@ function Panel({ card }: { card: Card }) {
         <ToolButton label={expanded ? text.collapse : text.details} pressed={expanded} onClick={() => setExpanded(!expanded)}>
           <Icon path={expanded ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"} />
         </ToolButton>
-        <ToolButton label={text.close} hint={`${text.close} (Esc)`} onClick={() => select(null)}>
+        <ToolButton label={text.close} hint={`${text.close} (Esc)`} onClick={() => openPanel(false)}>
           <Icon path="M6 6l12 12M18 6L6 18" />
         </ToolButton>
       </div>
-
-      {paletteOpen && (
-        <div className="panel-palette" role="group" aria-label={text.changeColour}>
-          {Array.from({ length: COLORS_COUNT }, (_, index) => (
-            <button
-              key={index}
-              type="button"
-              className={`project-color-${index}${index === card.color_index ? " current" : ""}`}
-              aria-label={text.colour(index + 1)}
-              aria-pressed={index === card.color_index}
-              onClick={() => void updateProject(card.id, { color_index: index })}
-            />
-          ))}
-        </div>
-      )}
 
       {share === "manual" && (
         <input
@@ -182,17 +134,6 @@ function Panel({ card }: { card: Card }) {
 
       {expanded && (
         <div className="panel-body">
-          <textarea
-            ref={titleInput}
-            className="panel-title"
-            aria-label={text.selectedTitle}
-            rows={1}
-            value={title}
-            onChange={(event) => setTitle(event.target.value.replace(/\n/g, " "))}
-            onBlur={saveTitle}
-            onKeyDown={onTitleKeyDown}
-          />
-
           <section>
             <h3>
               {text.dates}
@@ -202,6 +143,22 @@ function Panel({ card }: { card: Card }) {
               <input type="date" aria-label={text.startDate} value={card.started_on} max={card.finished_on} onChange={(event) => changeDate("started_on", event.target.value)} />
               <span aria-hidden>→</span>
               <input type="date" aria-label={text.finishDate} value={card.finished_on} min={card.started_on} onChange={(event) => changeDate("finished_on", event.target.value)} />
+            </div>
+          </section>
+
+          <section>
+            <h3>{text.changeColour}</h3>
+            <div className="panel-palette" role="group" aria-label={text.changeColour}>
+              {Array.from({ length: COLORS_COUNT }, (_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`project-color-${index}${index === card.color_index ? " current" : ""}`}
+                  aria-label={text.colour(index + 1)}
+                  aria-pressed={index === card.color_index}
+                  onClick={() => void updateProject(card.id, { color_index: index })}
+                />
+              ))}
             </div>
           </section>
 
@@ -219,7 +176,6 @@ function Panel({ card }: { card: Card }) {
             )}
           </section>
 
-          <p className="panel-muted">{card.owner ? text.shareNote : text.sharedWithYou}</p>
         </div>
       )}
     </div>
@@ -284,12 +240,19 @@ function usePanelPosition(ref: RefObject<HTMLDivElement | null>, projectId: numb
       const margin = 12;
       const gap = 10;
       const width = panel.offsetWidth;
-      const height = panel.offsetHeight;
+      // Natural height, even while capped (then the body scrolls): the panel
+      // never covers its bar.
+      const body = panel.querySelector<HTMLElement>(".panel-body");
+      const height = panel.offsetHeight + (body ? body.scrollHeight - body.clientHeight : 0);
       const x = Math.max(view.left + margin, Math.min(box.left, view.right - margin - width));
       const below = box.bottom + gap;
-      const above = box.top - gap - height;
-      const flip = below + height > view.bottom - margin && above >= view.top + margin;
-      const y = Math.max(view.top + margin, Math.min(flip ? above : below, view.bottom - margin - height));
+      const roomBelow = view.bottom - margin - below;
+      const roomAbove = box.top - gap - (view.top + margin);
+      const flip = height > roomBelow && (height <= roomAbove || roomAbove > roomBelow);
+      const room = flip ? roomAbove : roomBelow;
+      panel.style.maxHeight = height > room ? `${Math.max(120, Math.floor(room))}px` : "";
+      const shown = Math.min(height, Math.max(120, room));
+      const y = flip ? box.top - gap - shown : below;
       const onScreen = box.bottom > view.top && box.top < view.bottom && box.right > view.left && box.left < view.right;
       const arrow = Math.max(14, Math.min(width - 24, Math.max(box.left, x) + 22 - x));
       panel.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;

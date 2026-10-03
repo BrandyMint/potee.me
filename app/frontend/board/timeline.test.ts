@@ -5,7 +5,6 @@ import {
   dateAt,
   dayOffChecker,
   dayOffset,
-  daysOffRuns,
   eventTime,
   fitAll,
   labelStyle,
@@ -258,14 +257,6 @@ describe("days off", () => {
     expect(isDayOff(day(2026, 5, 9))).toBe(true);
     expect(isDayOff(day(2026, 5, 16))).toBe(false);
     expect(isDayOff(day(2026, 5, 17))).toBe(true);
-  });
-
-  it("groups consecutive days off into runs from the start of a project", () => {
-    expect(daysOffRuns(day(2026, 4, 30), day(2026, 5, 17), isDayOff)).toEqual([
-      { offset: 1, days: 3 },
-      { offset: 9, days: 3 },
-      { offset: 17, days: 1 },
-    ]);
   });
 
   it("marks day off columns in the days zoom", () => {

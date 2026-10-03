@@ -225,6 +225,7 @@ function Board() {
         case "Escape":
           if (state.editingEventId !== null) state.editEvent(null);
           else if (state.draftId !== null) state.cancelDraft();
+          else if (state.panelOpen) state.openPanel(false);
           else state.select(null);
           break;
         default:
@@ -313,7 +314,7 @@ function Board() {
           data-testid="viewport"
         >
           <div className="canvas" style={{ width }}>
-            <TimelineGrid columns={columns} mode={mode} width={width} />
+            <TimelineGrid columns={columns} mode={mode} width={width} todayX={xOf(timeline, new Date())} />
             <div className="rows" ref={rowsRef}>
               {projects.map((card, index) => (
                 <ProjectRow

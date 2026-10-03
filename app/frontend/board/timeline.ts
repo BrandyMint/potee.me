@@ -398,15 +398,3 @@ export function dayOffChecker(calendar: Pick<WorkCalendar, "weekend" | "holidays
   };
 }
 
-/** Runs of consecutive days off from start to finish (inclusive), in days from start. */
-export function daysOffRuns(start: Date, finish: Date, isDayOff: (date: Date) => boolean): { offset: number; days: number }[] {
-  const runs: { offset: number; days: number }[] = [];
-  const total = differenceInCalendarDays(finish, start) + 1;
-  for (let i = 0; i < total; i++) {
-    if (!isDayOff(addDays(start, i))) continue;
-    const last = runs.at(-1);
-    if (last && last.offset + last.days === i) last.days += 1;
-    else runs.push({ offset: i, days: 1 });
-  }
-  return runs;
-}

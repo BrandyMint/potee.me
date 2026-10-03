@@ -20,7 +20,7 @@ body.board-page {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: #1d1d1d url("../images/black-Linen.png");
+  background: #1d1d1d;
   color: var(--text);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -155,7 +155,7 @@ button {
 }
 
 .account .signup-hint {
-  color: var(--danger);
+  color: #ccc;
 }
 
 .account-email {
@@ -244,41 +244,31 @@ button {
   border-right: 1px solid var(--line);
 }
 
-.grid-column.week-end {
-  border-right-color: #555;
+/* In the days zoom days are split by faint lines, weeks by regular ones. */
+.scale-days .grid-column,
+.scale-days .header-cell {
+  border-right-color: rgb(255 255 255 / 0.05);
 }
 
-/* Weekends and holidays (WorkCalendar), dimmed when the account asks for it. */
-.grid-column.day-off {
-  background: rgb(0 0 0 / 0.12);
+.scale-days .grid-column.week-end,
+.scale-days .header-cell.week-end {
+  border-right-color: var(--line);
 }
 
-.header-cell.day-off .header-title,
-.header-cell.day-off .header-subtitle {
-  opacity: 0.5;
-}
-
-.project-bar .day-off {
+/* Now: a thin line behind the bars, instead of a lit column. */
+.today-line {
   position: absolute;
   top: 0;
   bottom: 0;
-  background: rgb(0 0 0 / 0.2);
-  pointer-events: none;
+  width: 2px;
+  margin-left: -1px;
+  background: color-mix(in srgb, var(--danger) 75%, transparent);
 }
 
-.project-bar .day-off.first {
-  border-top-left-radius: inherit;
-  border-bottom-left-radius: inherit;
-}
-
-.project-bar .day-off.last {
-  border-top-right-radius: inherit;
-  border-bottom-right-radius: inherit;
-}
-
-.grid-column.current {
-  background: url("../images/lighten-Linen.gif");
-  border-right-color: #444;
+/* Weekends and holidays (WorkCalendar) only fade their dates in the header. */
+.header-cell.day-off .header-title,
+.header-cell.day-off .header-subtitle {
+  opacity: 0.5;
 }
 
 .timeline-header {
@@ -341,10 +331,9 @@ button {
 }
 
 /* --tiers-extra (set per row) makes room for stacked event labels.
-   --bar-fill: the bar colour with soft volume (light above, shade below). */
+   --bar-fill: the flat bar colour. */
 .project {
-  --bar-volume: linear-gradient(to bottom, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0) 55%, rgb(0 0 0 / 0.14));
-  --bar-fill: var(--bar-volume), var(--c);
+  --bar-fill: var(--c);
   --bar-top: calc(24px + var(--tiers-extra, 0px));
   position: relative;
   flex: none;
@@ -366,13 +355,12 @@ button {
   height: var(--bar-height);
   border-radius: calc(var(--bar-height) / 2);
   background: var(--bar-fill);
-  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
 
 .project-bar:hover,
 .project.resizing .project-bar {
-  box-shadow: 0 0 10px 0 rgb(13 144 209 / 0.7);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent);
 }
 
 /* The title sits on the bar itself, without a backing that would show its
@@ -395,10 +383,8 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: color-mix(in srgb, var(--c) 40%, black);
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c) 35%, black);
+  font-size: 12px;
   cursor: grab;
   touch-action: none;
 }
@@ -445,7 +431,7 @@ button {
   opacity: 0.4;
 }
 
-.project.inactive { --bar-fill: var(--bar-volume), #666; }
+.project.inactive { --bar-fill: #666; }
 .project.inactive .project-title-text { color: #000; }
 .project.inactive .event-bar { background: rgb(85 85 85 / 0.6); }
 .project.inactive .event-title { color: #999; }
@@ -462,10 +448,8 @@ button {
   background: rgb(0 0 0 / 0.6);
   color: var(--c);
   cursor: pointer;
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 12px;
   text-overflow: ellipsis;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -534,7 +518,8 @@ button {
 
 /* New project draft: typed right on the bar, marked by a breathing dashed outline. */
 
-.project.draft .project-bar {
+.project.draft .project-bar,
+.project.renaming .project-bar {
   outline: 1.5px dashed color-mix(in srgb, var(--c) 70%, white);
   outline-offset: 3px;
   animation: draft-breathe 1.6s ease-in-out infinite;
@@ -545,10 +530,12 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project.draft .project-bar { animation: none; }
+  .project.draft .project-bar,
+  .project.renaming .project-bar { animation: none; }
 }
 
-.project.draft .project-title {
+.project.draft .project-title,
+.project.renaming .project-title {
   position: static;
   background: none;
   width: 100%;
@@ -570,9 +557,7 @@ button {
   color: color-mix(in srgb, var(--c) 40%, black);
   caret-color: color-mix(in srgb, var(--c) 25%, black);
   font: inherit;
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-size: 12px;
 }
 
 .draft-title input::placeholder {
@@ -594,6 +579,11 @@ button {
 }
 
 /* Events */
+
+/* While a title is typed in the bar, its milestones step aside. */
+.project.renaming .event {
+  display: none;
+}
 
 /* Events don't form their own layer, so every connector (z 2) stays under
    every label and tick (z 3) of the row. */
@@ -994,14 +984,6 @@ button {
   stroke-linejoin: round;
 }
 
-.panel-colour {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--c);
-  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.2);
-}
-
 .panel-separator {
   width: 1px;
   height: 20px;
@@ -1013,8 +995,9 @@ button {
   display: grid;
   grid-template-columns: repeat(10, 22px);
   gap: 8px;
-  padding: 6px 12px 12px;
+  padding: 2px 0 4px;
 }
+
 
 .panel-palette button {
   width: 22px;
@@ -1034,36 +1017,10 @@ button {
 }
 
 .panel-body {
+  min-height: 0;
   overflow-y: auto;
   padding: 4px 16px 14px 22px;
   border-top: 1px solid #333;
-}
-
-.panel-title {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 34px;
-  margin: 10px 0 4px;
-  padding: 3px 6px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  color: #eee;
-  font: inherit;
-  font-size: 19px;
-  line-height: 1.3;
-  resize: none;
-  field-sizing: content;
-}
-
-.panel-title:hover {
-  border-color: #3a3a3a;
-}
-
-.panel-title:focus {
-  border-color: var(--accent);
-  background: #111;
-  outline: none;
 }
 
 .panel-body section {

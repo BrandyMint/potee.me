@@ -1,11 +1,11 @@
 import { addDays, differenceInCalendarDays, parseISO } from "date-fns";
-import { memo, useMemo, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
+import { memo, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
 import { EventMarker } from "./EventMarker";
 import { t } from "./i18n";
 import { isSaved } from "./store";
-import { dateAt, dayOffChecker, daysOffRuns, eventBounds, eventTime, formatDay, labelStyle, labelTiers, parseDay, scaleMode, xOf } from "./timeline";
+import { dateAt, eventBounds, eventTime, formatDay, labelStyle, labelTiers, parseDay, xOf } from "./timeline";
 import type { Card } from "./types";
 
 interface Props {
@@ -17,9 +17,17 @@ interface Props {
 
 type Edge = "start" | "finish";
 
+/** Longer than the gap between the clicks of a double click. */
+const DOUBLE_CLICK_MS = 350;
+
 export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draft }: Props) {
   const { timeline, viewportWidth, scrollLeft, timelineX, goToDate, rowIndexAt } = useBoardView();
   const select = useBoard((state) => state.select);
+  const renaming = useBoard((state) => state.renamingId === card.id);
+  const selected = useBoard((state) => state.selectedId === card.id);
+  const panelOpen = useBoard((state) => state.panelOpen);
+  const openPanel = useBoard((state) => state.openPanel);
+  const renameProject = useBoard((state) => state.renameProject);
   const addEvent = useBoard((state) => state.addEvent);
   const updateProject = useBoard((state) => state.updateProject);
   const moveProject = useBoard((state) => state.moveProject);
@@ -39,13 +47,24 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   const width = (differenceInCalendarDays(finish, start) + 1) * ppd;
   const right = left + width;
 
+  // First click selects the project, the second opens its panel. The panel
+  // waits out the double-click interval: a double click adds a milestone only.
+  const panelTimer = useRef(0);
+  const openPanelSoon = () => {
+    window.clearTimeout(panelTimer.current);
+    panelTimer.current = window.setTimeout(() => openPanel(true), DOUBLE_CLICK_MS);
+  };
   const onBarClick = (event: MouseEvent) => {
     event.stopPropagation();
-    select(card.id);
+    // Clicks on the title are handled by its own pointer handler.
+    if ((event.target as HTMLElement).closest(".project-title") || event.detail > 1) return;
+    if (!selected) select(card.id);
+    else if (!panelOpen && isSaved(card.id)) openPanelSoon();
   };
 
   const onBarDoubleClick = (event: MouseEvent) => {
     event.stopPropagation();
+    window.clearTimeout(panelTimer.current);
     if (!isSaved(card.id)) return;
     select(card.id);
     const at = dateAt(timeline, Math.min(right - 1, Math.max(left, timelineX(event.clientX))));
@@ -77,9 +96,13 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
     });
   };
 
+  // Clicks on the title: select, then open the panel, then rename in the bar
+  // (a double click renames at once).
   const onTitlePointerDown = (pointer: PointerEvent) => {
     pointer.stopPropagation();
     if (draft) return;
+    const wasSelected = selected;
+    const wasOpen = panelOpen;
     startDrag(
       pointer,
       {
@@ -87,7 +110,9 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
         onEnd: (_dx, _dy, moved, event) => {
           setReorderY(null);
           if (!moved) {
-            select(card.id);
+            if (!wasSelected) select(card.id);
+            else if (!wasOpen) openPanelSoon();
+            else if (isSaved(card.id)) renameProject(card.id);
             return;
           }
           const target = rowIndexAt(event.clientY, card.id);
@@ -122,6 +147,7 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   if (resize) classes.push("resizing");
   if (reorderY !== null) classes.push("reordering");
   if (draft) classes.push("draft");
+  if (renaming) classes.push("renaming");
 
   return (
     <div
@@ -137,20 +163,42 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
       data-testid={`project-${card.title}`}
     >
       <div className="project-bar" style={{ left, width }} onClick={onBarClick} onDoubleClick={onBarDoubleClick}>
-        <DaysOff start={start} finish={finish} pixelsPerDay={ppd} />
         <div className="resize-handle start" onPointerDown={onEdgePointerDown("start")} />
         <div className="project-title">
           {draft ? (
             <DraftTitle onSave={(title) => void commitDraft(title)} onCancel={cancelDraft} />
+          ) : renaming ? (
+            <DraftTitle
+              initial={card.title}
+              saveOnBlur
+              onSave={(title) => {
+                renameProject(null);
+                const value = title.trim();
+                if (value && value !== card.title) void updateProject(card.id, { title: value });
+              }}
+              onCancel={() => renameProject(null)}
+            />
           ) : (
-            <span className="project-title-text" onPointerDown={onTitlePointerDown} title={t().reorderHint}>
+            <span
+              className="project-title-text"
+              onPointerDown={onTitlePointerDown}
+              onDoubleClick={(event) => {
+                event.stopPropagation();
+                window.clearTimeout(panelTimer.current);
+                if (isSaved(card.id)) {
+                  select(card.id);
+                  renameProject(card.id);
+                }
+              }}
+              title={t().reorderHint}
+            >
               {card.title}
             </span>
           )}
         </div>
         <div className="resize-handle finish" onPointerDown={onEdgePointerDown("finish")} />
       </div>
-      {draft && (
+      {(draft || renaming) && (
         <div className="draft-hint" style={{ left }}>
           <kbd>Enter</kbd> — {t().draftSave} · <kbd>Esc</kbd> — {t().draftCancel}
         </div>
@@ -187,11 +235,24 @@ export const ProjectRow = memo(function ProjectRow({ card, index, inactive, draf
   );
 });
 
-function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onCancel: () => void }) {
-  const [title, setTitle] = useState("");
+/** Title field right in the bar: for a new project and for renaming. */
+function DraftTitle({ initial = "", saveOnBlur = false, onSave, onCancel }: {
+  initial?: string;
+  saveOnBlur?: boolean;
+  onSave: (title: string) => void;
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = useState(initial);
+  const done = useRef(false);
+  const finish = (save: boolean) => {
+    if (done.current) return;
+    done.current = true;
+    if (save) onSave(title);
+    else onCancel();
+  };
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Enter") onSave(title);
-    if (event.key === "Escape") onCancel();
+    if (event.key === "Enter") finish(true);
+    if (event.key === "Escape") finish(false);
   };
   return (
     <form className="draft-title" onSubmit={(event) => event.preventDefault()} onPointerDown={(e) => e.stopPropagation()}>
@@ -201,6 +262,8 @@ function DraftTitle({ onSave, onCancel }: { onSave: (title: string) => void; onC
         value={title}
         autoFocus
         enterKeyHint="done"
+        onFocus={(event) => event.currentTarget.select()}
+        onBlur={saveOnBlur ? () => finish(true) : undefined}
         onChange={(event) => setTitle(event.target.value)}
         onKeyDown={onKeyDown}
       />
@@ -234,20 +297,3 @@ export function layoutLabels(events: { id: number; x: number; title: string; tim
   return { tiers, hidden, tierStep, timeLine, tiersExtra: (count - 1) * tierStep + timeLine };
 }
 
-/** Weekends and holidays of the user's region, dimmed on a project bar (days and weeks zoom). */
-export function DaysOff({ start, finish, pixelsPerDay }: { start: Date; finish: Date; pixelsPerDay: number }) {
-  const calendar = useBoard((state) => state.calendar);
-  const isDayOff = useMemo(() => dayOffChecker(calendar), [calendar]);
-  const show = calendar.dim && scaleMode(pixelsPerDay) !== "months";
-  const [from, to] = [start.getTime(), finish.getTime()];
-  const runs = useMemo(() => (show ? daysOffRuns(new Date(from), new Date(to), isDayOff) : []), [show, from, to, isDayOff]);
-  const total = differenceInCalendarDays(finish, start) + 1;
-  return runs.map(({ offset, days }) => (
-    <div
-      key={offset}
-      className={`day-off${offset === 0 ? " first" : ""}${offset + days === total ? " last" : ""}`}
-      style={{ left: offset * pixelsPerDay, width: days * pixelsPerDay }}
-      aria-hidden
-    />
-  ));
-}

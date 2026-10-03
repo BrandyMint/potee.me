@@ -3,9 +3,18 @@ import { expect, test, type Page } from "@playwright/test";
 const row = (page: Page, title: string) => page.getByTestId(`project-${title}`);
 const projectPanel = (page: Page) => page.getByRole("region", { name: "Project panel" });
 
+/** First click selects a project, the second opens its panel (not a double click: that renames). */
+async function openProject(page: Page, title: string) {
+  const name = row(page, title).locator(".project-title-text");
+  await name.click();
+  await page.waitForTimeout(600);
+  await name.click();
+  await expect(projectPanel(page)).toBeVisible();
+}
+
 /** Selects a project and opens the details of its panel (dates, milestones). */
 async function openDetails(page: Page, title: string) {
-  await row(page, title).locator(".project-title-text").click();
+  await openProject(page, title);
   const panel = projectPanel(page);
   await panel.getByRole("button", { name: "Details: dates and milestones" }).click();
   return panel;
@@ -73,11 +82,11 @@ test("double click on empty space starts a project there, Escape cancels it", as
   await expect(page.locator(".project")).toHaveCount(3);
 });
 
-test("selecting a project opens its panel: rename and recolour", async ({ page }) => {
-  await row(page, "Learn Scala").locator(".project-title-text").click();
+test("selecting a project opens its panel: rename in the bar and recolour", async ({ page }) => {
+  await openProject(page, "Learn Scala");
   await expect(projectPanel(page).getByRole("toolbar", { name: "Learn Scala" })).toBeVisible();
   await projectPanel(page).getByRole("button", { name: "Rename" }).click();
-  const title = page.getByLabel("Selected project title");
+  const title = row(page, "Learn Scala").getByLabel("Project title");
   await expect(title).toBeFocused();
   await expect(title).toHaveValue("Learn Scala");
   await expect(row(page, "Make my wife happy")).toHaveClass(/inactive/);
@@ -89,7 +98,7 @@ test("selecting a project opens its panel: rename and recolour", async ({ page }
   await expect(row(page, "Learn Rust")).toHaveClass(/project-color-1/);
 
   const recoloured = apiCall(page, "PATCH", /^\/api\/projects\/\d+$/);
-  await page.getByRole("button", { name: "Change colour" }).click();
+  await projectPanel(page).getByRole("button", { name: "Details: dates and milestones" }).click();
   await page.getByRole("button", { name: "Colour 3" }).click();
   await recoloured;
   await expect(row(page, "Learn Rust")).toHaveClass(/project-color-2/);
@@ -98,8 +107,71 @@ test("selecting a project opens its panel: rename and recolour", async ({ page }
   await expect(row(page, "Learn Rust")).toHaveClass(/project-color-2/);
 });
 
-test("the project panel sits under the selected bar", async ({ page }) => {
+test("clicks on a project: select, open the panel, rename; a double click on the title renames", async ({ page }) => {
+  const title = row(page, "Learn Scala").locator(".project-title-text");
+  await title.click();
+  await expect(row(page, "Learn Scala")).not.toHaveClass(/inactive/);
+  await expect(projectPanel(page)).toHaveCount(0);
+  await page.waitForTimeout(600);
+  await title.click();
+  await expect(projectPanel(page)).toBeVisible();
+  await page.waitForTimeout(600);
+  await title.click();
+  await expect(row(page, "Learn Scala").getByLabel("Project title")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(row(page, "Learn Scala").locator(".project-title-text")).toBeVisible();
+
+  const events = await row(page, "Make my wife happy").locator(".event").count();
+  await row(page, "Make my wife happy").locator(".project-title-text").dblclick();
+  await expect(row(page, "Make my wife happy").getByLabel("Project title")).toBeFocused();
+  await expect(row(page, "Make my wife happy").locator(".event")).toHaveCount(events);
+});
+
+
+test("a double click adds a milestone even on the active project and opens no panel", async ({ page }) => {
+  const events = row(page, "Learn Scala").locator(".event");
+  const count = await events.count();
   await row(page, "Learn Scala").locator(".project-title-text").click();
+  await page.waitForTimeout(600);
+  const { box } = await center(bar(page, "Learn Scala"));
+  await page.mouse.dblclick(box.x + 140, box.y + box.height / 2);
+  await expect(events).toHaveCount(count + 1);
+  await page.waitForTimeout(600);
+  await expect(projectPanel(page)).toHaveCount(0);
+});
+
+test("renaming in the bar looks like a new project", async ({ page }) => {
+  const scala = row(page, "Learn Scala");
+  const events = await scala.locator(".event").count();
+  await openProject(page, "Learn Scala");
+  await page.waitForTimeout(600);
+  await scala.locator(".project-title-text").click();
+
+  await expect(scala.getByLabel("Project title")).toBeFocused();
+  await expect(scala).toHaveClass(/renaming/);
+  await expect(scala.locator(".draft-hint")).toBeVisible();
+  await expect(scala.locator(".event").first()).toBeHidden();
+  await expect(projectPanel(page)).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(scala.locator(".event")).toHaveCount(events);
+  await expect(projectPanel(page)).toBeVisible();
+});
+
+
+test("an expanded panel never covers its bar", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 520 });
+  const panel = await openDetails(page, "Learn Scala");
+  for (let i = 0; i < 6; i++) await panel.getByRole("button", { name: /add/ }).click();
+  await expect(async () => {
+    const barBox = (await bar(page, "Learn Scala").boundingBox())!;
+    const panelBox = (await panel.boundingBox())!;
+    const overlaps = panelBox.y < barBox.y + barBox.height && panelBox.y + panelBox.height > barBox.y;
+    expect(overlaps).toBe(false);
+  }).toPass();
+});
+
+test("the project panel sits under the selected bar", async ({ page }) => {
+  await openProject(page, "Learn Scala");
   const panel = projectPanel(page);
   await expect(panel).toBeVisible();
   await expect(async () => {
@@ -131,7 +203,7 @@ test("the expanded panel lists milestones, adds one and changes dates", async ({
   await finish.fill(next);
   await moved;
   await page.reload();
-  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await openProject(page, "Learn Scala");
   // The panel remembers that it was expanded.
   await expect(projectPanel(page).getByLabel("Finish date")).toHaveValue(next);
 });
@@ -179,13 +251,13 @@ test("dragging a milestone in the panel changes the order of steps, dates stay",
   await expect.poll(titles).toEqual([before[2], before[0], before[1]]);
   expect(await dates()).toEqual(days);
   await page.reload();
-  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await openProject(page, "Learn Scala");
   await expect.poll(titles).toEqual([before[2], before[0], before[1]]);
 });
 
 test("the panel copies the share link", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await openProject(page, "Learn Scala");
   const card = projectPanel(page);
   await card.getByRole("button", { name: "Share" }).click();
   await expect(card.getByRole("button", { name: "✓ Link copied" })).toBeVisible();
@@ -197,7 +269,8 @@ test("double click on a project adds an event, which can be renamed", async ({ p
   await expect(events).toHaveCount(3);
   const { box } = await center(bar(page, "Learn Scala"));
   const created = apiCall(page, "POST", /^\/api\/projects\/\d+\/events$/);
-  await page.mouse.dblclick(box.x + 60, box.y + box.height / 2);
+  // Past the title: a double click on the title renames the project instead.
+  await page.mouse.dblclick(box.x + 140, box.y + box.height / 2);
   expect((await created).status()).toBe(201);
   await expect(events).toHaveCount(4);
 
@@ -253,7 +326,7 @@ test("dragging a title reorders the projects", async ({ page }) => {
 });
 
 test("deletes a project", async ({ page }) => {
-  await row(page, "Make my wife happy").locator(".project-title-text").click();
+  await openProject(page, "Make my wife happy");
   const deleted = apiCall(page, "DELETE", /^\/api\/projects\/\d+$/);
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   expect((await deleted).status()).toBe(204);
@@ -271,7 +344,8 @@ test("keyboard zoom is remembered", async ({ page }) => {
 });
 
 test("Entire fits the selected project into the screen", async ({ page }) => {
-  await row(page, "Start my own business").locator(".project-title-text").click();
+  await openProject(page, "Start my own business");
+  await projectPanel(page).getByRole("button", { name: "Details: dates and milestones" }).click();
   await page.getByRole("button", { name: "Entire" }).click();
   await expect(page.getByRole("button", { name: "days" })).toHaveClass(/active/);
   await expect(async () => {
@@ -292,12 +366,14 @@ test("a share link adds the project to another visitor's board", async ({ page, 
   await visitorPage.goto(new URL(shareUrl).pathname);
   await expect(visitorPage).toHaveURL(/\/projects$/);
   await expect(visitorPage.locator(".project")).toHaveCount(4);
-  await expect(projectPanel(visitorPage).getByRole("toolbar", { name: "Learn Scala" })).toBeVisible();
+  // The shared project is selected; the visitor's own sample with the same title is not.
+  await expect(visitorPage.locator('[data-testid="project-Learn Scala"]:not(.inactive)')).toHaveCount(1);
+  await expect(row(visitorPage, "Make my wife happy")).toHaveClass(/inactive/);
   await visitor.close();
 });
 
 test("a deleted project can be restored with Undo", async ({ page }) => {
-  await row(page, "Learn Scala").locator(".project-title-text").click();
+  await openProject(page, "Learn Scala");
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(row(page, "Learn Scala")).toHaveCount(0);
   await page.getByRole("button", { name: "Undo" }).click();
@@ -310,7 +386,7 @@ test("a deleted project can be restored with Undo", async ({ page }) => {
 
 test("an empty board explains how to start", async ({ page }) => {
   for (const title of ["Learn Scala", "Make my wife happy", "Start my own business"]) {
-    await row(page, title).locator(".project-title-text").click();
+    await openProject(page, title);
     await page.getByRole("button", { name: "Delete", exact: true }).click();
   }
   await expect(page.getByRole("heading", { name: "Your board is empty" })).toBeVisible();
@@ -354,7 +430,7 @@ test.describe("on a phone", () => {
     for (const box of boxes) expect(box!.x + box!.width).toBeLessThanOrEqual(header.x + header.width + 1);
     for (let i = 1; i < boxes.length; i++) expect(boxes[i]!.x).toBeGreaterThanOrEqual(boxes[i - 1]!.x + boxes[i - 1]!.width - 1);
 
-    await row(page, "Learn Scala").locator(".project-title-text").click();
+    await openProject(page, "Learn Scala");
     const card = (await projectPanel(page).boundingBox())!;
     expect(card.y + card.height).toBeGreaterThan(800);
   });

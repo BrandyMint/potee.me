@@ -9,7 +9,7 @@ test("signing up keeps the board, logging back in restores it", async ({ page, b
   await page.getByLabel("Project title").press("Enter");
   await expect(page.getByTestId("project-Before sign up")).toBeVisible();
 
-  await page.getByRole("link", { name: "Sign up to save your projects" }).click();
+  await page.getByRole("link", { name: "Save your board" }).click();
   const email = uniqueEmail();
   await page.getByLabel("Email").fill(email);
   await page.getByLabel(/Password/).fill("secret-password");

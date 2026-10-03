@@ -15,6 +15,10 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
   const pixelsPerDay = useBoard((state) => state.pixelsPerDay);
   const setScale = useBoard((state) => state.setScale);
   const user = useBoard((state) => state.user);
+  // The "save your board" link waits for the visitor's own first change.
+  const projects = useBoard((state) => state.projects);
+  const [initialProjects] = useState(projects);
+  const edited = user.edited || projects !== initialProjects;
   const planEnabled = useBoard((state) => state.features.plan_from_text);
   const setPlanOpen = useBoard((state) => state.setPlanOpen);
   const mode = scaleMode(pixelsPerDay);
@@ -61,7 +65,7 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
       )}
       <div className="header-spacer" />
       <HelpButton />
-      <Account email={user.email} anonymous={user.anonymous} />
+      <Account email={user.email} anonymous={user.anonymous} edited={edited} />
     </header>
   );
 }
@@ -108,15 +112,17 @@ function HelpButton() {
   );
 }
 
-function Account({ email, anonymous }: { email: string | null; anonymous: boolean }) {
+function Account({ email, anonymous, edited }: { email: string | null; anonymous: boolean; edited: boolean }) {
   const text = t();
   if (anonymous) {
     return (
       <nav className="account">
-        <a className="signup-hint" href="/signup">
-          <span className="label-long">{text.signUp}</span>
-          <span className="label-short">{text.signUpShort}</span>
-        </a>
+        {edited && (
+          <a className="signup-hint" href="/signup">
+            <span className="label-long">{text.signUp}</span>
+            <span className="label-short">{text.signUpShort}</span>
+          </a>
+        )}
         <a href="/login">{text.logIn}</a>
       </nav>
     );
