@@ -156,6 +156,7 @@ button {
 
 .account .signup-hint {
   color: #ccc;
+  animation: fade-in 0.4s ease-out;
 }
 
 .account-email {
@@ -262,7 +263,7 @@ button {
   bottom: 0;
   width: 2px;
   margin-left: -1px;
-  background: color-mix(in srgb, var(--danger) 75%, transparent);
+  background: color-mix(in srgb, var(--danger) 40%, transparent);
 }
 
 /* Weekends and holidays (WorkCalendar) only fade their dates in the header. */
@@ -342,24 +343,45 @@ button {
 
 /* Rows change height when their labels need more or fewer tiers (zoom, a new
    milestone): the row, its bar and labels glide there instead of jumping. */
-.project-bar,
 .event-bar,
 .event-title,
 .event-connector,
 .draft-hint,
 .edge-label {
-  transition: top 0.15s ease-out, height 0.15s ease-out;
+  transition: top 0.15s ease-out, height 0.15s ease-out, opacity 0.15s ease-out;
+}
+
+/* Selecting a project greys the others: colours change smoothly too. */
+.project-bar {
+  transition: top 0.15s ease-out, height 0.15s ease-out, background-color 0.2s ease-out;
+}
+
+.project-title-text {
+  transition: color 0.2s ease-out;
+}
+
+/* The header fades out and back while a title is typed. */
+.board-header > * {
+  transition: opacity 0.15s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .project,
   .project-bar,
+  .project-title-text,
+  .board-header > *,
   .event-bar,
   .event-title,
   .event-connector,
   .draft-hint,
   .edge-label {
     transition: none;
+  }
+
+  .plan-backdrop,
+  .plan-panel.centred,
+  .account .signup-hint {
+    animation: none;
   }
 }
 
@@ -703,7 +725,12 @@ button {
 .board.editing .board-header > :not(.brand) {
   opacity: 0.2;
   pointer-events: none;
-  transition: opacity 0.15s;
+}
+
+/* Hovering a milestone fades the other milestones of its project, so one
+   among overlapping labels can be read. */
+.project:has(.event:hover):not(.editing-event) .event:not(:hover) > * {
+  opacity: 0.15;
 }
 
 /* While a milestone is edited, the other milestones of its project fade out
@@ -716,9 +743,13 @@ button {
   opacity: 0.12;
 }
 
-/* While a title is typed in the bar, its milestones step aside. */
+/* While a title is typed in the bar, its milestones fade away. */
 .project.renaming .event {
-  display: none;
+  pointer-events: none;
+}
+
+.project.renaming .event > * {
+  opacity: 0;
 }
 
 /* Events don't form their own layer, so every connector (z 2) stays under
@@ -1053,6 +1084,23 @@ button {
 
 @keyframes panel-in {
   from { opacity: 0; }
+}
+
+/* A closed panel fades out (PANEL_FADE_MS in ProjectPanel.tsx). */
+.project-panel.closing {
+  pointer-events: none;
+  animation: panel-out 0.14s ease-in forwards;
+}
+
+@keyframes panel-out {
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-panel,
+  .project-panel.closing {
+    animation: none;
+  }
 }
 
 /* Arrow pointing at the bar. */
@@ -1458,6 +1506,15 @@ button {
   background: rgb(0 0 0 / 0.35);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+.plan-panel.centred {
+  animation: fade-in 0.2s ease-out;
 }
 
 .plan-panel.centred {

@@ -1,5 +1,6 @@
 import { format, set as setTime } from "date-fns";
 import {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -44,11 +45,26 @@ export function ProjectPanel() {
   const open = useBoard((state) => state.panelOpen);
   // The first click only selects the project; the second opens the panel.
   // While the title is edited in the bar, the panel steps aside for its hint.
-  if (!card || !isSaved(card.id) || !open || renaming) return null;
-  return <Panel key={card.id} card={card} />;
+  const visible = card !== undefined && isSaved(card.id) && open && !renaming;
+  // A closed panel stays a moment longer, fading out (not clickable).
+  const [shown, setShown] = useState<Card | null>(null);
+  useEffect(() => {
+    if (visible) {
+      setShown(card);
+      return;
+    }
+    const timer = window.setTimeout(() => setShown(null), PANEL_FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [visible, card]);
+  const current = visible ? card : shown;
+  if (!current) return null;
+  return <Panel key={current.id} card={current} closing={!visible} />;
 }
 
-function Panel({ card }: { card: Card }) {
+/** Fade-out of a closed panel; matches the panel-out animation in board.css. */
+const PANEL_FADE_MS = 140;
+
+function Panel({ card, closing }: { card: Card; closing: boolean }) {
   const { showProject, goToDate, today } = useBoardView();
   const updateProject = useBoard((state) => state.updateProject);
   const deleteProject = useBoard((state) => state.deleteProject);
@@ -95,7 +111,7 @@ function Panel({ card }: { card: Card }) {
   return (
     <div
       ref={panel}
-      className={`project-panel project-color-${card.color_index}${expanded ? " expanded" : ""}`}
+      className={`project-panel project-color-${card.color_index}${expanded ? " expanded" : ""}${closing ? " closing" : ""}`}
       role="region"
       aria-label={text.projectPanel}
     >
