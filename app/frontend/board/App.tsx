@@ -216,7 +216,10 @@ function Board() {
   // Keyboard shortcuts (see Keystrokes.md).
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (isFormControl(event.target) || event.metaKey || event.ctrlKey || event.altKey) return;
+      // Fields handle their own keys; Esc still works from a focused button
+      // (e.g. "Details" right after opening the dialog).
+      const typing = event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable]") !== null;
+      if ((event.key === "Escape" ? typing : isFormControl(event.target)) || event.metaKey || event.ctrlKey || event.altKey) return;
       const state = store.getState();
       switch (event.key) {
         case "+":

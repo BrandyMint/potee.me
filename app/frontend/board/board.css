@@ -731,6 +731,9 @@ button {
    among overlapping labels (of this or a neighbouring project) can be read. */
 .board:not(.editing):has(.event:hover) .event:not(:hover) > * {
   opacity: 0.15;
+  /* Only once the pointer rests on a milestone: no flicker while it passes
+     over the board. Coming back has no delay. */
+  transition-delay: 0.25s;
 }
 
 /* While a milestone is edited, the other milestones of its project fade out
@@ -1055,39 +1058,44 @@ button {
   }
 }
 
-/* Panel of the selected project, attached under its bar (positioned by
-   ProjectPanel.tsx every frame). "Details" expands it into title, dates and
-   milestones; on phones it is a bottom sheet (see below). */
+/* Details of the selected project: a dialog in the middle of the blurred
+   board (ProjectPanel.tsx); on phones a bottom sheet (see below). */
+
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 54;
+  background: rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: panel-in 0.14s ease-out;
+}
 
 .project-panel {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
   z-index: 55;
   display: flex;
   flex-direction: column;
-  max-width: calc(100vw - 24px);
-  max-height: calc(100vh - var(--header-height) - 24px);
+  width: min(460px, calc(100vw - 24px));
+  max-height: calc(100vh - 48px);
   border: 1px solid #3a3a3a;
   border-radius: 10px;
   background: #222;
   box-shadow: 0 12px 32px rgb(0 0 0 / 0.55);
   color: #bbb;
+  transform: translate(-50%, -50%);
   animation: panel-in 0.14s ease-out;
-}
-
-/* As wide as the toolbar; the details wrap to it. */
-.project-panel.expanded {
-  width: min-content;
-  min-width: 380px;
 }
 
 @keyframes panel-in {
   from { opacity: 0; }
 }
 
-/* A closed panel fades out (PANEL_FADE_MS in ProjectPanel.tsx). */
-.project-panel.closing {
+/* A closed dialog fades out (PANEL_FADE_MS in ProjectPanel.tsx). */
+.project-panel.closing,
+.panel-backdrop.closing {
   pointer-events: none;
   animation: panel-out 0.14s ease-in forwards;
 }
@@ -1098,32 +1106,90 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .project-panel,
-  .project-panel.closing {
+  .project-panel.closing,
+  .panel-backdrop,
+  .panel-backdrop.closing {
     animation: none;
   }
 }
 
-/* Arrow pointing at the bar. */
-.project-panel::before {
-  content: "";
-  position: absolute;
-  left: var(--arrow-x, 22px);
-  width: 10px;
-  height: 10px;
-  background: #222;
-  transform: rotate(45deg);
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px 10px 22px;
 }
 
-.project-panel[data-placement="below"]::before {
-  top: -6px;
-  border-top: 1px solid #3a3a3a;
-  border-left: 1px solid #3a3a3a;
+.panel-header h2 {
+  flex: 1;
+  margin: 0;
+  overflow: hidden;
+  color: #eee;
+  font-size: 18px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.project-panel[data-placement="above"]::before {
-  bottom: -6px;
-  border-right: 1px solid #3a3a3a;
-  border-bottom: 1px solid #3a3a3a;
+.panel-close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: #ccc;
+  place-items: center;
+}
+
+.panel-close:hover {
+  background: #333;
+  color: #fff;
+}
+
+/* Tools of the selected project in the board header. */
+.project-tools {
+  position: relative;
+  min-width: 0;
+  padding: 0;
+}
+
+.project-tools-colour {
+  position: relative;
+}
+
+/* The project's colour as a dot: the colour tool and the dialog title. */
+.panel-colour {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.2);
+}
+
+/* Swatches keep their colour inside the toolbar, pressed or hovered. */
+.project-tools .panel-palette button,
+.project-tools .panel-palette button:hover,
+.project-tools .panel-palette button[aria-pressed="true"] {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.project-tools .popover.panel-palette {
+  top: calc(100% + 8px);
+  left: 0;
+  padding: 10px;
+}
+
+.project-tools .popover.panel-share-url {
+  top: calc(100% + 8px);
+  left: 0;
+  width: 320px;
 }
 
 .project-panel button {
@@ -1203,7 +1269,7 @@ button {
 }
 
 .panel-share-url {
-  margin: 0 12px 12px;
+  margin: 0;
 }
 
 .panel-body {
@@ -1463,28 +1529,32 @@ button {
 }
 
 @media (max-width: 760px) {
-  .project-panel,
-  .project-panel.expanded {
+  .project-panel {
     top: auto;
     right: 0;
     bottom: 0;
+    left: 0;
     width: auto;
-    max-width: none;
     max-height: 70vh;
     border-radius: 12px 12px 0 0;
     padding-bottom: env(safe-area-inset-bottom);
+    transform: none;
   }
 
-  .project-panel::before {
+  /* The header has no room for the title and labels of the tools, nor for
+     help and account while a project is selected. */
+  .panel-label,
+  .board-header:has(.project-tools) .help,
+  .board-header:has(.project-tools) .account {
     display: none;
   }
 
-  .panel-toolbar {
+  .board-header .scale-buttons {
+    flex: none;
+  }
+
+  .project-tools {
     overflow-x: auto;
-  }
-
-  .panel-label {
-    display: none;
   }
 }
 

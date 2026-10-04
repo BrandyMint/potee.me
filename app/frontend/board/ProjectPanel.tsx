@@ -1,13 +1,11 @@
 import { format, set as setTime } from "date-fns";
 import {
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
   type PointerEvent,
   type ReactNode,
-  type RefObject,
 } from "react";
 import { useBoard, useBoardView } from "./context";
 import { startDrag } from "./drag";
@@ -16,37 +14,122 @@ import { isSaved } from "./store";
 import { COLORS_COUNT, formatDay, parseDay, projectDays } from "./timeline";
 import type { BoardEvent, Card } from "./types";
 
-const EXPANDED_KEY = "potee.projectPanelExpanded";
-
-function readExpanded(): boolean {
-  try {
-    return localStorage.getItem(EXPANDED_KEY) === "1";
-  } catch {
-    return false;
-  }
+/**
+ * Tools of the selected project, shown in the board header in place of "New
+ * project" and "Plan from text": rename (in the bar), share, colour, Entire,
+ * delete, details (the dialog below) and deselect.
+ */
+export function ProjectTools() {
+  const card = useBoard((state) => state.projects.find((project) => project.id === state.selectedId));
+  if (!card || !isSaved(card.id)) return null;
+  return <Tools key={card.id} card={card} />;
 }
 
-function writeExpanded(expanded: boolean): void {
-  try {
-    localStorage.setItem(EXPANDED_KEY, expanded ? "1" : "0");
-  } catch {
-    // Private mode or blocked storage: the panel just starts collapsed next time.
-  }
+function Tools({ card }: { card: Card }) {
+  const { showProject } = useBoardView();
+  const updateProject = useBoard((state) => state.updateProject);
+  const deleteProject = useBoard((state) => state.deleteProject);
+  const renameProject = useBoard((state) => state.renameProject);
+  const openPanel = useBoard((state) => state.openPanel);
+  const select = useBoard((state) => state.select);
+  const [share, setShare] = useState<"idle" | "copied" | "manual">("idle");
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const palette = useRef<HTMLDivElement>(null);
+  const text = t();
+
+  // The palette closes on a click elsewhere.
+  useEffect(() => {
+    if (!paletteOpen) return;
+    const close = (event: Event) => {
+      if (!palette.current?.contains(event.target as Node)) setPaletteOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [paletteOpen]);
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(card.share_url);
+      setShare("copied");
+      setTimeout(() => setShare("idle"), 2000);
+    } catch {
+      // No clipboard access (e.g. plain http): show the link to copy by hand.
+      setShare("manual");
+    }
+  };
+  const removeLabel = card.owner ? text.delete : text.removeFromBoard;
+
+  return (
+    <div className={`panel-toolbar project-tools project-color-${card.color_index}`} role="toolbar" aria-label={card.title}>
+      <ToolButton label={text.rename} onClick={() => renameProject(card.id)}>
+        <Icon path="M4 20h4L19 9l-4-4L4 16z" />
+      </ToolButton>
+      <ToolButton label={share === "copied" ? `✓ ${text.linkCopied}` : text.share} hint={text.shareHint} onClick={() => void copyLink()} text>
+        <Icon path="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
+      </ToolButton>
+      <div className="project-tools-colour" ref={palette}>
+        <ToolButton label={text.changeColour} pressed={paletteOpen} onClick={() => setPaletteOpen(!paletteOpen)}>
+          <span className="panel-colour" />
+        </ToolButton>
+        {paletteOpen && (
+          <div className="popover panel-palette" role="group" aria-label={text.changeColour}>
+            {Array.from({ length: COLORS_COUNT }, (_, index) => (
+              <button
+                key={index}
+                type="button"
+                className={`project-color-${index}${index === card.color_index ? " current" : ""}`}
+                aria-label={text.colour(index + 1)}
+                aria-pressed={index === card.color_index}
+                onClick={() => {
+                  setPaletteOpen(false);
+                  void updateProject(card.id, { color_index: index });
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      <ToolButton label={text.entire} hint={text.entireHint} onClick={() => showProject(card.id)}>
+        <Icon path="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7M21 15v6h-6M21 21l-7-7M3 9V3h6M3 3l7 7" />
+      </ToolButton>
+      <ToolButton label={removeLabel} className="danger" onClick={() => deleteProject(card.id)}>
+        <Icon path="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+      </ToolButton>
+      <span className="panel-separator" />
+      <ToolButton label={text.details} hint={text.detailsHint} onClick={() => openPanel(true)} text>
+        <Icon path="M4 6h16M4 12h16M4 18h10" />
+      </ToolButton>
+      <ToolButton label={text.close} hint={`${text.close} (Esc)`} onClick={() => select(null)}>
+        <Icon path="M6 6l12 12M18 6L6 18" />
+      </ToolButton>
+      {share === "manual" && (
+        <input
+          className="popover panel-share-url"
+          readOnly
+          autoFocus
+          aria-label={text.copyLink}
+          value={card.share_url}
+          onFocus={(event) => event.currentTarget.select()}
+          onBlur={() => setShare("idle")}
+        />
+      )}
+    </div>
+  );
 }
 
 /**
- * Panel of the selected project, attached under its bar: colour, rename, Entire,
- * Share, delete. "Details" expands it into title, dates and the milestone list.
- * On narrow screens it is a bottom sheet.
+ * Details of the selected project in a dialog in the middle of the blurred
+ * board: dates and the milestone list (add, move, reorder, delete).
+ * Opened by "Details" in the header or a second click on the project; on
+ * narrow screens it is a bottom sheet.
  */
 export function ProjectPanel() {
   const card = useBoard((state) => state.projects.find((project) => project.id === state.selectedId));
   const renaming = useBoard((state) => state.renamingId !== null && state.renamingId === state.selectedId);
   const open = useBoard((state) => state.panelOpen);
-  // The first click only selects the project; the second opens the panel.
-  // While the title is edited in the bar, the panel steps aside for its hint.
+  // While the title is edited in the bar, the dialog steps aside.
   const visible = card !== undefined && isSaved(card.id) && open && !renaming;
-  // A closed panel stays a moment longer, fading out (not clickable).
+  // A closed dialog stays a moment longer, fading out (not clickable).
   const [shown, setShown] = useState<Card | null>(null);
   useEffect(() => {
     if (visible) {
@@ -61,27 +144,16 @@ export function ProjectPanel() {
   return <Panel key={current.id} card={current} closing={!visible} />;
 }
 
-/** Fade-out of a closed panel; matches the panel-out animation in board.css. */
+/** Fade-out of a closed dialog; matches the panel-out animation in board.css. */
 const PANEL_FADE_MS = 140;
 
 function Panel({ card, closing }: { card: Card; closing: boolean }) {
-  const { showProject, goToDate, today } = useBoardView();
+  const { goToDate, today } = useBoardView();
   const updateProject = useBoard((state) => state.updateProject);
-  const deleteProject = useBoard((state) => state.deleteProject);
   const addEvent = useBoard((state) => state.addEvent);
   const openPanel = useBoard((state) => state.openPanel);
-  const renameProject = useBoard((state) => state.renameProject);
-  const [expanded, setExpandedState] = useState(readExpanded);
-  const [share, setShare] = useState<"idle" | "copied" | "manual">("idle");
-  const panel = useRef<HTMLDivElement>(null);
   const text = t();
 
-  usePanelPosition(panel, card.id);
-
-  const setExpanded = (value: boolean) => {
-    setExpandedState(value);
-    writeExpanded(value);
-  };
   const changeDate = (field: "started_on" | "finished_on", value: string) => {
     if (!value) return;
     const next = { started_on: card.started_on, finished_on: card.finished_on, [field]: value };
@@ -94,61 +166,25 @@ function Panel({ card, closing }: { card: Card; closing: boolean }) {
     void addEvent(card.id, at);
     goToDate(at);
   };
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(card.share_url);
-      setShare("copied");
-      setTimeout(() => setShare("idle"), 2000);
-    } catch {
-      // No clipboard access (e.g. plain http): show the link to copy by hand.
-      setShare("manual");
-    }
-  };
 
   const events = [...card.events].sort((a, b) => a.at.localeCompare(b.at));
-  const removeLabel = card.owner ? text.delete : text.removeFromBoard;
 
   return (
-    <div
-      ref={panel}
-      className={`project-panel project-color-${card.color_index}${expanded ? " expanded" : ""}${closing ? " closing" : ""}`}
-      role="region"
-      aria-label={text.projectPanel}
-    >
-      <div className="panel-toolbar" role="toolbar" aria-label={card.title}>
-        <ToolButton label={text.rename} onClick={() => renameProject(card.id)}>
-          <Icon path="M4 20h4L19 9l-4-4L4 16z" />
-        </ToolButton>
-        <ToolButton label={share === "copied" ? `✓ ${text.linkCopied}` : text.share} hint={text.shareHint} onClick={() => void copyLink()} text>
-          <Icon path="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
-        </ToolButton>
-        <ToolButton label={text.entire} hint={text.entireHint} onClick={() => showProject(card.id)}>
-          <Icon path="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7M21 15v6h-6M21 21l-7-7M3 9V3h6M3 3l7 7" />
-        </ToolButton>
-        <span className="panel-separator" />
-        <ToolButton label={removeLabel} className="danger" onClick={() => deleteProject(card.id)}>
-          <Icon path="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
-        </ToolButton>
-        <ToolButton label={expanded ? text.collapse : text.details} pressed={expanded} onClick={() => setExpanded(!expanded)}>
-          <Icon path={expanded ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"} />
-        </ToolButton>
-        <ToolButton label={text.close} hint={`${text.close} (Esc)`} onClick={() => openPanel(false)}>
-          <Icon path="M6 6l12 12M18 6L6 18" />
-        </ToolButton>
-      </div>
-
-      {share === "manual" && (
-        <input
-          className="panel-share-url"
-          readOnly
-          autoFocus
-          aria-label={text.copyLink}
-          value={card.share_url}
-          onFocus={(event) => event.currentTarget.select()}
-        />
-      )}
-
-      {expanded && (
+    <>
+      <div className={`panel-backdrop${closing ? " closing" : ""}`} onClick={() => openPanel(false)} aria-hidden />
+      <div
+        className={`project-panel project-color-${card.color_index}${closing ? " closing" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={text.projectPanel}
+      >
+        <header className="panel-header">
+          <span className="panel-colour" aria-hidden />
+          <h2>{card.title}</h2>
+          <button type="button" className="panel-close" aria-label={text.close} title={`${text.close} (Esc)`} onClick={() => openPanel(false)}>
+            <Icon path="M6 6l12 12M18 6L6 18" />
+          </button>
+        </header>
         <div className="panel-body">
           <section>
             <h3>
@@ -159,22 +195,6 @@ function Panel({ card, closing }: { card: Card; closing: boolean }) {
               <input type="date" aria-label={text.startDate} value={card.started_on} max={card.finished_on} onChange={(event) => changeDate("started_on", event.target.value)} />
               <span aria-hidden>→</span>
               <input type="date" aria-label={text.finishDate} value={card.finished_on} min={card.started_on} onChange={(event) => changeDate("finished_on", event.target.value)} />
-            </div>
-          </section>
-
-          <section>
-            <h3>{text.changeColour}</h3>
-            <div className="panel-palette" role="group" aria-label={text.changeColour}>
-              {Array.from({ length: COLORS_COUNT }, (_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={`project-color-${index}${index === card.color_index ? " current" : ""}`}
-                  aria-label={text.colour(index + 1)}
-                  aria-pressed={index === card.color_index}
-                  onClick={() => void updateProject(card.id, { color_index: index })}
-                />
-              ))}
             </div>
           </section>
 
@@ -191,10 +211,9 @@ function Panel({ card, closing }: { card: Card; closing: boolean }) {
               <MilestoneList projectId={card.id} events={events} today={today} />
             )}
           </section>
-
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -212,7 +231,8 @@ function ToolButton(props: {
     <button
       type="button"
       className={props.className}
-      aria-label={props.text ? undefined : props.label}
+      // Always named: on phones the visible label is hidden.
+      aria-label={props.label}
       aria-pressed={props.pressed}
       title={props.hint ?? props.label}
       onClick={props.onClick}
@@ -229,56 +249,6 @@ function Icon({ path }: { path: string }) {
       <path d={path} />
     </svg>
   );
-}
-
-/**
- * Keeps the panel under the visible part of the selected bar while the board
- * scrolls, zooms or the bar is dragged; flips it above the bar when there is
- * no room below. Positions are written straight to the element every frame.
- */
-function usePanelPosition(ref: RefObject<HTMLDivElement | null>, projectId: number) {
-  useLayoutEffect(() => {
-    const narrow = window.matchMedia("(max-width: 760px)");
-    let frame = 0;
-    const place = () => {
-      frame = requestAnimationFrame(place);
-      const panel = ref.current;
-      const bar = document.querySelector(`[data-project-id="${projectId}"] .project-bar`);
-      const viewport = document.querySelector('[data-testid="viewport"]');
-      if (!panel || !bar || !viewport) return;
-      if (narrow.matches) {
-        panel.style.transform = "";
-        panel.style.visibility = "";
-        return;
-      }
-      const box = bar.getBoundingClientRect();
-      const view = viewport.getBoundingClientRect();
-      const margin = 12;
-      const gap = 10;
-      const width = panel.offsetWidth;
-      // Natural height, even while capped (then the body scrolls): the panel
-      // never covers its bar.
-      const body = panel.querySelector<HTMLElement>(".panel-body");
-      const height = panel.offsetHeight + (body ? body.scrollHeight - body.clientHeight : 0);
-      const x = Math.max(view.left + margin, Math.min(box.left, view.right - margin - width));
-      const below = box.bottom + gap;
-      const roomBelow = view.bottom - margin - below;
-      const roomAbove = box.top - gap - (view.top + margin);
-      const flip = height > roomBelow && (height <= roomAbove || roomAbove > roomBelow);
-      const room = flip ? roomAbove : roomBelow;
-      panel.style.maxHeight = height > room ? `${Math.max(120, Math.floor(room))}px` : "";
-      const shown = Math.min(height, Math.max(120, room));
-      const y = flip ? box.top - gap - shown : below;
-      const onScreen = box.bottom > view.top && box.top < view.bottom && box.right > view.left && box.left < view.right;
-      const arrow = Math.max(14, Math.min(width - 24, Math.max(box.left, x) + 22 - x));
-      panel.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-      panel.style.visibility = onScreen ? "" : "hidden";
-      panel.style.setProperty("--arrow-x", `${Math.round(arrow)}px`);
-      panel.dataset.placement = flip ? "above" : "below";
-    };
-    place();
-    return () => cancelAnimationFrame(frame);
-  }, [ref, projectId]);
 }
 
 /**
@@ -375,6 +345,7 @@ function MilestoneItem({
   const updateEvent = useBoard((state) => state.updateEvent);
   const deleteEvent = useBoard((state) => state.deleteEvent);
   const editEvent = useBoard((state) => state.editEvent);
+  const openPanel = useBoard((state) => state.openPanel);
   const dateInput = useRef<HTMLInputElement>(null);
   const timeInput = useRef<HTMLInputElement>(null);
   const text = t();
@@ -432,6 +403,8 @@ function MilestoneItem({
         className="milestone-title"
         onPointerDown={onDragStart}
         onClick={() => {
+          // The milestone is edited on the board: the dialog steps aside.
+          openPanel(false);
           goToDate(at);
           editEvent(event.id);
         }}

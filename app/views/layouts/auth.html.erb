@@ -4,7 +4,8 @@
 <% end %>
 <% content_for :page do %>
   <main class="auth <%= yield :auth_class %>">
-    <%= link_to root_path, class: "auth-logo" do %>
+    <%# Back to the visitor's board when there is one, otherwise the landing. %>
+    <%= link_to(session_user ? board_path : root_path, class: "auth-logo") do %>
       <%= image_tag "logo.png", alt: "Potee" %>
     <% end %>
     <%= render "shared/flash" %>

@@ -9,6 +9,15 @@ RSpec.describe "Email sign-up and log-in", type: :request do
     post login_path, params: { email:, password: }
   end
 
+  it "leads the logo of the auth pages back to the board, or to the landing without one" do
+    get signup_path
+    expect(response.body).to include(%(class="auth-logo" href="#{root_path}"))
+
+    sign_in_anonymously
+    get signup_path
+    expect(response.body).to include(%(class="auth-logo" href="#{board_path}"))
+  end
+
   describe "sign up" do
     it "turns the anonymous user into an account and keeps the board" do
       anonymous = sign_in_anonymously

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import logoUrl from "../images/logo.png";
 import { useBoard, useBoardView } from "./context";
 import { t } from "./i18n";
+import { ProjectTools } from "./ProjectPanel";
+import { isSaved } from "./store";
 import { SCALE, scaleMode, xOf, type ScaleMode } from "./timeline";
 
 const SCALE_BUTTONS: { mode: ScaleMode; pixelsPerDay: number }[] = [
@@ -20,6 +22,8 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
   const [initialProjects] = useState(projects);
   const edited = user.edited || projects !== initialProjects;
   const planEnabled = useBoard((state) => state.features.plan_from_text);
+  // A selected project puts its tools here instead of "New project".
+  const projectSelected = useBoard((state) => state.selectedId !== null && isSaved(state.selectedId));
   const setPlanOpen = useBoard((state) => state.setPlanOpen);
   const mode = scaleMode(pixelsPerDay);
   const text = t();
@@ -53,15 +57,21 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
           {todayDirection === "left" ? text.moveToTodayLeft : text.moveToTodayRight}
         </button>
       )}
-      <button type="button" className="new-project" onClick={onNewProject} title={text.newProjectHint} aria-label={text.newProject}>
-        <span aria-hidden>+</span>
-        <span className="label-long">{text.newProject}</span>
-      </button>
-      {planEnabled && (
-        <button type="button" className="plan-button" onClick={() => setPlanOpen(true)} title={text.planFromText} aria-label={text.planFromText}>
-          <span aria-hidden>✨</span>
-          <span className="label-long">{text.planFromText}</span>
-        </button>
+      {projectSelected ? (
+        <ProjectTools />
+      ) : (
+        <>
+          <button type="button" className="new-project" onClick={onNewProject} title={text.newProjectHint} aria-label={text.newProject}>
+            <span aria-hidden>+</span>
+            <span className="label-long">{text.newProject}</span>
+          </button>
+          {planEnabled && (
+            <button type="button" className="plan-button" onClick={() => setPlanOpen(true)} title={text.planFromText} aria-label={text.planFromText}>
+              <span aria-hidden>✨</span>
+              <span className="label-long">{text.planFromText}</span>
+            </button>
+          )}
+        </>
       )}
       <div className="header-spacer" />
       <HelpButton />
