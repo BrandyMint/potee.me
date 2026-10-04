@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Build the image of a release and roll it out to production (goga-infra).
+#   bin/deploy [X.Y.Z]   (the version in VERSION by default)
+# The image is tagged with the version and built from the release tag's tree
+# (git archive: nothing uncommitted or untracked gets in) on the machine's buildx
+# builder; deployment config lives in brandymint/infra.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+version="${1:-$(cat VERSION)}"
+image="registry.brandymint.ru/dapi/potee:$version"
+infra="${INFRA_DIR:-$HOME/code/brandymint/infra}"
+apps="environments/goga-infra/apps.yaml.gotmpl"
+
+git fetch --quiet --tags
+git rev-parse --quiet --verify "v$version^{commit}" >/dev/null || { echo "No tag v$version: run bin/release first" >&2; exit 1; }
+# app-update commits the whole apps file: never take someone else's edits along.
+git -C "$infra" diff --quiet -- "$apps" || { echo "$infra/$apps has uncommitted changes" >&2; exit 1; }
+
+git archive "v$version" | docker buildx build --platform linux/amd64 --push -t "$image" -
+(cd "$infra" && git pull --rebase --autostash --quiet && direnv exec . make app-update STAGE=goga-infra APP=potee TAG="$version")
+
+for _ in $(seq 1 40); do
+  status="$(cd "$infra" && direnv exec . make app-status STAGE=goga-infra APP=potee 2>&1 | grep 'Deployment status' || true)"
+  case "$status" in *"consistent $version"*) break ;; esac
+  sleep 15
+done
+echo "$status"
+case "$status" in *"consistent $version"*) ;; *) exit 1 ;; esac
+curl -fsS -o /dev/null https://potee.pismenny.ru/ && echo "potee $version is live"

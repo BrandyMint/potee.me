@@ -57,7 +57,7 @@ class McpController < ActionController::API
     {
       protocolVersion: PROTOCOL_VERSIONS.include?(requested_version) ? requested_version : PROTOCOL_VERSIONS.first,
       capabilities: { tools: { listChanged: false } },
-      serverInfo: { name: "potee", title: "Potee", version: "1.0" },
+      serverInfo: { name: "potee", title: "Potee", version: Potee::VERSION },
       instructions: INSTRUCTIONS
     }
   end

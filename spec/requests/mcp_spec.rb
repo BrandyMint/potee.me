@@ -28,6 +28,7 @@ RSpec.describe "MCP server", type: :request do
     result = rpc("initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "test", version: "1" } })["result"]
     expect(result).to include("protocolVersion" => "2025-06-18", "capabilities" => { "tools" => { "listChanged" => false } })
     expect(result["instructions"]).to include("list_projects")
+    expect(result["serverInfo"]).to include("version" => Potee::VERSION)
 
     post mcp_path, params: { jsonrpc: "2.0", method: "notifications/initialized" }.to_json,
                    headers: { "CONTENT_TYPE" => "application/json", "Authorization" => "Bearer #{token}" }

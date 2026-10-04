@@ -53,4 +53,13 @@ E2E tests share the dev database; each test gets a fresh browser context, which 
 
 ### Deployment
 
-https://potee.pismenny.ru runs in the `goga-office` cluster; deployment config lives in `~/code/brandymint/infra` (`STAGE=goga-infra APP=potee`). Images are never built locally: `docker buildx build --platform linux/amd64 --push -t registry.brandymint.ru/dapi/potee:$(git rev-parse HEAD) .` goes to the machine's builder (`BUILDX_BUILDER`, see `~/dotfiles`), then in infra `direnv exec . make app-update STAGE=goga-infra APP=potee TAG=<sha>`. `.dockerignore` is a whitelist because the build context may leave the machine.
+https://potee.pismenny.ru runs in the `goga-office` cluster; deployment config lives in `~/code/brandymint/infra` (`STAGE=goga-infra APP=potee`).
+
+Releases follow semver; the version lives in `VERSION` (`Potee::VERSION`: MCP `serverInfo`, `<meta name="version">`, the board's help popover). Release from `develop` with a clean tree:
+
+```sh
+bin/release [patch|minor|major]   # bump VERSION, commit, tag vX.Y.Z, push, GitHub release with the commits as notes
+bin/deploy [X.Y.Z]                # image registry.brandymint.ru/dapi/potee:X.Y.Z from the tag, infra app-update, wait for the rollout
+```
+
+patch — fixes and small UI changes; minor — new features; major — breaking changes to the API or the MCP tools. Images are never built locally: `bin/deploy` sends `git archive` of the tag to the machine's buildx builder (`BUILDX_BUILDER`, see `~/dotfiles`), so untracked files never reach the image; `.dockerignore` is a whitelist on top of that. It refuses to run while the infra apps file has someone else's uncommitted edits (`make app-update` commits the whole file). The old app's tags (`v0.2.x+sha`, 2012–2014) stay in history; the rewrite starts at 1.0.0.

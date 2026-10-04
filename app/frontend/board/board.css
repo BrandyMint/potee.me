@@ -203,6 +203,12 @@ button {
   gap: 12px;
 }
 
+.help-version {
+  margin: 12px 0 0;
+  color: #777;
+  font-size: 12px;
+}
+
 .help-popover dt {
   color: #eee;
 }

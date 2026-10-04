@@ -408,9 +408,10 @@ test("an empty board explains how to start", async ({ page }) => {
   await expect(page.locator(".empty-state")).toHaveCount(0);
 });
 
-test("the help popover lists gestures and shortcuts", async ({ page }) => {
+test("the help popover lists gestures and shortcuts and the version", async ({ page }) => {
   await page.getByRole("button", { name: "Help" }).click();
   await expect(page.getByRole("dialog", { name: "How to use Potee" })).toContainText("Double-click a project");
+  await expect(page.getByRole("dialog")).toContainText(/Potee \d+\.\d+\.\d+/);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

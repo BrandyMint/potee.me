@@ -80,6 +80,9 @@ export function Header({ onNewProject, onShowAll }: { onNewProject: () => void; 
   );
 }
 
+// Release version from the page's <meta name="version">.
+const version = document.querySelector<HTMLMetaElement>('meta[name="version"]')?.content;
+
 function HelpButton() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -116,6 +119,7 @@ function HelpButton() {
               </div>
             ))}
           </dl>
+          {version && <p className="help-version">Potee {version}</p>}
         </div>
       )}
     </div>

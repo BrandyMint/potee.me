@@ -6,6 +6,7 @@
 !Gemfile.lock
 !Rakefile
 !config.ru
+!VERSION
 !package.json
 !package-lock.json
 !tsconfig.json
