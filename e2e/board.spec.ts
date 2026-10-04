@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const row = (page: Page, title: string) => page.getByTestId(`project-${title}`);
 const projectPanel = (page: Page) => page.getByRole("dialog", { name: "Project panel" });
@@ -510,6 +510,15 @@ test("event titles stay visible when zooming out", async ({ page }) => {
     await page.getByRole("button", { name: zoom }).click();
     await expect(row(page, "Learn Scala").locator(".event-title", { hasText: "Buy a book" })).toBeVisible();
   }
+});
+
+test("editing a milestone fades the milestones of every project", async ({ page }) => {
+  await row(page, "Learn Scala").locator(".event", { hasText: "Buy a book" }).locator(".event-title").click();
+  await expect(page.getByLabel("Event time").or(page.getByRole("button", { name: "+ time" }))).toBeVisible();
+
+  const opacity = (event: Locator) => event.locator(".event-bar").evaluate((el) => getComputedStyle(el).opacity);
+  await expect.poll(() => opacity(row(page, "Learn Scala").locator(".event", { hasText: "Go to the conference" }))).toBe("0.12");
+  await expect.poll(() => opacity(row(page, "Make my wife happy").locator(".event").first())).toBe("0.12");
 });
 
 test("an event with a time shows it in the days zoom", async ({ page }) => {

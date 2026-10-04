@@ -736,13 +736,13 @@ button {
   transition-delay: 0.25s;
 }
 
-/* While a milestone is edited, the other milestones of its project fade out
-   of the way. */
-.project.editing-event .event:not(.editing) {
+/* While a milestone is edited, all the other milestones on the board fade
+   out of the way, as on hover. */
+.board:has(.project.editing-event) .event:not(.editing) {
   pointer-events: none;
 }
 
-.project.editing-event .event:not(.editing) > * {
+.board:has(.project.editing-event) .event:not(.editing) > * {
   opacity: 0.12;
 }
 
