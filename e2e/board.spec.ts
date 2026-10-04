@@ -486,15 +486,18 @@ test("labels of close events go to separate tiers instead of overlapping", async
 
   const labels = scala.locator(".event-title");
   await expect(labels).toHaveCount(4);
-  const boxes = (await Promise.all((await labels.all()).map((label) => label.boundingBox()))).map((box) => box!);
-  for (let i = 0; i < boxes.length; i++) {
-    for (let j = i + 1; j < boxes.length; j++) {
-      const [a, b] = [boxes[i]!, boxes[j]!];
-      const overlap = a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
-      expect(overlap).toBe(false);
+  // The row glides to its new height (a short transition): check once it is there.
+  await expect(async () => {
+    const boxes = (await Promise.all((await labels.all()).map((label) => label.boundingBox()))).map((box) => box!);
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const [a, b] = [boxes[i]!, boxes[j]!];
+        const overlap = a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+        expect(overlap).toBe(false);
+      }
     }
-  }
-  expect((await scala.boundingBox())!.height).toBeGreaterThan(heightBefore);
+    expect((await scala.boundingBox())!.height).toBeGreaterThan(heightBefore);
+  }).toPass();
   await expect(scala.locator(".event-connector")).toHaveCount(1);
 });
 

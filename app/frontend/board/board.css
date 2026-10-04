@@ -337,7 +337,30 @@ button {
   position: relative;
   flex: none;
   height: calc(78px + var(--tiers-extra, 0px));
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, height 0.15s ease-out;
+}
+
+/* Rows change height when their labels need more or fewer tiers (zoom, a new
+   milestone): the row, its bar and labels glide there instead of jumping. */
+.project-bar,
+.event-bar,
+.event-title,
+.event-connector,
+.draft-hint,
+.edge-label {
+  transition: top 0.15s ease-out, height 0.15s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project,
+  .project-bar,
+  .event-bar,
+  .event-title,
+  .event-connector,
+  .draft-hint,
+  .edge-label {
+    transition: none;
+  }
 }
 
 .scale-compact .project { height: calc(64px + var(--tiers-extra, 0px)); }
