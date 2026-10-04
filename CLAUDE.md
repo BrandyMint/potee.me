@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Potee — visual project planner: projects are horizontal bars on a zoomable, scrollable timeline, with events (milestones) on them. Rails 8.1 / Ruby 3.4 backend serving a JSON API and one page that hosts a React 19 + TypeScript board built by Vite (`vite_rails`). PostgreSQL 17. This is a rewrite of the 2012 Rails 3.2 + Backbone app (still on the `develop` branch history); behaviour was ported from it, including the keyboard shortcuts in `Keystrokes.md`.
+Potee — visual project planner: projects are horizontal bars on a zoomable, scrollable timeline, with events (milestones) on them. Rails 8.1 / Ruby 3.4 backend serving a JSON API and one page that hosts a React 19 + TypeScript board built by Vite (`vite_rails`). PostgreSQL 17. This is a rewrite of the 2012 Rails 3.2 + Backbone app (its code is in the git history before the rewrite); behaviour was ported from it, including the keyboard shortcuts in `Keystrokes.md`.
 
 ## Commands
 
@@ -55,7 +55,7 @@ E2E tests share the dev database; each test gets a fresh browser context, which 
 
 https://potee.pismenny.ru runs in the `goga-office` cluster; deployment config lives in `~/code/brandymint/infra` (`STAGE=goga-infra APP=potee`).
 
-Releases follow semver; the version lives in `VERSION` (`Potee::VERSION`: MCP `serverInfo`, `<meta name="version">`, the board's help popover). Release from `develop` with a clean tree:
+Releases follow semver; the version lives in `VERSION` (`Potee::VERSION`: MCP `serverInfo`, `<meta name="version">`, the board's help popover). Release from `main` with a clean tree:
 
 ```sh
 bin/release [patch|minor|major]   # bump VERSION, commit, tag vX.Y.Z, push, GitHub release with the commits as notes
