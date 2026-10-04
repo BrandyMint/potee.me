@@ -2,11 +2,11 @@
 title: "UC-014: Восстановление пароля"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: восстановление пароля."
+purpose: "Фиксирует сброс забытого пароля по письму."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -27,7 +27,7 @@ must_not_define:
 
 ## Trigger
 
-Клик «Forgot password?» на странице входа.
+Клик «Забыли пароль?» на странице входа.
 
 ## Preconditions
 
@@ -36,7 +36,7 @@ must_not_define:
 ## Main Flow
 
 1. Пользователь вводит email на `/passwords/new`.
-2. Видит «If this email is registered, a reset link is on its way.»
+2. Видит сообщение, что ссылка отправлена, если email зарегистрирован.
 3. Получает письмо со ссылкой (действует 15 минут), открывает её, вводит новый пароль.
 4. Входит автоматически, открывается доска.
 
@@ -53,6 +53,7 @@ must_not_define:
 
 - `BR-01` Ответ не раскрывает, зарегистрирован ли email.
 - `BR-02` Ссылка одноразовая и живёт 15 минут.
+- `BR-03` Страницы со ссылкой сброса не передают адрес в веб-аналитику.
 
 ## Traceability
 
@@ -60,11 +61,16 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow, `EX-01`, `EX-02` | `spec/requests/auth_spec.rb` › password reset |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow, `BR-02` | `spec/requests/auth_spec.rb` › emails a link that sets a new password |  |
+| `EX-02`, `BR-01` | `spec/requests/auth_spec.rb` › does not reveal whether an email is registered |  |
+| `BR-03` | `spec/requests/metrika_spec.rb` › stays off pages whose URL carries a password reset token |  |

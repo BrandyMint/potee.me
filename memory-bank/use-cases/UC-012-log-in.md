@@ -2,11 +2,11 @@
 title: "UC-012: Вход в аккаунт"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: вход в аккаунт."
+purpose: "Фиксирует вход и слияние анонимной доски с аккаунтом."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -27,7 +27,7 @@ must_not_define:
 
 ## Trigger
 
-Клик «Log in» на лендинге или в шапке доски.
+Клик «Войти» на лендинге или в шапке доски.
 
 ## Preconditions
 
@@ -42,8 +42,8 @@ must_not_define:
 ## Alternate Flows / Exceptions
 
 - `ALT-01` Анонимная доска содержала только нетронутые примеры — ничего не переносится.
-- `EX-01` Неверный email или пароль — общее сообщение «Wrong email or password.».
-- `EX-02` Забыт пароль — `UC-014`.
+- `EX-01` Неверный email или пароль — общее сообщение «Неверный email или пароль».
+- `EX-02` Забыт пароль — [`UC-014`](UC-014-reset-password.md).
 
 ## Postconditions
 
@@ -60,12 +60,15 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow, `BR-02` | `spec/requests/auth_spec.rb` › merges…; `e2e/auth.spec.ts` |
-| `EX-01` | `e2e/auth.spec.ts` › wrong password shows an error |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow, `ALT-01`, `BR-02` | `spec/requests/auth_spec.rb` › merges what the visitor made on the anonymous board… |  |
+| `EX-01` | `e2e/auth.spec.ts` › wrong password shows an error; `spec/requests/auth_spec.rb` › rejects a wrong password |  |

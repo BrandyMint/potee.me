@@ -8,6 +8,7 @@ derived_from:
   - ../../roadmap.md
   - ../../use-cases/UC-003-create-project.md
   - ../../use-cases/UC-007-add-event.md
+  - ../../use-cases/UC-019-plan-from-text.md
 status: draft
 audience: humans_and_agents
 ---

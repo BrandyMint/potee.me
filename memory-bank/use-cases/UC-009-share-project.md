@@ -2,11 +2,11 @@
 title: "UC-009: Приглашение в проект по ссылке"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: приглашение в проект по ссылке."
+purpose: "Фиксирует получение ссылки-приглашения на проект."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -35,8 +35,8 @@ must_not_define:
 
 ## Main Flow
 
-1. Пользователь нажимает «Share» в панели проекта.
-2. Ссылка копируется в буфер, кнопка на 2 секунды меняется на «Ссылка скопирована».
+1. Пользователь нажимает «Поделиться» в инструментах проекта в шапке.
+2. Ссылка копируется в буфер, кнопка на 2 секунды показывает «Ссылка скопирована».
 3. Пользователь отправляет ссылку любым способом.
 
 ## Alternate Flows / Exceptions
@@ -58,11 +58,14 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | [`UC-010`](UC-010-join-shared-project.md) |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow | проверено вручную (UX walkthrough 2026-10-01) |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow | `e2e/board.spec.ts` › the panel copies the share link |  |

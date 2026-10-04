@@ -1,12 +1,12 @@
 ---
-title: "UC-008: Редактирование события"
+title: "UC-008: Редактирование вехи"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: редактирование события."
+purpose: "Фиксирует переименование, перенос, время, порядок и удаление вех."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -15,11 +15,11 @@ must_not_define:
   - bdd_example_inventory
 ---
 
-# UC-008: Редактирование события
+# UC-008: Редактирование вехи
 
 ## Goal
 
-Пользователь переименовывает, переносит или удаляет веху.
+Пользователь переименовывает, переносит, уточняет время или удаляет веху.
 
 ## Primary Actor
 
@@ -31,19 +31,22 @@ must_not_define:
 
 ## Preconditions
 
-- Событие сохранено.
+- Веха сохранена.
 
 ## Main Flow
 
-1. Перенос: пользователь тянет метку вдоль полосы и отпускает — новый момент сохраняется.
-2. Переименование: клик по названию → поле ввода → Enter или уход из поля сохраняют, Esc отменяет.
-3. Удаление: в режиме редактирования кнопка «Удалить»; 5 секунд можно «Отменить».
-4. Время: в форме события можно указать время начала или очистить его; событие со временем в масштабе «дни» показывает его перед названием («19:00 Созвон 1»).
+1. Перенос: пользователь тянет веху вдоль полосы и отпускает — новый момент сохраняется.
+2. Правка на месте: клик по названию — название редактируется в пунктирной рамке, все остальные вехи доски гаснут и не мешают; над названием — время или «+ время» (подставляет момент, где стоит веха, с точностью до 15 минут).
+3. Enter или ✓ сохраняют, Esc отменяет; корзина удаляет веху, 5 секунд можно нажать «Отменить».
+4. Веха со временем в масштабе «дни» показывает его маленькой строкой над названием.
 
 ## Alternate Flows / Exceptions
 
-- `ALT-01` Метку нельзя вытащить за пределы сроков проекта.
-- `EX-01` Ошибка сохранения — сообщение и откат.
+- `ALT-01` В окне «Подробнее» ([`UC-005`](UC-005-manage-project.md)) список вех: веху можно перенести на другой день, удалить при наведении или перетащить, чтобы поменять порядок шагов — даты при этом остаются на местах.
+- `ALT-02` Клик по названию вехи в списке закрывает окно, переносит ленту к вехе и открывает правку на месте.
+- `ALT-03` Время можно убрать — веха снова «на весь день».
+- `EX-01` Неверное время — подсказка с примером, веха не сохраняется.
+- `EX-02` Ошибка сохранения — сообщение и откат.
 
 ## Postconditions
 
@@ -51,8 +54,9 @@ must_not_define:
 
 ## Business Rules
 
-- `BR-01` Событие всегда внутри сроков проекта.
+- `BR-01` Веха всегда внутри сроков проекта; метку нельзя вытащить за его края.
 - `BR-02` Пустое название не сохраняется — остаётся прежнее.
+- `BR-03` Время показывается в формате аккаунта: 24 или 12 часов ([`UC-016`](UC-016-account-settings.md)).
 
 ## Traceability
 
@@ -60,11 +64,18 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow | `e2e/board.spec.ts` › dragging an event moves it in time; › …can be renamed |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow 1 | `e2e/board.spec.ts` › dragging an event moves it in time |  |
+| Main flow 2–4, `ALT-03` | `e2e/board.spec.ts` › editing a milestone fades the milestones of every project; › an event with a time shows it in the days zoom |  |
+| `ALT-01` | `e2e/board.spec.ts` › milestones in the panel move to another day and are deleted on hover; › dragging a milestone in the panel changes the order of steps, dates stay |  |
+| `BR-01` | `spec/requests/api/events_spec.rb` |  |
+| `BR-03` | `spec/requests/settings_spec.rb` › takes the clock from the account… |  |

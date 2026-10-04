@@ -2,11 +2,11 @@
 title: "UC-013: Выход из аккаунта"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: выход из аккаунта."
+purpose: "Фиксирует завершение сеанса."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -27,7 +27,7 @@ must_not_define:
 
 ## Trigger
 
-Клик «Log out» в шапке доски.
+Клик «Выйти» в шапке доски.
 
 ## Preconditions
 
@@ -35,12 +35,12 @@ must_not_define:
 
 ## Main Flow
 
-1. Пользователь нажимает «Log out».
-2. Сессия сбрасывается, открывается лендинг.
+1. Пользователь нажимает «Выйти».
+2. Сессия сбрасывается.
 
 ## Alternate Flows / Exceptions
 
-- `ALT-01` Повторный заход на доску создаёт новую анонимную доску.
+- `ALT-01` Следующий заход на доску создаёт новую анонимную доску.
 
 ## Postconditions
 
@@ -56,11 +56,14 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow | `spec/requests/auth_spec.rb` › logs out into a new anonymous board |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow, `ALT-01` | `spec/requests/auth_spec.rb` › logs out into a new anonymous board |  |

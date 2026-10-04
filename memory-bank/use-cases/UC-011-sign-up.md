@@ -2,11 +2,11 @@
 title: "UC-011: Регистрация и сохранение доски"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: регистрация и сохранение доски."
+purpose: "Фиксирует превращение анонимной доски в аккаунт."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -27,7 +27,7 @@ must_not_define:
 
 ## Trigger
 
-Клик «Sign up to save your projects».
+Клик «Сохранить доску» в шапке (появляется после первого своего изменения) или переход на `/signup`.
 
 ## Preconditions
 
@@ -35,16 +35,18 @@ must_not_define:
 
 ## Main Flow
 
-1. Посетитель открывает `/signup`, вводит email и пароль (от 8 символов).
-2. Нажимает «Sign up».
-3. Анонимная доска становится доской аккаунта; открывается доска с приветствием, в шапке — email и «Log out».
+1. Посетитель открывает `/signup`, вводит email и пароль.
+2. Нажимает «Зарегистрироваться».
+3. Анонимная доска становится доской аккаунта; язык и регион определяются по браузеру (часовой пояс, затем язык); открывается доска, в шапке — email и «Выйти».
 
 ## Alternate Flows / Exceptions
 
 - `ALT-01` Регистрация без доски (прямо на `/signup`) — создаётся аккаунт с доской-примером.
-- `EX-01` Email уже зарегистрирован — сообщение «Log in instead».
-- `EX-02` Пароль короче 8 символов или неверный email — сообщение, введённый email сохраняется в форме.
-- `EX-03` Больше 10 попыток за 3 минуты — сообщение «Try again later».
+- `ALT-02` Логотип на страницах входа ведёт обратно на доску, если она есть, иначе на лендинг.
+- `ALT-03` Со страницы регистрации есть ссылка на `/privacy` — какие данные хранит Potee.
+- `EX-01` Email уже зарегистрирован — сообщение с предложением войти.
+- `EX-02` Короткий пароль или неверный email — сообщение, введённый email сохраняется в форме.
+- `EX-03` Больше 10 попыток за 3 минуты — сообщение «Попробуйте позже».
 
 ## Postconditions
 
@@ -61,11 +63,19 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow, `EX-01`, `EX-02` | `spec/requests/auth_spec.rb` › sign up; `e2e/auth.spec.ts` |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow | `e2e/auth.spec.ts` › signing up keeps the board, logging back in restores it; `spec/requests/auth_spec.rb` › sign up |  |
+| `ALT-01`, `EX-01`, `EX-02` | `spec/requests/auth_spec.rb` › sign up |  |
+| `ALT-02` | `spec/requests/auth_spec.rb` › leads the logo of the auth pages back to the board… |  |
+| `ALT-03` | `spec/requests/privacy_spec.rb` |  |
+| Main flow 3 (регион) | `spec/requests/settings_spec.rb` › detects the region and language at sign-up… |  |
+| `BR-01`, `BR-02` | `spec/models/user_spec.rb` |  |

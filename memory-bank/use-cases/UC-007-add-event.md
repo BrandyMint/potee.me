@@ -1,12 +1,12 @@
 ---
-title: "UC-007: Добавление события"
+title: "UC-007: Добавление вехи"
 doc_kind: use_case
 doc_function: canonical
-purpose: "Фиксирует устойчивый пользовательский сценарий Potee: добавление события."
+purpose: "Фиксирует добавление вехи на полосу проекта."
 derived_from:
   - ../product/context.md
   - ../prd/PRD-001-potee.md
-status: draft
+status: active
 audience: humans_and_agents
 must_not_define:
   - implementation_sequence
@@ -15,7 +15,7 @@ must_not_define:
   - bdd_example_inventory
 ---
 
-# UC-007: Добавление события
+# UC-007: Добавление вехи
 
 ## Goal
 
@@ -36,23 +36,24 @@ must_not_define:
 ## Main Flow
 
 1. Пользователь делает двойной клик по полосе проекта в нужном месте.
-2. На полосе появляется метка «Some event» в этот момент (с точностью до минуты).
-3. Пользователь кликает по названию метки, чтобы переименовать (`UC-008`).
+2. Проект выделяется, на полосе появляется веха «Событие» в этот момент.
+3. Пользователь кликает по названию вехи, чтобы переименовать её и задать время ([`UC-008`](UC-008-edit-event.md)).
 
 ## Alternate Flows / Exceptions
 
-- `ALT-01` В мелких масштабах названия событий видны меньшим шрифтом и не более чем в два яруса; не поместившиеся показываются при наведении.
-- `ALT-02` Подпись, которая налезла бы на соседнюю, поднимается на ярус выше с линией к своей метке; строка становится выше.
-- `ALT-03` Подпись под курсором выводится на тёмной подложке поверх соседних.
+- `ALT-01` Веху можно добавить в окне «Подробнее» кнопкой «добавить» ([`UC-005`](UC-005-manage-project.md)).
+- `ALT-02` Подпись, которая налезла бы на соседнюю, поднимается на ярус выше с линией к своей вехе; строка становится выше.
+- `ALT-03` В мелких масштабах подписи меньше и ярусов меньше; не поместившиеся показываются при наведении.
+- `ALT-04` Наведение на веху после короткой паузы приглушает все остальные вехи доски, чтобы подпись читалась.
 - `EX-01` Ошибка сохранения — сообщение и откат.
 
 ## Postconditions
 
-- Событие сохранено и видно всем участникам проекта; прошедшие события приглушены.
+- Веха сохранена и видна всем участникам проекта; прошедшие вехи приглушены.
 
 ## Business Rules
 
-- `BR-01` Событие создаётся только внутри сроков проекта.
+- `BR-01` Веха создаётся только внутри сроков проекта.
 
 ## Traceability
 
@@ -60,11 +61,17 @@ must_not_define:
 | --- | --- |
 | PRD | [`PRD-001`](../prd/PRD-001-potee.md) |
 | Features | `none` |
+| Related use cases | `none` |
 | ADR | `none` |
 | Runbooks / Ops | `none` |
 
 ## Downstream Behavior Coverage
 
-| UC element | Downstream examples / checks |
-| --- | --- |
-| Main flow | `e2e/board.spec.ts` › double click on a project adds an event…; `spec/requests/api/events_spec.rb` |
+Навигация: acceptance и проверки живут в тестах и feature `brief.md`.
+
+| UC element | Downstream examples / checks | Coverage note |
+| --- | --- | --- |
+| Main flow | `e2e/board.spec.ts` › double click on a project adds an event, which can be renamed |  |
+| `ALT-01` | `e2e/board.spec.ts` › the expanded panel lists milestones, adds one and changes dates |  |
+| `ALT-02`, `ALT-03` | `e2e/board.spec.ts` › labels of close events go to separate tiers…; › event titles stay visible when zooming out |  |
+| `BR-01` | `spec/requests/api/events_spec.rb` |  |
