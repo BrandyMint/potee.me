@@ -727,9 +727,9 @@ button {
   pointer-events: none;
 }
 
-/* Hovering a milestone fades the other milestones of its project, so one
-   among overlapping labels can be read. */
-.project:has(.event:hover):not(.editing-event) .event:not(:hover) > * {
+/* Hovering a milestone fades all the other milestones on the board, so one
+   among overlapping labels (of this or a neighbouring project) can be read. */
+.board:not(.editing):has(.event:hover) .event:not(:hover) > * {
   opacity: 0.15;
 }
 
